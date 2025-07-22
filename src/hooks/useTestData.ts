@@ -11,7 +11,7 @@ export function useTestData() {
     const processed: { [key: string]: ProcessedPrepTest } = {};
     
     // Process all your raw test data here
-    processed[LSAC140.moduleName] = processRawPrepTest(LSAC140);
+    processed[rawPrepTest140.moduleName] = processRawPrepTest(rawPrepTest140);
     
     // Add more tests as needed:
     // processed['PrepTest 141'] = processRawPrepTest(rawPrepTest141);
