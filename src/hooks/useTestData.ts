@@ -1,7 +1,7 @@
 // hooks/useTestData.ts
 import { useMemo } from 'react';
 import { processRawPrepTest } from '../utils/dataProcessing';
-import rawPrepTest140 from '../data/fullPrepTest140.json';
+import rawPrepTest140 from '../data/LSAC140.json';
 import type { ProcessedPrepTest } from '../types/test-data';
 
 export function useTestData() {
