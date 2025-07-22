@@ -9,13 +9,16 @@ import type {
 export function processRawPrepTest(rawData: RawPrepTest): ProcessedPrepTest {
   // Helper to strip HTML tags and convert escaped newlines
   const stripHtmlTags = (html: string): string => {
-    // First, replace </p> tags with double newlines to preserve paragraph breaks
-    let processedHtml = html.replace(/<\/p>/g, '\n\n');
-    // Then, create a DOM parser to strip all other HTML tags
-    const doc = new DOMParser().parseFromString(processedHtml, 'text/html');
-    // Get text content and convert any remaining escaped newlines, then trim whitespace
-    return (doc.body.textContent || "").replace(/\\n/g, '\n').trim();
-  };
+  // Replace </p> tags with double newlines to preserve paragraph breaks
+  let cleaned = html.replace(/<\/p>/g, '\n\n');
+  // Remove all other HTML tags
+  cleaned = cleaned.replace(/<[^>]*>/g, '');
+  // Convert any remaining escaped newlines (e.g., if they were in attributes)
+  cleaned = cleaned.replace(/\\n/g, '\n');
+  // Trim leading/trailing whitespace
+  return cleaned.trim();
+};
+
 
   // Helper to convert option letter to 0-indexed number
   const optionLetterToIndex = (letter: string): number => {
