@@ -1,4 +1,6 @@
 // scripts/migrateTestData.js
+import dotenv from 'dotenv'; // Add this line
+dotenv.config(); // Add this line right after the import
 import { createClient } from '@supabase/supabase-js';
 import fs from 'fs';
 import path from 'path';
