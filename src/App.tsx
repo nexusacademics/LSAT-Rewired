@@ -21,8 +21,19 @@ import type { ProcessedQuestion } from './types/test-data';
 // Define view type
 type AppView = 'dashboard' | 'triple-review' | 'performance' | 'subscription';
 
+// Define Message interface for chat history
+interface Message {
+  id: string;
+  type: 'user' | 'ai';
+  content: string;
+  timestamp: Date;
+  feedback?: 'helpful' | 'not-helpful';
+}
+
 function App() {
   const [currentView, setCurrentView] = useState<AppView>('dashboard');
+  // State to hold conversation messages, lifted to App.tsx
+  const [messages, setMessages] = useState<Message[]>([]);
 
   // Custom hooks handle specific concerns
   const { user, supabaseUser, subscription, isLoading: authLoading } = useAuth();
@@ -115,6 +126,8 @@ function App() {
           currentSession={currentSession}
           currentQuestionData={currentQuestionDataForChat}
           allProcessedTests={allProcessedTests}
+          messages={messages} // Pass messages state
+          setMessages={setMessages} // Pass setMessages function
         />
       )}
     </div>
@@ -142,7 +155,7 @@ function useCurrentQuestionData(
     return null;
   }
 
-  return currentSection.questions[currentSession.currentSectionIndex];
+  return currentSection.questions[currentSession.currentQuestionIndex]; // Corrected to use currentQuestionIndex
 }
 
 export default App;
