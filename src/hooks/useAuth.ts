@@ -71,7 +71,10 @@ export function useAuth() {
       const mockUser: User = {
         id: supabaseUser.id,
         email: supabaseUser.email || '',
-        name: supabaseUser.email?.split('@')[0] || 'User',
+        name: supabaseUser.email?.split('@')[0] || 'Jake',
+         firstName: 'Jake', // You can also change this
+      lastName: 'Username', // And this
+      username: 'LSATWizard', // And this
         stats: {
           circuitsCreated: 50,
           testsCompleted: 10,
@@ -117,7 +120,7 @@ export function useAuth() {
           // If no session, create a mock user for dashboard display
           const mockSupabaseUser: SupabaseUser = {
             id: 'mock-user-id', // A consistent mock ID for development
-            email: 'mock@example.com',
+            email: 'LSATWizard@gmail.com',
           };
           const mockUser: User = {
             id: mockSupabaseUser.id,
