@@ -356,7 +356,7 @@ Goldilocks Principle: The correct assumption is just strong enough to make the r
                   handleSendMessage();
                 }
               }}
-              placeholder="Ask about argument structure, circuit building, or analysis techniques..."
+              placeholder="Talk to me here..."
               className="w-full px-3 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 pr-10 text-sm resize-none overflow-hidden min-h-[42px]" // Added resize-none, overflow-hidden, min-h
               disabled={isChatDisabled} // Disable input when chat is disabled
               rows={1} // Start with 1 row
