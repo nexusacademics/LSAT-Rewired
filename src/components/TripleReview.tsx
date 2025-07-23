@@ -516,7 +516,7 @@ const TripleReview: React.FC<TripleReviewProps> = ({
       </div>
 
       {/* Main Content Wrapper - This is the scrollable area */}
-      <div ref={mainContentRef} className="flex-1 overflow-y-auto">
+      <div ref={mainContentRef} className="flex-1 p-6 overflow-y-auto">
         {/* Section Transition Modal (now the only modal) */}
         {showSectionTransition && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={() => setShowSectionTransition(false)}>
@@ -572,303 +572,300 @@ const TripleReview: React.FC<TripleReviewProps> = ({
           </div>
         )}
 
-        {/* NEW WRAPPER DIV FOR CONTENT */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {showCircuitBuilder && session.phase !== 'timed' ? (
-            <div className="grid lg:grid-cols-3 gap-6"> {/* Removed h-full */}
-              {/* Left Column: Passage & Selected Answer (managed by TripleReview) */}
-              <div className="lg:col-span-1 space-y-6 overflow-y-auto"> {/* Removed h-full */}
-                <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-                  <div className="prose max-w-none">
-                    <div className="text-slate-700 leading-relaxed">
-                      <div className="whitespace-pre-line">{currentQuestionData.passage}</div>
-                    </div>
+        {showCircuitBuilder && session.phase !== 'timed' ? (
+          <div className="grid lg:grid-cols-3 gap-6 h-full"> {/* Changed to lg:grid-cols-3 */}
+            {/* Left Column: Passage & Selected Answer (managed by TripleReview) */}
+            <div className="lg:col-span-1 space-y-6 h-full overflow-y-auto">
+              <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                <div className="prose max-w-none">
+                  <div className="text-slate-700 leading-relaxed">
+                    <div className="whitespace-pre-line">{currentQuestionData.passage}</div>
                   </div>
                 </div>
+              </div>
 
-                {/* Conditional Answer Display in Circuit Builder */}
+              {/* Conditional Answer Display in Circuit Builder */}
+              {session.phase === 'blind-review' && (
+                <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                  <h3 className="text-lg font-semibold text-slate-900 mb-4">Your Selected Answer</h3>
+                  {selectedAnswerText ? (
+                    <p className="text-slate-700 font-medium">
+                      ({String.fromCharCode(65 + selectedAnswerIndex)}) {selectedAnswerText}
+                    </p>
+                  ) : (
+                    <p className="text-slate-500 italic">
+                      No answer selected yet. Your choice will appear here.
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {session.phase === 'strategy-review' && (
+                <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                  <h3 className="text-lg font-semibold text-slate-900 mb-4">Correct Answer</h3>
+                  <p className="text-slate-700 font-medium">
+                    ({String.fromCharCode(65 + currentQuestionData.correctAnswer)}) {currentQuestionData.options[currentQuestionData.correctAnswer]}
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* CircuitBuilder takes the remaining 2 columns */}
+            <div className="lg:col-span-2 h-full"> {/* Changed to lg:col-span-2 */}
+            
+              <CircuitBuilder
+                onBack={() => setShowCircuitBuilder(false)}
+                onSaveCircuit={handleSaveCircuitFromBuilder} // Pass the new handler
+                questionData={currentQuestionData}
+                session={session}
+                existingCircuit={existingCircuitForQuestion} // Pass the existing circuit
+              />
+            </div>
+          </div>
+        ) : (
+          // Original layout when CircuitBuilder is not shown or in timed mode
+          <div className={session.phase === 'timed' ? "grid lg:grid-cols-2 gap-6 h-full" : "grid lg:grid-cols-3 gap-6 h-full"}>
+            {/* Left Column: Passage */}
+            <div className={session.phase === 'timed' ? "lg:col-span-1 space-y-6 h-full overflow-y-auto" : "lg:col-span-1 space-y-6 h-full overflow-y-auto"}>
+              <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                <div className="prose max-w-none">
+                  <div className="text-slate-700 leading-relaxed">
+                    <div className="whitespace-pre-line">{currentQuestionData.passage}</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Circuit Builder box (button to open) */}
+              {(session.phase === 'blind-review' || session.phase === 'strategy-review') && (
+                <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                  <h3 className="text-lg font-semibold text-slate-900 mb-4">Circuit Builder</h3>
+
+                  <div className="bg-teal-50 border border-teal-200 rounded-xl p-4 mb-4">
+                    <div className="flex items-center mb-2">
+                      <Target className="h-5 w-5 text-teal-600 mr-2" />
+                      <span className="font-medium text-teal-800">Build Your Circuit</span>
+                    </div>
+                    <p className="text-sm text-teal-700">
+                      Map out the logical structure of this argument to earn circuit points.
+                    </p>
+                  </div>
+
+                  <button
+                    onClick={() => setShowCircuitBuilder(true)} // Toggle CircuitBuilder visibility
+                    className="w-full bg-teal-600 text-white py-3 px-4 rounded-xl font-medium hover:bg-teal-700 transition-colors"
+                  >
+                    Open Circuit Builder
+                  </button>
+
+                  {existingCircuitForQuestion && ( // Check if a circuit exists for this question
+                    <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+                      <div className="text-green-800 font-medium">
+                        Circuit Created ✓
+                      </div>
+                      <div className="text-green-700 text-sm">
+                        Quality Score: {existingCircuitForQuestion.analysisQuality}/100
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Sidebar - Conditionally rendered */}
+            {session.phase !== 'timed' && (
+              <div className="lg:col-span-1 space-y-6 h-full overflow-y-auto">
+                {/* Analysis Template box - MOVED TO TOP */}
                 {session.phase === 'blind-review' && (
                   <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-                    <h3 className="text-lg font-semibold text-slate-900 mb-4">Your Selected Answer</h3>
-                    {selectedAnswerText ? (
-                      <p className="text-slate-700 font-medium">
-                        ({String.fromCharCode(65 + selectedAnswerIndex)}) {selectedAnswerText}
-                      </p>
-                    ) : (
-                      <p className="text-slate-500 italic">
-                        No answer selected yet. Your choice will appear here.
-                      </p>
-                    )}
+                    <h3 className="text-lg font-semibold text-slate-900 mb-4">Analysis Template</h3>
+
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-2">
+                          Question Type Analysis
+                        </label>
+                        <textarea
+                          rows={3}
+                          className="w-full border border-slate-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                          placeholder="Identify the question type and what it's asking for..."
+                          value={session.analysisNotes[currentQuestionData.id]?.questionTypeAnalysis || ''}
+                          onChange={(e) => handleNoteChange('questionTypeAnalysis', e.target.value)}
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-2">
+                          Argument Structure
+                        </label>
+                        <textarea
+                          rows={3}
+                          className="w-full border border-slate-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                          placeholder="Break down the premises and conclusion..."
+                          value={session.analysisNotes[currentQuestionData.id]?.argumentStructure || ''}
+                          onChange={(e) => handleNoteChange('argumentStructure', e.target.value)}
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-2">
+                          Answer Choice Analysis
+                        </label>
+                        <textarea
+                          rows={4}
+                          className="w-full border border-slate-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                          placeholder="Evaluate each answer choice and explain why the correct answer works..."
+                          value={session.analysisNotes[currentQuestionData.id]?.answerChoiceAnalysis || ''}
+                          onChange={(e) => handleNoteChange('answerChoiceAnalysis', e.target.value)}
+                        />
+                      </div>
+                    </div>
                   </div>
                 )}
 
                 {session.phase === 'strategy-review' && (
                   <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-                    <h3 className="text-lg font-semibold text-slate-900 mb-4">Correct Answer</h3>
-                    <p className="text-slate-700 font-medium">
-                      ({String.fromCharCode(65 + currentQuestionData.correctAnswer)}) {currentQuestionData.options[currentQuestionData.correctAnswer]}
-                    </p>
-                  </div>
-                )}
-              </div>
+                    <h3 className="text-lg font-semibold text-slate-900 mb-4">Answer Explanations</h3>
 
-              {/* CircuitBuilder takes the remaining 2 columns */}
-              <div className="lg:col-span-2"> {/* Removed h-full */}
-              
-                <CircuitBuilder
-                  onBack={() => setShowCircuitBuilder(false)}
-                  onSaveCircuit={handleSaveCircuitFromBuilder} // Pass the new handler
-                  questionData={currentQuestionData}
-                  session={session}
-                  existingCircuit={existingCircuitForQuestion} // Pass the existing circuit
-                />
-              </div>
-            </div>
-          ) : (
-            // Original layout when CircuitBuilder is not shown or in timed mode
-            <div className={session.phase === 'timed' ? "grid lg:grid-cols-2 gap-6" : "grid lg:grid-cols-3 gap-6"}> {/* Removed h-full */}
-              {/* Left Column: Passage */}
-              <div className={session.phase === 'timed' ? "lg:col-span-1 space-y-6 overflow-y-auto" : "lg:col-span-1 space-y-6 overflow-y-auto"}> {/* Removed h-full */}
-                <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-                  <div className="prose max-w-none">
-                    <div className="text-slate-700 leading-relaxed">
-                      <div className="whitespace-pre-line">{currentQuestionData.passage}</div>
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-2">
+                          Question Type Analysis
+                        </label>
+                        <textarea
+                          rows={3}
+                          className="w-full border border-slate-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                          placeholder="Identify the question type and what it's asking for..."
+                          value={session.analysisNotes[currentQuestionData.id]?.questionTypeAnalysis || ''}
+                          onChange={(e) => handleNoteChange('questionTypeAnalysis', e.target.value)}
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-2">
+                          Argument Structure
+                        </label>
+                        <textarea
+                          rows={3}
+                          className="w-full border border-slate-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                          placeholder="Break down the premises and conclusion..."
+                          value={session.analysisNotes[currentQuestionData.id]?.argumentStructure || ''}
+                          onChange={(e) => handleNoteChange('argumentStructure', e.target.value)}
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-2">
+                          Answer Choice Analysis
+                        </label>
+                        <textarea
+                          rows={4}
+                          className="w-full border border-slate-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                          placeholder="Evaluate each answer choice and explain why the correct answer works..."
+                          value={session.analysisNotes[currentQuestionData.id]?.answerChoiceAnalysis || ''}
+                          onChange={(e) => handleNoteChange('answerChoiceAnalysis', e.target.value)}
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
 
-                {/* Circuit Builder box (button to open) */}
-                {(session.phase === 'blind-review' || session.phase === 'strategy-review') && (
+                {session.phase !== 'timed' && (
                   <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-                    <h3 className="text-lg font-semibold text-slate-900 mb-4">Circuit Builder</h3>
-
-                    <div className="bg-teal-50 border border-teal-200 rounded-xl p-4 mb-4">
-                      <div className="flex items-center mb-2">
-                        <Target className="h-5 w-5 text-teal-600 mr-2" />
-                        <span className="font-medium text-teal-800">Build Your Circuit</span>
-                      </div>
-                      <p className="text-sm text-teal-700">
-                        Map out the logical structure of this argument to earn circuit points.
-                      </p>
-                    </div>
-
-                    <button
-                      onClick={() => setShowCircuitBuilder(true)} // Toggle CircuitBuilder visibility
-                      className="w-full bg-teal-600 text-white py-3 px-4 rounded-xl font-medium hover:bg-teal-700 transition-colors"
-                    >
-                      Open Circuit Builder
-                    </button>
-
-                    {existingCircuitForQuestion && ( // Check if a circuit exists for this question
-                      <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
-                        <div className="text-green-800 font-medium">
-                          Circuit Created ✓
-                        </div>
-                        <div className="text-green-700 text-sm">
-                          Quality Score: {existingCircuitForQuestion.analysisQuality}/100
-                        </div>
-                      </div>
-                    )}
+                    <h3 className="text-lg font-semibold text-slate-900 mb-4">Quick Notes</h3>
+                    <textarea
+                      rows={4}
+                      className="w-full border border-slate-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="Jot down thoughts, patterns, or insights..."
+                    />
                   </div>
                 )}
               </div>
+            )}
 
-              {/* Sidebar - Conditionally rendered */}
-              {session.phase !== 'timed' && (
-                <div className="lg:col-span-1 space-y-6 overflow-y-auto"> {/* Removed h-full */}
-                  {/* Analysis Template box - MOVED TO TOP */}
-                  {session.phase === 'blind-review' && (
-                    <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-                      <h3 className="text-lg font-semibold text-slate-900 mb-4">Analysis Template</h3>
-
-                      <div className="space-y-4">
-                        <div>
-                          <label className="block text-sm font-medium text-slate-700 mb-2">
-                            Question Type Analysis
-                          </label>
-                          <textarea
-                            rows={3}
-                            className="w-full border border-slate-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                            placeholder="Identify the question type and what it's asking for..."
-                            value={session.analysisNotes[currentQuestionData.id]?.questionTypeAnalysis || ''}
-                            onChange={(e) => handleNoteChange('questionTypeAnalysis', e.target.value)}
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-medium text-slate-700 mb-2">
-                            Argument Structure
-                          </label>
-                          <textarea
-                            rows={3}
-                            className="w-full border border-slate-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                            placeholder="Break down the premises and conclusion..."
-                            value={session.analysisNotes[currentQuestionData.id]?.argumentStructure || ''}
-                            onChange={(e) => handleNoteChange('argumentStructure', e.target.value)}
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-medium text-slate-700 mb-2">
-                            Answer Choice Analysis
-                          </label>
-                          <textarea
-                            rows={4}
-                            className="w-full border border-slate-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                            placeholder="Evaluate each answer choice and explain why the correct answer works..."
-                            value={session.analysisNotes[currentQuestionData.id]?.answerChoiceAnalysis || ''}
-                            onChange={(e) => handleNoteChange('answerChoiceAnalysis', e.target.value)}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {session.phase === 'strategy-review' && (
-                    <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-                      <h3 className="text-lg font-semibold text-slate-900 mb-4">Answer Explanations</h3>
-
-                      <div className="space-y-4">
-                        <div>
-                          <label className="block text-sm font-medium text-slate-700 mb-2">
-                            Question Type Analysis
-                          </label>
-                          <textarea
-                            rows={3}
-                            className="w-full border border-slate-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                            placeholder="Identify the question type and what it's asking for..."
-                            value={session.analysisNotes[currentQuestionData.id]?.questionTypeAnalysis || ''}
-                            onChange={(e) => handleNoteChange('questionTypeAnalysis', e.target.value)}
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-medium text-slate-700 mb-2">
-                            Argument Structure
-                          </label>
-                          <textarea
-                            rows={3}
-                            className="w-full border border-slate-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                            placeholder="Break down the premises and conclusion..."
-                            value={session.analysisNotes[currentQuestionData.id]?.argumentStructure || ''}
-                            onChange={(e) => handleNoteChange('argumentStructure', e.target.value)}
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-medium text-slate-700 mb-2">
-                            Answer Choice Analysis
-                          </label>
-                          <textarea
-                            rows={4}
-                            className="w-full border border-slate-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                            placeholder="Evaluate each answer choice and explain why the correct answer works..."
-                            value={session.analysisNotes[currentQuestionData.id]?.answerChoiceAnalysis || ''}
-                            onChange={(e) => handleNoteChange('answerChoiceAnalysis', e.target.value)}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {session.phase !== 'timed' && (
-                    <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-                      <h3 className="text-lg font-semibold text-slate-900 mb-4">Quick Notes</h3>
-                      <textarea
-                        rows={4}
-                        className="w-full border border-slate-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="Jot down thoughts, patterns, or insights..."
-                      />
-                    </div>
-                  )}
+            {/* Right Column: Question Stem & Options */}
+            <div className={session.phase === 'timed' ? "lg:col-span-1 space-y-6 h-full overflow-y-auto" : "lg:col-span-1 space-y-6 h-full overflow-y-auto"}>
+              {/* Question Stem (NEW LOCATION 2) */}
+              <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                <div className="mb-4">
+                  <h3 className="text-lg font-semibold text-slate-900">
+                    <div className="whitespace-pre-line">{currentQuestionData.question}</div>
+                  </h3>
                 </div>
-              )}
+              </div>
+              <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                <h3 className="text-lg font-semibold text-slate-900 mb-4">Answer Choices</h3>
+                <div className="space-y-3">
+                  {currentQuestionData.options.map((option, index) => {
+                    const isGreyedOut = greyedOutOptions[currentQuestionData.id]?.includes(index);
+                    const isCorrect = index === currentQuestionData.correctAnswer;
+                    const timedAnswerChosen = session.timedAnswers[currentQuestionData.id];
+                    const blindReviewAnswerChosen = session.blindReviewAnswers[currentQuestionData.id];
 
-              {/* Right Column: Question Stem & Options */}
-              <div className={session.phase === 'timed' ? "lg:col-span-1 space-y-6 overflow-y-auto" : "lg:col-span-1 space-y-6 overflow-y-auto"}> {/* Removed h-full */}
-                {/* Question Stem (NEW LOCATION 2) */}
-                <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-                  <div className="mb-4">
-                    <h3 className="text-lg font-semibold text-slate-900">
-                      <div className="whitespace-pre-line">{currentQuestionData.question}</div>
-                    </h3>
-                  </div>
-                </div>
-                <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-                  <h3 className="text-lg font-semibold text-slate-900 mb-4">Answer Choices</h3>
-                  <div className="space-y-3">
-                    {currentQuestionData.options.map((option, index) => {
-                      const isGreyedOut = greyedOutOptions[currentQuestionData.id]?.includes(index);
-                      const isCorrect = index === currentQuestionData.correctAnswer;
-                      const timedAnswerChosen = session.timedAnswers[currentQuestionData.id];
-                      const blindReviewAnswerChosen = session.blindReviewAnswers[currentQuestionData.id];
-
-                      return (
-                        <div
-                          key={index}
-                          className={`flex items-start space-x-3 p-4 border rounded-xl transition-colors ${
-                            isCorrect && session.phase === 'strategy-review' ? 'border-green-500 bg-green-50' : 'border-slate-200 hover:bg-slate-50'
-                          }`}
+                    return (
+                      <div
+                        key={index}
+                        className={`flex items-start space-x-3 p-4 border rounded-xl transition-colors ${
+                          isCorrect && session.phase === 'strategy-review' ? 'border-green-500 bg-green-50' : 'border-slate-200 hover:bg-slate-50'
+                        }`}
+                      >
+                        <label className="flex items-start space-x-3 flex-1 cursor-pointer">
+                          <input
+                            type="radio"
+                            name="answer"
+                            value={index}
+                            checked={session.phase === 'strategy-review' ? false : session.answeredQuestions[currentQuestionData.id] === index} // Fixed: Do not auto-select correct answer in strategy review
+                            onChange={() => handleAnswerSelection(index)}
+                            className="mt-1 text-blue-600"
+                            disabled={session.phase === 'timed' && !isTimerRunning || session.phase === 'strategy-review'} // Disable in strategy review
+                          />
+                          <span className="font-medium text-slate-700 mr-3">
+                            ({String.fromCharCode(65 + index)})
+                          </span>
+                          <span className={`text-slate-700 flex-1 ${isGreyedOut ? 'opacity-50 text-slate-400 line-through' : ''}`}>
+                            {option}
+                          </span>
+                        </label>
+                        {session.phase === 'strategy-review' && (
+                          <div className="flex items-center space-x-2 text-sm">
+                            {isCorrect && <span className="text-green-600 font-medium">Correct</span>}
+                            {timedAnswerChosen === index && (
+                              <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${isCorrect ? 'bg-green-200 text-green-800' : 'bg-red-100 text-red-700'}`}>
+                                Timed {isCorrect ? '✓' : '✗'}
+                              </span>
+                            )}
+                            {blindReviewAnswerChosen === index && (
+                              <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${isCorrect ? 'bg-green-200 text-green-800' : 'bg-red-100 text-red-700'}`}>
+                                Blind {isCorrect ? '✓' : '✗'}
+                              </span>
+                            )}
+                            {timedAnswerChosen === undefined && index === currentQuestionData.correctAnswer && ( // Fixed: Use === undefined
+                              <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-700">
+                                Timed Ø
+                              </span>
+                            )}
+                            {blindReviewAnswerChosen === undefined && index === currentQuestionData.correctAnswer && ( // Fixed: Use === undefined
+                              <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-700">
+                                Blind Ø
+                              </span>
+                            )}
+                          </div>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => handleToggleGreyOut(currentQuestionData.id, index)}
+                          className="text-slate-400 hover:text-slate-600 transition-colors"
+                          title={isGreyedOut ? "Show option" : "Grey out option"}
                         >
-                          <label className="flex items-start space-x-3 flex-1 cursor-pointer">
-                            <input
-                              type="radio"
-                              name="answer"
-                              value={index}
-                              checked={session.phase === 'strategy-review' ? false : session.answeredQuestions[currentQuestionData.id] === index} // Fixed: Do not auto-select correct answer in strategy review
-                              onChange={() => handleAnswerSelection(index)}
-                              className="mt-1 text-blue-600"
-                              disabled={session.phase === 'timed' && !isTimerRunning || session.phase === 'strategy-review'} // Disable in strategy review
-                            />
-                            <span className="font-medium text-slate-700 mr-3">
-                              ({String.fromCharCode(65 + index)})
-                            </span>
-                            <span className={`text-slate-700 flex-1 ${isGreyedOut ? 'opacity-50 text-slate-400 line-through' : ''}`}>
-                              {option}
-                            </span>
-                          </label>
-                          {session.phase === 'strategy-review' && (
-                            <div className="flex items-center space-x-2 text-sm">
-                              {isCorrect && <span className="text-green-600 font-medium">Correct</span>}
-                              {timedAnswerChosen === index && (
-                                <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${isCorrect ? 'bg-green-200 text-green-800' : 'bg-red-100 text-red-700'}`}>
-                                  Timed {isCorrect ? '✓' : '✗'}
-                                </span>
-                              )}
-                              {blindReviewAnswerChosen === index && (
-                                <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${isCorrect ? 'bg-green-200 text-green-800' : 'bg-red-100 text-red-700'}`}>
-                                  Blind {isCorrect ? '✓' : '✗'}
-                                </span>
-                              )}
-                              {timedAnswerChosen === undefined && index === currentQuestionData.correctAnswer && ( // Fixed: Use === undefined
-                                <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-700">
-                                  Timed Ø
-                                </span>
-                              )}
-                              {blindReviewAnswerChosen === undefined && index === currentQuestionData.correctAnswer && ( // Fixed: Use === undefined
-                                <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-700">
-                                  Blind Ø
-                                </span>
-                              )}
-                            </div>
-                          )}
-                          <button
-                            type="button"
-                            onClick={() => handleToggleGreyOut(currentQuestionData.id, index)}
-                            className="text-slate-400 hover:text-slate-600 transition-colors"
-                            title={isGreyedOut ? "Show option" : "Grey out option"}
-                          >
-                            {isGreyedOut ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                          </button>
-                        </div>
-                      );
-                    })}
-                  </div>
+                          {isGreyedOut ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        </button>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             </div>
-          )}
-        </div> {/* END NEW WRAPPER DIV FOR CONTENT */}
+          </div>
+        )}
       </div>
 
       {/* Footer - Question Tracker */}
@@ -913,4 +910,3 @@ const TripleReview: React.FC<TripleReviewProps> = ({
 };
 
 export default TripleReview;
-
