@@ -39,20 +39,37 @@ export function useTestData() {
         if (questionsError) throw questionsError;
 
         // Fetch all question options, ordered by their option_order
-        const { data: options, error: optionsError } = await supabase
-  .from('question_options')
-  .select('id, question_id, option_letter, option_text, option_order')
-  .order('option_order', { ascending: true })
-  .limit(100000); // ADD THIS LINE to fetch more than 1000 rows
-console.log('Supabase options data (raw):', options);
-console.log('Supabase options error:', optionsError);
-if (optionsError) throw optionsError;
+        const batchSize = 1000;
+let allOptions: any[] = [];
+let from = 0;
+let to = batchSize - 1;
+let hasMoreOptions = true;
 
-        const processed: { [key: string]: ProcessedPrepTest } = {};
+while (hasMoreOptions) {
+  const { data: optionsBatch, error: optionsError } = await supabase
+    .from('question_options')
+    .select('id, question_id, option_letter, option_text, option_order')
+    .order('option_order', { ascending: true })
+    .range(from, to);
+
+  if (optionsError) throw optionsError;
+
+  allOptions = allOptions.concat(optionsBatch);
+
+  console.log(`Fetched options ${from} to ${to}:`, optionsBatch.length);
+  if (optionsBatch.length < batchSize) {
+    hasMoreOptions = false; // Last batch
+  } else {
+    from += batchSize;
+    to += batchSize;
+  }
+}
+
+console.log('All question options (paginated):', allOptions);
 
         // Step 1: Map options to questions
         const optionsMap = new Map<string, { optionLetter: string; optionText: string; optionOrder: number }[]>();
-        options.forEach(opt => {
+        allOptions.forEach(opt => {
           if (!optionsMap.has(opt.question_id)) {
             optionsMap.set(opt.question_id, []);
           }
