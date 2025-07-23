@@ -40,12 +40,13 @@ export function useTestData() {
 
         // Fetch all question options, ordered by their option_order
         const { data: options, error: optionsError } = await supabase
-          .from('question_options')
-          .select('id, question_id, option_letter, option_text, option_order')
-          .order('option_order', { ascending: true });
-        console.log('Supabase options data (raw):', options); // ADD THIS LOG
-        console.log('Supabase options error:', optionsError);
-        if (optionsError) throw optionsError;
+  .from('question_options')
+  .select('id, question_id, option_letter, option_text, option_order')
+  .order('option_order', { ascending: true })
+  .limit(100000); // ADD THIS LINE to fetch more than 1000 rows
+console.log('Supabase options data (raw):', options);
+console.log('Supabase options error:', optionsError);
+if (optionsError) throw optionsError;
 
         const processed: { [key: string]: ProcessedPrepTest } = {};
 
