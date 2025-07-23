@@ -124,8 +124,8 @@ export function useAuth() {
             email: mockSupabaseUser.email || '',
             name: mockSupabaseUser.email?.split('@')[0] || 'User',
             firstName: 'Jake',
-            lastName: 'Usernam',
-            username: 'mockuser',
+            lastName: 'Username',
+            username: 'LSATWizard',
             stats: {
               circuitsCreated: 50,
               testsCompleted: 10,
