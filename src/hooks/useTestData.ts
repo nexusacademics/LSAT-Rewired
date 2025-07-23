@@ -9,6 +9,7 @@ export function useTestData() {
 
   useEffect(() => {
     const fetchTestData = async () => {
+      console.log('fetchTestData function is executing!'); // ADD THIS LINE
       setIsLoading(true);
       try {
         // Fetch all tests
