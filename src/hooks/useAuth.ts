@@ -123,8 +123,8 @@ export function useAuth() {
             id: mockSupabaseUser.id,
             email: mockSupabaseUser.email || '',
             name: mockSupabaseUser.email?.split('@')[0] || 'User',
-            firstName: 'Mock',
-            lastName: 'User',
+            firstName: 'Jake',
+            lastName: 'Usernam',
             username: 'mockuser',
             stats: {
               circuitsCreated: 50,
