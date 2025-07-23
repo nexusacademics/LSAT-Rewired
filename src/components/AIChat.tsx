@@ -14,18 +14,20 @@ interface AIChatProps {
   messages: Message[]; // Prop for messages state
   setMessages: React.Dispatch<React.SetStateAction<Message[]>>; // Prop for setMessages function
   isOpen: boolean; // NEW: Prop to indicate if the chat bubble is open
-  lastProcessedQuestionIdForChat: string | null; // NEW: Lifted state for last processed question ID
-  setLastProcessedQuestionIdForChat: React.Dispatch<React.SetStateAction<string | null>>; // NEW: Setter for lifted state
+  lastProcessedQuestionIdForChat: { questionId: string, phase: string } | null; // NEW: Lifted state for last processed question ID
+  setLastProcessedQuestionIdForChat: React.Dispatch<React.SetStateAction<{ questionId: string, phase: string } | null>>; // NEW: Setter for lifted state
+  hasInitialChatWelcomeBeenSent: boolean; // NEW: Lifted state for initial welcome message flag
+  setHasInitialChatWelcomeBeenSent: React.Dispatch<React.SetStateAction<boolean>>; // NEW: Setter for lifted state
 }
 
-const AIChat: React.FC<AIChatProps> = ({ user, isChatDisabled = false, currentView, currentSession, currentQuestionData, allProcessedTests, messages, setMessages, isOpen, lastProcessedQuestionIdForChat, setLastProcessedQuestionIdForChat }) => {
+const AIChat: React.FC<AIChatProps> = ({ user, isChatDisabled = false, currentView, currentSession, currentQuestionData, allProcessedTests, messages, setMessages, isOpen, lastProcessedQuestionIdForChat, setLastProcessedQuestionIdForChat, hasInitialChatWelcomeBeenSent, setHasInitialChatWelcomeBeenSent }) => {
   const [inputMessage, setInputMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null); // NEW: Ref for the textarea
   // Removed local lastProcessedQuestionId state, now using prop
-  const initialMessageSentRef = useRef(false); // NEW: Ref to track if initial message has been sent
+  // Removed initialMessageSentRef, now using hasInitialChatWelcomeBeenSent prop
 
   // Initialize Gemini AI
   const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY || '');
@@ -68,7 +70,7 @@ const AIChat: React.FC<AIChatProps> = ({ user, isChatDisabled = false, currentVi
   // NEW: Effect to manage chat context when currentQuestionData changes or view changes
   useEffect(() => {
     // Only add initial message if messages array is empty AND it hasn't been sent before
-    if (messages.length === 0 && !initialMessageSentRef.current) {
+    if (messages.length === 0 && !hasInitialChatWelcomeBeenSent) {
       setMessages([
         {
           id: 'initial-load-general',
@@ -77,42 +79,53 @@ const AIChat: React.FC<AIChatProps> = ({ user, isChatDisabled = false, currentVi
           timestamp: new Date()
         }
       ]);
-      initialMessageSentRef.current = true; // Mark as sent
+      setHasInitialChatWelcomeBeenSent(true); // Mark as sent
     }
 
     // Handle question change within TripleReview, only if chat is open
-    if (isOpen && currentView === 'triple-review' && currentQuestionData && currentQuestionData.id !== lastProcessedQuestionIdForChat) {
-      const questionRef = getQuestionReference(currentQuestionData.id);
+    const currentContext = currentQuestionData && currentSession
+      ? { questionId: currentQuestionData.id, phase: currentSession.phase }
+      : null;
 
-      // Define an array of introductory phrases
-      const introPhrases = [
-        `I see you've moved on to ${questionRef}. What are your initial thoughts on the passage or question stem?`,
-        `Alright, we're now on ${questionRef}. What's standing out to you in the stimulus or question?`,
-        `Moving to ${questionRef}. How are you approaching this one?`,
-        `New question, ${questionRef}! What's your first impression of the argument presented?`,
-        `Let's tackle ${questionRef}. What's the core issue or argument you're seeing here?`
-      ];
+    if (isOpen && currentView === 'triple-review' && currentContext) {
+      // Check if the context (questionId + phase) has actually changed
+      const hasContextChanged = !lastProcessedQuestionIdForChat ||
+                                currentContext.questionId !== lastProcessedQuestionIdForChat.questionId ||
+                                currentContext.phase !== lastProcessedQuestionIdForChat.phase;
 
-      // Randomly select one phrase
-      const randomPhrase = introPhrases[Math.floor(Math.random() * introPhrases.length)];
+      if (hasContextChanged) {
+        const questionRef = getQuestionReference(currentQuestionData.id);
 
-      // User moved to a new question within TripleReview
-      setMessages(prev => [
-        ...prev,
-        {
-          id: `new-question-intro-${Date.now()}`,
-          type: 'ai',
-          content: randomPhrase, // Use the randomly selected phrase
-          timestamp: new Date()
-        }
-      ]);
-      setLastProcessedQuestionIdForChat(currentQuestionData.id);
+        // Define an array of introductory phrases
+        const introPhrases = [
+          `I see you've moved on to ${questionRef}. What are your initial thoughts on the passage or question stem?`,
+          `Alright, we're now on ${questionRef}. What's standing out to you in the stimulus or question?`,
+          `Moving to ${questionRef}. How are you approaching this one?`,
+          `New question, ${questionRef}! What's your first impression of the argument presented?`,
+          `Let's tackle ${questionRef}. What's the core issue or argument you're seeing here?`
+        ];
+
+        // Randomly select one phrase
+        const randomPhrase = introPhrases[Math.floor(Math.random() * introPhrases.length)];
+
+        // User moved to a new question within TripleReview or phase changed for same question
+        setMessages(prev => [
+          ...prev,
+          {
+            id: `new-question-intro-${Date.now()}`,
+            type: 'ai',
+            content: randomPhrase, // Use the randomly selected phrase
+            timestamp: new Date()
+          }
+        ]);
+        setLastProcessedQuestionIdForChat(currentContext);
+      }
     } else if (currentView !== 'triple-review' && lastProcessedQuestionIdForChat !== null) {
       // User navigated away from a question (e.g., to dashboard)
       // Reset lastProcessedQuestionIdForChat to null when not in triple-review
       setLastProcessedQuestionIdForChat(null);
     }
-  }, [currentQuestionData, currentView, user.name, currentSession, allProcessedTests, messages.length, isOpen, lastProcessedQuestionIdForChat, setLastProcessedQuestionIdForChat]); // Dependencies for this effect
+  }, [currentQuestionData, currentView, user.name, currentSession, allProcessedTests, messages.length, isOpen, lastProcessedQuestionIdForChat, setLastProcessedQuestionIdForChat, hasInitialChatWelcomeBeenSent, setHasInitialChatWelcomeBeenSent]); // Dependencies for this effect
 
   const handleSendMessage = async () => {
     if (!inputMessage.trim()) return;
