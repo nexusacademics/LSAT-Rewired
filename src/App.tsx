@@ -23,17 +23,21 @@ type AppView = 'dashboard' | 'triple-review' | 'performance' | 'subscription';
 
 function App() {
   const [currentView, setCurrentView] = useState<AppView>('dashboard');
-  
+
   // Custom hooks handle specific concerns
   const { user, supabaseUser, subscription, isLoading: authLoading } = useAuth();
   const { allProcessedTests, isLoading: dataLoading } = useTestData();
-  const { 
-    userSessions, 
-    currentSession, 
-    startNewTestSession, 
-    resumeTestSession, 
-    updateSession, 
-    exitSession 
+
+  // ADD THIS LINE:
+  console.log('All Processed Tests in App.tsx:', allProcessedTests);
+
+  const {
+    userSessions,
+    currentSession,
+    startNewTestSession,
+    resumeTestSession,
+    updateSession,
+    exitSession
   } = useTestSessions(user);
 
   const isLoading = authLoading || dataLoading;
