@@ -13,15 +13,19 @@ interface AIChatProps {
   allProcessedTests: { [key: string]: ProcessedPrepTest }; // ADD THIS LINE
   messages: Message[]; // Prop for messages state
   setMessages: React.Dispatch<React.SetStateAction<Message[]>>; // Prop for setMessages function
+  isOpen: boolean; // NEW: Prop to indicate if the chat bubble is open
+  lastProcessedQuestionIdForChat: string | null; // NEW: Lifted state for last processed question ID
+  setLastProcessedQuestionIdForChat: React.Dispatch<React.SetStateAction<string | null>>; // NEW: Setter for lifted state
 }
 
-const AIChat: React.FC<AIChatProps> = ({ user, isChatDisabled = false, currentView, currentSession, currentQuestionData, allProcessedTests, messages, setMessages }) => {
+const AIChat: React.FC<AIChatProps> = ({ user, isChatDisabled = false, currentView, currentSession, currentQuestionData, allProcessedTests, messages, setMessages, isOpen, lastProcessedQuestionIdForChat, setLastProcessedQuestionIdForChat }) => {
   const [inputMessage, setInputMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null); // NEW: Ref for the textarea
-  const [lastProcessedQuestionId, setLastProcessedQuestionId] = useState<string | null>(null); // Track the last question AI focused on
+  // Removed local lastProcessedQuestionId state, now using prop
+  const initialMessageSentRef = useRef(false); // NEW: Ref to track if initial message has been sent
 
   // Initialize Gemini AI
   const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY || '');
@@ -63,8 +67,8 @@ const AIChat: React.FC<AIChatProps> = ({ user, isChatDisabled = false, currentVi
 
   // NEW: Effect to manage chat context when currentQuestionData changes or view changes
   useEffect(() => {
-    // Only add initial message if messages array is empty
-    if (messages.length === 0) {
+    // Only add initial message if messages array is empty AND it hasn't been sent before
+    if (messages.length === 0 && !initialMessageSentRef.current) {
       setMessages([
         {
           id: 'initial-load-general',
@@ -73,10 +77,11 @@ const AIChat: React.FC<AIChatProps> = ({ user, isChatDisabled = false, currentVi
           timestamp: new Date()
         }
       ]);
+      initialMessageSentRef.current = true; // Mark as sent
     }
 
-    // Handle question change within TripleReview
-    if (currentView === 'triple-review' && currentQuestionData && currentQuestionData.id !== lastProcessedQuestionId) {
+    // Handle question change within TripleReview, only if chat is open
+    if (isOpen && currentView === 'triple-review' && currentQuestionData && currentQuestionData.id !== lastProcessedQuestionIdForChat) {
       const questionRef = getQuestionReference(currentQuestionData.id);
 
       // Define an array of introductory phrases
@@ -101,13 +106,13 @@ const AIChat: React.FC<AIChatProps> = ({ user, isChatDisabled = false, currentVi
           timestamp: new Date()
         }
       ]);
-      setLastProcessedQuestionId(currentQuestionData.id);
-    } else if (currentView !== 'triple-review' && lastProcessedQuestionId !== null) {
+      setLastProcessedQuestionIdForChat(currentQuestionData.id);
+    } else if (currentView !== 'triple-review' && lastProcessedQuestionIdForChat !== null) {
       // User navigated away from a question (e.g., to dashboard)
-      // Reset lastProcessedQuestionId to null when not in triple-review
-      setLastProcessedQuestionId(null);
+      // Reset lastProcessedQuestionIdForChat to null when not in triple-review
+      setLastProcessedQuestionIdForChat(null);
     }
-  }, [currentQuestionData, currentView, user.name, currentSession, allProcessedTests, messages.length]); // Dependencies for this effect
+  }, [currentQuestionData, currentView, user.name, currentSession, allProcessedTests, messages.length, isOpen, lastProcessedQuestionIdForChat, setLastProcessedQuestionIdForChat]); // Dependencies for this effect
 
   const handleSendMessage = async () => {
     if (!inputMessage.trim()) return;
