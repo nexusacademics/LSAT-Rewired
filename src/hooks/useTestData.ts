@@ -84,10 +84,14 @@ console.log('All question options (paginated):', allOptions);
       console.log('Final optionsMap:', optionsMap);
 
       // Step 2: Map questions to sections
+     // Step 2: Map questions to sections
       const questionsMap = new Map<string, ProcessedQuestion[]>();
       questions.forEach(q => {
         const questionIdString = String(q.id); // Convert to string for map lookup
-        const processedOptions = (optionsMap.get(questionIdString) || []) // Use string key for lookup
+        const rawOptionsForQuestion = optionsMap.get(questionIdString) || []; // Get the array of options for this question
+        console.log(`Raw options array length for question ${questionIdString}:`, rawOptionsForQuestion.length); // ADD THIS LOG
+
+        const processedOptions = rawOptionsForQuestion
           .sort((a, b) => a.optionOrder - b.optionOrder) // Ensure options are sorted
           .map(opt => opt.optionText);
         console.log(`Processed options for question ${questionIdString}:`, processedOptions);
