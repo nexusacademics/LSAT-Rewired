@@ -16,8 +16,8 @@ export function useTestData() {
         const { data: tests, error: testsError } = await supabase
           .from('tests')
           .select('id, name');
-        console.log('Supabase tests data:', tests); // <-- ENSURE THIS IS HERE
-        console.log('Supabase tests error:', testsError); // <-- ENSURE THIS IS HERE
+        console.log('Supabase tests data:', tests);
+        console.log('Supabase tests error:', testsError);
         if (testsError) throw testsError;
 
         // Fetch all sections, ordered by their section_order
@@ -25,8 +25,8 @@ export function useTestData() {
           .from('sections')
           .select('id, test_id, name, section_type, section_order')
           .order('section_order', { ascending: true });
-        console.log('Supabase sections data:', sections); // <-- ENSURE THIS IS HERE
-        console.log('Supabase sections error:', sectionsError); // <-- ENSURE THIS IS HERE
+        console.log('Supabase sections data:', sections);
+        console.log('Supabase sections error:', sectionsError);
         if (sectionsError) throw sectionsError;
 
         // Fetch all questions, ordered by their question_order
@@ -34,8 +34,8 @@ export function useTestData() {
           .from('questions')
           .select('id, section_id, passage, question_stem, correct_answer_index, question_order, question_type')
           .order('question_order', { ascending: true });
-        console.log('Supabase questions data:', questions); // <-- ENSURE THIS IS HERE
-        console.log('Supabase questions error:', questionsError); // <-- ENSURE THIS IS HERE
+        console.log('Supabase questions data:', questions);
+        console.log('Supabase questions error:', questionsError);
         if (questionsError) throw questionsError;
 
         // Fetch all question options, ordered by their option_order
@@ -43,8 +43,8 @@ export function useTestData() {
           .from('question_options')
           .select('id, question_id, option_letter, option_text, option_order')
           .order('option_order', { ascending: true });
-        console.log('Supabase options data:', options); // <-- ENSURE THIS IS HERE
-        console.log('Supabase options error:', optionsError); // <-- ENSURE THIS IS HERE
+        console.log('Supabase options data (raw):', options); // ADD THIS LOG
+        console.log('Supabase options error:', optionsError);
         if (optionsError) throw optionsError;
 
         const processed: { [key: string]: ProcessedPrepTest } = {};
@@ -60,7 +60,9 @@ export function useTestData() {
             optionText: opt.option_text,
             optionOrder: opt.option_order
           });
+          console.log(`Option added to map for question ${opt.question_id}:`, opt.option_letter, opt.option_text); // ADD THIS LOG
         });
+        console.log('Final optionsMap:', optionsMap); // ADD THIS LOG
 
         // Step 2: Map questions to sections
         const questionsMap = new Map<string, ProcessedQuestion[]>();
@@ -68,6 +70,7 @@ export function useTestData() {
           const processedOptions = (optionsMap.get(q.id) || [])
             .sort((a, b) => a.optionOrder - b.optionOrder) // Ensure options are sorted
             .map(opt => opt.optionText);
+          console.log(`Processed options for question ${q.id}:`, processedOptions); // ADD THIS LOG
 
           const processedQuestion: ProcessedQuestion = {
             id: q.id,
@@ -77,6 +80,8 @@ export function useTestData() {
             correctAnswer: q.correct_answer_index,
             type: q.question_type,
           };
+          console.log(`Processed question object for ${q.id}:`, processedQuestion); // ADD THIS LOG
+
           if (!questionsMap.has(q.section_id)) {
             questionsMap.set(q.section_id, []);
           }
@@ -88,7 +93,7 @@ export function useTestData() {
         sections.forEach(s => {
           const processedQuestions = (questionsMap.get(s.id) || [])
             .sort((a, b) => a.question_order - b.question_order); // Ensure questions are sorted
-          
+
           const processedSection: ProcessedSection = {
             id: s.id,
             name: s.name,
@@ -102,9 +107,8 @@ export function useTestData() {
 
         // Step 4: Assemble final processed tests
         tests.forEach(t => {
-          const processedSections = (sectionsMap.get(t.id) || [])
-            .sort((a, b) => a.section_order - b.section_order); // Ensure sections are sorted
-          
+          const processedSections = (sectionsMap.get(t.id) || []); // Removed sort here as per previous plan
+
           processed[t.id] = {
             id: t.id,
             name: t.name,
@@ -113,7 +117,7 @@ export function useTestData() {
         });
 
         setAllProcessedTests(processed);
-        console.log('Final processed tests:', processed); // <-- ENSURE THIS IS HERE
+        console.log('Final processed tests:', processed);
       } catch (error) {
         console.error('Error fetching test data from Supabase:', error);
         // You might want to set an error state here to display to the user
