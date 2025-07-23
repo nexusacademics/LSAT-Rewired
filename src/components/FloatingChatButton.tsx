@@ -16,8 +16,11 @@ interface FloatingChatButtonProps {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   // NEW: Props for lifted chat context state
-  lastProcessedQuestionIdForChat: string | null;
-  setLastProcessedQuestionIdForChat: React.Dispatch<React.SetStateAction<string | null>>;
+  lastProcessedQuestionIdForChat: { questionId: string, phase: string } | null;
+  setLastProcessedQuestionIdForChat: React.Dispatch<React.SetStateAction<{ questionId: string, phase: string } | null>>;
+  // NEW: Prop for lifted initial welcome message flag
+  hasInitialChatWelcomeBeenSent: boolean;
+  setHasInitialChatWelcomeBeenSent: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const FloatingChatButton: React.FC<FloatingChatButtonProps> = ({
@@ -31,7 +34,9 @@ const FloatingChatButton: React.FC<FloatingChatButtonProps> = ({
   isOpen, // Destructure isOpen from props
   setIsOpen, // Destructure setIsOpen from props
   lastProcessedQuestionIdForChat, // NEW: Destructure lifted state
-  setLastProcessedQuestionIdForChat // NEW: Destructure lifted setter
+  setLastProcessedQuestionIdForChat, // NEW: Destructure lifted setter
+  hasInitialChatWelcomeBeenSent, // NEW: Destructure lifted state
+  setHasInitialChatWelcomeBeenSent // NEW: Destructure lifted setter
 }) => {
   // Determine if the chat should be disabled
   const isDisabled = currentView === 'triple-review' && currentSession?.phase === 'timed';
@@ -81,6 +86,8 @@ const FloatingChatButton: React.FC<FloatingChatButtonProps> = ({
             isOpen={isOpen} // Pass isOpen to AIChat
             lastProcessedQuestionIdForChat={lastProcessedQuestionIdForChat} // NEW: Pass lifted state
             setLastProcessedQuestionIdForChat={setLastProcessedQuestionIdForChat} // NEW: Pass lifted setter
+            hasInitialChatWelcomeBeenSent={hasInitialChatWelcomeBeenSent} // NEW: Pass lifted state
+            setHasInitialChatWelcomeBeenSent={setHasInitialChatWelcomeBeenSent} // NEW: Pass lifted setter
           />
         )}
       </div>
