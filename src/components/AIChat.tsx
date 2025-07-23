@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Send, Bot, User, Lightbulb, AlertCircle, ThumbsUp, ThumbsDown } from 'lucide-react';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import ReactMarkdown from 'react-markdown';
-import { User as UserType, ProcessedQuestion, TestSession } from '../App'; // Import ProcessedQuestion and TestSession
+import { User as UserType, ProcessedQuestion, TestSession, ProcessedPrepTest } from '../App'; // Import ProcessedPrepTest
 
 interface Message {
   id: string;
@@ -18,10 +18,10 @@ interface AIChatProps {
   currentView: 'landing' | 'dashboard' | 'triple-review' | 'circuit-builder' | 'performance' | 'chat';
   currentSession: TestSession | null;
   currentQuestionData: ProcessedQuestion | null; // NEW PROP
-  // REMOVED: messages and setMessages props
+  allProcessedTests: { [key: string]: ProcessedPrepTest }; // ADD THIS LINE
 }
 
-const AIChat: React.FC<AIChatProps> = ({ user, isChatDisabled = false, currentView, currentSession, currentQuestionData }) => {
+const AIChat: React.FC<AIChatProps> = ({ user, isChatDisabled = false, currentView, currentSession, currentQuestionData, allProcessedTests }) => { // ADD allProcessedTests here
   // Reintroduced local messages state
   const [messages, setMessages] = useState<Message[]>([]); // Initialize as empty array
   const [inputMessage, setInputMessage] = useState('');
@@ -51,15 +51,34 @@ const AIChat: React.FC<AIChatProps> = ({ user, isChatDisabled = false, currentVi
     }
   }, [inputMessage]);
 
+  // Helper function to get human-readable question reference
+  const getQuestionReference = (questionId: string): string => {
+    if (!currentSession || !allProcessedTests) return `Question ${questionId}`;
+
+    const test = allProcessedTests[currentSession.testId];
+    if (!test) return `Question ${questionId}`;
+
+    for (let sectionIndex = 0; sectionIndex < test.sections.length; sectionIndex++) {
+      const section = test.sections[sectionIndex];
+      for (let questionIndex = 0; questionIndex < section.questions.length; questionIndex++) {
+        if (section.questions[questionIndex].id === questionId) {
+          return `Section ${sectionIndex + 1}, Question ${questionIndex + 1}`;
+        }
+      }
+    }
+    return `Question ${questionId}`; // Fallback if not found
+  };
+
   // NEW: Effect to reset chat context when currentQuestionData changes
   useEffect(() => {
     if (currentView === 'triple-review' && currentQuestionData && currentQuestionData.id !== lastProcessedQuestionId) {
+      const questionRef = getQuestionReference(currentQuestionData.id);
       // User moved to a new question within TripleReview
       setMessages([
         {
           id: 'new-question-intro',
           type: 'ai',
-          content: `Okay, let's focus on Question ${currentQuestionData.id}. What are your initial thoughts on the passage or question stem?`,
+          content: `Okay, let's focus on ${questionRef}. What are your initial thoughts on the passage or question stem?`,
           timestamp: new Date()
         }
       ]);
@@ -86,18 +105,19 @@ const AIChat: React.FC<AIChatProps> = ({ user, isChatDisabled = false, currentVi
         }
       ]);
     } else if (messages.length === 0 && currentView === 'triple-review' && currentQuestionData) {
+      const questionRef = getQuestionReference(currentQuestionData.id);
       // Initial load when already in triple review on a question
       setMessages([
         {
           id: 'initial-load-question',
           type: 'ai',
-          content: `Hi ${user.name}! I'm your LSAT analysis assistant. Let's focus on Question ${currentQuestionData.id}. What are your initial thoughts on the passage or question stem?`,
+          content: `Hi ${user.name}! I'm your LSAT analysis assistant. Let's focus on ${questionRef}. What are your initial thoughts on the passage or question stem?`,
           timestamp: new Date()
         }
       ]);
       setLastProcessedQuestionId(currentQuestionData.id);
     }
-  }, [currentQuestionData, currentView, user.name]); // Dependencies for this effect
+  }, [currentQuestionData, currentView, user.name, currentSession, allProcessedTests]); // Dependencies for this effect
 
   const handleSendMessage = async () => {
     if (!inputMessage.trim()) return;
@@ -419,4 +439,3 @@ Goldilocks Principle: The correct assumption is just strong enough to make the r
 };
 
 export default AIChat;
-
