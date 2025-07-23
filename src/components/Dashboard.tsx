@@ -28,12 +28,12 @@ const Dashboard: React.FC<DashboardProps> = ({ user, userSessions, onStartNewTes
 
   // Helper to format session display name
   const formatSessionDisplayName = (session: TestSession) => {
-    const test = allProcessedTests[session.testId];
-    if (!test) return session.testId; // Fallback if test data not found
+  const test = allProcessedTests[session.testId]; // session.testId is now a UUID
+  if (!test) return session.testId; // Fallback if test data not found
 
-    const sectionNumber = session.selectedSectionId ? test.sections.findIndex(s => s.id === session.selectedSectionId) + 1 : null;
-    return sectionNumber ? `${test.name} - Section ${sectionNumber}` : test.name;
-  };
+  const sectionNumber = session.selectedSectionId ? test.sections.findIndex(s => s.id === session.selectedSectionId) + 1 : null;
+  return sectionNumber ? `${test.name} - Section ${sectionNumber}` : test.name;
+};
 
   const handleStartNewSessionClick = () => {
     setIsTimeModeModal(true);
