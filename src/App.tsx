@@ -1,102 +1,146 @@
 // App.tsx
-import React, { useState } from 'react';
-
-// Import custom hooks for separation of concerns
+import React, { useState, useEffect, useCallback } from 'react';
+import { createRoot } from 'react-dom/client'; // Import createRoot
+import { supabase } from './lib/supabase'; // Ensure supabase is imported
 import { useAuth } from './hooks/useAuth';
 import { useTestData } from './hooks/useTestData';
-import { useTestSessions } => {
-    if (!user) {
-      console.warn('Cannot start test session: no user logged in');
-      return;
-    }
+import { useTestSessions } from './hooks/useTestSessions';
+import { processRawPrepTest } from './utils/dataProcessing'; // Import the processing function
 
-    const newSession: TestSession = {
-      id: `session-${Date.now()}`,
-      testId,
-      userId: user.id,
-      phase,
-      timeMode: phase === 'timed' ? timeMode : undefined,
-      customTimeMinutes: phase === 'timed' ? customTimeMinutes : undefined,
-      startTime: new Date(),
-      circuits: [],
-      flaggedQuestions: [],
-      answeredQuestions: {},
-      timedAnswers: {},
-      blindReviewAnswers: {},
-      analysisNotes: {},
-      currentSectionIndex: 0,
-      currentQuestionIndex: 0, // Initialize currentQuestionIndex to 0
-      selectedSectionId,
-      completedSectionIds: [],
-      completedPhases: [],
-    };
+// Components
+import LoadingSpinner from './components/LoadingSpinner';
+import Navigation from './components/Navigation';
+import Dashboard from './components/Dashboard';
+import TripleReview from './components/TripleReview';
+import PerformanceTracker from './components/PerformanceTracker';
+import FloatingChatButton from './components/FloatingChatButton'; // Import FloatingChatButton
 
-    console.log('Starting new test session:', newSession.id); // Debug log
-    
-    setUserSessions(prev => [...prev, newSession]);
-    setCurrentSession(newSession);
-  }, [user]);
+// Types
+import type { User, TestSession, ProcessedPrepTest, ProcessedSection, ProcessedQuestion } from './types/user'; // Import all necessary types
 
-  const resumeTestSession = useCallback((sessionId: string, targetPhase?: 'blind-review' | 'strategy-review') => {
-    const sessionToResume = userSessions.find(session => session.id === sessionId);
-    if (!sessionToResume) {
-      console.warn('Cannot resume session: session not found', sessionId);
-      return;
-    }
+// Define Message interface for chat history
+export interface Message {
+  id: string;
+  type: 'user' | 'ai';
+  content: string;
+  timestamp: Date;
+  feedback?: 'helpful' | 'not-helpful';
+}
 
-    let updatedSession = { ...sessionToResume };
+// Re-export types from user.ts for convenience in other files
+export type { User, TestSession, ProcessedPrepTest, ProcessedSection, ProcessedQuestion };
 
-    if (targetPhase) {
-      // Store answers from the phase just completed before resetting for the new phase
-      // This logic is handled in TripleReview.handleSubmitSection
-      
-      // Starting a new review phase for a completed session
-      updatedSession = {
-        ...updatedSession,
-        phase: targetPhase, // Set to the new phase
-        endTime: undefined, // Clear end time as it's now in progress for this new phase
-        currentSectionIndex: 0,
-        currentQuestionIndex: 0, // Reset currentQuestionIndex for new phase
-        answeredQuestions: {}, // Reset answered questions for the new phase
-        flaggedQuestions: [],
-        completedSectionIds: [],
-      };
-    }
-    // If targetPhase is not provided, it means we are resuming the current in-progress phase.
-    // In this case, no changes to phase or state reset are needed.
+type AppView = 'dashboard' | 'triple-review' | 'performance' | 'subscription';
 
-    console.log('Resuming test session:', updatedSession.id, 'phase:', updatedSession.phase); // Debug log
-
-    setCurrentSession(updatedSession);
-    // Persist the changes to userSessions
-    setUserSessions(prev => 
-      prev.map(session => 
-        session.id === updatedSession.id ? updatedSession : session
-      )
-    );
-  }, [userSessions]);
-
-  const updateSession = useCallback((updatedSession: TestSession) => {
-    setCurrentSession(updatedSession);
-    setUserSessions(prev => 
-      prev.map(session => 
-        session.id === updatedSession.id ? updatedSession : session
-      )
-    );
-  }, []);
-
-  const exitSession = useCallback(() => {
-    console.log('Exiting current session'); // Debug log
-    setCurrentSession(null);
-  }, []);
-
-  return {
+function App() {
+  const { user, isLoading: isAuthLoading, subscription } = useAuth();
+  const { allProcessedTests, isLoading: isTestDataLoading } = useTestData();
+  const {
     userSessions,
     currentSession,
     startNewTestSession,
     resumeTestSession,
     updateSession,
     exitSession
-  };
+  } = useTestSessions(user);
+
+  const [currentView, setCurrentView] = useState<AppView>('dashboard');
+  const [messages, setMessages] = useState<Message[]>([]); // State for chat messages
+  const [isChatOpen, setIsChatOpen] = useState(false); // NEW: State to control chat bubble visibility
+
+  // Determine current question data for AI Chat context
+  const currentQuestionData: ProcessedQuestion | null = currentSession
+    ? allProcessedTests[currentSession.testId]?.sections
+        .find(section => section.id === (currentSession.selectedSectionId || allProcessedTests[currentSession.testId].sections[currentSession.currentSectionIndex]?.id))
+        ?.questions[currentSession.currentQuestionIndex] || null
+    : null;
+
+  // Handle view changes
+  const handleViewChange = useCallback((view: AppView) => {
+    setCurrentView(view);
+    // Close chat when navigating away from Triple Review or Circuit Builder
+    if (view !== 'triple-review' && view !== 'circuit-builder') {
+      setIsChatOpen(false);
+    }
+  }, []);
+
+  // Override exitSession to also close the chat bubble
+  const handleExitSession = useCallback(() => {
+    exitSession();
+    setCurrentView('dashboard');
+    setIsChatOpen(false); // NEW: Close chat bubble when exiting session
+    setMessages([]); // Clear chat messages when exiting a session
+  }, [exitSession]);
+
+  if (isAuthLoading || isTestDataLoading) {
+    return <LoadingSpinner />;
+  }
+
+  return (
+    <div className="min-h-screen bg-slate-50 flex flex-col">
+      <Navigation
+        currentView={currentView}
+        onViewChange={handleViewChange}
+        userStats={user?.stats}
+      />
+
+      <main className="flex-1 p-6">
+        {currentView === 'dashboard' && user && (
+          <Dashboard
+            user={user}
+            userSessions={userSessions}
+            onStartNewTestSession={startNewTestSession}
+            onResumeTestSession={resumeTestSession}
+            allProcessedTests={allProcessedTests}
+          />
+        )}
+
+        {currentView === 'triple-review' && currentSession && processedPrepTest && (
+          <TripleReview
+            session={currentSession}
+            onUpdateSession={updateSession}
+            onExitSession={handleExitSession} // Use the wrapped exit session
+            processedPrepTest={processedPrepTest}
+          />
+        )}
+
+        {currentView === 'performance' && user && (
+          <PerformanceTracker user={user} />
+        )}
+
+        {currentView === 'subscription' && (
+          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
+            <h1 className="text-3xl font-bold text-slate-900 mb-4">Subscription Status</h1>
+            {subscription ? (
+              <p className="text-slate-700">
+                Your current subscription status is: <span className="font-semibold">{subscription.subscription_status}</span>
+                {subscription.price_id && ` (Price ID: ${subscription.price_id})`}
+              </p>
+            ) : (
+              <p className="text-slate-700">You do not have an active subscription.</p>
+            )}
+            <p className="text-slate-600 mt-4">
+              Manage your subscription through your Stripe customer portal or contact support.
+            </p>
+          </div>
+        )}
+      </main>
+
+      {user && (
+        <FloatingChatButton
+          user={user}
+          currentView={currentView}
+          currentSession={currentSession}
+          currentQuestionData={currentQuestionData}
+          allProcessedTests={allProcessedTests}
+          messages={messages}
+          setMessages={setMessages}
+          isOpen={isChatOpen} // NEW: Pass isOpen state
+          setIsOpen={setIsChatOpen} // NEW: Pass setIsOpen setter
+        />
+      )}
+    </div>
+  );
 }
 
+export default App;
