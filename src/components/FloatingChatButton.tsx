@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MessageCircle, X } from 'lucide-react';
 import AIChat from './AIChat';
 import { User, TestSession, ProcessedQuestion } from '../App'; // Import ProcessedQuestion
@@ -32,6 +32,13 @@ const FloatingChatButton: React.FC<FloatingChatButtonProps> = ({ user, currentVi
 
   // Determine if the chat should be disabled
   const isDisabled = currentView === 'triple-review' && currentSession?.phase === 'timed';
+
+  // NEW: Effect to close chat when a session starts
+  useEffect(() => {
+    if (currentSession && isOpen) {
+      setIsOpen(false);
+    }
+  }, [currentSession]); // Dependency on currentSession
 
   const toggleChat = () => {
     if (!isDisabled) {
