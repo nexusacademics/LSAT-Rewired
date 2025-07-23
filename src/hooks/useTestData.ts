@@ -67,44 +67,46 @@ while (hasMoreOptions) {
 
 console.log('All question options (paginated):', allOptions);
 
-        // Step 1: Map options to questions
-        const optionsMap = new Map<string, { optionLetter: string; optionText: string; optionOrder: number }[]>();
-        allOptions.forEach(opt => {
-          if (!optionsMap.has(opt.question_id)) {
-            optionsMap.set(opt.question_id, []);
-          }
-          optionsMap.get(opt.question_id)?.push({
-            optionLetter: opt.option_letter,
-            optionText: opt.option_text,
-            optionOrder: opt.option_order
-          });
-          console.log(`Option added to map for question ${opt.question_id}:`, opt.option_letter, opt.option_text); // ADD THIS LOG
+       // Step 1: Map options to questions
+      const optionsMap = new Map<string, { optionLetter: string; optionText: string; optionOrder: number }[]>();
+      allOptions.forEach(opt => {
+        const questionIdString = String(opt.question_id); // Convert to string for map key
+        if (!optionsMap.has(questionIdString)) {
+          optionsMap.set(questionIdString, []);
+        }
+        optionsMap.get(questionIdString)?.push({
+          optionLetter: opt.option_letter,
+          optionText: opt.option_text,
+          optionOrder: opt.option_order
         });
-        console.log('Final optionsMap:', optionsMap); // ADD THIS LOG
+        console.log(`Option added to map for question ${questionIdString}:`, opt.option_letter, opt.option_text);
+      });
+      console.log('Final optionsMap:', optionsMap);
 
-        // Step 2: Map questions to sections
-        const questionsMap = new Map<string, ProcessedQuestion[]>();
-        questions.forEach(q => {
-          const processedOptions = (optionsMap.get(q.id) || [])
-            .sort((a, b) => a.optionOrder - b.optionOrder) // Ensure options are sorted
-            .map(opt => opt.optionText);
-          console.log(`Processed options for question ${q.id}:`, processedOptions); // ADD THIS LOG
+      // Step 2: Map questions to sections
+      const questionsMap = new Map<string, ProcessedQuestion[]>();
+      questions.forEach(q => {
+        const questionIdString = String(q.id); // Convert to string for map lookup
+        const processedOptions = (optionsMap.get(questionIdString) || []) // Use string key for lookup
+          .sort((a, b) => a.optionOrder - b.optionOrder) // Ensure options are sorted
+          .map(opt => opt.optionText);
+        console.log(`Processed options for question ${questionIdString}:`, processedOptions);
 
-          const processedQuestion: ProcessedQuestion = {
-            id: q.id,
-            passage: q.passage,
-            question: q.question_stem, // Map question_stem to question
-            options: processedOptions,
-            correctAnswer: q.correct_answer_index,
-            type: q.question_type,
-          };
-          console.log(`Processed question object for ${q.id}:`, processedQuestion); // ADD THIS LOG
+        const processedQuestion: ProcessedQuestion = {
+          id: q.id,
+          passage: q.passage,
+          question: q.question_stem,
+          options: processedOptions,
+          correctAnswer: q.correct_answer_index,
+          type: q.question_type,
+        };
+        console.log(`Processed question object for ${q.id}:`, processedQuestion);
 
-          if (!questionsMap.has(q.section_id)) {
-            questionsMap.set(q.section_id, []);
-          }
-          questionsMap.get(q.section_id)?.push(processedQuestion);
-        });
+        if (!questionsMap.has(q.section_id)) {
+          questionsMap.set(q.section_id, []);
+        }
+        questionsMap.get(q.section_id)?.push(processedQuestion);
+      });
 
         // Step 3: Map sections to tests
         const sectionsMap = new Map<string, ProcessedSection[]>();
