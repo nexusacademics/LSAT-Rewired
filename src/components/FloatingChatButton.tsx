@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { MessageCircle, X } from 'lucide-react';
 import AIChat from './AIChat';
-import { User, TestSession, ProcessedQuestion } from '../App'; // Import ProcessedQuestion
+import { User, TestSession, ProcessedQuestion, ProcessedPrepTest } from '../App'; // Import ProcessedQuestion and ProcessedPrepTest
 
 interface FloatingChatButtonProps {
   user: User;
   currentView: 'landing' | 'dashboard' | 'triple-review' | 'circuit-builder' | 'performance' | 'chat';
   currentSession: TestSession | null;
   currentQuestionData: ProcessedQuestion | null; // NEW PROP
+  allProcessedTests: { [key: string]: ProcessedPrepTest }; // ADD THIS LINE
 }
 
 interface Message {
@@ -18,7 +19,7 @@ interface Message {
   feedback?: 'helpful' | 'not-helpful';
 }
 
-const FloatingChatButton: React.FC<FloatingChatButtonProps> = ({ user, currentView, currentSession, currentQuestionData }) => {
+const FloatingChatButton: React.FC<FloatingChatButtonProps> = ({ user, currentView, currentSession, currentQuestionData, allProcessedTests }) => { // ADD allProcessedTests here
   const [isOpen, setIsOpen] = useState(false);
   // State to hold conversation messages, now managed here
   const [messages, setMessages] = useState<Message[]>([
@@ -79,6 +80,7 @@ const FloatingChatButton: React.FC<FloatingChatButtonProps> = ({ user, currentVi
             currentView={currentView}
             currentSession={currentSession}
             currentQuestionData={currentQuestionData}
+            allProcessedTests={allProcessedTests}
             messages={messages} // Pass messages state
             setMessages={setMessages} // Pass setMessages function
           />
@@ -89,4 +91,3 @@ const FloatingChatButton: React.FC<FloatingChatButtonProps> = ({ user, currentVi
 };
 
 export default FloatingChatButton;
-
