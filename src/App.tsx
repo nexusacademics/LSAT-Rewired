@@ -4,158 +4,99 @@ import React, { useState } from 'react';
 // Import custom hooks for separation of concerns
 import { useAuth } from './hooks/useAuth';
 import { useTestData } from './hooks/useTestData';
-import { useTestSessions } from './hooks/useTestSessions';
+import { useTestSessions } => {
+    if (!user) {
+      console.warn('Cannot start test session: no user logged in');
+      return;
+    }
 
-// Import components
-import Dashboard from './components/Dashboard';
-import TripleReview from './components/TripleReview';
-import PerformanceTracker from './components/PerformanceTracker';
-import FloatingChatButton from './components/FloatingChatButton';
-import LoadingSpinner from './components/LoadingSpinner';
-import Navigation from './components/Navigation';
+    const newSession: TestSession = {
+      id: `session-${Date.now()}`,
+      testId,
+      userId: user.id,
+      phase,
+      timeMode: phase === 'timed' ? timeMode : undefined,
+      customTimeMinutes: phase === 'timed' ? customTimeMinutes : undefined,
+      startTime: new Date(),
+      circuits: [],
+      flaggedQuestions: [],
+      answeredQuestions: {},
+      timedAnswers: {},
+      blindReviewAnswers: {},
+      analysisNotes: {},
+      currentSectionIndex: 0,
+      currentQuestionIndex: 0, // Initialize currentQuestionIndex to 0
+      selectedSectionId,
+      completedSectionIds: [],
+      completedPhases: [],
+    };
 
-// Import types
-import type { TestSession } from './types/user';
-import type { ProcessedQuestion } from './types/test-data';
+    console.log('Starting new test session:', newSession.id); // Debug log
+    
+    setUserSessions(prev => [...prev, newSession]);
+    setCurrentSession(newSession);
+  }, [user]);
 
-// Define view type
-type AppView = 'dashboard' | 'triple-review' | 'performance' | 'subscription';
+  const resumeTestSession = useCallback((sessionId: string, targetPhase?: 'blind-review' | 'strategy-review') => {
+    const sessionToResume = userSessions.find(session => session.id === sessionId);
+    if (!sessionToResume) {
+      console.warn('Cannot resume session: session not found', sessionId);
+      return;
+    }
 
-// Define Message interface for chat history
-interface Message {
-  id: string;
-  type: 'user' | 'ai';
-  content: string;
-  timestamp: Date;
-  feedback?: 'helpful' | 'not-helpful';
-}
+    let updatedSession = { ...sessionToResume };
 
-function App() {
-  const [currentView, setCurrentView] = useState<AppView>('dashboard');
-  // State to hold conversation messages, lifted to App.tsx
-  const [messages, setMessages] = useState<Message[]>([]);
+    if (targetPhase) {
+      // Store answers from the phase just completed before resetting for the new phase
+      // This logic is handled in TripleReview.handleSubmitSection
+      
+      // Starting a new review phase for a completed session
+      updatedSession = {
+        ...updatedSession,
+        phase: targetPhase, // Set to the new phase
+        endTime: undefined, // Clear end time as it's now in progress for this new phase
+        currentSectionIndex: 0,
+        currentQuestionIndex: 0, // Reset currentQuestionIndex for new phase
+        answeredQuestions: {}, // Reset answered questions for the new phase
+        flaggedQuestions: [],
+        completedSectionIds: [],
+      };
+    }
+    // If targetPhase is not provided, it means we are resuming the current in-progress phase.
+    // In this case, no changes to phase or state reset are needed.
 
-  // Custom hooks handle specific concerns
-  const { user, supabaseUser, subscription, isLoading: authLoading } = useAuth();
-  const { allProcessedTests, isLoading: dataLoading } = useTestData();
+    console.log('Resuming test session:', updatedSession.id, 'phase:', updatedSession.phase); // Debug log
 
-  // ADD THIS LINE:
-  console.log('All Processed Tests in App.tsx:', allProcessedTests);
+    setCurrentSession(updatedSession);
+    // Persist the changes to userSessions
+    setUserSessions(prev => 
+      prev.map(session => 
+        session.id === updatedSession.id ? updatedSession : session
+      )
+    );
+  }, [userSessions]);
 
-  const {
+  const updateSession = useCallback((updatedSession: TestSession) => {
+    setCurrentSession(updatedSession);
+    setUserSessions(prev => 
+      prev.map(session => 
+        session.id === updatedSession.id ? updatedSession : session
+      )
+    );
+  }, []);
+
+  const exitSession = useCallback(() => {
+    console.log('Exiting current session'); // Debug log
+    setCurrentSession(null);
+  }, []);
+
+  return {
     userSessions,
     currentSession,
     startNewTestSession,
     resumeTestSession,
     updateSession,
     exitSession
-  } = useTestSessions(user);
-
-  const isLoading = authLoading || dataLoading;
-
-  // Derive current question data for chat
-  const currentQuestionDataForChat = useCurrentQuestionData(
-    currentView,
-    currentSession,
-    allProcessedTests
-  );
-
-  // Event handlers
-  const handleStartNewSession = (
-    testId: string,
-    phase: 'timed' | 'blind-review' | 'strategy-review',
-    timeMode?: 'regular' | '1.5x' | '2x' | 'custom' | 'untimed',
-    customTimeMinutes?: number,
-    selectedSectionId?: string
-  ) => {
-    startNewTestSession(testId, phase, timeMode, customTimeMinutes, selectedSectionId);
-    setCurrentView('triple-review');
   };
-
-  const handleResumeSession = (sessionId: string, targetPhase?: 'blind-review' | 'strategy-review') => {
-    resumeTestSession(sessionId, targetPhase);
-    setCurrentView('triple-review');
-  };
-
-  const handleExitSession = () => {
-    exitSession();
-    setCurrentView('dashboard');
-  };
-
-  if (isLoading) {
-    return <LoadingSpinner />;
-  }
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-      <Navigation 
-        currentView={currentView}
-        onViewChange={setCurrentView}
-        userStats={user?.stats}
-      />
-
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {currentView === 'dashboard' && user && (
-          <Dashboard 
-            user={user} 
-            userSessions={userSessions}
-            onStartNewTestSession={handleStartNewSession}
-            onResumeTestSession={handleResumeSession}
-            allProcessedTests={allProcessedTests}
-          />
-        )}
-
-        {currentView === 'triple-review' && currentSession && (
-          <TripleReview
-            session={currentSession}
-            onUpdateSession={updateSession}
-            onExitSession={handleExitSession}
-            processedPrepTest={allProcessedTests[currentSession.testId]}
-          />
-        )}
-
-        {currentView === 'performance' && user && (
-          <PerformanceTracker user={user} />
-        )}
-      </main>
-
-      {user && (
-        <FloatingChatButton
-          user={user}
-          currentView={currentView}
-          currentSession={currentSession}
-          currentQuestionData={currentQuestionDataForChat}
-          allProcessedTests={allProcessedTests}
-          messages={messages} // Pass messages state
-          setMessages={setMessages} // Pass setMessages function
-        />
-      )}
-    </div>
-  );
 }
 
-// Custom hook to derive current question data
-function useCurrentQuestionData(
-  currentView: AppView,
-  currentSession: TestSession | null,
-  allProcessedTests: { [key: string]: any }
-): ProcessedQuestion | null {
-  if (currentView !== 'triple-review' || !currentSession) {
-    return null;
-  }
-
-  const currentTest = allProcessedTests[currentSession.testId];
-  if (!currentTest) return null;
-
-  const currentSection = currentSession.selectedSectionId
-    ? currentTest.sections.find((sec: any) => sec.id === currentSession.selectedSectionId)
-    : currentTest.sections[currentSession.currentSectionIndex];
-
-  if (!currentSection || currentSession.currentSectionIndex >= currentSection.questions.length) {
-    return null;
-  }
-
-  return currentSection.questions[currentSession.currentQuestionIndex]; // Corrected to use currentQuestionIndex
-}
-
-export default App;
