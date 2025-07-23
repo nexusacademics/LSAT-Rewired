@@ -56,16 +56,17 @@ while (hasMoreOptions) {
 
   allOptions = allOptions.concat(optionsBatch);
 
-  console.log(`Fetched options ${from} to ${to}:`, optionsBatch.length);
-  if (optionsBatch.length < batchSize) {
-    hasMoreOptions = false; // Last batch
-  } else {
-    from += batchSize;
-    to += batchSize;
-  }
+console.log(`Fetched options ${from} to ${to}:`, optionsBatch.length);
+if (optionsBatch.length < batchSize) {
+  hasMoreOptions = false; // Last batch
+} else {
+  from += batchSize;
+  to += batchSize;
 }
 
-console.log('All question options (paginated):', allOptions);
+}
+
+console.log('DEBUG: allOptions array after fetch:', allOptions); // ADD THIS LINE
 
        // Step 1: Map options to questions
       const optionsMap = new Map<string, { optionLetter: string; optionText: string; optionOrder: number }[]>();
