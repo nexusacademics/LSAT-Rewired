@@ -78,13 +78,26 @@ const AIChat: React.FC<AIChatProps> = ({ user, isChatDisabled = false, currentVi
     // Handle question change within TripleReview
     if (currentView === 'triple-review' && currentQuestionData && currentQuestionData.id !== lastProcessedQuestionId) {
       const questionRef = getQuestionReference(currentQuestionData.id);
+
+      // Define an array of introductory phrases
+      const introPhrases = [
+        `I see you've moved on to ${questionRef}. What are your initial thoughts on the passage or question stem?`,
+        `Alright, we're now on ${questionRef}. What's standing out to you in the stimulus or question?`,
+        `Moving to ${questionRef}. How are you approaching this one?`,
+        `New question, ${questionRef}! What's your first impression of the argument presented?`,
+        `Let's tackle ${questionRef}. What's the core issue or argument you're seeing here?`
+      ];
+
+      // Randomly select one phrase
+      const randomPhrase = introPhrases[Math.floor(Math.random() * introPhrases.length)];
+
       // User moved to a new question within TripleReview
       setMessages(prev => [
         ...prev,
         {
           id: `new-question-intro-${Date.now()}`,
           type: 'ai',
-          content: `I see you've moved on to ${questionRef}. What are your initial thoughts on the passage or question stem?`,
+          content: randomPhrase, // Use the randomly selected phrase
           timestamp: new Date()
         }
       ]);
