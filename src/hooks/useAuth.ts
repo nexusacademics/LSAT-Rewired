@@ -122,7 +122,7 @@ export function useAuth() {
           const mockUser: User = {
             id: mockSupabaseUser.id,
             email: mockSupabaseUser.email || '',
-            name: mockSupabaseUser.email?.split('@')[0] || 'User',
+            name: mockSupabaseUser.email?.split('@')[0] || 'Jake',
             firstName: 'Jake',
             lastName: 'Username',
             username: 'LSATWizard',
