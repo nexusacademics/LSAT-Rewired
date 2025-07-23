@@ -45,7 +45,7 @@ let from = 0;
 let to = batchSize - 1;
 let hasMoreOptions = true;
 
-hile (hasMoreOptions) {
+while (hasMoreOptions) {
   const { data: optionsBatch, error: optionsError } = await supabase
     .from('question_options')
     .select('id, question_id, option_letter, option_text, option_order')
