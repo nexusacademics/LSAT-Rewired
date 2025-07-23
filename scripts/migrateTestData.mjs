@@ -80,118 +80,122 @@ async function migrateTestData(testData) {
 
   const testId = test.id;
 
-  // 2. Insert Sections
-  for (const rawSection of testData.sections) {
-    let { data: section, error: sectionError } = await supabase
+ // 2. Insert Sections
+for (const [sIndex, rawSection] of testData.sections.entries()) { // Added sIndex for section_order
+  const sectionType = rawSection.sectionId.startsWith('LR') ? 'Logical Reasoning' :
+                      rawSection.sectionId.startsWith('RC') ? 'Reading Comprehension' :
+                      'Question'; // Default for other types
+
+  let { data: section, error: sectionError } = await supabase
+    .from('sections')
+    .select('id')
+    .eq('test_id', testId)
+    .eq('name', rawSection.sectionName)
+    .maybeSingle();
+
+  if (sectionError) {
+    console.error(`Error checking for existing section ${rawSection.sectionName}:`, sectionError);
+    throw sectionError;
+  }
+
+  if (!section) {
+    const { data, error } = await supabase
       .from('sections')
+      .insert({
+        test_id: testId,
+        name: rawSection.sectionName,
+        section_type: sectionType, // ADDED THIS LINE
+        section_order: sIndex + 1 // ADDED THIS LINE
+      })
       .select('id')
-      .eq('test_id', testId)
-      .eq('name', rawSection.sectionName)
-      .maybeSingle();
+      .single();
 
-    if (sectionError) {
-      console.error(`Error checking for existing section ${rawSection.sectionName}:`, sectionError);
-      throw sectionError;
+    if (error) {
+      console.error(`Error inserting section ${rawSection.sectionName}:`, error);
+      throw error;
     }
-
-    if (!section) {
-      const { data, error } = await supabase
-        .from('sections')
-        .insert({
-          test_id: testId,
-          name: rawSection.sectionName,
-          section_type: rawSection.sectionId.startsWith('LR') ? 'Logical Reasoning' :
-                        rawSection.sectionId.startsWith('RC') ? 'Reading Comprehension' :
-                        'Question' // Default for other types
-        })
-        .select('id')
-        .single();
-
-      if (error) {
-        console.error(`Error inserting section ${rawSection.sectionName}:`, error);
-        throw error;
-      }
-      section = data;
-      console.log(`  Inserted section: ${rawSection.sectionName} (ID: ${section.id})`);
-    } else {
-      console.log(`  Section ${rawSection.sectionName} already exists (ID: ${section.id}), skipping insertion.`);
-    }
+    section = data;
+    console.log(`  Inserted section: ${rawSection.sectionName} (ID: ${section.id})`);
+  } else {
+    console.log(`  Section ${rawSection.sectionName} already exists (ID: ${section.id}), skipping insertion.`);
+  }
 
     const sectionId = section.id;
 
-    // 3. Insert Questions and Options
-    for (const [qIndex, rawQuestion] of rawSection.items.entries()) {
-      let { data: question, error: questionError } = await supabase
-        .from('questions')
-        .select('id')
-        .eq('section_id', sectionId)
-        .eq('item_id', rawQuestion.itemId)
-        .maybeSingle();
+   // 3. Insert Questions and Options
+for (const [qIndex, rawQuestion] of rawSection.items.entries()) {
+  let { data: question, error: questionError } = await supabase
+    .from('questions')
+    .select('id')
+    .eq('section_id', sectionId)
+    .eq('item_id', rawQuestion.itemId)
+    .maybeSingle();
 
-      if (questionError) {
-        console.error(`Error checking for existing question ${rawQuestion.itemId}:`, questionError);
-        throw questionError;
-      }
+  if (questionError) {
+    console.error(`Error checking for existing question ${rawQuestion.itemId}:`, questionError);
+    throw questionError;
+  }
 
-      if (!question) {
-        const { data, error } = await supabase
-          .from('questions')
-          .insert({
-            section_id: sectionId,
-            item_id: rawQuestion.itemId,
-            stimulus_text: stripHtmlTags(rawQuestion.stimulusText),
-            stem_text: stripHtmlTags(rawQuestion.stemText),
-            correct_answer_index: optionLetterToIndex(rawQuestion.correctAnswer),
-            question_order: qIndex + 1 // 1-indexed order
-          })
-          .select('id')
-          .single();
+  if (!question) {
+    const { data, error } = await supabase
+      .from('questions')
+      .insert({
+        section_id: sectionId,
+        item_id: rawQuestion.itemId,
+        passage: stripHtmlTags(rawQuestion.stimulusText), // Changed from stimulus_text
+        question_stem: stripHtmlTags(rawQuestion.stemText), // Changed from stem_text
+        correct_answer_index: optionLetterToIndex(rawQuestion.correctAnswer),
+        question_order: qIndex + 1, // 1-indexed order
+        question_type: sectionType // ADDED THIS LINE (uses sectionType from above)
+      })
+      .select('id')
+      .single();
 
-        if (error) {
-          console.error(`Error inserting question ${rawQuestion.itemId}:`, error);
-          throw error;
-        }
-        question = data;
-        console.log(`    Inserted question: ${rawQuestion.itemId} (ID: ${question.id})`);
-      } else {
-        console.log(`    Question ${rawQuestion.itemId} already exists (ID: ${question.id}), skipping insertion.`);
-      }
+    if (error) {
+      console.error(`Error inserting question ${rawQuestion.itemId}:`, error);
+      throw error;
+    }
+    question = data;
+    console.log(`    Inserted question: ${rawQuestion.itemId} (ID: ${question.id})`);
+  } else {
+    console.log(`    Question ${rawQuestion.itemId} already exists (ID: ${question.id}), skipping insertion.`);
+  }
 
       const questionId = question.id;
 
-      // Insert Options for the question
-      for (const [oIndex, rawOption] of rawQuestion.options.entries()) {
-        let { data: option, error: optionError } = await supabase
-          .from('question_options')
-          .select('id')
-          .eq('question_id', questionId)
-          .eq('option_letter', rawOption.optionLetter)
-          .maybeSingle();
+     // Insert Options for the question
+for (const [oIndex, rawOption] of rawQuestion.options.entries()) {
+  let { data: option, error: optionError } = await supabase
+    .from('question_options')
+    .select('id')
+    .eq('question_id', questionId)
+    .eq('option_letter', rawOption.optionLetter)
+    .maybeSingle();
 
-        if (optionError) {
-          console.error(`Error checking for existing option ${rawOption.optionLetter} for question ${questionId}:`, optionError);
-          throw optionError;
-        }
+  if (optionError) {
+    console.error(`Error checking for existing option ${rawOption.optionLetter} for question ${questionId}:`, optionError);
+    throw optionError;
+  }
 
-        if (!option) {
-          const { error } = await supabase
-            .from('question_options')
-            .insert({
-              question_id: questionId,
-              option_letter: rawOption.optionLetter,
-              option_content: stripHtmlTags(rawOption.optionContent),
-              option_order: oIndex + 1 // 1-indexed order
-            });
+  if (!option) {
+    const { error } = await supabase
+      .from('question_options')
+      .insert({
+        question_id: questionId,
+        option_letter: rawOption.optionLetter,
+        option_text: stripHtmlTags(rawOption.optionContent), // Changed from option_content
+        option_order: oIndex + 1 // 1-indexed order
+      });
 
-          if (error) {
-            console.error(`Error inserting option ${rawOption.optionLetter} for question ${questionId}:`, error);
-            throw error;
-          }
-          // console.log(`      Inserted option: ${rawOption.optionLetter}`);
-        } else {
-          // console.log(`      Option ${rawOption.optionLetter} for question ${questionId} already exists, skipping insertion.`);
-        }
-      }
+    if (error) {
+      console.error(`Error inserting option ${rawOption.optionLetter} for question ${questionId}:`, error);
+      throw error;
+    }
+    // console.log(`      Inserted option: ${rawOption.optionLetter}`);
+  } else {
+    // console.log(`      Option ${rawOption.optionLetter} for question ${questionId} already exists, skipping insertion.`);
+  }
+}
     }
   }
   console.log(`Data migration for ${testData.moduleName} completed.`);
