@@ -17,7 +17,7 @@ const TimeModeSelectionModal: React.FC<TimeModeSelectionModalProps> = ({ isOpen,
   const [selectedSectionId, setSelectedSectionId] = useState<string | undefined>(undefined); // undefined for whole test
   const [selectedTimeMode, setSelectedTimeMode] = useState<'regular' | '1.5x' | '2x' | 'custom' | 'untimed'>('regular');
   const [customMinutes, setCustomMinutes] = useState(35);
-
+console.log('All Processed Tests received by TimeModeSelectionModal:', allProcessedTests);
   // Reset state when modal opens/closes
   React.useEffect(() => {
     if (isOpen) {
