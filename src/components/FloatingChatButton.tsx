@@ -1,10 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { MessageCircle, X } from 'lucide-react';
 import AIChat from './AIChat';
-import { User, TestSession, ProcessedQuestion, ProcessedPrepTest, Message } from '../App'; // Import ProcessedQuestion and ProcessedPrepTest
+import { User, TestSession, ProcessedQuestion, ProcessedPrepTest } from '../App'; // Import ProcessedQuestion and ProcessedPrepTest
 
 // Define Message interface for chat history (moved from AIChat.tsx)
-// This interface is now imported from App.tsx, so no need to define it here.
+interface Message {
+  id: string;
+  type: 'user' | 'ai';
+  content: string;
+  timestamp: Date;
+  feedback?: 'helpful' | 'not-helpful';
+}
 
 interface FloatingChatButtonProps {
   user: User;
@@ -14,12 +20,11 @@ interface FloatingChatButtonProps {
   allProcessedTests: { [key: string]: ProcessedPrepTest }; // ADD THIS LINE
   messages: Message[]; // Prop for messages state, now passed from App.tsx
   setMessages: React.Dispatch<React.SetStateAction<Message[]>>; // Prop for setMessages function, now passed from App.tsx
-  isOpen: boolean; // NEW: Prop to control open/close state
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>; // NEW: Prop to set open/close state
 }
 
-const FloatingChatButton: React.FC<FloatingChatButtonProps> = ({ user, currentView, currentSession, currentQuestionData, allProcessedTests, messages, setMessages, isOpen, setIsOpen }) => {
-  // Removed local isOpen state, now using props from App.tsx
+const FloatingChatButton: React.FC<FloatingChatButtonProps> = ({ user, currentView, currentSession, currentQuestionData, allProcessedTests, messages, setMessages }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  // Removed local messages state, now using props from App.tsx
 
   // Determine if the chat should be disabled
   const isDisabled = currentView === 'triple-review' && currentSession?.phase === 'timed';
