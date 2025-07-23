@@ -65,7 +65,6 @@ hile (hasMoreOptions) {
   }
 }
 
-console.log('DEBUG: allOptions array after fetch:', allOptions); // ADD THIS LINE
 
        // Step 1: Map options to questions
       const optionsMap = new Map<string, { optionLetter: string; optionText: string; optionOrder: number }[]>();
