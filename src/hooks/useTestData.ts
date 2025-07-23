@@ -16,6 +16,8 @@ export function useTestData() {
         const { data: tests, error: testsError } = await supabase
           .from('tests')
           .select('id, name');
+         console.log('Supabase tests data:', tests); // This line
+        console.log('Supabase tests error:', testsError); // This line
         if (testsError) throw testsError;
 
         // Fetch all sections, ordered by their section_order
