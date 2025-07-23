@@ -35,6 +35,7 @@ const AIChat: React.FC<AIChatProps> = ({ user, isChatDisabled = false, currentVi
   const [isTyping, setIsTyping] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null); // NEW: Ref for the textarea
 
   // Initialize Gemini AI
   const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY || '');
@@ -47,6 +48,14 @@ const AIChat: React.FC<AIChatProps> = ({ user, isChatDisabled = false, currentVi
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  // NEW: Effect to resize textarea when inputMessage changes
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto'; // Reset height to calculate scrollHeight correctly
+      textareaRef.current.style.height = textareaRef.current.scrollHeight + 'px';
+    }
+  }, [inputMessage]);
 
   const handleSendMessage = async () => {
     if (!inputMessage.trim()) return;
@@ -76,14 +85,14 @@ const AIChat: React.FC<AIChatProps> = ({ user, isChatDisabled = false, currentVi
           role: 'user',
           parts: [{ text: `You are a 25 year veteran educator and standardized testing expert. You are an expert on LSAT analysis and are helping students with as they review their practice tests. Your role is to:
 
-1. 
+1.
 2. Guide students' thinking through Socratic questioning
 3. Help them understand argument structure (premises, conclusions, assumptions) using a blend of traditional Aristotelian logic, more modern arguemntation theory like the work of Stephen Toulmin, and (on inductive, causal arguments) the Bradford Hill Criteria.
 4. Encourage circuit building and visual mapping of logical relationships
 5. Focus on developing analytical skills, not just getting correct answers
 6. Use encouraging, supportive tone while maintaining academic rigor
 7. When students ask for answers, redirect them to think about the logical structure
-8. Encourage growth mindset based on the work of Carol Dweck 
+8. Encourage growth mindset based on the work of Carol Dweck
 9. Encourage conceptual understanding over quick solutions
 10. Do not provide a full analysis of a question if asked. Inquire with the student and guide them to analyze it on their own, step by step.
 11. Keep responses concise and direct at first. Do not give any information about the question itself until the student is stuck.
@@ -135,7 +144,7 @@ Goldilocks Principle: The correct assumption is just strong enough to make the r
       let dynamicHistory: { role: string; parts: { text: string }[] }[] = [];
 
       // Add question context if applicable (only for Blind Review or Strategy Review)
-      if (currentQuestionData && currentView === 'triple-review' && 
+      if (currentQuestionData && currentView === 'triple-review' &&
           (currentSession?.phase === 'blind-review' || currentSession?.phase === 'strategy-review')) {
         const questionContext = `The user is currently working on the following LSAT question:\n\n` +
                                 `Passage:\n${currentQuestionData.passage}\n\n` +
@@ -336,14 +345,21 @@ Goldilocks Principle: The correct assumption is just strong enough to make the r
 
         <div className="flex space-x-3"> {/* Adjusted spacing */}
           <div className="flex-1 relative">
-            <input
-              type="text"
+            {/* Changed from input to textarea */}
+            <textarea
+              ref={textareaRef} // Added ref
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+              onKeyPress={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) { // Send on Enter, new line on Shift+Enter
+                  e.preventDefault(); // Prevent default new line
+                  handleSendMessage();
+                }
+              }}
               placeholder="Ask about argument structure, circuit building, or analysis techniques..."
-              className="w-full px-3 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 pr-10 text-sm" // Adjusted padding, border-radius, and font size
+              className="w-full px-3 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 pr-10 text-sm resize-none overflow-hidden min-h-[42px]" // Added resize-none, overflow-hidden, min-h
               disabled={isChatDisabled} // Disable input when chat is disabled
+              rows={1} // Start with 1 row
             />
             <Lightbulb className="absolute right-2.5 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" /> {/* Adjusted position and icon size */}
           </div>
