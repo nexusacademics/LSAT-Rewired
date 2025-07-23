@@ -1,9 +1,16 @@
-// scripts/migrateTestData.js
-import dotenv from 'dotenv'; // Add this line
-dotenv.config(); // Add this line right after the import
+// scripts/migrateTestData.mjs
+import dotenv from 'dotenv';
+dotenv.config();
 import { createClient } from '@supabase/supabase-js';
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url'; // Add this line
+import { dirname } from 'path';     // Add this line
+
+// Define __dirname for ES module scope
+const __filename = fileURLToPath(import.meta.url); // Add this line
+const __dirname = dirname(__filename);             // Add this line
+
 
 // Load environment variables
 // Ensure VITE_SUPABASE_URL and VITE_SUPABASE_SERVICE_ROLE_KEY are set in your .env file
