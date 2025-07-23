@@ -8,7 +8,7 @@ import { useTestSessions } from './hooks/useTestSessions';
 
 // Import components
 import Dashboard from './components/Dashboard';
-import TripleReview from './components/TripleReview';
+import TripleReview from './components/TripleReview/index';
 import PerformanceTracker from './components/PerformanceTracker';
 import FloatingChatButton from './components/FloatingChatButton';
 import LoadingSpinner from './components/LoadingSpinner';
