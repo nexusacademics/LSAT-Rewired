@@ -1,37 +1,39 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react'; // Removed useState, useEffect as they are no longer needed here
 import { MessageCircle, X } from 'lucide-react';
 import AIChat from './AIChat';
-import { User, TestSession, ProcessedQuestion, ProcessedPrepTest } from '../App'; // Import ProcessedQuestion and ProcessedPrepTest
-
-// Define Message interface for chat history (moved from AIChat.tsx)
-interface Message {
-  id: string;
-  type: 'user' | 'ai';
-  content: string;
-  timestamp: Date;
-  feedback?: 'helpful' | 'not-helpful';
-}
+// Import types from App.tsx as they are now exported from there
+import { User, TestSession, ProcessedQuestion, ProcessedPrepTest, Message } from '../App';
 
 interface FloatingChatButtonProps {
   user: User;
   currentView: 'landing' | 'dashboard' | 'triple-review' | 'circuit-builder' | 'performance' | 'chat';
   currentSession: TestSession | null;
-  currentQuestionData: ProcessedQuestion | null; // NEW PROP
-  allProcessedTests: { [key: string]: ProcessedPrepTest }; // ADD THIS LINE
-  messages: Message[]; // Prop for messages state, now passed from App.tsx
-  setMessages: React.Dispatch<React.SetStateAction<Message[]>>; // Prop for setMessages function, now passed from App.tsx
+  currentQuestionData: ProcessedQuestion | null;
+  allProcessedTests: { [key: string]: ProcessedPrepTest };
+  messages: Message[];
+  setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
+  // NEW: Props to control the open/closed state from parent
+  isOpen: boolean;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const FloatingChatButton: React.FC<FloatingChatButtonProps> = ({ user, currentView, currentSession, currentQuestionData, allProcessedTests, messages, setMessages }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  // Removed local messages state, now using props from App.tsx
-
+const FloatingChatButton: React.FC<FloatingChatButtonProps> = ({
+  user,
+  currentView,
+  currentSession,
+  currentQuestionData,
+  allProcessedTests,
+  messages,
+  setMessages,
+  isOpen, // Destructure isOpen from props
+  setIsOpen // Destructure setIsOpen from props
+}) => {
   // Determine if the chat should be disabled
   const isDisabled = currentView === 'triple-review' && currentSession?.phase === 'timed';
 
   const toggleChat = () => {
     if (!isDisabled) {
-      setIsOpen(!isOpen);
+      setIsOpen(!isOpen); // Use setIsOpen from props
     }
   };
 
@@ -69,8 +71,8 @@ const FloatingChatButton: React.FC<FloatingChatButtonProps> = ({ user, currentVi
             currentSession={currentSession}
             currentQuestionData={currentQuestionData}
             allProcessedTests={allProcessedTests}
-            messages={messages} // Pass messages state from props
-            setMessages={setMessages} // Pass setMessages function from props
+            messages={messages}
+            setMessages={setMessages}
           />
         )}
       </div>
