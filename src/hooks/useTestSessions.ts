@@ -33,6 +33,7 @@ export function useTestSessions(user: User | null) {
       blindReviewAnswers: {},
       analysisNotes: {},
       currentSectionIndex: 0,
+      currentQuestionIndex: 0, // Initialize currentQuestionIndex to 0
       selectedSectionId,
       completedSectionIds: [],
       completedPhases: [],
@@ -63,6 +64,7 @@ export function useTestSessions(user: User | null) {
         phase: targetPhase, // Set to the new phase
         endTime: undefined, // Clear end time as it's now in progress for this new phase
         currentSectionIndex: 0,
+        currentQuestionIndex: 0, // Reset currentQuestionIndex for new phase
         answeredQuestions: {}, // Reset answered questions for the new phase
         flaggedQuestions: [],
         completedSectionIds: [],
