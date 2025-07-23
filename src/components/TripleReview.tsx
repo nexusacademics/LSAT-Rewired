@@ -36,6 +36,8 @@ const TripleReview: React.FC<TripleReviewProps> = ({
 
   const currentQuestionData = questionsInCurrentSection[currentQuestionIndex];
 
+    console.log('TripleReview: currentQuestionData:', currentQuestionData);
+
   // Find the existing circuit for the current question, if any
   const existingCircuitForQuestion = session.circuits.find(
     (c) => c.questionId === currentQuestionData?.id
