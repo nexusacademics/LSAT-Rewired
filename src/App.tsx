@@ -37,7 +37,9 @@ function App() {
   // NEW: State to control the chat bubble's open/closed state
   const [isChatOpen, setIsChatOpen] = useState(false);
   // NEW: State to track the last question AI focused on, lifted from AIChat
-  const [lastProcessedQuestionIdForChat, setLastProcessedQuestionIdForChat] = useState<string | null>(null);
+  const [lastProcessedQuestionIdForChat, setLastProcessedQuestionIdForChat] = useState<{ questionId: string, phase: string } | null>(null);
+  // NEW: State to track if the initial chat welcome message has been sent
+  const [hasInitialChatWelcomeBeenSent, setHasInitialChatWelcomeBeenSent] = useState(false);
 
 
   // Custom hooks handle specific concerns
@@ -88,6 +90,7 @@ function App() {
     setIsChatOpen(false); // Close the chat bubble
     setMessages([]); // Clear chat messages
     setLastProcessedQuestionIdForChat(null); // Reset chat context on session exit
+    setHasInitialChatWelcomeBeenSent(false); // Reset initial welcome message flag
   }, [exitSession]);
 
 
@@ -144,6 +147,8 @@ function App() {
           setIsOpen={setIsChatOpen} // NEW: Pass setIsOpen function
           lastProcessedQuestionIdForChat={lastProcessedQuestionIdForChat} // NEW: Pass lifted state
           setLastProcessedQuestionIdForChat={setLastProcessedQuestionIdForChat} // NEW: Pass lifted setter
+          hasInitialChatWelcomeBeenSent={hasInitialChatWelcomeBeenSent} // NEW: Pass lifted state
+          setHasInitialChatWelcomeBeenSent={setHasInitialChatWelcomeBeenSent} // NEW: Pass lifted setter
         />
       )}
     </div>
