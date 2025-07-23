@@ -78,4 +78,48 @@ export const StrategySummary: React.FC<StrategySummaryProps> = ({
               // Filter answers relevant to this section
               section.questions.forEach(q => {
                 if (session.timedAnswers.hasOwnProperty(q.id)) {
-                  sectionTimedAnswers[q.id] = session
+                  sectionTimedAnswers[q.id] = session.timedAnswers[q.id];
+                }
+                if (session.blindReviewAnswers.hasOwnProperty(q.id)) {
+                  sectionBlindReviewAnswers[q.id] = session.blindReviewAnswers[q.id];
+                }
+              });
+
+              const sectionTimedScore = calculateScore(sectionTimedAnswers, [section]);
+              const sectionBlindReviewScore = calculateScore(sectionBlindReviewAnswers, [section]);
+
+              return (
+                <div key={section.id} className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 sm:p-6">
+                  <h3 className="text-lg sm:text-xl font-semibold text-slate-900 mb-3 sm:mb-4">
+                    Section {index + 1}
+                  </h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-4">
+                      <h4 className="text-base sm:text-lg font-semibold text-blue-800 mb-1">Timed</h4>
+                      <p className="text-2xl sm:text-3xl font-bold text-blue-600">
+                        {sectionTimedScore.correct}/{sectionTimedScore.total}
+                      </p>
+                    </div>
+                    <div className="bg-teal-50 border border-teal-200 rounded-lg p-3 sm:p-4">
+                      <h4 className="text-base sm:text-lg font-semibold text-teal-800 mb-1">Blind Review</h4>
+                      <p className="text-2xl sm:text-3xl font-bold text-teal-600">
+                        {sectionBlindReviewScore.correct}/{sectionBlindReviewScore.total}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        <button
+          onClick={onClose}
+          className="px-6 sm:px-8 py-3 sm:py-4 bg-blue-600 text-white rounded-xl font-semibold text-base sm:text-lg hover:bg-blue-700 transition-colors"
+        >
+          Continue to Question Review <ChevronRight className="h-5 w-5 inline ml-2" />
+        </button>
+      </div>
+    </div>
+  );
+};
