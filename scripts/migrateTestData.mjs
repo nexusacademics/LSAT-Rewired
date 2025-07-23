@@ -1,6 +1,8 @@
 // scripts/migrateTestData.mjs
 import dotenv from 'dotenv';
-dotenv.config();
+const dotenvResult = dotenv.config(); // Capture the result of dotenv.config()
+console.log('DEBUG: dotenv.config() result:', dotenvResult); // NEW DEBUG LINE
+
 import { createClient } from '@supabase/supabase-js';
 import fs from 'fs';
 import path from 'path';
@@ -14,11 +16,12 @@ const __dirname = dirname(__filename);
 // Load environment variables
 // Ensure VITE_SUPABASE_URL and VITE_SUPABASE_SERVICE_ROLE_KEY are set in your .env file
 const supabaseUrl = process.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY; // Also check anon key
 const supabaseServiceRoleKey = process.env.VITE_SUPABASE_SERVICE_ROLE_KEY;
 
-// ADD THIS LINE FOR DEBUGGING
+console.log('DEBUG: Supabase URL (first 5 chars):', supabaseUrl ? supabaseUrl.substring(0, 5) + '...' : 'NOT LOADED'); // NEW DEBUG LINE
+console.log('DEBUG: Supabase Anon Key (first 5 chars):', supabaseAnonKey ? supabaseAnonKey.substring(0, 5) + '...' : 'NOT LOADED'); // NEW DEBUG LINE
 console.log('DEBUG: Supabase Service Role Key (first 5 chars):', supabaseServiceRoleKey ? supabaseServiceRoleKey.substring(0, 5) + '...' : 'NOT LOADED');
-// END DEBUG LINE
 
 if (!supabaseUrl || !supabaseServiceRoleKey) {
   console.error('Missing Supabase environment variables.');
@@ -29,6 +32,7 @@ if (!supabaseUrl || !supabaseServiceRoleKey) {
 const supabase = createClient(supabaseUrl, supabaseServiceRoleKey);
 
 // ... rest of your script
+
 
 
 // Path to your raw test data JSON file
