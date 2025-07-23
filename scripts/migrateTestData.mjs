@@ -4,18 +4,21 @@ dotenv.config();
 import { createClient } from '@supabase/supabase-js';
 import fs from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url'; // Add this line
-import { dirname } from 'path';     // Add this line
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 
 // Define __dirname for ES module scope
-const __filename = fileURLToPath(import.meta.url); // Add this line
-const __dirname = dirname(__filename);             // Add this line
-
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 // Load environment variables
 // Ensure VITE_SUPABASE_URL and VITE_SUPABASE_SERVICE_ROLE_KEY are set in your .env file
 const supabaseUrl = process.env.VITE_SUPABASE_URL;
 const supabaseServiceRoleKey = process.env.VITE_SUPABASE_SERVICE_ROLE_KEY;
+
+// ADD THIS LINE FOR DEBUGGING
+console.log('DEBUG: Supabase Service Role Key (first 5 chars):', supabaseServiceRoleKey ? supabaseServiceRoleKey.substring(0, 5) + '...' : 'NOT LOADED');
+// END DEBUG LINE
 
 if (!supabaseUrl || !supabaseServiceRoleKey) {
   console.error('Missing Supabase environment variables.');
@@ -24,6 +27,9 @@ if (!supabaseUrl || !supabaseServiceRoleKey) {
 }
 
 const supabase = createClient(supabaseUrl, supabaseServiceRoleKey);
+
+// ... rest of your script
+
 
 // Path to your raw test data JSON file
 const rawTestDataPath = path.resolve(__dirname, '../src/data/fullPrepTest140.json');
