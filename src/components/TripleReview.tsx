@@ -572,7 +572,7 @@ const TripleReview: React.FC<TripleReviewProps> = ({
         )}
 
         {showCircuitBuilder && session.phase !== 'timed' ? (
-          <div className="grid lg:grid-cols-4 gap-6 h-full"> {/* Changed to lg:grid-cols-4 */}
+          <div className="grid lg:grid-cols-3 gap-6 h-full"> {/* Changed to lg:grid-cols-3 */}
             {/* Left Column: Passage & Selected Answer (managed by TripleReview) */}
             <div className="lg:col-span-1 space-y-6 h-full overflow-y-auto">
               <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
@@ -609,8 +609,8 @@ const TripleReview: React.FC<TripleReviewProps> = ({
               )}
             </div>
 
-            {/* CircuitBuilder takes the remaining 3 columns */}
-            <div className="lg:col-span-3 h-full"> {/* Changed to lg:col-span-3 */}
+            {/* CircuitBuilder takes the remaining 2 columns */}
+            <div className="lg:col-span-2 h-full"> {/* Changed to lg:col-span-2 */}
             
               <CircuitBuilder
                 onBack={() => setShowCircuitBuilder(false)}
@@ -623,9 +623,9 @@ const TripleReview: React.FC<TripleReviewProps> = ({
           </div>
         ) : (
           // Original layout when CircuitBuilder is not shown or in timed mode
-          <div className={session.phase === 'timed' ? "grid lg:grid-cols-3 gap-6 h-full" : "grid lg:grid-cols-5 gap-6 h-full"}>
+          <div className={session.phase === 'timed' ? "grid lg:grid-cols-2 gap-6 h-full" : "grid lg:grid-cols-3 gap-6 h-full"}>
             {/* Left Column: Passage */}
-            <div className="lg:col-span-2 space-y-6 h-full overflow-y-auto">
+            <div className={session.phase === 'timed' ? "lg:col-span-1 space-y-6 h-full overflow-y-auto" : "lg:col-span-1 space-y-6 h-full overflow-y-auto"}>
               <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
                 <div className="prose max-w-none">
                   <div className="text-slate-700 leading-relaxed">
@@ -672,7 +672,7 @@ const TripleReview: React.FC<TripleReviewProps> = ({
 
             {/* Sidebar - Conditionally rendered */}
             {session.phase !== 'timed' && (
-              <div className="lg:col-span-2 space-y-6 h-full overflow-y-auto">
+              <div className="lg:col-span-1 space-y-6 h-full overflow-y-auto">
                 {/* Analysis Template box - MOVED TO TOP */}
                 {session.phase === 'blind-review' && (
                   <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
@@ -909,3 +909,4 @@ const TripleReview: React.FC<TripleReviewProps> = ({
 };
 
 export default TripleReview;
+
