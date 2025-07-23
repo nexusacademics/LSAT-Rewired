@@ -114,6 +114,7 @@ function App() {
           currentView={currentView}
           currentSession={currentSession}
           currentQuestionData={currentQuestionDataForChat}
+          allProcessedTests={allProcessedTests} {/* ADD THIS LINE */}
         />
       )}
     </div>
