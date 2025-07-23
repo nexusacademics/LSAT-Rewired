@@ -17,6 +17,8 @@ const TimeModeSelectionModal: React.FC<TimeModeSelectionModalProps> = ({ isOpen,
   const [selectedSectionId, setSelectedSectionId] = useState<string | undefined>(undefined); // undefined for whole test
   const [selectedTimeMode, setSelectedTimeMode] = useState<'regular' | '1.5x' | '2x' | 'custom' | 'untimed'>('regular');
   const [customMinutes, setCustomMinutes] = useState(35);
+  const [searchTerm, setSearchTerm] = useState('');
+
 console.log('All Processed Tests received by TimeModeSelectionModal:', allProcessedTests);
   // Reset state when modal opens/closes
   React.useEffect(() => {
@@ -75,8 +77,18 @@ console.log('All Processed Tests received by TimeModeSelectionModal:', allProces
         {currentStep === 'selectTest' && (
           <>
             <h2 className="text-2xl font-bold text-slate-900 mb-6 text-center">Select a PrepTest</h2>
+            <input
+  type="text"
+  placeholder="Search tests..."
+  value={searchTerm}
+  onChange={(e) => setSearchTerm(e.target.value)}
+  className="w-full px-4 py-2 border border-slate-300 rounded-lg mb-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+/>
+
             <div className="space-y-3">
-              {Object.values(allProcessedTests).map((test) => (
+             {Object.values(allProcessedTests)
+  .filter(test => test.name.toLowerCase().includes(searchTerm.toLowerCase()))
+  .map((test) => (
                 <button
                   key={test.id}
                   onClick={() => {
