@@ -45,25 +45,24 @@ let from = 0;
 let to = batchSize - 1;
 let hasMoreOptions = true;
 
-while (hasMoreOptions) {
+hile (hasMoreOptions) {
   const { data: optionsBatch, error: optionsError } = await supabase
     .from('question_options')
     .select('id, question_id, option_letter, option_text, option_order')
-    .order('option_order', { ascending: true })
+    .order('id', { ascending: true }) // CHANGE THIS LINE: Order by 'id' for stable pagination
     .range(from, to);
 
   if (optionsError) throw optionsError;
 
   allOptions = allOptions.concat(optionsBatch);
 
-console.log(`Fetched options ${from} to ${to}:`, optionsBatch.length);
-if (optionsBatch.length < batchSize) {
-  hasMoreOptions = false; // Last batch
-} else {
-  from += batchSize;
-  to += batchSize;
-}
-
+  console.log(`Fetched options ${from} to ${to}:`, optionsBatch.length);
+  if (optionsBatch.length < batchSize) {
+    hasMoreOptions = false; // Last batch
+  } else {
+    from += batchSize;
+    to += batchSize;
+  }
 }
 
 console.log('DEBUG: allOptions array after fetch:', allOptions); // ADD THIS LINE
