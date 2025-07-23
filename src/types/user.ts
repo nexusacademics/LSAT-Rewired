@@ -40,6 +40,7 @@ export interface TestSession {
   blindReviewAnswers: { [questionId: string]: number };
   analysisNotes: { [questionId: string]: QuestionAnalysisNotes };
   currentSectionIndex: number;
+  currentQuestionIndex: number; // ADD THIS LINE
   selectedSectionId?: string;
   completedSectionIds: string[];
   completedPhases: ('timed' | 'blind-review' | 'strategy-review')[];
