@@ -36,8 +36,30 @@ const supabase = createClient(supabaseUrl, supabaseServiceRoleKey);
 
 
 // Path to your raw test data JSON file
-const rawTestDataPath = path.resolve(__dirname, '../src/data/fullPrepTest140.json');
-const rawPrepTest140 = JSON.parse(fs.readFileSync(rawTestDataPath, 'utf8'));
+const dataDirectory = path.resolve(__dirname, '../src/data');
+const testFiles = fs.readdirSync(dataDirectory).filter(file => file.endsWith('.json'));
+
+// Modify the main function call to accept testData as an argument
+async function migrateTestData(testData) {
+  console.log(`Starting data migration for ${testData.moduleName} to Supabase...`);
+  // ... rest of your existing migrateTestData function logic ...
+  // Make sure all references to `testData` inside this function are changed to `testData`
+}
+
+// Loop through each test file and call the migration function
+(async () => {
+  for (const fileName of testFiles) {
+    const filePath = path.join(dataDirectory, fileName);
+    try {
+      const rawData = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+      await migrateTestData(rawData);
+    } catch (error) {
+      console.error(`Error processing file ${fileName}:`, error);
+    }
+  }
+  console.log('\nAll specified data migrations attempted.');
+})();
+
 
 // Helper function to strip HTML tags and convert escaped newlines
 const stripHtmlTags = (html) => {
@@ -56,7 +78,7 @@ async function migrateTestData() {
   console.log('Starting data migration to Supabase...');
 
   try {
-    const testName = rawPrepTest140.moduleName;
+    const testName = testData.moduleName;
 
     // 1. Insert into 'tests' table
     console.log(`Inserting test: "${testName}"`);
@@ -73,7 +95,7 @@ async function migrateTestData() {
     console.log(`Successfully inserted test "${testName}" with ID: ${testId}`);
 
     // 2. Insert sections
-    for (const [sectionIndex, rawSection] of rawPrepTest140.sections.entries()) {
+    for (const [sectionIndex, rawSection] of testData.sections.entries()) {
       const sectionName = rawSection.sectionName;
       console.log(`  Inserting section: "${sectionName}" for test "${testName}"`);
       const { data: sectionData, error: sectionError } = await supabase
