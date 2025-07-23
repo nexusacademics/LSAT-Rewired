@@ -3,14 +3,7 @@ import { MessageCircle, X } from 'lucide-react';
 import AIChat from './AIChat';
 import { User, TestSession, ProcessedQuestion, ProcessedPrepTest } from '../App'; // Import ProcessedQuestion and ProcessedPrepTest
 
-interface FloatingChatButtonProps {
-  user: User;
-  currentView: 'landing' | 'dashboard' | 'triple-review' | 'circuit-builder' | 'performance' | 'chat';
-  currentSession: TestSession | null;
-  currentQuestionData: ProcessedQuestion | null; // NEW PROP
-  allProcessedTests: { [key: string]: ProcessedPrepTest }; // ADD THIS LINE
-}
-
+// Define Message interface for chat history (moved from AIChat.tsx)
 interface Message {
   id: string;
   type: 'user' | 'ai';
@@ -19,27 +12,22 @@ interface Message {
   feedback?: 'helpful' | 'not-helpful';
 }
 
-const FloatingChatButton: React.FC<FloatingChatButtonProps> = ({ user, currentView, currentSession, currentQuestionData, allProcessedTests }) => { // ADD allProcessedTests here
+interface FloatingChatButtonProps {
+  user: User;
+  currentView: 'landing' | 'dashboard' | 'triple-review' | 'circuit-builder' | 'performance' | 'chat';
+  currentSession: TestSession | null;
+  currentQuestionData: ProcessedQuestion | null; // NEW PROP
+  allProcessedTests: { [key: string]: ProcessedPrepTest }; // ADD THIS LINE
+  messages: Message[]; // Prop for messages state, now passed from App.tsx
+  setMessages: React.Dispatch<React.SetStateAction<Message[]>>; // Prop for setMessages function, now passed from App.tsx
+}
+
+const FloatingChatButton: React.FC<FloatingChatButtonProps> = ({ user, currentView, currentSession, currentQuestionData, allProcessedTests, messages, setMessages }) => {
   const [isOpen, setIsOpen] = useState(false);
-  // State to hold conversation messages, now managed here
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: '1',
-      type: 'ai',
-      content: `Hi ${user.name}! I'm your LSAT analysis assistant. I'm here to help guide your thinking through circuits and logical reasoning, but I won't give you direct answers. What question are you working on?`,
-      timestamp: new Date()
-    }
-  ]);
+  // Removed local messages state, now using props from App.tsx
 
   // Determine if the chat should be disabled
   const isDisabled = currentView === 'triple-review' && currentSession?.phase === 'timed';
-
-  // NEW: Effect to close chat when a session starts - REMOVED
-  // useEffect(() => {
-  //   if (currentSession && isOpen) {
-  //     setIsOpen(false);
-  //   }
-  // }, [currentSession]); // Dependency on currentSession
 
   const toggleChat = () => {
     if (!isDisabled) {
@@ -81,8 +69,8 @@ const FloatingChatButton: React.FC<FloatingChatButtonProps> = ({ user, currentVi
             currentSession={currentSession}
             currentQuestionData={currentQuestionData}
             allProcessedTests={allProcessedTests}
-            messages={messages} // Pass messages state
-            setMessages={setMessages} // Pass setMessages function
+            messages={messages} // Pass messages state from props
+            setMessages={setMessages} // Pass setMessages function from props
           />
         )}
       </div>
@@ -91,4 +79,3 @@ const FloatingChatButton: React.FC<FloatingChatButtonProps> = ({ user, currentVi
 };
 
 export default FloatingChatButton;
-
