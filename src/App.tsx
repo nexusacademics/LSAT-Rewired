@@ -1,5 +1,5 @@
 // App.tsx
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 
 // Import custom hooks for separation of concerns
 import { useAuth } from './hooks/useAuth';
@@ -16,13 +16,13 @@ import Navigation from './components/Navigation';
 
 // Import types
 import type { TestSession } from './types/user';
-import type { ProcessedQuestion } from './types/test-data';
+import type { ProcessedQuestion, ProcessedPrepTest } from './types/test-data'; // Ensure ProcessedPrepTest is imported
 
 // Define view type
 type AppView = 'dashboard' | 'triple-review' | 'performance' | 'subscription';
 
 // Define Message interface for chat history
-interface Message {
+export interface Message { // Exported for use in FloatingChatButton
   id: string;
   type: 'user' | 'ai';
   content: string;
@@ -34,13 +34,12 @@ function App() {
   const [currentView, setCurrentView] = useState<AppView>('dashboard');
   // State to hold conversation messages, lifted to App.tsx
   const [messages, setMessages] = useState<Message[]>([]);
+  // NEW: State to control the chat bubble's open/closed state
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   // Custom hooks handle specific concerns
   const { user, supabaseUser, subscription, isLoading: authLoading } = useAuth();
   const { allProcessedTests, isLoading: dataLoading } = useTestData();
-
-  // ADD THIS LINE:
-  console.log('All Processed Tests in App.tsx:', allProcessedTests);
 
   const {
     userSessions,
@@ -77,18 +76,25 @@ function App() {
     setCurrentView('triple-review');
   };
 
-  const handleExitSession = () => {
+  // MODIFIED: handleExitSession to close chat and clear messages
+  const handleExitSession = useCallback(() => {
     exitSession();
     setCurrentView('dashboard');
-  };
+    setIsChatOpen(false); // Close the chat bubble
+    setMessages([]); // Clear chat messages
+  }, [exitSession]);
+
 
   if (isLoading) {
     return <LoadingSpinner />;
   }
 
+  // Ensure processedPrepTest is available for TripleReview
+  const processedPrepTest = currentSession ? allProcessedTests[currentSession.testId] : undefined;
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-      <Navigation 
+      <Navigation
         currentView={currentView}
         onViewChange={setCurrentView}
         userStats={user?.stats}
@@ -96,8 +102,8 @@ function App() {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {currentView === 'dashboard' && user && (
-          <Dashboard 
-            user={user} 
+          <Dashboard
+            user={user}
             userSessions={userSessions}
             onStartNewTestSession={handleStartNewSession}
             onResumeTestSession={handleResumeSession}
@@ -105,12 +111,12 @@ function App() {
           />
         )}
 
-        {currentView === 'triple-review' && currentSession && (
+        {currentView === 'triple-review' && currentSession && processedPrepTest && ( // Ensure processedPrepTest is defined
           <TripleReview
             session={currentSession}
             onUpdateSession={updateSession}
             onExitSession={handleExitSession}
-            processedPrepTest={allProcessedTests[currentSession.testId]}
+            processedPrepTest={processedPrepTest} // Pass the derived processedPrepTest
           />
         )}
 
@@ -128,6 +134,8 @@ function App() {
           allProcessedTests={allProcessedTests}
           messages={messages} // Pass messages state
           setMessages={setMessages} // Pass setMessages function
+          isOpen={isChatOpen} // NEW: Pass isOpen state
+          setIsOpen={setIsChatOpen} // NEW: Pass setIsOpen function
         />
       )}
     </div>
@@ -138,7 +146,7 @@ function App() {
 function useCurrentQuestionData(
   currentView: AppView,
   currentSession: TestSession | null,
-  allProcessedTests: { [key: string]: any }
+  allProcessedTests: { [key: string]: ProcessedPrepTest } // Use ProcessedPrepTest type
 ): ProcessedQuestion | null {
   if (currentView !== 'triple-review' || !currentSession) {
     return null;
@@ -151,7 +159,7 @@ function useCurrentQuestionData(
     ? currentTest.sections.find((sec: any) => sec.id === currentSession.selectedSectionId)
     : currentTest.sections[currentSession.currentSectionIndex];
 
-  if (!currentSection || currentSession.currentSectionIndex >= currentSection.questions.length) {
+  if (!currentSection || currentSession.currentQuestionIndex >= currentSection.questions.length) {
     return null;
   }
 
