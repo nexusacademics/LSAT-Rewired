@@ -36,6 +36,9 @@ function App() {
   const [messages, setMessages] = useState<Message[]>([]);
   // NEW: State to control the chat bubble's open/closed state
   const [isChatOpen, setIsChatOpen] = useState(false);
+  // NEW: State to track the last question AI focused on, lifted from AIChat
+  const [lastProcessedQuestionIdForChat, setLastProcessedQuestionIdForChat] = useState<string | null>(null);
+
 
   // Custom hooks handle specific concerns
   const { user, supabaseUser, subscription, isLoading: authLoading } = useAuth();
@@ -84,6 +87,7 @@ function App() {
     setCurrentView('dashboard');
     setIsChatOpen(false); // Close the chat bubble
     setMessages([]); // Clear chat messages
+    setLastProcessedQuestionIdForChat(null); // Reset chat context on session exit
   }, [exitSession]);
 
 
@@ -138,6 +142,8 @@ function App() {
           setMessages={setMessages} // Pass setMessages function
           isOpen={isChatOpen} // NEW: Pass isOpen state
           setIsOpen={setIsChatOpen} // NEW: Pass setIsOpen function
+          lastProcessedQuestionIdForChat={lastProcessedQuestionIdForChat} // NEW: Pass lifted state
+          setLastProcessedQuestionIdForChat={setLastProcessedQuestionIdForChat} // NEW: Pass lifted setter
         />
       )}
     </div>
