@@ -90,11 +90,12 @@ console.log('All question options (paginated):', allOptions);
         const rawOptionsForQuestion = optionsMap.get(questionIdString) || []; // Get the array of options for this question
         console.log(`Raw options array length for question ${questionIdString}:`, rawOptionsForQuestion.length); // ADD THIS LOG
 
-         // ADD THIS BLOCK: Detailed log for the problematic question
-        if (questionIdString === '9daad7b2-5df3-4aee-8beb-1970f2b03c7f') {
-          console.log(`DEBUG: Raw options for problematic question ${questionIdString}:`, rawOptionsForQuestion);
+      // MODIFIED BLOCK: Detailed log for any problematic question (not exactly 5 options)
+        if (rawOptionsForQuestion.length !== 5) { // Trigger if not exactly 5 options
+          console.log(`DEBUG: Problematic question ${questionIdString} has ${rawOptionsForQuestion.length} options.`);
+          console.log(`DEBUG: Raw options for question ${questionIdString}:`, rawOptionsForQuestion);
         }
-        // END ADDED BLOCK
+        // END MODIFIED BLOCK
         
         const processedOptions = rawOptionsForQuestion
           .sort((a, b) => a.optionOrder - b.optionOrder) // Ensure options are sorted
