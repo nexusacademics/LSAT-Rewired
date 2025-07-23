@@ -124,6 +124,7 @@ console.log('All question options (paginated):', allOptions);
         });
 
         // Step 4: Assemble final processed tests
+       const processed: { [key: string]: ProcessedPrepTest } = {};
         tests.forEach(t => {
           const processedSections = (sectionsMap.get(t.id) || []); // Removed sort here as per previous plan
 
