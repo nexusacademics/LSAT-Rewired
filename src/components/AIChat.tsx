@@ -2,15 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Send, Bot, User, Lightbulb, AlertCircle, ThumbsUp, ThumbsDown } from 'lucide-react';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import ReactMarkdown from 'react-markdown';
-import { User as UserType, ProcessedQuestion, TestSession, ProcessedPrepTest } from '../App'; // Import ProcessedPrepTest
-
-interface Message {
-  id: string;
-  type: 'user' | 'ai';
-  content: string;
-  timestamp: Date;
-  feedback?: 'helpful' | 'not-helpful';
-}
+import { User as UserType, ProcessedQuestion, TestSession, ProcessedPrepTest, Message } from '../App'; // Import Message from App
 
 interface AIChatProps {
   user: UserType;
@@ -23,9 +15,7 @@ interface AIChatProps {
   setMessages: React.Dispatch<React.SetStateAction<Message[]>>; // Prop for setMessages function
 }
 
-const AIChat: React.FC<AIChatProps> = ({ user, isChatDisabled = false, currentView, currentSession, currentQuestionData, allProcessedTests, messages, setMessages }) => { // ADD allProcessedTests here
-  // Reintroduced local messages state - REMOVED
-  // const [messages, setMessages] = useState<Message[]>([]); // Initialize as empty array
+const AIChat: React.FC<AIChatProps> = ({ user, isChatDisabled = false, currentView, currentSession, currentQuestionData, allProcessedTests, messages, setMessages }) => {
   const [inputMessage, setInputMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
