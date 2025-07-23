@@ -15,6 +15,9 @@ interface FloatingChatButtonProps {
   // NEW: Props to control the open/closed state from parent
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  // NEW: Props for lifted chat context state
+  lastProcessedQuestionIdForChat: string | null;
+  setLastProcessedQuestionIdForChat: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
 const FloatingChatButton: React.FC<FloatingChatButtonProps> = ({
@@ -26,7 +29,9 @@ const FloatingChatButton: React.FC<FloatingChatButtonProps> = ({
   messages,
   setMessages,
   isOpen, // Destructure isOpen from props
-  setIsOpen // Destructure setIsOpen from props
+  setIsOpen, // Destructure setIsOpen from props
+  lastProcessedQuestionIdForChat, // NEW: Destructure lifted state
+  setLastProcessedQuestionIdForChat // NEW: Destructure lifted setter
 }) => {
   // Determine if the chat should be disabled
   const isDisabled = currentView === 'triple-review' && currentSession?.phase === 'timed';
@@ -73,6 +78,9 @@ const FloatingChatButton: React.FC<FloatingChatButtonProps> = ({
             allProcessedTests={allProcessedTests}
             messages={messages}
             setMessages={setMessages}
+            isOpen={isOpen} // Pass isOpen to AIChat
+            lastProcessedQuestionIdForChat={lastProcessedQuestionIdForChat} // NEW: Pass lifted state
+            setLastProcessedQuestionIdForChat={setLastProcessedQuestionIdForChat} // NEW: Pass lifted setter
           />
         )}
       </div>
