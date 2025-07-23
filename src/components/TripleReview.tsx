@@ -18,7 +18,7 @@ const TripleReview: React.FC<TripleReviewProps> = ({
 }) => {
   const [isTimerRunning, setIsTimerRunning] = useState(session.phase === 'timed');
   const [timeRemaining, setTimeRemaining] = useState(35 * 60);
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  // Removed local currentQuestionIndex state, now using session.currentQuestionIndex
   const [showSectionTransition, setShowSectionTransition] = useState(false);
   const [showEndSectionWarning, setShowEndSectionWarning] = useState(false); // This state will no longer be used
   const [greyedOutOptions, setGreyedOutOptions] = useState<{[questionId: string]: number[]}>({});
@@ -34,7 +34,8 @@ const TripleReview: React.FC<TripleReviewProps> = ({
   const currentSectionData = currentSections[session.currentSectionIndex];
   const questionsInCurrentSection = currentSectionData?.questions || [];
 
-  const currentQuestionData = questionsInCurrentSection[currentQuestionIndex];
+  // Use session.currentQuestionIndex to get the current question data
+  const currentQuestionData = questionsInCurrentSection[session.currentQuestionIndex];
 
  
 
@@ -140,21 +141,21 @@ const TripleReview: React.FC<TripleReviewProps> = ({
   };
 
   const handleNextQuestion = () => {
-    if (currentQuestionIndex < questionsInCurrentSection.length - 1) {
-      setCurrentQuestionIndex(prev => prev + 1);
+    if (session.currentQuestionIndex < questionsInCurrentSection.length - 1) {
+      onUpdateSession({ ...session, currentQuestionIndex: session.currentQuestionIndex + 1 });
       scrollToTop();
     }
   };
 
   const handlePreviousQuestion = () => {
-    if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex(prev => prev - 1);
+    if (session.currentQuestionIndex > 0) {
+      onUpdateSession({ ...session, currentQuestionIndex: session.currentQuestionIndex - 1 });
       scrollToTop();
     }
   };
 
   const handleQuestionJump = (index: number) => {
-    setCurrentQuestionIndex(index);
+    onUpdateSession({ ...session, currentQuestionIndex: index });
     scrollToTop();
   };
 
@@ -244,9 +245,9 @@ const TripleReview: React.FC<TripleReviewProps> = ({
       onUpdateSession({
         ...updatedSession,
         currentSectionIndex: nextSectionIndex,
+        currentQuestionIndex: 0, // Reset question index for the new section
         completedSectionIds: updatedCompletedSectionIds,
       });
-      setCurrentQuestionIndex(0);
       setShowSectionTransition(false);
       scrollToTop();
     } else {
@@ -274,7 +275,7 @@ const TripleReview: React.FC<TripleReviewProps> = ({
   //   onExitSession();
   // };
 
-  const isLastQuestionOfSection = currentQuestionIndex === questionsInCurrentSection.length - 1;
+  const isLastQuestionOfSection = session.currentQuestionIndex === questionsInCurrentSection.length - 1;
   const isLastSection = session.currentSectionIndex === currentSections.length - 1;
 
   if (!currentQuestionData) {
@@ -423,7 +424,7 @@ const TripleReview: React.FC<TripleReviewProps> = ({
                 {getPhaseTitle(session.phase)}
               </h1>
               <p className="text-slate-600">
-                {formattedSectionDisplay} • Question {currentQuestionIndex + 1} of {questionsInCurrentSection.length}
+                {formattedSectionDisplay} • Question {session.currentQuestionIndex + 1} of {questionsInCurrentSection.length}
               </p>
             </div>
           </div>
@@ -487,7 +488,7 @@ const TripleReview: React.FC<TripleReviewProps> = ({
             <div className="flex space-x-1">
               <button
                 onClick={handlePreviousQuestion}
-                disabled={currentQuestionIndex === 0}
+                disabled={session.currentQuestionIndex === 0}
                 className="px-4 py-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Previous
@@ -871,7 +872,7 @@ const TripleReview: React.FC<TripleReviewProps> = ({
       <div className="bg-white shadow-lg border-t border-slate-200 p-4">
         <div className="max-w-7xl mx-auto flex flex-wrap justify-center gap-2">
           {questionsInCurrentSection.map((q, index) => {
-            const isCurrent = index === currentQuestionIndex;
+            const isCurrent = index === session.currentQuestionIndex; // Use session.currentQuestionIndex
             const isAnswered = session.answeredQuestions.hasOwnProperty(q.id);
             const isFlagged = session.flaggedQuestions.includes(q.id);
 
@@ -909,4 +910,3 @@ const TripleReview: React.FC<TripleReviewProps> = ({
 };
 
 export default TripleReview;
-
