@@ -19,11 +19,13 @@ interface AIChatProps {
   currentSession: TestSession | null;
   currentQuestionData: ProcessedQuestion | null; // NEW PROP
   allProcessedTests: { [key: string]: ProcessedPrepTest }; // ADD THIS LINE
+  messages: Message[]; // Prop for messages state
+  setMessages: React.Dispatch<React.SetStateAction<Message[]>>; // Prop for setMessages function
 }
 
-const AIChat: React.FC<AIChatProps> = ({ user, isChatDisabled = false, currentView, currentSession, currentQuestionData, allProcessedTests }) => { // ADD allProcessedTests here
-  // Reintroduced local messages state
-  const [messages, setMessages] = useState<Message[]>([]); // Initialize as empty array
+const AIChat: React.FC<AIChatProps> = ({ user, isChatDisabled = false, currentView, currentSession, currentQuestionData, allProcessedTests, messages, setMessages }) => { // ADD allProcessedTests here
+  // Reintroduced local messages state - REMOVED
+  // const [messages, setMessages] = useState<Message[]>([]); // Initialize as empty array
   const [inputMessage, setInputMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
@@ -69,33 +71,10 @@ const AIChat: React.FC<AIChatProps> = ({ user, isChatDisabled = false, currentVi
     return `Question ${questionId}`; // Fallback if not found
   };
 
-  // NEW: Effect to reset chat context when currentQuestionData changes
+  // NEW: Effect to manage chat context when currentQuestionData changes or view changes
   useEffect(() => {
-    if (currentView === 'triple-review' && currentQuestionData && currentQuestionData.id !== lastProcessedQuestionId) {
-      const questionRef = getQuestionReference(currentQuestionData.id);
-      // User moved to a new question within TripleReview
-      setMessages([
-        {
-          id: 'new-question-intro',
-          type: 'ai',
-          content: `Okay, let's focus on ${questionRef}. What are your initial thoughts on the passage or question stem?`,
-          timestamp: new Date()
-        }
-      ]);
-      setLastProcessedQuestionId(currentQuestionData.id);
-    } else if (currentView !== 'triple-review' && lastProcessedQuestionId !== null) {
-      // User navigated away from a question (e.g., to dashboard)
-      setMessages([
-        {
-          id: 'general-intro',
-          type: 'ai',
-          content: `Hi ${user.name}! I'm your LSAT analysis assistant. I'm here to help guide your thinking through circuits and logical reasoning, but I won't give you direct answers. What question are you working on?`,
-          timestamp: new Date()
-        }
-      ]);
-      setLastProcessedQuestionId(null);
-    } else if (messages.length === 0 && currentView !== 'triple-review') {
-      // Initial load when not in triple review
+    // Only add initial message if messages array is empty
+    if (messages.length === 0) {
       setMessages([
         {
           id: 'initial-load-general',
@@ -104,20 +83,28 @@ const AIChat: React.FC<AIChatProps> = ({ user, isChatDisabled = false, currentVi
           timestamp: new Date()
         }
       ]);
-    } else if (messages.length === 0 && currentView === 'triple-review' && currentQuestionData) {
+    }
+
+    // Handle question change within TripleReview
+    if (currentView === 'triple-review' && currentQuestionData && currentQuestionData.id !== lastProcessedQuestionId) {
       const questionRef = getQuestionReference(currentQuestionData.id);
-      // Initial load when already in triple review on a question
-      setMessages([
+      // User moved to a new question within TripleReview
+      setMessages(prev => [
+        ...prev,
         {
-          id: 'initial-load-question',
+          id: `new-question-intro-${Date.now()}`,
           type: 'ai',
-          content: `Hi ${user.name}! I'm your LSAT analysis assistant. Let's focus on ${questionRef}. What are your initial thoughts on the passage or question stem?`,
+          content: `I see you've moved on to ${questionRef}. What are your initial thoughts on the passage or question stem?`,
           timestamp: new Date()
         }
       ]);
       setLastProcessedQuestionId(currentQuestionData.id);
+    } else if (currentView !== 'triple-review' && lastProcessedQuestionId !== null) {
+      // User navigated away from a question (e.g., to dashboard)
+      // Reset lastProcessedQuestionId to null when not in triple-review
+      setLastProcessedQuestionId(null);
     }
-  }, [currentQuestionData, currentView, user.name, currentSession, allProcessedTests]); // Dependencies for this effect
+  }, [currentQuestionData, currentView, user.name, currentSession, allProcessedTests, messages.length]); // Dependencies for this effect
 
   const handleSendMessage = async () => {
     if (!inputMessage.trim()) return;
