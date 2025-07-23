@@ -1,25 +1,28 @@
 // App.tsx
-import React, { useState, useEffect, useCallback } from 'react';
-import { createRoot } from 'react-dom/client'; // Import createRoot
-import { supabase } from './lib/supabase'; // Ensure supabase is imported
+import React, { useState } from 'react';
+
+// Import custom hooks for separation of concerns
 import { useAuth } from './hooks/useAuth';
 import { useTestData } from './hooks/useTestData';
 import { useTestSessions } from './hooks/useTestSessions';
-import { processRawPrepTest } from './utils/dataProcessing'; // Import the processing function
 
-// Components
-import LoadingSpinner from './components/LoadingSpinner';
-import Navigation from './components/Navigation';
+// Import components
 import Dashboard from './components/Dashboard';
 import TripleReview from './components/TripleReview';
 import PerformanceTracker from './components/PerformanceTracker';
-import FloatingChatButton from './components/FloatingChatButton'; // Import FloatingChatButton
+import FloatingChatButton from './components/FloatingChatButton';
+import LoadingSpinner from './components/LoadingSpinner';
+import Navigation from './components/Navigation';
 
-// Types
-import type { User, TestSession, ProcessedPrepTest, ProcessedSection, ProcessedQuestion } from './types/user'; // Import all necessary types
+// Import types
+import type { TestSession } from './types/user';
+import type { ProcessedQuestion } from './types/test-data';
+
+// Define view type
+type AppView = 'dashboard' | 'triple-review' | 'performance' | 'subscription';
 
 // Define Message interface for chat history
-export interface Message {
+interface Message {
   id: string;
   type: 'user' | 'ai';
   content: string;
@@ -27,14 +30,18 @@ export interface Message {
   feedback?: 'helpful' | 'not-helpful';
 }
 
-// Re-export types from user.ts for convenience in other files
-export type { User, TestSession, ProcessedPrepTest, ProcessedSection, ProcessedQuestion };
-
-type AppView = 'dashboard' | 'triple-review' | 'performance' | 'subscription';
-
 function App() {
-  const { user, isLoading: isAuthLoading, subscription } = useAuth();
-  const { allProcessedTests, isLoading: isTestDataLoading } = useTestData();
+  const [currentView, setCurrentView] = useState<AppView>('dashboard');
+  // State to hold conversation messages, lifted to App.tsx
+  const [messages, setMessages] = useState<Message[]>([]);
+
+  // Custom hooks handle specific concerns
+  const { user, supabaseUser, subscription, isLoading: authLoading } = useAuth();
+  const { allProcessedTests, isLoading: dataLoading } = useTestData();
+
+  // ADD THIS LINE:
+  console.log('All Processed Tests in App.tsx:', allProcessedTests);
+
   const {
     userSessions,
     currentSession,
@@ -44,85 +51,71 @@ function App() {
     exitSession
   } = useTestSessions(user);
 
-  const [currentView, setCurrentView] = useState<AppView>('dashboard');
-  const [messages, setMessages] = useState<Message[]>([]); // State for chat messages
-  const [isChatOpen, setIsChatOpen] = useState(false); // NEW: State to control chat bubble visibility
+  const isLoading = authLoading || dataLoading;
 
-  // Determine current question data for AI Chat context
-  const currentQuestionData: ProcessedQuestion | null = currentSession
-    ? allProcessedTests[currentSession.testId]?.sections
-        .find(section => section.id === (currentSession.selectedSectionId || allProcessedTests[currentSession.testId].sections[currentSession.currentSectionIndex]?.id))
-        ?.questions[currentSession.currentQuestionIndex] || null
-    : null;
+  // Derive current question data for chat
+  const currentQuestionDataForChat = useCurrentQuestionData(
+    currentView,
+    currentSession,
+    allProcessedTests
+  );
 
-  // Handle view changes
-  const handleViewChange = useCallback((view: AppView) => {
-    setCurrentView(view);
-    // Close chat when navigating away from Triple Review or Circuit Builder
-    if (view !== 'triple-review' && view !== 'circuit-builder') {
-      setIsChatOpen(false);
-    }
-  }, []);
+  // Event handlers
+  const handleStartNewSession = (
+    testId: string,
+    phase: 'timed' | 'blind-review' | 'strategy-review',
+    timeMode?: 'regular' | '1.5x' | '2x' | 'custom' | 'untimed',
+    customTimeMinutes?: number,
+    selectedSectionId?: string
+  ) => {
+    startNewTestSession(testId, phase, timeMode, customTimeMinutes, selectedSectionId);
+    setCurrentView('triple-review');
+  };
 
-  // Override exitSession to also close the chat bubble
-  const handleExitSession = useCallback(() => {
+  const handleResumeSession = (sessionId: string, targetPhase?: 'blind-review' | 'strategy-review') => {
+    resumeTestSession(sessionId, targetPhase);
+    setCurrentView('triple-review');
+  };
+
+  const handleExitSession = () => {
     exitSession();
     setCurrentView('dashboard');
-    setIsChatOpen(false); // NEW: Close chat bubble when exiting session
-    setMessages([]); // Clear chat messages when exiting a session
-  }, [exitSession]);
+  };
 
-  if (isAuthLoading || isTestDataLoading) {
+  if (isLoading) {
     return <LoadingSpinner />;
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col">
-      <Navigation
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+      <Navigation 
         currentView={currentView}
-        onViewChange={handleViewChange}
+        onViewChange={setCurrentView}
         userStats={user?.stats}
       />
 
-      <main className="flex-1 p-6">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {currentView === 'dashboard' && user && (
-          <Dashboard
-            user={user}
+          <Dashboard 
+            user={user} 
             userSessions={userSessions}
-            onStartNewTestSession={startNewTestSession}
-            onResumeTestSession={resumeTestSession}
+            onStartNewTestSession={handleStartNewSession}
+            onResumeTestSession={handleResumeSession}
             allProcessedTests={allProcessedTests}
           />
         )}
 
-        {currentView === 'triple-review' && currentSession && processedPrepTest && (
+        {currentView === 'triple-review' && currentSession && (
           <TripleReview
             session={currentSession}
             onUpdateSession={updateSession}
-            onExitSession={handleExitSession} // Use the wrapped exit session
-            processedPrepTest={processedPrepTest}
+            onExitSession={handleExitSession}
+            processedPrepTest={allProcessedTests[currentSession.testId]}
           />
         )}
 
         {currentView === 'performance' && user && (
           <PerformanceTracker user={user} />
-        )}
-
-        {currentView === 'subscription' && (
-          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
-            <h1 className="text-3xl font-bold text-slate-900 mb-4">Subscription Status</h1>
-            {subscription ? (
-              <p className="text-slate-700">
-                Your current subscription status is: <span className="font-semibold">{subscription.subscription_status}</span>
-                {subscription.price_id && ` (Price ID: ${subscription.price_id})`}
-              </p>
-            ) : (
-              <p className="text-slate-700">You do not have an active subscription.</p>
-            )}
-            <p className="text-slate-600 mt-4">
-              Manage your subscription through your Stripe customer portal or contact support.
-            </p>
-          </div>
         )}
       </main>
 
@@ -131,16 +124,38 @@ function App() {
           user={user}
           currentView={currentView}
           currentSession={currentSession}
-          currentQuestionData={currentQuestionData}
+          currentQuestionData={currentQuestionDataForChat}
           allProcessedTests={allProcessedTests}
-          messages={messages}
-          setMessages={setMessages}
-          isOpen={isChatOpen} // NEW: Pass isOpen state
-          setIsOpen={setIsChatOpen} // NEW: Pass setIsOpen setter
+          messages={messages} // Pass messages state
+          setMessages={setMessages} // Pass setMessages function
         />
       )}
     </div>
   );
+}
+
+// Custom hook to derive current question data
+function useCurrentQuestionData(
+  currentView: AppView,
+  currentSession: TestSession | null,
+  allProcessedTests: { [key: string]: any }
+): ProcessedQuestion | null {
+  if (currentView !== 'triple-review' || !currentSession) {
+    return null;
+  }
+
+  const currentTest = allProcessedTests[currentSession.testId];
+  if (!currentTest) return null;
+
+  const currentSection = currentSession.selectedSectionId
+    ? currentTest.sections.find((sec: any) => sec.id === currentSession.selectedSectionId)
+    : currentTest.sections[currentSession.currentSectionIndex];
+
+  if (!currentSection || currentSession.currentSectionIndex >= currentSection.questions.length) {
+    return null;
+  }
+
+  return currentSection.questions[currentSession.currentQuestionIndex]; // Corrected to use currentQuestionIndex
 }
 
 export default App;
