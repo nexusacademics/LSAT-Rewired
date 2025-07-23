@@ -34,12 +34,12 @@ const FloatingChatButton: React.FC<FloatingChatButtonProps> = ({ user, currentVi
   // Determine if the chat should be disabled
   const isDisabled = currentView === 'triple-review' && currentSession?.phase === 'timed';
 
-  // NEW: Effect to close chat when a session starts
-  useEffect(() => {
-    if (currentSession && isOpen) {
-      setIsOpen(false);
-    }
-  }, [currentSession]); // Dependency on currentSession
+  // NEW: Effect to close chat when a session starts - REMOVED
+  // useEffect(() => {
+  //   if (currentSession && isOpen) {
+  //     setIsOpen(false);
+  //   }
+  // }, [currentSession]); // Dependency on currentSession
 
   const toggleChat = () => {
     if (!isDisabled) {
@@ -91,3 +91,4 @@ const FloatingChatButton: React.FC<FloatingChatButtonProps> = ({ user, currentVi
 };
 
 export default FloatingChatButton;
+
