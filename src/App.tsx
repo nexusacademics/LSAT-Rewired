@@ -69,6 +69,7 @@ function App() {
   ) => {
     startNewTestSession(testId, phase, timeMode, customTimeMinutes, selectedSectionId);
     setCurrentView('triple-review');
+    setIsChatOpen(false); // NEW: Close the chat bubble when starting a new session
   };
 
   const handleResumeSession = (sessionId: string, targetPhase?: 'blind-review' | 'strategy-review') => {
