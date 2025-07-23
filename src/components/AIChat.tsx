@@ -23,19 +23,13 @@ interface AIChatProps {
 
 const AIChat: React.FC<AIChatProps> = ({ user, isChatDisabled = false, currentView, currentSession, currentQuestionData }) => {
   // Reintroduced local messages state
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: '1',
-      type: 'ai',
-      content: `Hi ${user.name}! I'm your LSAT analysis assistant. I'm here to help guide your thinking through circuits and logical reasoning, but I won't give you direct answers. What question are you working on?`,
-      timestamp: new Date()
-    }
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]); // Initialize as empty array
   const [inputMessage, setInputMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null); // NEW: Ref for the textarea
+  const [lastProcessedQuestionId, setLastProcessedQuestionId] = useState<string | null>(null); // Track the last question AI focused on
 
   // Initialize Gemini AI
   const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY || '');
@@ -56,6 +50,54 @@ const AIChat: React.FC<AIChatProps> = ({ user, isChatDisabled = false, currentVi
       textareaRef.current.style.height = textareaRef.current.scrollHeight + 'px';
     }
   }, [inputMessage]);
+
+  // NEW: Effect to reset chat context when currentQuestionData changes
+  useEffect(() => {
+    if (currentView === 'triple-review' && currentQuestionData && currentQuestionData.id !== lastProcessedQuestionId) {
+      // User moved to a new question within TripleReview
+      setMessages([
+        {
+          id: 'new-question-intro',
+          type: 'ai',
+          content: `Okay, let's focus on Question ${currentQuestionData.id}. What are your initial thoughts on the passage or question stem?`,
+          timestamp: new Date()
+        }
+      ]);
+      setLastProcessedQuestionId(currentQuestionData.id);
+    } else if (currentView !== 'triple-review' && lastProcessedQuestionId !== null) {
+      // User navigated away from a question (e.g., to dashboard)
+      setMessages([
+        {
+          id: 'general-intro',
+          type: 'ai',
+          content: `Hi ${user.name}! I'm your LSAT analysis assistant. I'm here to help guide your thinking through circuits and logical reasoning, but I won't give you direct answers. What question are you working on?`,
+          timestamp: new Date()
+        }
+      ]);
+      setLastProcessedQuestionId(null);
+    } else if (messages.length === 0 && currentView !== 'triple-review') {
+      // Initial load when not in triple review
+      setMessages([
+        {
+          id: 'initial-load-general',
+          type: 'ai',
+          content: `Hi ${user.name}! I'm your LSAT analysis assistant. I'm here to help guide your thinking through circuits and logical reasoning, but I won't give you direct answers. What question are you working on?`,
+          timestamp: new Date()
+        }
+      ]);
+    } else if (messages.length === 0 && currentView === 'triple-review' && currentQuestionData) {
+      // Initial load when already in triple review on a question
+      setMessages([
+        {
+          id: 'initial-load-question',
+          type: 'ai',
+          content: `Hi ${user.name}! I'm your LSAT analysis assistant. Let's focus on Question ${currentQuestionData.id}. What are your initial thoughts on the passage or question stem?`,
+          timestamp: new Date()
+        }
+      ]);
+      setLastProcessedQuestionId(currentQuestionData.id);
+    }
+  }, [currentQuestionData, currentView, user.name]); // Dependencies for this effect
 
   const handleSendMessage = async () => {
     if (!inputMessage.trim()) return;
@@ -356,7 +398,7 @@ Goldilocks Principle: The correct assumption is just strong enough to make the r
                   handleSendMessage();
                 }
               }}
-              placeholder="Talk to me here..."
+              placeholder="Ask about argument structure, circuit building, or analysis techniques..."
               className="w-full px-3 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 pr-10 text-sm resize-none overflow-hidden min-h-[42px]" // Added resize-none, overflow-hidden, min-h
               disabled={isChatDisabled} // Disable input when chat is disabled
               rows={1} // Start with 1 row
