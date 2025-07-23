@@ -83,7 +83,6 @@ console.log('All question options (paginated):', allOptions);
       });
       console.log('Final optionsMap:', optionsMap);
 
-      // Step 2: Map questions to sections
      // Step 2: Map questions to sections
       const questionsMap = new Map<string, ProcessedQuestion[]>();
       questions.forEach(q => {
@@ -91,6 +90,12 @@ console.log('All question options (paginated):', allOptions);
         const rawOptionsForQuestion = optionsMap.get(questionIdString) || []; // Get the array of options for this question
         console.log(`Raw options array length for question ${questionIdString}:`, rawOptionsForQuestion.length); // ADD THIS LOG
 
+         // ADD THIS BLOCK: Detailed log for the problematic question
+        if (questionIdString === '9daad7b2-5df3-4aee-8beb-1970f2b03c7f') {
+          console.log(`DEBUG: Raw options for problematic question ${questionIdString}:`, rawOptionsForQuestion);
+        }
+        // END ADDED BLOCK
+        
         const processedOptions = rawOptionsForQuestion
           .sort((a, b) => a.optionOrder - b.optionOrder) // Ensure options are sorted
           .map(opt => opt.optionText);
