@@ -289,10 +289,12 @@ const TripleReview: React.FC<TripleReviewProps> = ({
       />
 
       {/* Floating Circuit Builder Button */}
-     <FloatingCircuitBuilderButton
+    <FloatingCircuitBuilderButton
   session={session}
-  onOpenCircuitBuilder={() => setShowCircuitBuilder(true)}
+  isOpen={showCircuitBuilder}
+  onToggle={() => setShowCircuitBuilder(prev => !prev)}
 />
+
 
 
       
