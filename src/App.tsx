@@ -17,7 +17,7 @@ import Navigation from './components/Navigation';
 // Import types
 import type { TestSession } from './types/user';
 import type { ProcessedQuestion, ProcessedPrepTest } from './types/test-data'; // Ensure ProcessedPrepTest is imported
-import { ThemeProvider } from './contexts/ThemeContext'; // Import ThemeProvider
+import { ThemeProvider, useTheme } from './contexts/ThemeContext'; // Import ThemeProvider and useTheme
 
 // Define view type
 type AppView = 'dashboard' | 'triple-review' | 'performance' | 'subscription';
@@ -31,7 +31,9 @@ export interface Message { // Exported for use in FloatingChatButton
   feedback?: 'helpful' | 'not-helpful';
 }
 
-function App() {
+// Main App Content Component (needs to be inside ThemeProvider)
+function AppContent() {
+  const { theme } = useTheme(); // Now we can use the theme hook
   const [currentView, setCurrentView] = useState<AppView>('dashboard');
   // State to hold conversation messages, lifted to App.tsx
   const [messages, setMessages] = useState<Message[]>([]);
@@ -41,7 +43,6 @@ function App() {
   const [lastProcessedQuestionIdForChat, setLastProcessedQuestionIdForChat] = useState<{ questionId: string, phase: string } | null>(null);
   // NEW: State to track if the initial chat welcome message has been sent
   const [hasInitialChatWelcomeBeenSent, setHasInitialChatWelcomeBeenSent] = useState(false);
-
 
   // Custom hooks handle specific concerns
   const { user, supabaseUser, subscription, isLoading: authLoading } = useAuth();
@@ -94,75 +95,79 @@ function App() {
     setHasInitialChatWelcomeBeenSent(false); // Reset initial welcome message flag
   }, [exitSession]);
 
-
   if (isLoading) {
     return <LoadingSpinner />;
   }
 
   // Ensure processedPrepTest is available for TripleReview
   const processedPrepTest = currentSession ? allProcessedTests[currentSession.testId] : undefined;
-import { useTheme } from './contexts/ThemeContext'; // Make sure this import exists
 
-function App() {
-  const { theme } = useTheme();
+  // Dynamic background classes based on theme
+  const backgroundClasses = theme === 'dark' 
+    ? 'bg-gray-900' 
+    : 'bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100';
+
   return (
-  <ThemeProvider>
-  <div className="app">
-    <div className={`min-h-screen transition-all duration-500 ${
-      theme === 'dark' 
-        ? 'bg-gray-900' 
-        : 'bg-gradient-to-br from-slate-50 to-blue-50'
-    }`}>
-      <Navigation
-        currentView={currentView}
-        onViewChange={setCurrentView}
-        userStats={user?.stats}
-      />
-
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {currentView === 'dashboard' && user && (
-          <Dashboard
-            user={user}
-            userSessions={userSessions}
-            onStartNewTestSession={handleStartNewSession}
-            onResumeTestSession={handleResumeSession}
-            allProcessedTests={allProcessedTests}
-          />
-        )}
-
-        {currentView === 'triple-review' && currentSession && processedPrepTest && ( // Ensure processedPrepTest is defined
-          <TripleReview
-            session={currentSession}
-            onUpdateSession={updateSession}
-            onExitSession={handleExitSession}
-            processedPrepTest={processedPrepTest} // Pass the derived processedPrepTest
-          />
-        )}
-
-        {currentView === 'performance' && user && (
-          <PerformanceTracker user={user} />
-        )}
-      </main>
-
-      {user && (
-        <FloatingChatButton
-          user={user}
+    <div className="app">
+      <div className={`min-h-screen transition-all duration-500 ${backgroundClasses}`}>
+        <Navigation
           currentView={currentView}
-          currentSession={currentSession}
-          currentQuestionData={currentQuestionDataForChat}
-          allProcessedTests={allProcessedTests}
-          messages={messages} // Pass messages state
-          setMessages={setMessages} // Pass setMessages function
-          isOpen={isChatOpen} // NEW: Pass isOpen state
-          setIsOpen={setIsChatOpen} // NEW: Pass setIsOpen function
-          lastProcessedQuestionIdForChat={lastProcessedQuestionIdForChat} // NEW: Pass lifted state
-          setLastProcessedQuestionIdForChat={setLastProcessedQuestionIdForChat} // NEW: Pass lifted setter
-          hasInitialChatWelcomeBeenSent={hasInitialChatWelcomeBeenSent} // NEW: Pass lifted state
-          setHasInitialChatWelcomeBeenSent={setHasInitialChatWelcomeBeenSent} // NEW: Pass lifted setter
+          onViewChange={setCurrentView}
+          userStats={user?.stats}
         />
-      )}
+
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          {currentView === 'dashboard' && user && (
+            <Dashboard
+              user={user}
+              userSessions={userSessions}
+              onStartNewTestSession={handleStartNewSession}
+              onResumeTestSession={handleResumeSession}
+              allProcessedTests={allProcessedTests}
+            />
+          )}
+
+          {currentView === 'triple-review' && currentSession && processedPrepTest && ( // Ensure processedPrepTest is defined
+            <TripleReview
+              session={currentSession}
+              onUpdateSession={updateSession}
+              onExitSession={handleExitSession}
+              processedPrepTest={processedPrepTest} // Pass the derived processedPrepTest
+            />
+          )}
+
+          {currentView === 'performance' && user && (
+            <PerformanceTracker user={user} />
+          )}
+        </main>
+
+        {user && (
+          <FloatingChatButton
+            user={user}
+            currentView={currentView}
+            currentSession={currentSession}
+            currentQuestionData={currentQuestionDataForChat}
+            allProcessedTests={allProcessedTests}
+            messages={messages} // Pass messages state
+            setMessages={setMessages} // Pass setMessages function
+            isOpen={isChatOpen} // NEW: Pass isOpen state
+            setIsOpen={setIsChatOpen} // NEW: Pass setIsOpen function
+            lastProcessedQuestionIdForChat={lastProcessedQuestionIdForChat} // NEW: Pass lifted state
+            setLastProcessedQuestionIdForChat={setLastProcessedQuestionIdForChat} // NEW: Pass lifted setter
+            hasInitialChatWelcomeBeenSent={hasInitialChatWelcomeBeenSent} // NEW: Pass lifted state
+            setHasInitialChatWelcomeBeenSent={setHasInitialChatWelcomeBeenSent} // NEW: Pass lifted setter
+          />
+        )}
+      </div>
     </div>
-  </div>
+  );
+}
+
+// Main App Component (wraps with ThemeProvider)
+function App() {
+  return (
+    <ThemeProvider>
+      <AppContent />
     </ThemeProvider>
   );
 }
@@ -190,4 +195,5 @@ function useCurrentQuestionData(
 
   return currentSection.questions[currentSession.currentQuestionIndex]; // Corrected to use currentQuestionIndex
 }
+
 export default App;
