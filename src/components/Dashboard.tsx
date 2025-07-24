@@ -16,7 +16,7 @@ interface DashboardProps {
   userSessions: TestSession[];
   onStartNewTestSession: (testId: string, phase: 'timed' | 'blind-review' | 'strategy-review', timeMode?: 'regular' | '1.5x' | '2x' | 'custom' | 'untimed', customTimeMinutes?: number, selectedSectionId?: string) => void;
   onResumeTestSession: (sessionId: string, targetPhase?: 'blind-review' | 'strategy-review') => void;
-  allProcessedTests: { [key: string]: ProcessedPrepTest };
+  allProcessedTests: Record<string, ProcessedPrepTest>; // CHANGE THIS LINE
 }
 
 const Dashboard: React.FC<DashboardProps> = ({ 
