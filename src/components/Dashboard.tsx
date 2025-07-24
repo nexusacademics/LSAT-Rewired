@@ -16,7 +16,7 @@ interface DashboardProps {
   userSessions: TestSession[];
   onStartNewTestSession: (testId: string, phase: 'timed' | 'blind-review' | 'strategy-review', timeMode?: 'regular' | '1.5x' | '2x' | 'custom' | 'untimed', customTimeMinutes?: number, selectedSectionId?: string) => void;
   onResumeTestSession: (sessionId: string, targetPhase?: 'blind-review' | 'strategy-review') => void;
-  allProcessedTests: Record<string, ProcessedPrepTest>; // CHANGE THIS LINE
+  allProcessedTests: { [key: string]: ProcessedPrepTest };
 }
 
 const Dashboard: React.FC<DashboardProps> = ({ 
@@ -491,7 +491,9 @@ const Dashboard: React.FC<DashboardProps> = ({
                     {[...Array(7)].map((_, i) => (
                       <div 
                         key={i} 
-                        className={`h-10 w-10 rounded-xl bg-gradient-to-br from-orange-500 to-red-500 shadow-lg transform hover:scale-110 transition-transform ${theme === 'dark' ? 'border border-orange-400/30' : ''}`}
+                        className={`h-10 w-10 rounded-xl bg-gradient-to-br from-orange-500 to-red-500 shadow-lg transform hover:scale-110 transition-transform ${
+                          theme === 'dark' ? 'border border-orange-400/30' : ''
+                        }`}
                       />
                     ))}
                   </div>
