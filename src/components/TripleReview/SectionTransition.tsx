@@ -34,7 +34,7 @@ export const SectionTransition: React.FC<SectionTransitionProps> = ({
     <>
       You have completed Section {session.currentSectionIndex + 1}. Are you ready to move on to the next section?
       <br /><br />
-      (You will not be permitted to come back to this section once you move on.)
+      NOTE: You will not be permitted to come back to this section once you move on.
     </>
   )}
 </p>
