@@ -15,6 +15,7 @@ interface NavigationProps {
 }
 
 export default function Navigation({ currentView, onViewChange, userStats }: NavigationProps) {
+    if (currentView === 'triple-review') return null;
   const { theme } = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
   const drawerRef = useRef<HTMLDivElement>(null);
