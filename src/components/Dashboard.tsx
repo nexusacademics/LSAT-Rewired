@@ -26,8 +26,7 @@ const Dashboard: React.FC<DashboardProps> = ({
   onResumeTestSession, 
   allProcessedTests 
 }) => {
-  // Fixed the state setter name to be consistent
-  const [isTimeModeModalOpen, setIsTimeModeModalOpen] = useState(false);
+  const [isTimeModeModalOpen, setIsTimeModeModal] = useState(false);
   const { theme } = useTheme();
   
   // Filter user sessions into categories (keeping your existing logic)
@@ -52,7 +51,7 @@ const Dashboard: React.FC<DashboardProps> = ({
   };
 
   const handleStartNewSessionClick = () => {
-    setIsTimeModeModalOpen(true);
+    setIsTimeModeModal(true);
   };
 
   const handleTimeModeSelected = (testId: string, timeMode: 'regular' | '1.5x' | '2x' | 'custom' | 'untimed', customTimeMinutes?: number, selectedSectionId?: string) => {
@@ -507,7 +506,7 @@ const Dashboard: React.FC<DashboardProps> = ({
         {/* Time Mode Selection Modal */}
         <TimeModeSelectionModal
           isOpen={isTimeModeModalOpen}
-          onClose={() => setIsTimeModeModalOpen(false)}
+          onClose={() => setIsTimeModeModal(false)}
           onSelectTimeMode={handleTimeModeSelected}
           allProcessedTests={allProcessedTests}
         />
