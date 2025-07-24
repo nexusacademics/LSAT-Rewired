@@ -24,7 +24,7 @@ const PerformanceTracker: React.FC<PerformanceTrackerProps> = ({
       averageAnalysisScore: 85
     }
   },
- 
+  theme = 'light'
 }) => {
   const [timeframe, setTimeframe] = useState<'week' | 'month' | 'all'>('month');
 
