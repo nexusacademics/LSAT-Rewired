@@ -70,9 +70,7 @@ const Dashboard: React.FC<DashboardProps> = ({
         <div className="max-w-7xl mx-auto space-y-8">
         
         {/* Theme Toggle */}
-        <div className="flex justify-end">
-          <ThemeToggle />
-        </div>
+     
 
         {/* Welcome Header */}
         <Card padding="lg" gradient={theme === 'light'}>
