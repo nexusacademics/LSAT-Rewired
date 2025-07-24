@@ -67,6 +67,9 @@ export default function Navigation({ currentView, onViewChange, userStats }: Nav
               >
                 Subscription
               </NavButton>
+                 <div className="flex justify-end">
+          <ThemeToggle />
+        </div>
             </div>
           </div>
           {userStats && (
