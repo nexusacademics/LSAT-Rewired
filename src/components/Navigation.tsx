@@ -1,166 +1,409 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Brain, Target, TrendingUp, Menu, X } from 'lucide-react';
+import React, { useState } from 'react';
+import { BookOpen, Play, TrendingUp, Calendar, Upload, Download, Users, Brain, Target, Archive, ChevronRight, Zap, Award, Activity } from 'lucide-react';
+import { User, TestSession, ProcessedPrepTest } from '../App';
+import TimeModeSelectionModal from './TimeModeSelectionModal';
+
+// Import your new design system components
 import { useTheme } from '../contexts/ThemeContext';
+import Button from '../components/ui/Button';
+import Card, { CardHeader, CardTitle, CardContent } from '../components/ui/Card';
+import Badge from '../components/ui/Badge';
+import ProgressBar from '../components/ui/ProgressBar';
 import ThemeToggle from '../components/ui/ThemeToggle';
 
-type AppView = 'dashboard' | 'triple-review' | 'performance' | 'subscription';
-
-interface NavigationProps {
-  currentView: AppView;
-  onViewChange: (view: AppView) => void;
-  userStats?: {
-    circuitsCreated: number;
-    rank: number;
-  };
+interface DashboardProps {
+  user: User;
+  userSessions: TestSession[];
+  onStartNewTestSession: (testId: string, phase: 'timed' | 'blind-review' | 'strategy-review', timeMode?: 'regular' | '1.5x' | '2x' | 'custom' | 'untimed', customTimeMinutes?: number, selectedSectionId?: string) => void;
+  onResumeTestSession: (sessionId: string, targetPhase?: 'blind-review' | 'strategy-review') => void;
+  allProcessedTests: { [key: string]: ProcessedPrepTest };
 }
 
-export default function Navigation({ currentView, onViewChange, userStats }: NavigationProps) {
-    if (currentView === 'triple-review') return null;
+const Dashboard: React.FC<DashboardProps> = ({ 
+  user, 
+  userSessions, 
+  onStartNewTestSession, 
+  onResumeTestSession, 
+  allProcessedTests 
+}) => {
+  const [isTimeModeModalOpen, setIsTimeModeModal] = useState(false);
   const { theme } = useTheme();
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const drawerRef = useRef<HTMLDivElement>(null);
+  
+  // Filter user sessions into categories
+  const activeSessions = userSessions.filter(session => !session.endTime);
+  const readyForBlindReviewSessions = userSessions.filter(session => 
+    session.endTime && session.completedPhases.includes('timed') && !session.completedPhases.includes('blind-review')
+  );
+  const readyForStrategyReviewSessions = userSessions.filter(session => 
+    session.endTime && session.completedPhases.includes('blind-review') && !session.completedPhases.includes('strategy-review')
+  );
+  const archivedSessions = userSessions.filter(session => 
+    session.endTime && session.completedPhases.includes('strategy-review')
+  );
 
-  const navClasses = theme === 'dark' 
-    ? 'bg-gray-800 border-gray-700' 
-    : 'bg-white border-slate-200';
+  // Helper to format session display name
+  const formatSessionDisplayName = (session: TestSession) => {
+    const test = allProcessedTests[session.testId];
+    if (!test) return session.testId;
 
-  const logoTextClasses = theme === 'dark' 
-    ? 'text-white' 
-    : 'text-slate-900';
-
-  const statsTextClasses = theme === 'dark' 
-    ? 'text-gray-300' 
-    : 'text-slate-700';
-
-  const handleLinkClick = (view: AppView) => {
-    onViewChange(view);
-    setMobileOpen(false);
+    const sectionNumber = session.selectedSectionId ? test.sections.findIndex(s => s.id === session.selectedSectionId) + 1 : null;
+    return sectionNumber ? `${test.name} - Section ${sectionNumber}` : test.name;
   };
 
-  // Close drawer if clicking outside
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (drawerRef.current && !drawerRef.current.contains(e.target as Node)) {
-        setMobileOpen(false);
-      }
-    };
-    if (mobileOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [mobileOpen]);
+  const handleStartNewSessionClick = () => {
+    setIsTimeModeModal(true);
+  };
+
+  const handleTimeModeSelected = (testId: string, timeMode: 'regular' | '1.5x' | '2x' | 'custom' | 'untimed', customTimeMinutes?: number, selectedSectionId?: string) => {
+    onStartNewTestSession(testId, 'timed', timeMode, customTimeMinutes, selectedSectionId);
+    setIsTimeModeModal(false);
+  };
+
+  // Dynamic background based on theme
+  const backgroundClasses = theme === 'dark' 
+    ? 'bg-gray-900' 
+    : 'bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100';
 
   return (
-    <nav className={`${navClasses} shadow-sm border-b transition-all duration-500 relative z-50`}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          {/* Logo */}
-          <div
-            className="flex items-center space-x-2 cursor-pointer"
-            onClick={() => handleLinkClick('dashboard')}
-          >
-            <Brain className="h-8 w-8 text-blue-600" />
-            <span className={`text-xl font-bold ${logoTextClasses}`}>
-              LSAT Rewired
-            </span>
-          </div>
-
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex space-x-6 items-center">
-            <NavButton active={currentView === 'dashboard'} onClick={() => handleLinkClick('dashboard')} theme={theme}>
-              Dashboard
-            </NavButton>
-            <NavButton active={currentView === 'performance'} onClick={() => handleLinkClick('performance')} theme={theme}>
-              Performance
-            </NavButton>
-            <NavButton active={currentView === 'subscription'} onClick={() => handleLinkClick('subscription')} theme={theme}>
-              Subscription
-            </NavButton>
-            <ThemeToggle />
-            {userStats && (
-              <div className="flex items-center space-x-4 ml-4">
-                <Stat icon={<Target className="h-4 w-4 text-teal-600" />} label={`${userStats.circuitsCreated} Circuits`} theme={theme} />
-                <Stat icon={<TrendingUp className="h-4 w-4 text-orange-600" />} label={`Rank #${userStats.rank}`} theme={theme} />
+    <div className={`h-[calc(100vh-4rem)] w-full transition-all duration-500 ${backgroundClasses} overflow-hidden`}>
+      <div className="w-full p-3 h-full">
+        <div className="max-w-7xl mx-auto h-full flex flex-col space-y-3">
+        
+          {/* Top Row: Welcome & Start New Session - Compact */}
+          <div className="flex-shrink-0 grid lg:grid-cols-2 gap-4">
+            {/* Welcome Message */}
+            <Card padding="default">
+              <div className={`${theme === 'dark' ? 'bg-gradient-to-r from-blue-600/20 via-purple-600/20 to-teal-600/20 p-4 -m-4 rounded-2xl' : ''}`}>
+                <h1 className={`text-2xl font-bold mb-1 ${
+                  theme === 'dark' 
+                    ? 'text-white' 
+                    : 'bg-gradient-to-r from-blue-600 via-purple-600 to-teal-600 bg-clip-text text-transparent'
+                }`}>
+                  Welcome back, {user.name}!
+                </h1>
+                <p className={`text-sm mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
+                  Ready to continue your LSAT mastery journey?
+                </p>
+                
+                {user.lawhubCredentials?.verified && (
+                  <Badge variant="success" className="inline-flex items-center text-xs">
+                    <Brain className="h-3 w-3 mr-1" />
+                    LawHub: {user.lawhubCredentials.username}
+                  </Badge>
+                )}
               </div>
-            )}
+            </Card>
+
+            {/* Start New Session */}
+            <Card padding="default" hover>
+              <div className="flex items-center justify-between mb-3">
+                <div>
+                  <h3 className={`text-lg font-bold mb-1 flex items-center ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                    <Zap className="h-5 w-5 text-yellow-500 mr-2" />
+                    Start New Session
+                  </h3>
+                  <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                    Begin a new PrepTest
+                  </p>
+                </div>
+                <div className={`p-2 rounded-xl ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-100'}`}>
+                  <BookOpen className="h-6 w-6 text-blue-500" />
+                </div>
+              </div>
+              
+              <Button 
+                size="default" 
+                className="w-full"
+                onClick={handleStartNewSessionClick}
+              >
+                <Play className="h-4 w-4 mr-2" />
+                Start Test Session
+              </Button>
+            </Card>
           </div>
 
-          {/* Mobile Hamburger */}
-          <div className="md:hidden">
-            <button onClick={() => setMobileOpen(true)} aria-label="Open menu">
-              <Menu className="h-6 w-6 text-blue-600" />
-            </button>
-          </div>
-        </div>
-      </div>
+          {/* Main Content: Two Column Layout - Flexible */}
+          <div className="flex-1 min-h-0 grid lg:grid-cols-3 gap-4">
+            
+            {/* Left Column: Sessions (2/3 width) */}
+            <div className="lg:col-span-2 min-h-0 flex flex-col space-y-3">
+              
+              {/* Active Sessions */}
+              <Card padding="default" className="flex-1 min-h-0">
+                <CardHeader className="pb-2">
+                  <CardTitle icon={<Activity className="h-5 w-5 text-orange-500" />} className="text-lg">
+                    Active Sessions
+                  </CardTitle>
+                </CardHeader>
+                
+                <CardContent className="flex-1 min-h-0 overflow-y-auto">
+                  {activeSessions.length > 0 ? (
+                    <div className="grid md:grid-cols-2 gap-3">
+                      {activeSessions.slice(0, 4).map((session) => (
+                        <Card 
+                          key={session.id} 
+                          variant="accent" 
+                          padding="default"
+                          hover
+                          className={`${theme === 'dark' ? 'hover:border-orange-500/50' : 'hover:border-orange-300'} min-h-0`}
+                        >
+                          <div className="mb-2">
+                            <h4 className={`font-medium text-sm ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                              {formatSessionDisplayName(session)}
+                            </h4>
+                            <span className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+                              {session.startTime.toLocaleDateString()}
+                            </span>
+                          </div>
+                          
+                          <div className="flex items-center justify-between mb-2">
+                            <Badge variant="primary" className="text-xs">
+                              {session.phase === 'timed' && session.timeMode ? `${session.timeMode}` : session.phase}
+                            </Badge>
+                            <span className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                              Q: {Object.keys(session.answeredQuestions).length}
+                            </span>
+                          </div>
+                          
+                          <Button 
+                            variant="accent" 
+                            size="sm"
+                            className="w-full"
+                            onClick={() => onResumeTestSession(session.id)}
+                          >
+                            Resume
+                          </Button>
+                        </Card>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8">
+                      <div className="text-4xl mb-2">🎯</div>
+                      <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+                        No active sessions
+                      </p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
 
-      {/* Slide-in Drawer */}
-      <div
-        className={`fixed inset-0 z-40 transition-transform duration-300 ease-in-out transform ${
-          mobileOpen ? 'translate-x-0' : '-translate-x-full'
-        } md:hidden`}
-        style={{ backgroundColor: theme === 'dark' ? 'rgba(15, 23, 42, 0.95)' : 'rgba(255, 255, 255, 0.95)' }}
-      >
-        <div ref={drawerRef} className="w-64 h-full shadow-lg p-6 flex flex-col gap-4">
-          <div className="flex justify-between items-center mb-4">
-            <span className={`text-xl font-bold ${logoTextClasses}`}>Menu</span>
-            <button onClick={() => setMobileOpen(false)}>
-              <X className="h-6 w-6 text-blue-600" />
-            </button>
-          </div>
-          <NavButton active={currentView === 'dashboard'} onClick={() => handleLinkClick('dashboard')} theme={theme}>
-            Dashboard
-          </NavButton>
-          <NavButton active={currentView === 'performance'} onClick={() => handleLinkClick('performance')} theme={theme}>
-            Performance
-          </NavButton>
-          <NavButton active={currentView === 'subscription'} onClick={() => handleLinkClick('subscription')} theme={theme}>
-            Subscription
-          </NavButton>
-          <ThemeToggle />
-          {userStats && (
-            <div className="pt-4 mt-auto border-t border-gray-300 dark:border-gray-700 text-sm space-y-1">
-              <div className={statsTextClasses}>{userStats.circuitsCreated} Circuits</div>
-              <div className={statsTextClasses}>Rank #{userStats.rank}</div>
+              {/* Review & Archived - Compact Side by Side */}
+              <div className="flex-shrink-0 grid grid-cols-2 gap-3">
+                {/* Ready for Review */}
+                <Card padding="default" hover>
+                  <CardHeader className="pb-2">
+                    <CardTitle icon={<Target className="h-4 w-4 text-teal-500" />} className="text-sm">
+                      Ready for Review
+                    </CardTitle>
+                  </CardHeader>
+                  
+                  <CardContent>
+                    {readyForBlindReviewSessions.length > 0 || readyForStrategyReviewSessions.length > 0 ? (
+                      <div className="space-y-2">
+                        {[...readyForBlindReviewSessions, ...readyForStrategyReviewSessions].slice(0, 2).map((session) => {
+                          const isBlindReview = readyForBlindReviewSessions.includes(session);
+                          return (
+                            <div key={session.id} className={`p-2 rounded-lg border text-center ${
+                              theme === 'dark' ? 
+                                (isBlindReview ? 'border-teal-600/30 bg-teal-900/10' : 'border-orange-600/30 bg-orange-900/10') : 
+                                (isBlindReview ? 'border-teal-200 bg-teal-50/30' : 'border-orange-200 bg-orange-50/30')
+                            }`}>
+                              <div className={`text-xs font-medium mb-1 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                                {formatSessionDisplayName(session).split(' - ')[0]}
+                              </div>
+                              <Button
+                                variant="accent"
+                                size="sm"
+                                className="w-full text-xs"
+                                onClick={() => onResumeTestSession(session.id, isBlindReview ? 'blind-review' : 'strategy-review')}
+                              >
+                                {isBlindReview ? 'Blind Review' : 'Strategy Review'}
+                              </Button>
+                            </div>
+                          );
+                        })}
+                        {(readyForBlindReviewSessions.length + readyForStrategyReviewSessions.length) > 2 && (
+                          <p className={`text-xs text-center ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+                            +{(readyForBlindReviewSessions.length + readyForStrategyReviewSessions.length) - 2} more
+                          </p>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="text-center py-4">
+                        <p className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+                          None ready
+                        </p>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+
+                {/* Archived Sessions */}
+                <Card padding="default" hover>
+                  <CardHeader className="pb-2">
+                    <CardTitle icon={<Archive className="h-4 w-4 text-gray-500" />} className="text-sm">
+                      Archived
+                    </CardTitle>
+                  </CardHeader>
+                  
+                  <CardContent>
+                    {archivedSessions.length > 0 ? (
+                      <div className="space-y-2">
+                        {archivedSessions.slice(0, 2).map((session) => (
+                          <div key={session.id} className={`p-2 rounded-lg border text-center ${
+                            theme === 'dark' ? 'bg-gray-750 border-gray-600' : 'bg-gray-50 border-gray-200'
+                          }`}>
+                            <div className={`text-xs font-medium mb-1 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                              {formatSessionDisplayName(session).split(' - ')[0]}
+                            </div>
+                            <Button
+                              variant="secondary"
+                              size="sm"
+                              className="w-full text-xs"
+                              onClick={() => alert('View details')}
+                            >
+                              View Details
+                            </Button>
+                          </div>
+                        ))}
+                        {archivedSessions.length > 2 && (
+                          <p className={`text-xs text-center ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+                            +{archivedSessions.length - 2} more
+                          </p>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="text-center py-4">
+                        <p className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+                          None archived
+                        </p>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
             </div>
-          )}
+
+            {/* Right Column: Stats & Performance (1/3 width) */}
+            <div className="min-h-0 flex flex-col space-y-3">
+              
+              {/* Performance Overview */}
+              <Card padding="default" className="flex-1">
+                <CardHeader className="pb-2">
+                  <CardTitle icon={<TrendingUp className="h-4 w-4 text-green-500" />} className="text-sm">
+                    Performance
+                  </CardTitle>
+                </CardHeader>
+                
+                <CardContent className="space-y-3">
+                  <div>
+                    <div className="flex justify-between items-center mb-1">
+                      <span className={`text-xs font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>Circuit Quality</span>
+                      <span className={`text-sm font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>85%</span>
+                    </div>
+                    <ProgressBar value={85} variant="success" />
+                  </div>
+                  
+                  <div>
+                    <div className="flex justify-between items-center mb-1">
+                      <span className={`text-xs font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>Analysis Depth</span>
+                      <span className={`text-sm font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>92%</span>
+                    </div>
+                    <ProgressBar value={92} variant="primary" />
+                  </div>
+                  
+                  <div>
+                    <div className="flex justify-between items-center mb-1">
+                      <span className={`text-xs font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>Consistency</span>
+                      <span className={`text-sm font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>78%</span>
+                    </div>
+                    <ProgressBar value={78} variant="warning" />
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Combined Stats & Leaderboard */}
+              <Card padding="default" className="flex-1">
+                <CardHeader className="pb-2">
+                  <CardTitle icon={<Award className="h-4 w-4 text-yellow-500" />} className="text-sm">
+                    Stats & Rankings
+                  </CardTitle>
+                </CardHeader>
+                
+                <CardContent className="space-y-3">
+                  {/* Personal Stats */}
+                  <div className="grid grid-cols-3 gap-2">
+                    <div className="text-center">
+                      <div className={`text-lg font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                        {user.stats.circuitsCreated}
+                      </div>
+                      <div className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Circuits</div>
+                    </div>
+                    <div className="text-center">
+                      <div className={`text-lg font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                        {user.stats.testsCompleted}
+                      </div>
+                      <div className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Tests</div>
+                    </div>
+                    <div className="text-center">
+                      <div className={`text-lg font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                        {user.stats.averageAnalysisScore}%
+                      </div>
+                      <div className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Analysis</div>
+                    </div>
+                  </div>
+
+                  {/* Study Streak */}
+                  <div className="text-center py-2 border-t border-b border-gray-200 dark:border-gray-700">
+                    <div className={`text-2xl font-bold mb-1 ${
+                      theme === 'dark' 
+                        ? 'text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-400' 
+                        : 'text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-red-500'
+                    }`}>7</div>
+                    <div className={`text-xs flex items-center justify-center ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                      <Calendar className="h-3 w-3 mr-1" />
+                      Day Streak 🔥
+                    </div>
+                  </div>
+
+                  {/* Compact Leaderboard */}
+                  <div className="space-y-1">
+                    <div className={`flex items-center justify-between p-1.5 rounded border text-xs ${
+                      theme === 'dark' ? 'bg-gray-750 border-yellow-600/30' : 'bg-yellow-50 border-yellow-200'
+                    }`}>
+                      <div className="flex items-center">
+                        <div className="w-5 h-5 bg-gradient-to-br from-yellow-400 to-yellow-500 text-gray-900 text-xs font-bold rounded-full flex items-center justify-center mr-1">1</div>
+                        <span className={`font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Sarah</span>
+                      </div>
+                      <span className={`font-semibold ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>847</span>
+                    </div>
+                    
+                    <div className={`flex items-center justify-between p-1.5 rounded border text-xs ${
+                      theme === 'dark' ? 'bg-gray-750 border-blue-500/50' : 'bg-blue-50 border-blue-300'
+                    }`}>
+                      <div className="flex items-center">
+                        <div className="w-5 h-5 bg-gradient-to-br from-blue-500 to-purple-500 text-white text-xs font-bold rounded-full flex items-center justify-center mr-1">{user.stats.rank}</div>
+                        <span className={`font-medium ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`}>You</span>
+                      </div>
+                      <span className={`font-semibold ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>{user.stats.circuitsCreated}</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+
+          {/* Time Mode Selection Modal */}
+          <TimeModeSelectionModal
+            isOpen={isTimeModeModalOpen}
+            onClose={() => setIsTimeModeModal(false)}
+            onSelectTimeMode={handleTimeModeSelected}
+            allProcessedTests={allProcessedTests}
+          />
         </div>
       </div>
-    </nav>
-  );
-}
-
-interface NavButtonProps {
-  active: boolean;
-  onClick: () => void;
-  children: React.ReactNode;
-  theme: 'light' | 'dark';
-}
-
-function NavButton({ active, onClick, children, theme }: NavButtonProps) {
-  const base = 'px-4 py-2 rounded-md font-medium text-sm transition-all duration-200 w-full text-left';
-  const dark = active
-    ? 'bg-blue-900/50 text-blue-400'
-    : 'text-gray-300 hover:bg-gray-700 hover:text-white';
-  const light = active
-    ? 'bg-blue-50 text-blue-600'
-    : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900';
-  return (
-    <button onClick={onClick} className={`${base} ${theme === 'dark' ? dark : light}`}>
-      {children}
-    </button>
-  );
-}
-
-function Stat({ icon, label, theme }: { icon: React.ReactNode; label: string; theme: string }) {
-  return (
-    <div className="flex items-center space-x-2">
-      {icon}
-      <span className={`text-sm font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-slate-700'}`}>
-        {label}
-      </span>
     </div>
   );
-}
+};
+
+export default Dashboard;
