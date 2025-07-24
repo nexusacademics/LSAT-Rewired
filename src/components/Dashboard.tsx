@@ -56,7 +56,7 @@ const Dashboard: React.FC<DashboardProps> = ({
 
   const handleTimeModeSelected = (testId: string, timeMode: 'regular' | '1.5x' | '2x' | 'custom' | 'untimed', customTimeMinutes?: number, selectedSectionId?: string) => {
     onStartNewTestSession(testId, 'timed', timeMode, customTimeMinutes, selectedSectionId);
-    setIsTimeModeModal(false);
+    setIsTimeModeModalOpen(false);
   };
 
   // Dynamic background based on theme
@@ -65,8 +65,9 @@ const Dashboard: React.FC<DashboardProps> = ({
     : 'bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100';
 
   return (
-    <div className={`min-h-screen transition-all duration-500 ${backgroundClasses} p-6`}>
-      <div className="max-w-7xl mx-auto space-y-8">
+    <div className={`min-h-screen w-full fixed inset-0 transition-all duration-500 ${backgroundClasses}`}>
+      <div className="h-full w-full overflow-y-auto p-6">
+        <div className="max-w-7xl mx-auto space-y-8 pb-8">
         
         {/* Theme Toggle */}
         <div className="flex justify-end">
@@ -510,6 +511,7 @@ const Dashboard: React.FC<DashboardProps> = ({
           onSelectTimeMode={handleTimeModeSelected}
           allProcessedTests={allProcessedTests}
         />
+        </div>
       </div>
     </div>
   );
