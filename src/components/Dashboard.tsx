@@ -56,7 +56,7 @@ const Dashboard: React.FC<DashboardProps> = ({
 
   const handleTimeModeSelected = (testId: string, timeMode: 'regular' | '1.5x' | '2x' | 'custom' | 'untimed', customTimeMinutes?: number, selectedSectionId?: string) => {
     onStartNewTestSession(testId, 'timed', timeMode, customTimeMinutes, selectedSectionId);
-    setIsTimeModeModalOpen(false);
+    setIsTimeModeModal(false);
   };
 
   // Dynamic background based on theme
