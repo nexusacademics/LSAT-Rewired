@@ -29,7 +29,7 @@ const Dashboard: React.FC<DashboardProps> = ({
   const [isTimeModeModalOpen, setIsTimeModeModal] = useState(false);
   const { theme } = useTheme();
   
-  // Filter user sessions into categories
+  // Filter user sessions into categories (keeping your existing logic)
   const activeSessions = userSessions.filter(session => !session.endTime);
   const readyForBlindReviewSessions = userSessions.filter(session => 
     session.endTime && session.completedPhases.includes('timed') && !session.completedPhases.includes('blind-review')
@@ -41,7 +41,7 @@ const Dashboard: React.FC<DashboardProps> = ({
     session.endTime && session.completedPhases.includes('strategy-review')
   );
 
-  // Helper to format session display name
+  // Helper to format session display name (keeping your existing logic)
   const formatSessionDisplayName = (session: TestSession) => {
     const test = allProcessedTests[session.testId];
     if (!test) return session.testId;
@@ -65,341 +65,450 @@ const Dashboard: React.FC<DashboardProps> = ({
     : 'bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100';
 
   return (
-    <div className={`h-[calc(100vh-4rem)] w-full transition-all duration-500 ${backgroundClasses} overflow-hidden`}>
-      <div className="w-full p-3 h-full">
-        <div className="max-w-7xl mx-auto h-full flex flex-col space-y-3">
+    <div className={`min-h-screen w-full transition-all duration-500 ${backgroundClasses}`}>
+      <div className="w-full p-6">
+        <div className="max-w-7xl mx-auto space-y-8">
         
-          {/* Top Row: Welcome & Start New Session - Compact */}
-          <div className="flex-shrink-0 grid lg:grid-cols-2 gap-4">
-            {/* Welcome Message */}
-            <Card padding="default">
-              <div className={`${theme === 'dark' ? 'bg-gradient-to-r from-blue-600/20 via-purple-600/20 to-teal-600/20 p-4 -m-4 rounded-2xl' : ''}`}>
-                <h1 className={`text-2xl font-bold mb-1 ${
+        {/* Theme Toggle */}
+     
+
+        {/* Welcome Header */}
+        <Card padding="lg" gradient={theme === 'light'}>
+          <div className={`${theme === 'dark' ? 'bg-gradient-to-r from-blue-600/20 via-purple-600/20 to-teal-600/20 p-8 -m-8 rounded-3xl' : ''}`}>
+            <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between">
+              <div className="mb-6 lg:mb-0">
+                <h1 className={`text-4xl lg:text-5xl font-bold mb-3 ${
                   theme === 'dark' 
                     ? 'text-white' 
                     : 'bg-gradient-to-r from-blue-600 via-purple-600 to-teal-600 bg-clip-text text-transparent'
                 }`}>
                   Welcome back, {user.name}!
                 </h1>
-                <p className={`text-sm mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
+                <p className={`text-xl mb-4 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
                   Ready to continue your LSAT mastery journey?
                 </p>
                 
                 {user.lawhubCredentials?.verified && (
-                  <Badge variant="success" className="inline-flex items-center text-xs">
-                    <Brain className="h-3 w-3 mr-1" />
-                    LawHub: {user.lawhubCredentials.username}
+                  <Badge variant="success" className="inline-flex items-center">
+                    <Brain className="h-4 w-4 mr-2" />
+                    LawHub Connected: {user.lawhubCredentials.username}
                   </Badge>
                 )}
               </div>
-            </Card>
 
-            {/* Start New Session */}
-            <Card padding="default" hover>
-              <div className="flex items-center justify-between mb-3">
-                <div>
-                  <h3 className={`text-lg font-bold mb-1 flex items-center ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                    <Zap className="h-5 w-5 text-yellow-500 mr-2" />
-                    Start New Session
-                  </h3>
-                  <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                    Begin a new PrepTest
-                  </p>
+              <div className="flex items-center space-x-8">
+                <div className="text-center group cursor-pointer">
+                  <div className={`text-4xl font-bold mb-1 transition-colors duration-300 ${
+                    theme === 'dark' 
+                      ? 'text-white group-hover:text-blue-400' 
+                      : 'text-gray-900 group-hover:text-blue-600'
+                  }`}>
+                    {user.stats.circuitsCreated}
+                  </div>
+                  <div className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Circuits Built</div>
                 </div>
-                <div className={`p-2 rounded-xl ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-100'}`}>
-                  <BookOpen className="h-6 w-6 text-blue-500" />
+                <div className="text-center group cursor-pointer">
+                  <div className={`text-4xl font-bold mb-1 transition-colors duration-300 ${
+                    theme === 'dark' 
+                      ? 'text-white group-hover:text-teal-400' 
+                      : 'text-gray-900 group-hover:text-teal-600'
+                  }`}>
+                    {user.stats.testsCompleted}
+                  </div>
+                  <div className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Tests Completed</div>
+                </div>
+                <div className="text-center group cursor-pointer">
+                  <div className={`text-4xl font-bold mb-1 transition-colors duration-300 ${
+                    theme === 'dark' 
+                      ? 'text-white group-hover:text-orange-400' 
+                      : 'text-gray-900 group-hover:text-orange-600'
+                  }`}>
+                    {user.stats.averageAnalysisScore}%
+                  </div>
+                  <div className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Analysis Score</div>
                 </div>
               </div>
-              
-              <Button 
-                size="default" 
-                className="w-full"
-                onClick={handleStartNewSessionClick}
-              >
-                <Play className="h-4 w-4 mr-2" />
-                Start Test Session
-              </Button>
-            </Card>
+            </div>
           </div>
+        </Card>
 
-          {/* Main Content: Two Column Layout - Flexible */}
-          <div className="flex-1 min-h-0 grid lg:grid-cols-3 gap-4">
+        <div className="grid lg:grid-cols-3 gap-8">
+          {/* Test Selection */}
+          <div className="lg:col-span-2 space-y-8">
             
-            {/* Left Column: Sessions (2/3 width) */}
-            <div className="lg:col-span-2 min-h-0 flex flex-col space-y-3">
-              
-              {/* Active Sessions */}
-              <Card padding="default" className="flex-1 min-h-0">
-                <CardHeader className="pb-2">
-                  <CardTitle icon={<Activity className="h-5 w-5 text-orange-500" />} className="text-lg">
-                    Active Sessions
-                  </CardTitle>
-                </CardHeader>
+            {/* Start New Session */}
+            <Card padding="lg" hover>
+              <CardHeader>
+                <CardTitle icon={<Zap className="h-6 w-6 text-yellow-500" />}>
+                  Start Your Next Session
+                </CardTitle>
+              </CardHeader>
+
+              <Card variant="accent" padding="default">
+                <div className="flex items-center justify-between mb-6">
+                  <div>
+                    <h3 className={`text-xl font-bold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                      Begin a New PrepTest Session
+                    </h3>
+                    <p className={theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}>
+                      Select a PrepTest and configure your session.
+                    </p>
+                  </div>
+                  <div className={`p-3 rounded-xl ${theme === 'dark' ? 'bg-gray-700 shadow-inner' : 'bg-gray-100'}`}>
+                    <BookOpen className="h-8 w-8 text-blue-500" />
+                  </div>
+                </div>
                 
-                <CardContent className="flex-1 min-h-0 overflow-y-auto">
-                  {activeSessions.length > 0 ? (
-                    <div className="grid md:grid-cols-2 gap-3">
-                      {activeSessions.slice(0, 4).map((session) => (
-                        <Card 
-                          key={session.id} 
+                <Button 
+                  size="lg" 
+                  className="w-full"
+                  onClick={handleStartNewSessionClick}
+                >
+                  <Play className="h-5 w-5 mr-3" />
+                  Start New Test Session
+                </Button>
+              </Card>
+            </Card>
+
+            {/* Active Sessions */}
+            <Card padding="lg" hover>
+              <CardHeader>
+                <CardTitle icon={<Activity className="h-6 w-6 text-orange-500" />}>
+                  Your Active Sessions
+                </CardTitle>
+              </CardHeader>
+              
+              <CardContent>
+                {activeSessions.length > 0 ? (
+                  <div className="space-y-4">
+                    {activeSessions.map((session) => (
+                      <Card 
+                        key={session.id} 
+                        variant="accent" 
+                        padding="default"
+                        hover
+                        className={theme === 'dark' ? 'hover:border-orange-500/50' : 'hover:border-orange-300'}
+                      >
+                        <div className="flex items-center justify-between mb-4">
+                          <h3 className={`font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                            {formatSessionDisplayName(session)}
+                          </h3>
+                          <span className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+                            Started: {session.startTime.toLocaleDateString()}
+                          </span>
+                        </div>
+                        
+                        <div className="flex items-center justify-between mb-4">
+                          <Badge variant={
+                            session.phase === 'strategy-review' ? 'warning' :
+                            session.phase === 'blind-review' ? 'info' : 'primary'
+                          }>
+                            {session.phase === 'timed' && session.timeMode ? `Timed (${session.timeMode})` : session.phase.replace('-', ' ')}
+                          </Badge>
+                          
+                          <div className={`flex space-x-4 text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                            <span>Q: {session.currentSectionIndex + 1}-{Object.keys(session.answeredQuestions).length}</span>
+                            <span>Circuits: {session.circuits.length}</span>
+                          </div>
+                        </div>
+                        
+                        <Button 
                           variant="accent" 
-                          padding="default"
-                          hover
-                          className={`${theme === 'dark' ? 'hover:border-orange-500/50' : 'hover:border-orange-300'} min-h-0`}
+                          className="w-full"
+                          onClick={() => onResumeTestSession(session.id)}
                         >
-                          <div className="mb-2">
-                            <h4 className={`font-medium text-sm ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                              {formatSessionDisplayName(session)}
-                            </h4>
-                            <span className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
-                              {session.startTime.toLocaleDateString()}
-                            </span>
-                          </div>
-                          
-                          <div className="flex items-center justify-between mb-2">
-                            <Badge variant="primary" className="text-xs">
-                              {session.phase === 'timed' && session.timeMode ? `${session.timeMode}` : session.phase}
-                            </Badge>
-                            <span className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                              Q: {Object.keys(session.answeredQuestions).length}
-                            </span>
-                          </div>
-                          
-                          <Button 
-                            variant="accent" 
-                            size="sm"
-                            className="w-full"
-                            onClick={() => onResumeTestSession(session.id)}
-                          >
-                            Resume
-                          </Button>
-                        </Card>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-center py-8">
-                      <div className="text-4xl mb-2">🎯</div>
-                      <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
-                        No active sessions
-                      </p>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
+                          Resume Session
+                        </Button>
+                      </Card>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-12">
+                    <div className="text-6xl mb-4">🎯</div>
+                    <p className={`text-lg ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+                      No active sessions. Start a new PrepTest above!
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
 
-              {/* Review & Archived - Compact Side by Side */}
-              <div className="flex-shrink-0 grid grid-cols-2 gap-3">
-                {/* Ready for Review */}
-                <Card padding="default" hover>
-                  <CardHeader className="pb-2">
-                    <CardTitle icon={<Target className="h-4 w-4 text-teal-500" />} className="text-sm">
-                      Ready for Review
-                    </CardTitle>
-                  </CardHeader>
-                  
-                  <CardContent>
-                    {readyForBlindReviewSessions.length > 0 || readyForStrategyReviewSessions.length > 0 ? (
-                      <div className="space-y-2">
-                        {[...readyForBlindReviewSessions, ...readyForStrategyReviewSessions].slice(0, 2).map((session) => {
-                          const isBlindReview = readyForBlindReviewSessions.includes(session);
-                          return (
-                            <div key={session.id} className={`p-2 rounded-lg border text-center ${
-                              theme === 'dark' ? 
-                                (isBlindReview ? 'border-teal-600/30 bg-teal-900/10' : 'border-orange-600/30 bg-orange-900/10') : 
-                                (isBlindReview ? 'border-teal-200 bg-teal-50/30' : 'border-orange-200 bg-orange-50/30')
-                            }`}>
-                              <div className={`text-xs font-medium mb-1 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                                {formatSessionDisplayName(session).split(' - ')[0]}
-                              </div>
-                              <Button
-                                variant="accent"
-                                size="sm"
-                                className="w-full text-xs"
-                                onClick={() => onResumeTestSession(session.id, isBlindReview ? 'blind-review' : 'strategy-review')}
-                              >
-                                {isBlindReview ? 'Blind Review' : 'Strategy Review'}
-                              </Button>
-                            </div>
-                          );
-                        })}
-                        {(readyForBlindReviewSessions.length + readyForStrategyReviewSessions.length) > 2 && (
-                          <p className={`text-xs text-center ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
-                            +{(readyForBlindReviewSessions.length + readyForStrategyReviewSessions.length) - 2} more
-                          </p>
-                        )}
-                      </div>
-                    ) : (
-                      <div className="text-center py-4">
-                        <p className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
-                          None ready
-                        </p>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-
-                {/* Archived Sessions */}
-                <Card padding="default" hover>
-                  <CardHeader className="pb-2">
-                    <CardTitle icon={<Archive className="h-4 w-4 text-gray-500" />} className="text-sm">
-                      Archived
-                    </CardTitle>
-                  </CardHeader>
-                  
-                  <CardContent>
-                    {archivedSessions.length > 0 ? (
-                      <div className="space-y-2">
-                        {archivedSessions.slice(0, 2).map((session) => (
-                          <div key={session.id} className={`p-2 rounded-lg border text-center ${
-                            theme === 'dark' ? 'bg-gray-750 border-gray-600' : 'bg-gray-50 border-gray-200'
-                          }`}>
-                            <div className={`text-xs font-medium mb-1 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                              {formatSessionDisplayName(session).split(' - ')[0]}
-                            </div>
-                            <Button
-                              variant="secondary"
-                              size="sm"
-                              className="w-full text-xs"
-                              onClick={() => alert('View details')}
-                            >
-                              View Details
-                            </Button>
-                          </div>
-                        ))}
-                        {archivedSessions.length > 2 && (
-                          <p className={`text-xs text-center ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
-                            +{archivedSessions.length - 2} more
-                          </p>
-                        )}
-                      </div>
-                    ) : (
-                      <div className="text-center py-4">
-                        <p className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
-                          None archived
-                        </p>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-              </div>
-            </div>
-
-            {/* Right Column: Stats & Performance (1/3 width) */}
-            <div className="min-h-0 flex flex-col space-y-3">
+            {/* Ready for Review Sessions */}
+            <Card padding="lg" hover>
+              <CardHeader>
+                <CardTitle icon={<Target className="h-6 w-6 text-teal-500" />}>
+                  Ready for Review
+                </CardTitle>
+              </CardHeader>
               
-              {/* Performance Overview */}
-              <Card padding="default" className="flex-1">
-                <CardHeader className="pb-2">
-                  <CardTitle icon={<TrendingUp className="h-4 w-4 text-green-500" />} className="text-sm">
-                    Performance
-                  </CardTitle>
-                </CardHeader>
-                
-                <CardContent className="space-y-3">
-                  <div>
-                    <div className="flex justify-between items-center mb-1">
-                      <span className={`text-xs font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>Circuit Quality</span>
-                      <span className={`text-sm font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>85%</span>
-                    </div>
-                    <ProgressBar value={85} variant="success" />
-                  </div>
-                  
-                  <div>
-                    <div className="flex justify-between items-center mb-1">
-                      <span className={`text-xs font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>Analysis Depth</span>
-                      <span className={`text-sm font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>92%</span>
-                    </div>
-                    <ProgressBar value={92} variant="primary" />
-                  </div>
-                  
-                  <div>
-                    <div className="flex justify-between items-center mb-1">
-                      <span className={`text-xs font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>Consistency</span>
-                      <span className={`text-sm font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>78%</span>
-                    </div>
-                    <ProgressBar value={78} variant="warning" />
-                  </div>
-                </CardContent>
-              </Card>
+              <CardContent>
+                {readyForBlindReviewSessions.length > 0 || readyForStrategyReviewSessions.length > 0 ? (
+                  <div className="space-y-4">
+                    {readyForBlindReviewSessions.map((session) => (
+                      <Card 
+                        key={session.id} 
+                        variant="accent" 
+                        padding="default"
+                        hover
+                        className={theme === 'dark' ? 'border-teal-600/30 bg-teal-900/10 hover:bg-teal-900/20' : 'border-teal-200 bg-teal-50/30 hover:bg-teal-50/50'}
+                      >
+                        <div className="flex items-center justify-between mb-4">
+                          <h3 className={`font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                            {formatSessionDisplayName(session)}
+                          </h3>
+                          <span className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+                            Completed: {session.endTime?.toLocaleDateString()}
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <Badge variant="primary">
+                            Timed Phase Completed
+                          </Badge>
+                          <Button
+                            variant="accent"
+                            size="sm"
+                            onClick={() => onResumeTestSession(session.id, 'blind-review')}
+                            className="flex items-center"
+                          >
+                            Start Blind Review <ChevronRight className="h-4 w-4 ml-1" />
+                          </Button>
+                        </div>
+                      </Card>
+                    ))}
 
-              {/* Combined Stats & Leaderboard */}
-              <Card padding="default" className="flex-1">
-                <CardHeader className="pb-2">
-                  <CardTitle icon={<Award className="h-4 w-4 text-yellow-500" />} className="text-sm">
-                    Stats & Rankings
-                  </CardTitle>
-                </CardHeader>
-                
-                <CardContent className="space-y-3">
-                  {/* Personal Stats */}
-                  <div className="grid grid-cols-3 gap-2">
-                    <div className="text-center">
-                      <div className={`text-lg font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                        {user.stats.circuitsCreated}
-                      </div>
-                      <div className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Circuits</div>
-                    </div>
-                    <div className="text-center">
-                      <div className={`text-lg font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                        {user.stats.testsCompleted}
-                      </div>
-                      <div className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Tests</div>
-                    </div>
-                    <div className="text-center">
-                      <div className={`text-lg font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                        {user.stats.averageAnalysisScore}%
-                      </div>
-                      <div className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Analysis</div>
-                    </div>
+                    {readyForStrategyReviewSessions.map((session) => (
+                      <Card 
+                        key={session.id} 
+                        variant="accent" 
+                        padding="default"
+                        hover
+                        className={theme === 'dark' ? 'border-orange-600/30 bg-orange-900/10 hover:bg-orange-900/20' : 'border-orange-200 bg-orange-50/30 hover:bg-orange-50/50'}
+                      >
+                        <div className="flex items-center justify-between mb-4">
+                          <h3 className={`font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                            {formatSessionDisplayName(session)}
+                          </h3>
+                          <span className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+                            Completed: {session.endTime?.toLocaleDateString()}
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <Badge variant="info">
+                            Blind Review Completed
+                          </Badge>
+                          <Button
+                            variant="danger"
+                            size="sm"
+                            onClick={() => onResumeTestSession(session.id, 'strategy-review')}
+                            className="flex items-center"
+                          >
+                            Start Strategy Review <ChevronRight className="h-4 w-4 ml-1" />
+                          </Button>
+                        </div>
+                      </Card>
+                    ))}
                   </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <p className={theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}>
+                      No sessions ready for review.
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
 
-                  {/* Study Streak */}
-                  <div className="text-center py-2 border-t border-b border-gray-200 dark:border-gray-700">
-                    <div className={`text-2xl font-bold mb-1 ${
-                      theme === 'dark' 
-                        ? 'text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-400' 
-                        : 'text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-red-500'
-                    }`}>7</div>
-                    <div className={`text-xs flex items-center justify-center ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                      <Calendar className="h-3 w-3 mr-1" />
-                      Day Streak 🔥
-                    </div>
+            {/* Archived Sessions */}
+            <Card padding="lg" hover>
+              <CardHeader>
+                <CardTitle icon={<Archive className="h-6 w-6 text-gray-500" />}>
+                  Archived Sessions
+                </CardTitle>
+              </CardHeader>
+              
+              <CardContent>
+                {archivedSessions.length > 0 ? (
+                  <div className="space-y-4">
+                    {archivedSessions.map((session) => (
+                      <Card 
+                        key={session.id} 
+                        variant="accent" 
+                        padding="default"
+                        hover
+                      >
+                        <div className="flex items-center justify-between mb-4">
+                          <h3 className={`font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                            {formatSessionDisplayName(session)}
+                          </h3>
+                          <span className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+                            Archived: {session.endTime?.toLocaleDateString()}
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <Badge variant="warning">
+                            Strategy Review Completed
+                          </Badge>
+                          <Button
+                            variant="secondary"
+                            size="sm"
+                            onClick={() => alert('Viewing archived session details (not implemented yet)')}
+                            className="flex items-center"
+                          >
+                            View Details <Archive className="h-4 w-4 ml-1" />
+                          </Button>
+                        </div>
+                      </Card>
+                    ))}
                   </div>
-
-                  {/* Compact Leaderboard */}
-                  <div className="space-y-1">
-                    <div className={`flex items-center justify-between p-1.5 rounded border text-xs ${
-                      theme === 'dark' ? 'bg-gray-750 border-yellow-600/30' : 'bg-yellow-50 border-yellow-200'
-                    }`}>
-                      <div className="flex items-center">
-                        <div className="w-5 h-5 bg-gradient-to-br from-yellow-400 to-yellow-500 text-gray-900 text-xs font-bold rounded-full flex items-center justify-center mr-1">1</div>
-                        <span className={`font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Sarah</span>
-                      </div>
-                      <span className={`font-semibold ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>847</span>
-                    </div>
-                    
-                    <div className={`flex items-center justify-between p-1.5 rounded border text-xs ${
-                      theme === 'dark' ? 'bg-gray-750 border-blue-500/50' : 'bg-blue-50 border-blue-300'
-                    }`}>
-                      <div className="flex items-center">
-                        <div className="w-5 h-5 bg-gradient-to-br from-blue-500 to-purple-500 text-white text-xs font-bold rounded-full flex items-center justify-center mr-1">{user.stats.rank}</div>
-                        <span className={`font-medium ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`}>You</span>
-                      </div>
-                      <span className={`font-semibold ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>{user.stats.circuitsCreated}</span>
-                    </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <p className={theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}>
+                      No archived sessions.
+                    </p>
                   </div>
-                </CardContent>
-              </Card>
-            </div>
+                )}
+              </CardContent>
+            </Card>
           </div>
 
-          {/* Time Mode Selection Modal */}
-          <TimeModeSelectionModal
-            isOpen={isTimeModeModalOpen}
-            onClose={() => setIsTimeModeModal(false)}
-            onSelectTimeMode={handleTimeModeSelected}
-            allProcessedTests={allProcessedTests}
-          />
+          {/* Sidebar */}
+          <div className="space-y-8">
+            
+            {/* Performance Overview */}
+            <Card padding="default">
+              <CardHeader>
+                <CardTitle icon={<TrendingUp className="h-5 w-5 text-green-500" />}>
+                  Performance Overview
+                </CardTitle>
+              </CardHeader>
+              
+              <CardContent className="space-y-6">
+                <div>
+                  <div className="flex justify-between items-center mb-3">
+                    <span className={`text-sm font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>Circuit Quality</span>
+                    <span className={`text-lg font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>85%</span>
+                  </div>
+                  <ProgressBar value={85} variant="success" />
+                </div>
+                
+                <div>
+                  <div className="flex justify-between items-center mb-3">
+                    <span className={`text-sm font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>Analysis Depth</span>
+                    <span className={`text-lg font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>92%</span>
+                  </div>
+                  <ProgressBar value={92} variant="primary" />
+                </div>
+                
+                <div>
+                  <div className="flex justify-between items-center mb-3">
+                    <span className={`text-sm font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>Consistency</span>
+                    <span className={`text-lg font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>78%</span>
+                  </div>
+                  <ProgressBar value={78} variant="warning" />
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Leaderboard Preview */}
+            <Card padding="default">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle icon={<Award className="h-5 w-5 text-yellow-500" />}>
+                    Circuit Masters
+                  </CardTitle>
+                  <Users className={`h-5 w-5 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-400'}`} />
+                </div>
+              </CardHeader>
+              
+              <CardContent className="space-y-4">
+                <div className={`flex items-center justify-between p-4 rounded-2xl border ${
+                  theme === 'dark' ? 'bg-gray-750 border-yellow-600/30' : 'bg-yellow-50 border-yellow-200'
+                }`}>
+                  <div className="flex items-center">
+                    <div className="w-8 h-8 bg-gradient-to-br from-yellow-400 to-yellow-500 text-gray-900 text-sm font-bold rounded-full flex items-center justify-center mr-3 shadow-lg">1</div>
+                    <span className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Sarah Chen</span>
+                  </div>
+                  <span className={`text-sm font-semibold ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>847 circuits</span>
+                </div>
+                
+                <div className={`flex items-center justify-between p-4 rounded-2xl border ${
+                  theme === 'dark' ? 'bg-gray-750 border-gray-600' : 'bg-gray-50 border-gray-200'
+                }`}>
+                  <div className="flex items-center">
+                    <div className="w-8 h-8 bg-gradient-to-br from-gray-400 to-gray-500 text-white text-sm font-bold rounded-full flex items-center justify-center mr-3 shadow-lg">2</div>
+                    <span className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Marcus Johnson</span>
+                  </div>
+                  <span className={`text-sm font-semibold ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>792 circuits</span>
+                </div>
+                
+                <div className={`flex items-center justify-between p-4 rounded-2xl border ${
+                  theme === 'dark' ? 'bg-gray-750 border-orange-600/30' : 'bg-orange-50 border-orange-200'
+                }`}>
+                  <div className="flex items-center">
+                    <div className="w-8 h-8 bg-gradient-to-br from-orange-400 to-orange-500 text-gray-900 text-sm font-bold rounded-full flex items-center justify-center mr-3 shadow-lg">3</div>
+                    <span className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Emily Rodriguez</span>
+                  </div>
+                  <span className={`text-sm font-semibold ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>738 circuits</span>
+                </div>
+                
+                <div className={`flex items-center justify-between p-4 rounded-2xl border-2 ${
+                  theme === 'dark' ? 'bg-gray-750 border-blue-500/50' : 'bg-blue-50 border-blue-300'
+                }`}>
+                  <div className="flex items-center">
+                    <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-500 text-white text-sm font-bold rounded-full flex items-center justify-center mr-3 shadow-lg">{user.stats.rank}</div>
+                    <span className={`font-bold ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`}>You</span>
+                  </div>
+                  <span className={`text-sm font-semibold ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>{user.stats.circuitsCreated} circuits</span>
+                </div>
+              </CardContent>
+              
+              <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <Button variant="ghost" className="w-full text-sm">
+                  View Full Leaderboard
+                </Button>
+              </div>
+            </Card>
+
+            {/* Study Streak */}
+            <Card padding="default">
+              <CardHeader>
+                <CardTitle icon={<Calendar className="h-5 w-5 text-orange-500" />}>
+                  Study Streak
+                </CardTitle>
+              </CardHeader>
+              
+              <CardContent>
+                <div className="text-center">
+                  <div className={`text-5xl font-bold mb-3 ${
+                    theme === 'dark' 
+                      ? 'text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-400' 
+                      : 'text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-red-500'
+                  }`}>7</div>
+                  <div className={`text-sm mb-6 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Days in a row 🔥</div>
+                  
+                  <div className="grid grid-cols-7 gap-2">
+                    {[...Array(7)].map((_, i) => (
+                      <div 
+                        key={i} 
+                        className={`h-10 w-10 rounded-xl bg-gradient-to-br from-orange-500 to-red-500 shadow-lg transform hover:scale-110 transition-transform ${
+                          theme === 'dark' ? 'border border-orange-400/30' : ''
+                        }`}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
+        {/* Time Mode Selection Modal */}
+        <TimeModeSelectionModal
+          isOpen={isTimeModeModalOpen}
+          onClose={() => setIsTimeModeModal(false)}
+          onSelectTimeMode={handleTimeModeSelected}
+          allProcessedTests={allProcessedTests}
+        />
         </div>
       </div>
     </div>
