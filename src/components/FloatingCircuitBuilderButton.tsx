@@ -1,13 +1,21 @@
 import React, { useState } from 'react';
 import { Puzzle, X } from 'lucide-react';
 import CircuitBuilder from './CircuitBuilder';
-import { TestSession } from '../App';
+import { TestSession, Circuit, ProcessedQuestion } from '../App';
 
 interface FloatingCircuitBuilderButtonProps {
   session: TestSession;
+  onSaveCircuit?: (circuit: Circuit) => void;
+  currentQuestionData?: ProcessedQuestion;
+  existingCircuit?: Circuit;
 }
 
-export default function FloatingCircuitBuilderButton({ session }: FloatingCircuitBuilderButtonProps) {
+export default function FloatingCircuitBuilderButton({ 
+  session, 
+  onSaveCircuit, 
+  currentQuestionData, 
+  existingCircuit 
+}: FloatingCircuitBuilderButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
   
   const showButton = session.phase === 'blind-review' || session.phase === 'strategy-review';
@@ -16,7 +24,8 @@ export default function FloatingCircuitBuilderButton({ session }: FloatingCircui
   console.log('FloatingCircuitBuilderButton render:', {
     phase: session.phase,
     showButton,
-    completedPhases: session.completedPhases
+    completedPhases: session.completedPhases,
+    hasQuestionData: !!currentQuestionData
   });
 
   if (!showButton) {
@@ -32,9 +41,15 @@ export default function FloatingCircuitBuilderButton({ session }: FloatingCircui
       >
         {isOpen ? <X className="w-6 h-6" /> : <Puzzle className="w-6 h-6" />}
       </button>
-      {isOpen && (
+      {isOpen && currentQuestionData && (
         <div className="fixed bottom-24 left-5 z-50 w-80 max-w-full max-h-[70vh] bg-white dark:bg-gray-800 shadow-xl rounded-lg p-4 overflow-auto border border-gray-300 dark:border-gray-700">
-          <CircuitBuilder session={session} />
+          <CircuitBuilder
+            onBack={() => setIsOpen(false)}
+            onSaveCircuit={onSaveCircuit || (() => {})}
+            questionData={currentQuestionData}
+            session={session}
+            existingCircuit={existingCircuit}
+          />
         </div>
       )}
     </>
