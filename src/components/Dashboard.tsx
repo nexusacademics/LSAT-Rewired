@@ -382,4 +382,36 @@ const Dashboard: React.FC<DashboardProps> = ({
                           <div className="w-5 h-5 bg-gradient-to-br from-yellow-400 to-yellow-500 text-gray-900 text-xs font-bold rounded-full flex items-center justify-center mr-1">1</div>
                           <span className={`font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Sarah</span>
                         </div>
-                        <span className={`font-semibold ${theme === 'dark' ? 'text-gray-300' : 'text-
+                        <span className={`font-semibold ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>847</span>
+                      </div>
+                      
+                      <div className={`flex items-center justify-between p-1.5 rounded border text-xs ${
+                        theme === 'dark' ? 'bg-gray-750 border-blue-500/50' : 'bg-blue-50 border-blue-300'
+                      }`}>
+                        <div className="flex items-center">
+                          <div className="w-5 h-5 bg-gradient-to-br from-blue-500 to-purple-500 text-white text-xs font-bold rounded-full flex items-center justify-center mr-1">{user.stats.rank}</div>
+                          <span className={`font-medium ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`}>You</span>
+                        </div>
+                        <span className={`font-semibold ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>{user.stats.circuitsCreated}</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          </div>
+
+          {/* Time Mode Selection Modal */}
+          <TimeModeSelectionModal
+            isOpen={isTimeModeModalOpen}
+            onClose={() => setIsTimeModeModal(false)}
+            onSelectTimeMode={handleTimeModeSelected}
+            allProcessedTests={allProcessedTests}
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Dashboard;
