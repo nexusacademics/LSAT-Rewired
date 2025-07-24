@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { TestSession, ProcessedPrepTest, ProcessedSection, ProcessedQuestion, Circuit } from '../../App';
 import CircuitBuilder from '../CircuitBuilder';
-import FloatingCircuitBuilderButton from '../FloatingCircuitBuilderButton'; // Add this import
+import FloatingCircuitBuilderButton from '../FloatingCircuitBuilderButton'; // ✅ Already present
 import { Header } from './Header';
 import { PassagePanel } from './PassagePanel';
 import { QuestionPanel } from './QuestionPanel';
@@ -35,7 +35,11 @@ const TripleReview: React.FC<TripleReviewProps> = ({
     session.phase === 'strategy-review' && !session.completedPhases.includes('strategy-review')
   );
 
-  // Determine the sections and questions relevant to the current session
+  const [hasDismissedTooltipForQuestion, setHasDismissedTooltipForQuestion] = useState(false); // ✅ NEW
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false); // ✅ NEW
+  const [lastSavedScore, setLastSavedScore] = useState<number | undefined>(); // ✅ NEW
+
+  // Determine sections and current question
   const currentSections: ProcessedSection[] = session.selectedSectionId
     ? processedPrepTest.sections.filter(sec => sec.id === session.selectedSectionId)
     : processedPrepTest.sections;
@@ -44,9 +48,15 @@ const TripleReview: React.FC<TripleReviewProps> = ({
   const questionsInCurrentSection = currentSectionData?.questions || [];
   const currentQuestionData = questionsInCurrentSection[session.currentQuestionIndex];
 
-  // Calculate initial time based on timeMode
+  // Reset tooltip and success bubble when question changes ✅ NEW
+  useEffect(() => {
+    setHasDismissedTooltipForQuestion(false);
+    setShowSuccessMessage(false);
+    setLastSavedScore(undefined);
+  }, [currentQuestionData?.id]);
+
   const getInitialTime = () => {
-    const baseTime = 35 * 60; // 35 minutes in seconds
+    const baseTime = 35 * 60;
     switch (session.timeMode) {
       case '1.5x': return Math.floor(baseTime * 1.5);
       case '2x': return baseTime * 2;
@@ -60,7 +70,6 @@ const TripleReview: React.FC<TripleReviewProps> = ({
     setShowSectionTransition(true);
   };
 
-  // Custom hooks
   const {
     timeRemaining,
     getTimeDisplay,
@@ -99,7 +108,6 @@ const TripleReview: React.FC<TripleReviewProps> = ({
     onUpdateSession
   });
 
-  // Find the existing circuit for the current question, if any
   const existingCircuitForQuestion = session.circuits.find(
     (c) => c.questionId === currentQuestionData?.id
   );
@@ -115,21 +123,25 @@ const TripleReview: React.FC<TripleReviewProps> = ({
     } else {
       updatedCircuits = [...session.circuits, updatedCircuit];
     }
+
     onUpdateSession({ ...session, circuits: updatedCircuits });
+    setShowCircuitBuilder(false); // ✅ Close after save
+    setLastSavedScore(updatedCircuit.analysisQuality); // ✅ Show score
+    setShowSuccessMessage(true); // ✅ Show message
+    setTimeout(() => setShowSuccessMessage(false), 3000); // ✅ Auto-dismiss
   };
 
   const handleConfirmSectionSubmit = () => {
     const nextSectionIndex = session.currentSectionIndex + 1;
     const updatedCompletedSectionIds = [...session.completedSectionIds, currentSectionData.id];
 
-    // Save answered questions for the current phase before moving on
     let updatedSession = { ...session };
     if (session.phase === 'timed') {
       updatedSession.timedAnswers = { ...session.answeredQuestions };
     } else if (session.phase === 'blind-review') {
       updatedSession.blindReviewAnswers = { ...session.answeredQuestions };
     }
-    updatedSession.answeredQuestions = {}; // Reset for next phase
+    updatedSession.answeredQuestions = {};
 
     if (nextSectionIndex < currentSections.length) {
       onUpdateSession({
@@ -140,7 +152,6 @@ const TripleReview: React.FC<TripleReviewProps> = ({
       });
       setShowSectionTransition(false);
     } else {
-      // All sections completed for the current phase
       const updatedCompletedPhases = [...session.completedPhases, session.phase];
       onUpdateSession({
         ...updatedSession,
@@ -163,16 +174,13 @@ const TripleReview: React.FC<TripleReviewProps> = ({
     );
   }
 
-  // Define selected answer for display
   const selectedAnswerIndex = session.answeredQuestions[currentQuestionData.id];
   const selectedAnswerText = selectedAnswerIndex !== undefined
     ? currentQuestionData.options[selectedAnswerIndex]
     : null;
 
-  // Construct the formatted section name for the header
   const formattedSectionDisplay = `${processedPrepTest.name} - Section ${session.currentSectionIndex + 1}`;
 
-  // Strategy Review Summary Screen
   if (session.phase === 'strategy-review' && showStrategySummary) {
     return (
       <StrategySummary
@@ -186,7 +194,6 @@ const TripleReview: React.FC<TripleReviewProps> = ({
 
   return (
     <div className="fixed inset-0 flex flex-col bg-slate-50 z-40">
-      {/* Header */}
       <Header
         session={session}
         currentQuestionData={currentQuestionData}
@@ -209,9 +216,7 @@ const TripleReview: React.FC<TripleReviewProps> = ({
         isLastSection={isLastSection}
       />
 
-      {/* Main Content Wrapper */}
       <div ref={mainContentRef} className="flex-1 p-6 overflow-y-auto">
-        {/* Modals */}
         {showSectionTransition && (
           <SectionTransition
             session={session}
@@ -221,7 +226,6 @@ const TripleReview: React.FC<TripleReviewProps> = ({
           />
         )}
 
-        {/* Paused Overlay */}
         {session.phase === 'timed' && !isTimerRunning && (
           <PausedOverlay
             onResume={() => setIsTimerRunning(true)}
@@ -229,7 +233,6 @@ const TripleReview: React.FC<TripleReviewProps> = ({
           />
         )}
 
-        {/* Main Layout */}
         {showCircuitBuilder && session.phase !== 'timed' ? (
           <div className="grid lg:grid-cols-3 gap-6 h-full">
             <PassagePanel
@@ -281,23 +284,22 @@ const TripleReview: React.FC<TripleReviewProps> = ({
         )}
       </div>
 
-      {/* Footer - Question Tracker */}
       <QuestionTracker
         session={session}
         questionsInCurrentSection={questionsInCurrentSection}
         onQuestionJump={handleQuestionJump}
       />
 
-      {/* Floating Circuit Builder Button */}
-    <FloatingCircuitBuilderButton
-  session={session}
-  isOpen={showCircuitBuilder}
-  onToggle={() => setShowCircuitBuilder(prev => !prev)}
-/>
-
-
-
-      
+      {/* ✅ NEW: Updated floating button with tooltip/success integration */}
+      <FloatingCircuitBuilderButton
+        session={session}
+        isOpen={showCircuitBuilder}
+        onToggle={() => setShowCircuitBuilder(prev => !prev)}
+        showIntroTooltip={!hasDismissedTooltipForQuestion}
+        onDismissIntroTooltip={() => setHasDismissedTooltipForQuestion(true)}
+        showSuccessMessage={showSuccessMessage}
+        analysisQualityScore={lastSavedScore}
+      />
     </div>
   );
 };
