@@ -102,7 +102,9 @@ function App() {
   const processedPrepTest = currentSession ? allProcessedTests[currentSession.testId] : undefined;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+   <ThemeProvider>
+      <div className="app">
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       <Navigation
         currentView={currentView}
         onViewChange={setCurrentView}
@@ -178,5 +180,8 @@ function useCurrentQuestionData(
 
   return currentSection.questions[currentSession.currentQuestionIndex]; // Corrected to use currentQuestionIndex
 }
-
+  </div>
+    </ThemeProvider>
+  );
+}
 export default App;
