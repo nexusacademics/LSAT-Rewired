@@ -129,7 +129,7 @@ export const Header: React.FC<HeaderProps> = ({
               onClick={onExitSession}
               className="px-3 py-2 bg-slate-100 text-slate-600 hover:bg-slate-200 rounded-lg transition-colors text-sm font-medium"
             >
-              {session.phase === 'blind-review' ? 'Exit Blind Review' : 'Exit Strategy Review'}
+              {session.phase === 'blind-review' ? 'Pause Blind Review' : 'Pause Strategy Review'}
             </button>
           )}
 
