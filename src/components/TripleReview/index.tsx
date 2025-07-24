@@ -288,7 +288,6 @@ const TripleReview: React.FC<TripleReviewProps> = ({
         onQuestionJump={handleQuestionJump}
       />
     </div>
- 
       );
 };
 
