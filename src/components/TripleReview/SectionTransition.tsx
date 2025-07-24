@@ -27,12 +27,18 @@ export const SectionTransition: React.FC<SectionTransitionProps> = ({
         <h3 className="text-2xl font-semibold text-slate-900 mb-4">
           {isLastSection ? 'Test Complete!' : `Section ${session.currentSectionIndex + 1} Complete!`}
         </h3>
-        <p className="text-slate-600 mb-6">
-          {isLastSection
-            ? 'You have completed all sections of this test.'
-            : `You have completed Section ${session.currentSectionIndex + 1}. Are you ready to move on to the next section? <br/> (You will not be permitted to come back to this section once you move on.)`
-          }
-        </p>
+       <p className="text-slate-600 mb-6">
+  {isLastSection ? (
+    'You have completed all sections of this test.'
+  ) : (
+    <>
+      You have completed Section {session.currentSectionIndex + 1}. Are you ready to move on to the next section?
+      <br />
+      (You will not be permitted to come back to this section once you move on.)
+    </>
+  )}
+</p>
+
         <div className="flex space-x-3">
           <button
             onClick={onCancel}
