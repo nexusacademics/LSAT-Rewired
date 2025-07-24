@@ -337,62 +337,84 @@ const Dashboard: React.FC<DashboardProps> = ({
                     </CardTitle>
                   </CardHeader>
                   
-                  <CardContent className="flex-1 flex flex-col justify-center space-y-4">
-                    {/* Personal Stats */}
-                    <div className="grid grid-cols-3 gap-2">
-                      <div className="text-center">
-                        <div className={`text-lg font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                          {user.stats.circuitsCreated}
-                        </div>
-                        <div className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Circuits</div>
-                      </div>
-                      <div className="text-center">
-                        <div className={`text-lg font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                          {user.stats.testsCompleted}
-                        </div>
-                        <div className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Tests</div>
-                      </div>
-                      <div className="text-center">
-                        <div className={`text-lg font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                          {user.stats.averageAnalysisScore}%
-                        </div>
-                        <div className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Analysis</div>
-                      </div>
-                    </div>
-
-                    {/* Study Streak */}
-                    <div className="text-center py-2 border-t border-b border-gray-200 dark:border-gray-700">
-                      <div className={`text-2xl font-bold mb-1 ${
-                        theme === 'dark' 
-                          ? 'text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-400' 
-                          : 'text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-red-500'
-                      }`}>7</div>
-                      <div className={`text-xs flex items-center justify-center ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                        <Calendar className="h-3 w-3 mr-1" />
-                        Day Streak 🔥
-                      </div>
-                    </div>
-
-                    {/* Compact Leaderboard */}
-                    <div className="space-y-1">
-                      <div className={`flex items-center justify-between p-1.5 rounded border text-xs ${
-                        theme === 'dark' ? 'bg-gray-750 border-yellow-600/30' : 'bg-yellow-50 border-yellow-200'
-                      }`}>
-                        <div className="flex items-center">
-                          <div className="w-5 h-5 bg-gradient-to-br from-yellow-400 to-yellow-500 text-gray-900 text-xs font-bold rounded-full flex items-center justify-center mr-1">1</div>
-                          <span className={`font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Sarah</span>
-                        </div>
-                        <span className={`font-semibold ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>847</span>
-                      </div>
+                  <CardContent className="flex-1 flex flex-col justify-center">
+                    {/* Two Column Layout: Stats Left, Rankings Right */}
+                    <div className="grid grid-cols-2 gap-4 h-full">
                       
-                      <div className={`flex items-center justify-between p-1.5 rounded border text-xs ${
-                        theme === 'dark' ? 'bg-gray-750 border-blue-500/50' : 'bg-blue-50 border-blue-300'
-                      }`}>
-                        <div className="flex items-center">
-                          <div className="w-5 h-5 bg-gradient-to-br from-blue-500 to-purple-500 text-white text-xs font-bold rounded-full flex items-center justify-center mr-1">{user.stats.rank}</div>
-                          <span className={`font-medium ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`}>You</span>
+                      {/* Left Column: Personal Stats */}
+                      <div className="flex flex-col justify-center space-y-3">
+                        <div className="text-center">
+                          <div className={`text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                            {user.stats.circuitsCreated}
+                          </div>
+                          <div className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Circuits</div>
                         </div>
-                        <span className={`font-semibold ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>{user.stats.circuitsCreated}</span>
+                        
+                        <div className="text-center">
+                          <div className={`text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                            {user.stats.testsCompleted}
+                          </div>
+                          <div className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Tests</div>
+                        </div>
+                        
+                        <div className="text-center">
+                          <div className={`text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                            {user.stats.averageAnalysisScore}%
+                          </div>
+                          <div className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Analysis</div>
+                        </div>
+
+                        {/* Study Streak */}
+                        <div className="text-center pt-2 border-t border-gray-200 dark:border-gray-700">
+                          <div className={`text-lg font-bold mb-1 ${
+                            theme === 'dark' 
+                              ? 'text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-400' 
+                              : 'text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-red-500'
+                          }`}>7</div>
+                          <div className={`text-xs flex items-center justify-center ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                            <Calendar className="h-3 w-3 mr-1" />
+                            Day Streak 🔥
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Right Column: Rankings */}
+                      <div className="flex flex-col justify-center min-w-0">
+                        <div className={`text-xs font-medium mb-2 text-center ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+                          Leaderboard
+                        </div>
+                        
+                        <div className="space-y-1 min-w-0">
+                          <div className={`flex items-center justify-between p-1.5 rounded border text-xs min-w-0 ${
+                            theme === 'dark' ? 'bg-gray-750 border-yellow-600/30' : 'bg-yellow-50 border-yellow-200'
+                          }`}>
+                            <div className="flex items-center min-w-0 flex-shrink">
+                              <div className="w-4 h-4 bg-gradient-to-br from-yellow-400 to-yellow-500 text-gray-900 text-xs font-bold rounded-full flex items-center justify-center mr-1 flex-shrink-0">1</div>
+                              <span className={`font-medium truncate ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Sarah</span>
+                            </div>
+                            <span className={`font-semibold ml-1 flex-shrink-0 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>847</span>
+                          </div>
+                          
+                          <div className={`flex items-center justify-between p-1.5 rounded border text-xs min-w-0 ${
+                            theme === 'dark' ? 'bg-gray-750 border-blue-500/50' : 'bg-blue-50 border-blue-300'
+                          }`}>
+                            <div className="flex items-center min-w-0 flex-shrink">
+                              <div className="w-4 h-4 bg-gradient-to-br from-blue-500 to-purple-500 text-white text-xs font-bold rounded-full flex items-center justify-center mr-1 flex-shrink-0">{user.stats.rank}</div>
+                              <span className={`font-medium truncate ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`}>You</span>
+                            </div>
+                            <span className={`font-semibold ml-1 flex-shrink-0 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>{user.stats.circuitsCreated}</span>
+                          </div>
+                          
+                          <div className={`flex items-center justify-between p-1.5 rounded border text-xs min-w-0 ${
+                            theme === 'dark' ? 'bg-gray-750 border-gray-600' : 'bg-gray-50 border-gray-200'
+                          }`}>
+                            <div className="flex items-center min-w-0 flex-shrink">
+                              <div className="w-4 h-4 bg-gradient-to-br from-gray-400 to-gray-500 text-white text-xs font-bold rounded-full flex items-center justify-center mr-1 flex-shrink-0">3</div>
+                              <span className={`font-medium truncate ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>Alex</span>
+                            </div>
+                            <span className={`font-semibold ml-1 flex-shrink-0 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>203</span>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </CardContent>
