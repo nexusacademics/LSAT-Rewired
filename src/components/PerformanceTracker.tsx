@@ -23,12 +23,12 @@ const PerformanceTracker: React.FC<PerformanceTrackerProps> = ({
       circuitsCreated: 156,
       averageAnalysisScore: 85
     }
-  },
-  theme = 'light'
+  }
 }) => {
   const [timeframe, setTimeframe] = useState<'week' | 'month' | 'all'>('month');
 
   // Theme classes
+  const { theme } = useTheme();
   const isDark = theme === 'dark';
   const themeClasses = {
     background: isDark ? 'bg-gray-900' : 'bg-white',
