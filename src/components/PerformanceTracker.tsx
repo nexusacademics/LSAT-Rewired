@@ -382,24 +382,7 @@ const PerformanceTracker: React.FC<PerformanceTrackerProps> = ({
               </div>
             </div>
           </div>
-        </div>
-
-        {/* Theme Toggle Demo */}
-        <div className="flex justify-center">
-          <button
-            onClick={() => {
-              // This would typically be handled by your theme context
-              console.log('Theme toggle clicked - implement with your theme provider');
-            }}
-            className={`px-6 py-3 rounded-lg font-medium transition-colors ${
-              isDark 
-                ? 'bg-gray-700 text-white hover:bg-gray-600' 
-                : 'bg-slate-100 text-slate-900 hover:bg-slate-200'
-            }`}
-          >
-            Switch to {isDark ? 'Light' : 'Dark'} Theme
-          </button>
-        </div>
+        </div>      
       </div>
     </div>
   );
