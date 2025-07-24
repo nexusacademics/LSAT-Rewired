@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { TrendingUp, Target, Users, Calendar, Trophy, Brain, BarChart3 } from 'lucide-react';
 import ThemeToggle from '../components/ui/ThemeToggle';
+import { useTheme } from '../../contexts/ThemeContext';
 
 // Mock User interface for demo
 interface User {
@@ -23,9 +24,9 @@ const PerformanceTracker: React.FC<PerformanceTrackerProps> = ({
       circuitsCreated: 156,
       averageAnalysisScore: 85
     }
-  },
-  theme = 'light'
+  }
 }) => {
+  const { theme } = useTheme(); 
   const [timeframe, setTimeframe] = useState<'week' | 'month' | 'all'>('month');
 
   // Theme classes
