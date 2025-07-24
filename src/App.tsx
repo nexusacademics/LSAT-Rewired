@@ -156,7 +156,10 @@ function App() {
     </div>
   );
 }
-
+  </div>
+    </ThemeProvider>
+  );
+}
 // Custom hook to derive current question data
 function useCurrentQuestionData(
   currentView: AppView,
@@ -180,8 +183,5 @@ function useCurrentQuestionData(
 
   return currentSection.questions[currentSession.currentQuestionIndex]; // Corrected to use currentQuestionIndex
 }
-  </div>
-    </ThemeProvider>
-  );
-}
+
 export default App;
