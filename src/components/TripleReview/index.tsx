@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { TestSession, ProcessedPrepTest, ProcessedSection, ProcessedQuestion, Circuit } from '../../App';
 import CircuitBuilder from '../CircuitBuilder';
+import FloatingCircuitBuilderButton from '../FloatingCircuitBuilderButton'; // Add this import
 import { Header } from './Header';
 import { PassagePanel } from './PassagePanel';
 import { QuestionPanel } from './QuestionPanel';
@@ -286,6 +287,9 @@ const TripleReview: React.FC<TripleReviewProps> = ({
         questionsInCurrentSection={questionsInCurrentSection}
         onQuestionJump={handleQuestionJump}
       />
+
+      {/* Floating Circuit Builder Button */}
+      <FloatingCircuitBuilderButton session={session} />
       
     </div>
   );
