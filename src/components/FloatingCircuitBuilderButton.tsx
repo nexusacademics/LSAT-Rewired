@@ -26,7 +26,7 @@ export default function FloatingCircuitBuilderButton({ session }: FloatingCircui
         aria-label="Toggle Circuit Builder"
         className="fixed bottom-20 right-5 z-50 rounded-full bg-purple-600 hover:bg-purple-700 text-white p-4 shadow-lg transition-colors"
       >
-        {isOpen ? <X className="w-6 h-6" /> : <PuzzlePiece className="w-6 h-6" />}
+        {isOpen ? <X className="w-6 h-6" /> : <Puzzle className="w-6 h-6" />}
       </button>
 
       {/* Floating panel overlay */}
