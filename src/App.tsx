@@ -8,7 +8,7 @@ import { useTestSessions } from './hooks/useTestSessions';
 
 // Import components
 import Dashboard from './components/Dashboard';
-import TripleReview from './components/TripleReview/index';
+import TripleReview from './components/TripleReview';
 import PerformanceTracker from './components/PerformanceTracker';
 import FloatingChatButton from './components/FloatingChatButton';
 import LoadingSpinner from './components/LoadingSpinner';
@@ -17,6 +17,7 @@ import Navigation from './components/Navigation';
 // Import types
 import type { TestSession } from './types/user';
 import type { ProcessedQuestion, ProcessedPrepTest } from './types/test-data'; // Ensure ProcessedPrepTest is imported
+import { ThemeProvider } from './contexts/ThemeContext'; // Import ThemeProvider
 
 // Define view type
 type AppView = 'dashboard' | 'triple-review' | 'performance' | 'subscription';
@@ -154,17 +155,16 @@ function App() {
         />
       )}
     </div>
-  );
-}
   </div>
     </ThemeProvider>
   );
 }
+
 // Custom hook to derive current question data
 function useCurrentQuestionData(
   currentView: AppView,
   currentSession: TestSession | null,
-  allProcessedTests: { [key: string]: ProcessedPrepTest } // Use ProcessedPrepTest type
+  allProcessedTests: Record<string, ProcessedPrepTest> // Changed from { [key: string]: ProcessedPrepTest }
 ): ProcessedQuestion | null {
   if (currentView !== 'triple-review' || !currentSession) {
     return null;
@@ -183,5 +183,4 @@ function useCurrentQuestionData(
 
   return currentSection.questions[currentSession.currentQuestionIndex]; // Corrected to use currentQuestionIndex
 }
-
 export default App;
