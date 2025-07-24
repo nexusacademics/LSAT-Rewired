@@ -65,7 +65,7 @@ const Dashboard: React.FC<DashboardProps> = ({
     : 'bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100';
 
   return (
-    <div className={`h-screen w-full transition-all duration-500 ${backgroundClasses} overflow-hidden`}>
+    <div className={`h-[calc(100vh-4rem)] w-full transition-all duration-500 ${backgroundClasses} overflow-hidden`}>
       <div className="w-full p-3 h-full">
         <div className="max-w-7xl mx-auto h-full flex flex-col space-y-3">
         
