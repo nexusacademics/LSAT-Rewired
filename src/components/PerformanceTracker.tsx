@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { TrendingUp, Target, Users, Calendar, Trophy, Brain, BarChart3 } from 'lucide-react';
 import ThemeToggle from '../components/ui/ThemeToggle';
-import { useTheme } from '../../contexts/ThemeContext';
+import { useTheme } from '../contexts/ThemeContext';
 
 // Mock User interface for demo
 interface User {
