@@ -1,16 +1,17 @@
-// FloatingCircuitBuilderButton.tsx
 import React from 'react';
-import { Puzzle } from 'lucide-react';
-import { TestSession, Circuit, ProcessedQuestion } from '../App';
+import { Puzzle, X } from 'lucide-react';
+import { TestSession } from '../App';
 
 interface FloatingCircuitBuilderButtonProps {
   session: TestSession;
-  onOpenCircuitBuilder: () => void;
+  isOpen: boolean;
+  onToggle: () => void;
 }
 
 export default function FloatingCircuitBuilderButton({
   session,
-  onOpenCircuitBuilder
+  isOpen,
+  onToggle
 }: FloatingCircuitBuilderButtonProps) {
   const showButton = session.phase === 'blind-review' || session.phase === 'strategy-review';
 
@@ -18,11 +19,11 @@ export default function FloatingCircuitBuilderButton({
 
   return (
     <button
-      onClick={onOpenCircuitBuilder}
-      aria-label="Open Circuit Builder"
+      onClick={onToggle}
+      aria-label="Toggle Circuit Builder"
       className="fixed bottom-32 right-5 z-50 rounded-full bg-purple-600 hover:bg-purple-700 text-white p-4 shadow-lg transition-colors"
     >
-      <Puzzle className="w-6 h-6" />
+      {isOpen ? <X className="w-6 h-6" /> : <Puzzle className="w-6 h-6" />}
     </button>
   );
 }
