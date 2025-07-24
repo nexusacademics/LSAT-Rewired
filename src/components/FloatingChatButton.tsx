@@ -40,9 +40,6 @@ const FloatingChatButton: React.FC<FloatingChatButtonProps> = ({
 }) => {
   // Determine if the chat should be disabled
   const isDisabled = currentView === 'triple-review' && currentSession?.phase === 'timed';
-if (isTimedPhase) {
-  return null;
-}
 
   const toggleChat = () => {
     if (!isDisabled) {
