@@ -125,7 +125,7 @@ const TripleReview: React.FC<TripleReviewProps> = ({
     }
 
     onUpdateSession({ ...session, circuits: updatedCircuits });
-    setShowCircuitBuilder(false); // ✅ Close after save
+    //setShowCircuitBuilder(false); // ✅ Close after save
     setLastSavedScore(updatedCircuit.analysisQuality); // ✅ Show score
     setShowSuccessMessage(true); // ✅ Show message
     setTimeout(() => setShowSuccessMessage(false), 3000); // ✅ Auto-dismiss
