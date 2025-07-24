@@ -32,7 +32,7 @@ export const SectionTransition: React.FC<SectionTransitionProps> = ({
     'You have completed all sections of this test.'
   ) : (
     <>
-      You have completed Section {session.currentSectionIndex + 1}. Are you ready to move on to the next section?
+     Are you ready to move on to the next section?
       <br /><br />
       <b>NOTE:</b> You will not be permitted to come back to this section once you move on.
     </>
