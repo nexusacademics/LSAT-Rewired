@@ -42,7 +42,7 @@ export default function FloatingCircuitBuilderButton({
         {isOpen ? <X className="w-6 h-6" /> : <Puzzle className="w-6 h-6" />}
       </button>
       {isOpen && currentQuestionData && (
-        <div className="fixed bottom-24 left-5 z-50 w-80 max-w-full max-h-[70vh] bg-white dark:bg-gray-800 shadow-xl rounded-lg p-4 overflow-auto border border-gray-300 dark:border-gray-700">
+        <div className="fixed inset-0 z-40 bg-white dark:bg-gray-800">
           <CircuitBuilder
             onBack={() => setIsOpen(false)}
             onSaveCircuit={onSaveCircuit || (() => {})}
