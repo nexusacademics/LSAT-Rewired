@@ -491,9 +491,7 @@ const Dashboard: React.FC<DashboardProps> = ({
                     {[...Array(7)].map((_, i) => (
                       <div 
                         key={i} 
-                        className={`h-10 w-10 rounded-xl bg-gradient-to-br from-orange-500 to-red-500 shadow-lg transform hover:scale-110 transition-transform ${
-                          theme === 'dark' ? 'border border-orange-400/30' : ''
-                        }`}
+                        className={`h-10 w-10 rounded-xl bg-gradient-to-br from-orange-500 to-red-500 shadow-lg transform hover:scale-110 transition-transform ${theme === 'dark' ? 'border border-orange-400/30' : ''}`}
                       />
                     ))}
                   </div>
