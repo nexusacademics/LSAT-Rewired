@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { PuzzlePiece, X } from 'lucide-react'; // Example icon, replace as needed
 import CircuitBuilder from './CircuitBuilder';
 import { TestSession } from '../App';
+import { Puzzle } from 'lucide-react';
 
 interface FloatingCircuitBuilderButtonProps {
   session: TestSession;
