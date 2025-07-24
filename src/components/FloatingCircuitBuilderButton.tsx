@@ -37,12 +37,12 @@ export default function FloatingCircuitBuilderButton({
       <button
         onClick={() => setIsOpen(!isOpen)}
         aria-label="Toggle Circuit Builder"
-        className="fixed bottom-20 left-5 z-50 rounded-full bg-purple-600 hover:bg-purple-700 text-white p-4 shadow-lg transition-colors"
+        className="fixed bottom-32 right-5 z-50 rounded-full bg-purple-600 hover:bg-purple-700 text-white p-4 shadow-lg transition-colors"
       >
         {isOpen ? <X className="w-6 h-6" /> : <Puzzle className="w-6 h-6" />}
       </button>
       {isOpen && currentQuestionData && (
-        <div className="fixed inset-0 z-40 bg-white dark:bg-gray-800">
+        <div className="fixed inset-y-0 right-0 z-40 bg-white dark:bg-gray-800 shadow-xl border-l border-gray-300 dark:border-gray-700" style={{ width: 'calc(66.666667% + 1.5rem)' }}>
           <CircuitBuilder
             onBack={() => setIsOpen(false)}
             onSaveCircuit={onSaveCircuit || (() => {})}
