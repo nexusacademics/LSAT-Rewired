@@ -54,7 +54,7 @@ const FloatingChatButton: React.FC<FloatingChatButtonProps> = ({
         onClick={toggleChat}
         className={`fixed bottom-6 right-6 p-4 rounded-full shadow-lg transition-all duration-300 ease-in-out z-50
           ${isOpen ? 'bg-purple-700' : 'bg-purple-600 hover:bg-purple-700'}
-          ${isDisabled ? '' : ''}
+          ${isDisabled ? 'opacity-50 cursor-not-allowed' : ''}
         `}
         disabled={isDisabled}
         title={isDisabled ? "AI Assistant is disabled during timed sessions" : "Toggle AI Assistant"}
