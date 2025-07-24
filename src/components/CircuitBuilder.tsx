@@ -681,12 +681,17 @@ const CircuitBuilder: React.FC<CircuitBuilderProps> = ({ onBack, onSaveCircuit, 
               Clear All
             </button>
             <button
-              onClick={saveCircuit}
-              className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors"
-            >
-              <Save className="h-4 w-4 mr-2 inline" />
-              Save Circuit
-            </button>
+  onClick={() => {
+    if (currentCircuit) { // or whatever your circuit state is
+      onSaveCircuit(currentCircuit);
+    }
+  }}
+  className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors"
+>
+  <Save className="h-4 w-4 mr-2 inline" />
+  Save Circuit
+</button>
+
           </div>
         </div>
       </div>
