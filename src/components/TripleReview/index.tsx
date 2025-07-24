@@ -288,7 +288,6 @@ const TripleReview: React.FC<TripleReviewProps> = ({
         onQuestionJump={handleQuestionJump}
       />
     </div>
-  {/* Floating Circuit Builder Button (only in blind-review and strategy-review) */}
       {(session.phase === 'blind-review' || session.phase === 'strategy-review') && (
         <FloatingCircuitBuilderButton session={session} />
       );
