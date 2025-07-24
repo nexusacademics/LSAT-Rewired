@@ -10,12 +10,7 @@ interface FloatingCircuitBuilderButtonProps {
   existingCircuit?: Circuit;
 }
 
-export default function FloatingCircuitBuilderButton({ 
-  session, 
-  onSaveCircuit, 
-  currentQuestionData, 
-  existingCircuit 
-}: FloatingCircuitBuilderButtonProps) {
+export default function FloatingCircuitBuilderButton({ session }: FloatingCircuitBuilderButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
   
   const showButton = session.phase === 'blind-review' || session.phase === 'strategy-review';
@@ -24,8 +19,7 @@ export default function FloatingCircuitBuilderButton({
   console.log('FloatingCircuitBuilderButton render:', {
     phase: session.phase,
     showButton,
-    completedPhases: session.completedPhases,
-    hasQuestionData: !!currentQuestionData
+    completedPhases: session.completedPhases
   });
 
   if (!showButton) {
@@ -41,15 +35,9 @@ export default function FloatingCircuitBuilderButton({
       >
         {isOpen ? <X className="w-6 h-6" /> : <Puzzle className="w-6 h-6" />}
       </button>
-      {isOpen && currentQuestionData && (
+      {isOpen && (
         <div className="fixed bottom-24 left-5 z-50 w-80 max-w-full max-h-[70vh] bg-white dark:bg-gray-800 shadow-xl rounded-lg p-4 overflow-auto border border-gray-300 dark:border-gray-700">
-          <CircuitBuilder
-            onBack={() => setIsOpen(false)}
-            onSaveCircuit={onSaveCircuit || (() => {})}
-            questionData={currentQuestionData}
-            session={session}
-            existingCircuit={existingCircuit}
-          />
+          <CircuitBuilder session={session} />
         </div>
       )}
     </>
