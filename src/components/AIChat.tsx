@@ -75,7 +75,7 @@ const AIChat: React.FC<AIChatProps> = ({ user, isChatDisabled = false, currentVi
         {
           id: 'initial-load-general',
           type: 'ai',
-          content: `Hi ${user.name}! I'm your LSAT analysis assistant. I'm here to help guide your thinking through circuits and logical reasoning, but I won't give you direct answers. What question are you working on?`,
+          content: `Hi ${user.name}! I'm your LSAT analysis assistant. I'm here to help guide your thinking , but I won't give you direct answers.`,
           timestamp: new Date()
         }
       ]);
