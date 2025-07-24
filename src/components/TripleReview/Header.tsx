@@ -78,8 +78,8 @@ export const Header: React.FC<HeaderProps> = ({
 
   return (
     <div className="bg-white shadow-sm border-b border-slate-200 py-4 px-6 rounded-b-2xl">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
+<div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+<div className="flex items-center space-x-4 md:mb-0 mb-2">
           <div className={`p-3 bg-${phaseColor}-100 rounded-xl`}>
             <PhaseIcon className={`h-6 w-6 text-${phaseColor}-600`} />
           </div>
