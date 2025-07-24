@@ -1,29 +1,73 @@
 import React from 'react';
-import { Puzzle, X } from 'lucide-react';
+import { Puzzle, X, Target, CheckCircle } from 'lucide-react';
 import { TestSession } from '../App';
 
 interface FloatingCircuitBuilderButtonProps {
   session: TestSession;
   isOpen: boolean;
   onToggle: () => void;
+  showIntroTooltip: boolean;
+  onDismissIntroTooltip: () => void;
+  showSuccessMessage: boolean;
+  analysisQualityScore?: number;
 }
 
 export default function FloatingCircuitBuilderButton({
   session,
   isOpen,
-  onToggle
+  onToggle,
+  showIntroTooltip,
+  onDismissIntroTooltip,
+  showSuccessMessage,
+  analysisQualityScore
 }: FloatingCircuitBuilderButtonProps) {
   const showButton = session.phase === 'blind-review' || session.phase === 'strategy-review';
 
   if (!showButton) return null;
 
   return (
-    <button
-      onClick={onToggle}
-      aria-label="Toggle Circuit Builder"
-      className="fixed bottom-32 left-5 z-50 rounded-full bg-purple-600 hover:bg-purple-700 text-white p-4 shadow-lg transition-colors"
-    >
-      {isOpen ? <X className="w-6 h-6" /> : <Puzzle className="w-6 h-6" />}
-    </button>
+    <div className="fixed bottom-32 left-5 z-50 flex flex-col items-start space-y-2">
+      {/* Tooltip Bubble */}
+      {showIntroTooltip && (
+        <div className="bg-white border border-teal-200 shadow-lg rounded-xl p-3 w-64 text-sm text-teal-800 relative">
+          <div className="flex items-center mb-1">
+            <Target className="h-4 w-4 mr-2 text-teal-600" />
+            <span className="font-semibold">Build your circuit</span>
+          </div>
+          <p className="text-teal-700">
+            Map out the logical structure of this argument to earn circuit points.
+          </p>
+          <div className="absolute top-1/2 -right-3 w-0 h-0 border-t-8 border-b-8 border-l-8 border-transparent border-l-white" />
+        </div>
+      )}
+
+      {/* Success Bubble */}
+      {showSuccessMessage && analysisQualityScore !== undefined && (
+        <div className="bg-green-50 border border-green-200 shadow-lg rounded-xl p-3 w-64 text-sm text-green-800 relative">
+          <div className="flex items-center mb-1">
+            <CheckCircle className="h-4 w-4 mr-2 text-green-700" />
+            <span className="font-semibold">Circuit Created!</span>
+          </div>
+          <p className="text-green-700">
+            Quality Score: {analysisQualityScore}/100
+          </p>
+          <div className="absolute top-1/2 -right-3 w-0 h-0 border-t-8 border-b-8 border-l-8 border-transparent border-l-green-50" />
+        </div>
+      )}
+
+      {/* The actual floating button */}
+      <button
+        onClick={() => {
+          onToggle();
+          if (showIntroTooltip) {
+            onDismissIntroTooltip();
+          }
+        }}
+        aria-label="Toggle Circuit Builder"
+        className="rounded-full bg-purple-600 hover:bg-purple-700 text-white p-4 shadow-lg transition-colors"
+      >
+        {isOpen ? <X className="w-6 h-6" /> : <Puzzle className="w-6 h-6" />}
+      </button>
+    </div>
   );
 }
