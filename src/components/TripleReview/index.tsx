@@ -244,13 +244,14 @@ const TripleReview: React.FC<TripleReviewProps> = ({
               onShowCircuitBuilder={() => setShowCircuitBuilder(true)}
             />
             <div className="lg:col-span-2 h-full">
-              <CircuitBuilder
-                onBack={() => setShowCircuitBuilder(false)}
-                onSaveCircuit={handleSaveCircuitFromBuilder}
-                questionData={currentQuestionData}
-                session={session}
-                existingCircuit={existingCircuitForQuestion}
-              />
+             <CircuitBuilder
+  onBack={() => setShowCircuitBuilder(false)}
+  onSaveCircuit={handleSaveCircuitFromBuilder} // <-- this is critical
+  questionData={currentQuestionData}
+  session={session}
+  existingCircuit={existingCircuitForQuestion}
+/>
+
             </div>
           </div>
         ) : (
