@@ -15,7 +15,8 @@ interface NavigationProps {
 }
 
 export default function Navigation({ currentView, onViewChange, userStats }: NavigationProps) {
-    if (currentView === 'triple-review') return null;
+  if (currentView === 'triple-review') return null;
+  
   const { theme } = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
   const drawerRef = useRef<HTMLDivElement>(null);
@@ -53,12 +54,12 @@ export default function Navigation({ currentView, onViewChange, userStats }: Nav
   }, [mobileOpen]);
 
   return (
-    <nav className={`${navClasses} shadow-sm border-b transition-all duration-500 relative z-50`}>
+    <nav className={`${navClasses} shadow-sm border-b transition-all duration-500 relative z-50 flex-shrink-0`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div
-            className="flex items-center space-x-2 cursor-pointer"
+            className="flex items-center space-x-2 cursor-pointer flex-shrink-0"
             onClick={() => handleLinkClick('dashboard')}
           >
             <Brain className="h-8 w-8 text-blue-600" />
@@ -67,8 +68,8 @@ export default function Navigation({ currentView, onViewChange, userStats }: Nav
             </span>
           </div>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex space-x-6 items-center">
+          {/* Desktop Navigation - Hide when content would overflow */}
+          <div className="hidden xl:flex space-x-6 items-center">
             <NavButton active={currentView === 'dashboard'} onClick={() => handleLinkClick('dashboard')} theme={theme}>
               Dashboard
             </NavButton>
@@ -87,47 +88,66 @@ export default function Navigation({ currentView, onViewChange, userStats }: Nav
             )}
           </div>
 
+          {/* Medium screens - Show nav without stats */}
+          <div className="hidden md:flex xl:hidden space-x-4 items-center">
+            <NavButton active={currentView === 'dashboard'} onClick={() => handleLinkClick('dashboard')} theme={theme}>
+              Dashboard
+            </NavButton>
+            <NavButton active={currentView === 'performance'} onClick={() => handleLinkClick('performance')} theme={theme}>
+              Performance
+            </NavButton>
+            <NavButton active={currentView === 'subscription'} onClick={() => handleLinkClick('subscription')} theme={theme}>
+              Subscription
+            </NavButton>
+            <ThemeToggle />
+          </div>
+
           {/* Mobile Hamburger */}
           <div className="md:hidden">
-            <button onClick={() => setMobileOpen(true)} aria-label="Open menu">
+            <button onClick={() => setMobileOpen(true)} aria-label="Open menu" className="p-2">
               <Menu className="h-6 w-6 text-blue-600" />
             </button>
           </div>
         </div>
       </div>
 
-      {/* Slide-in Drawer */}
-      <div
-        className={`fixed inset-0 z-40 transition-transform duration-300 ease-in-out transform ${
-          mobileOpen ? 'translate-x-0' : '-translate-x-full'
-        } md:hidden`}
-        style={{ backgroundColor: theme === 'dark' ? 'rgba(15, 23, 42, 0.95)' : 'rgba(255, 255, 255, 0.95)' }}
-      >
-        <div ref={drawerRef} className="w-64 h-full shadow-lg p-6 flex flex-col gap-4">
-          <div className="flex justify-between items-center mb-4">
-            <span className={`text-xl font-bold ${logoTextClasses}`}>Menu</span>
-            <button onClick={() => setMobileOpen(false)}>
-              <X className="h-6 w-6 text-blue-600" />
-            </button>
-          </div>
-          <NavButton active={currentView === 'dashboard'} onClick={() => handleLinkClick('dashboard')} theme={theme}>
-            Dashboard
-          </NavButton>
-          <NavButton active={currentView === 'performance'} onClick={() => handleLinkClick('performance')} theme={theme}>
-            Performance
-          </NavButton>
-          <NavButton active={currentView === 'subscription'} onClick={() => handleLinkClick('subscription')} theme={theme}>
-            Subscription
-          </NavButton>
-          <ThemeToggle />
-          {userStats && (
-            <div className="pt-4 mt-auto border-t border-gray-300 dark:border-gray-700 text-sm space-y-1">
-              <div className={statsTextClasses}>{userStats.circuitsCreated} Circuits</div>
-              <div className={statsTextClasses}>Rank #{userStats.rank}</div>
+      {/* Slide-in Drawer - Fixed positioning to avoid affecting layout */}
+      {mobileOpen && (
+        <div
+          className="fixed inset-0 z-40 md:hidden"
+          style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
+        >
+          <div
+            ref={drawerRef}
+            className={`fixed left-0 top-0 w-64 h-full shadow-lg p-6 flex flex-col gap-4 transform transition-transform duration-300 ease-in-out ${
+              theme === 'dark' ? 'bg-gray-800' : 'bg-white'
+            }`}
+          >
+            <div className="flex justify-between items-center mb-4">
+              <span className={`text-xl font-bold ${logoTextClasses}`}>Menu</span>
+              <button onClick={() => setMobileOpen(false)} className="p-1">
+                <X className="h-6 w-6 text-blue-600" />
+              </button>
             </div>
-          )}
+            <NavButton active={currentView === 'dashboard'} onClick={() => handleLinkClick('dashboard')} theme={theme}>
+              Dashboard
+            </NavButton>
+            <NavButton active={currentView === 'performance'} onClick={() => handleLinkClick('performance')} theme={theme}>
+              Performance
+            </NavButton>
+            <NavButton active={currentView === 'subscription'} onClick={() => handleLinkClick('subscription')} theme={theme}>
+              Subscription
+            </NavButton>
+            <ThemeToggle />
+            {userStats && (
+              <div className="pt-4 mt-auto border-t border-gray-300 dark:border-gray-700 text-sm space-y-1">
+                <div className={statsTextClasses}>{userStats.circuitsCreated} Circuits</div>
+                <div className={statsTextClasses}>Rank #{userStats.rank}</div>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
+      )}
     </nav>
   );
 }
@@ -140,7 +160,7 @@ interface NavButtonProps {
 }
 
 function NavButton({ active, onClick, children, theme }: NavButtonProps) {
-  const base = 'px-4 py-2 rounded-md font-medium text-sm transition-all duration-200 w-full text-left';
+  const base = 'px-4 py-2 rounded-md font-medium text-sm transition-all duration-200 w-full md:w-auto text-left whitespace-nowrap';
   const dark = active
     ? 'bg-blue-900/50 text-blue-400'
     : 'text-gray-300 hover:bg-gray-700 hover:text-white';
@@ -156,7 +176,7 @@ function NavButton({ active, onClick, children, theme }: NavButtonProps) {
 
 function Stat({ icon, label, theme }: { icon: React.ReactNode; label: string; theme: string }) {
   return (
-    <div className="flex items-center space-x-2">
+    <div className="flex items-center space-x-2 whitespace-nowrap">
       {icon}
       <span className={`text-sm font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-slate-700'}`}>
         {label}
