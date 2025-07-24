@@ -1,7 +1,7 @@
 // components/TripleReview/index.tsx
 import React, { useState, useEffect } from 'react';
 import { TestSession, ProcessedPrepTest, ProcessedSection, ProcessedQuestion, Circuit } from '../../App';
-import CircuitBuilder from '../CircuitBuilder';
+import CircuitBuilder from './CircuitBuilder';
 import FloatingCircuitBuilderButton from '../../FloatingCircuitBuilderButton'; // Add this import
 import { Header } from './Header';
 import { PassagePanel } from './PassagePanel';
