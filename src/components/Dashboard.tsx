@@ -65,9 +65,9 @@ const Dashboard: React.FC<DashboardProps> = ({
     : 'bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100';
 
   return (
-    <div className={`min-h-screen w-full fixed inset-0 transition-all duration-500 ${backgroundClasses}`}>
-      <div className="h-full w-full overflow-y-auto p-6">
-        <div className="max-w-7xl mx-auto space-y-8 pb-8">
+    <div className={`min-h-screen w-full transition-all duration-500 ${backgroundClasses}`}>
+      <div className="w-full p-6">
+        <div className="max-w-7xl mx-auto space-y-8">
         
         {/* Theme Toggle */}
         <div className="flex justify-end">
