@@ -208,7 +208,6 @@ const TripleReview: React.FC<TripleReviewProps> = ({
         isLastQuestionOfSection={isLastQuestionOfSection}
         isLastSection={isLastSection}
       />
-  <FloatingCircuitBuilderButton session={session} />
 
       {/* Main Content Wrapper */}
       <div ref={mainContentRef} className="flex-1 p-6 overflow-y-auto">
