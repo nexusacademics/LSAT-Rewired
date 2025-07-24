@@ -1,7 +1,6 @@
-import React from 'react'; // Removed useState, useEffect as they are no longer needed here
+import React from 'react';
 import { MessageCircle, X } from 'lucide-react';
 import AIChat from './AIChat';
-// Import types from App.tsx as they are now exported from there
 import { User, TestSession, ProcessedQuestion, ProcessedPrepTest, Message } from '../App';
 
 interface FloatingChatButtonProps {
@@ -12,13 +11,10 @@ interface FloatingChatButtonProps {
   allProcessedTests: { [key: string]: ProcessedPrepTest };
   messages: Message[];
   setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
-  // NEW: Props to control the open/closed state from parent
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  // NEW: Props for lifted chat context state
-  lastProcessedQuestionIdForChat: { questionId: string, phase: string } | null;
-  setLastProcessedQuestionIdForChat: React.Dispatch<React.SetStateAction<{ questionId: string, phase: string } | null>>;
-  // NEW: Prop for lifted initial welcome message flag
+  lastProcessedQuestionIdForChat: { questionId: string; phase: string } | null;
+  setLastProcessedQuestionIdForChat: React.Dispatch<React.SetStateAction<{ questionId: string; phase: string } | null>>;
   hasInitialChatWelcomeBeenSent: boolean;
   setHasInitialChatWelcomeBeenSent: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -31,20 +27,19 @@ const FloatingChatButton: React.FC<FloatingChatButtonProps> = ({
   allProcessedTests,
   messages,
   setMessages,
-  isOpen, // Destructure isOpen from props
-  setIsOpen, // Destructure setIsOpen from props
-  lastProcessedQuestionIdForChat, // NEW: Destructure lifted state
-  setLastProcessedQuestionIdForChat, // NEW: Destructure lifted setter
-  hasInitialChatWelcomeBeenSent, // NEW: Destructure lifted state
-  setHasInitialChatWelcomeBeenSent // NEW: Destructure lifted setter
+  isOpen,
+  setIsOpen,
+  lastProcessedQuestionIdForChat,
+  setLastProcessedQuestionIdForChat,
+  hasInitialChatWelcomeBeenSent,
+  setHasInitialChatWelcomeBeenSent,
 }) => {
-  // Determine if the chat should be disabled
-  const isDisabled = currentView === 'triple-review' && currentSession?.phase === 'timed';
+  // Hide the chat completely during timed phase
+  const isTimedPhase = currentView === 'triple-review' && currentSession?.phase === 'timed';
+  if (isTimedPhase) return null;
 
   const toggleChat = () => {
-    if (!isDisabled) {
-      setIsOpen(!isOpen); // Use setIsOpen from props
-    }
+    setIsOpen(!isOpen);
   };
 
   return (
@@ -54,10 +49,8 @@ const FloatingChatButton: React.FC<FloatingChatButtonProps> = ({
         onClick={toggleChat}
         className={`fixed bottom-6 right-6 p-4 rounded-full shadow-lg transition-all duration-300 ease-in-out z-50
           ${isOpen ? 'bg-purple-700' : 'bg-purple-600 hover:bg-purple-700'}
-          ${isDisabled ? 'opacity-50 cursor-not-allowed' : ''}
         `}
-        disabled={isDisabled}
-        title={isDisabled ? "AI Assistant is disabled during timed sessions" : "Toggle AI Assistant"}
+        title="Toggle AI Assistant"
       >
         {isOpen ? (
           <X className="h-7 w-7 text-white" />
@@ -76,18 +69,18 @@ const FloatingChatButton: React.FC<FloatingChatButtonProps> = ({
         {isOpen && (
           <AIChat
             user={user}
-            isChatDisabled={isDisabled}
+            isChatDisabled={false}
             currentView={currentView}
             currentSession={currentSession}
             currentQuestionData={currentQuestionData}
             allProcessedTests={allProcessedTests}
             messages={messages}
             setMessages={setMessages}
-            isOpen={isOpen} // Pass isOpen to AIChat
-            lastProcessedQuestionIdForChat={lastProcessedQuestionIdForChat} // NEW: Pass lifted state
-            setLastProcessedQuestionIdForChat={setLastProcessedQuestionIdForChat} // NEW: Pass lifted setter
-            hasInitialChatWelcomeBeenSent={hasInitialChatWelcomeBeenSent} // NEW: Pass lifted state
-            setHasInitialChatWelcomeBeenSent={setHasInitialChatWelcomeBeenSent} // NEW: Pass lifted setter
+            isOpen={isOpen}
+            lastProcessedQuestionIdForChat={lastProcessedQuestionIdForChat}
+            setLastProcessedQuestionIdForChat={setLastProcessedQuestionIdForChat}
+            hasInitialChatWelcomeBeenSent={hasInitialChatWelcomeBeenSent}
+            setHasInitialChatWelcomeBeenSent={setHasInitialChatWelcomeBeenSent}
           />
         )}
       </div>
