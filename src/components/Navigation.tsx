@@ -2,7 +2,7 @@
 import React from 'react';
 import { Brain, Target, TrendingUp } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
-import ThemeToggle from 'ThemeToggle'; // adjust path as needed
+import ThemeToggle from '../components/ui/ThemeToggle'; // adjust path as needed
 
 type AppView = 'dashboard' | 'triple-review' | 'performance' | 'subscription';
 
