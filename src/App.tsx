@@ -101,18 +101,25 @@ function App() {
 
   // Ensure processedPrepTest is available for TripleReview
   const processedPrepTest = currentSession ? allProcessedTests[currentSession.testId] : undefined;
+import { useTheme } from './contexts/ThemeContext'; // Make sure this import exists
 
+function App() {
+  const { theme } = useTheme();
   return (
-   <ThemeProvider>
-      <div className="app">
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+  <ThemeProvider>
+  <div className="app">
+    <div className={`min-h-screen transition-all duration-500 ${
+      theme === 'dark' 
+        ? 'bg-gray-900' 
+        : 'bg-gradient-to-br from-slate-50 to-blue-50'
+    }`}>
       <Navigation
         currentView={currentView}
         onViewChange={setCurrentView}
         userStats={user?.stats}
       />
 
-     <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 bg-transparent">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {currentView === 'dashboard' && user && (
           <Dashboard
             user={user}
