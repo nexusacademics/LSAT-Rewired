@@ -65,12 +65,12 @@ const Dashboard: React.FC<DashboardProps> = ({
     : 'bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100';
 
   return (
-    <div className={`h-[calc(100vh-4rem)] w-full transition-all duration-500 ${backgroundClasses} overflow-hidden`}>
-      <div className="w-full p-3 h-full">
-        <div className="max-w-7xl mx-auto h-full flex flex-col space-y-3">
-        
-          {/* Top Row: Welcome & Start New Session - Compact */}
-          <div className="flex-shrink-0 grid lg:grid-cols-2 gap-4">
+    <div className={`flex-1 min-h-0 w-full transition-all duration-500 ${backgroundClasses} overflow-hidden`}>
+      <div className="w-full h-full p-3">
+        <div className="max-w-7xl mx-auto h-full flex flex-col">
+          
+          {/* Top Row: Welcome & Start New Session - Fixed height */}
+          <div className="flex-shrink-0 grid lg:grid-cols-2 gap-4 mb-4">
             {/* Welcome Message */}
             <Card padding="default">
               <div className={`${theme === 'dark' ? 'bg-gradient-to-r from-blue-600/20 via-purple-600/20 to-teal-600/20 p-4 -m-4 rounded-2xl' : ''}`}>
@@ -122,85 +122,89 @@ const Dashboard: React.FC<DashboardProps> = ({
             </Card>
           </div>
 
-          {/* Main Content: Two Column Layout - Flexible */}
+          {/* Main Content: Flexible height container */}
           <div className="flex-1 min-h-0 grid lg:grid-cols-3 gap-4">
             
             {/* Left Column: Sessions (2/3 width) */}
-            <div className="lg:col-span-2 min-h-0 flex flex-col space-y-3">
+            <div className="lg:col-span-2 min-h-0 flex flex-col">
               
-              {/* Active Sessions */}
-              <Card padding="default" className="flex-1 min-h-0">
-                <CardHeader className="pb-2">
-                  <CardTitle icon={<Activity className="h-5 w-5 text-orange-500" />} className="text-lg">
-                    Active Sessions
-                  </CardTitle>
-                </CardHeader>
-                
-                <CardContent className="flex-1 min-h-0 overflow-y-auto">
-                  {activeSessions.length > 0 ? (
-                    <div className="grid md:grid-cols-2 gap-3">
-                      {activeSessions.slice(0, 4).map((session) => (
-                        <Card 
-                          key={session.id} 
-                          variant="accent" 
-                          padding="default"
-                          hover
-                          className={`${theme === 'dark' ? 'hover:border-orange-500/50' : 'hover:border-orange-300'} min-h-0`}
-                        >
-                          <div className="mb-2">
-                            <h4 className={`font-medium text-sm ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                              {formatSessionDisplayName(session)}
-                            </h4>
-                            <span className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
-                              {session.startTime.toLocaleDateString()}
-                            </span>
-                          </div>
-                          
-                          <div className="flex items-center justify-between mb-2">
-                            <Badge variant="primary" className="text-xs">
-                              {session.phase === 'timed' && session.timeMode ? `${session.timeMode}` : session.phase}
-                            </Badge>
-                            <span className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                              Q: {Object.keys(session.answeredQuestions).length}
-                            </span>
-                          </div>
-                          
-                          <Button 
+              {/* Active Sessions - Takes available space */}
+              <div className="flex-1 min-h-0 mb-4">
+                <Card padding="default" className="h-full flex flex-col">
+                  <CardHeader className="pb-2 flex-shrink-0">
+                    <CardTitle icon={<Activity className="h-5 w-5 text-orange-500" />} className="text-lg">
+                      Active Sessions
+                    </CardTitle>
+                  </CardHeader>
+                  
+                  <CardContent className="flex-1 min-h-0 overflow-y-auto">
+                    {activeSessions.length > 0 ? (
+                      <div className="grid md:grid-cols-2 gap-3">
+                        {activeSessions.slice(0, 6).map((session) => (
+                          <Card 
+                            key={session.id} 
                             variant="accent" 
-                            size="sm"
-                            className="w-full"
-                            onClick={() => onResumeTestSession(session.id)}
+                            padding="default"
+                            hover
+                            className={`${theme === 'dark' ? 'hover:border-orange-500/50' : 'hover:border-orange-300'}`}
                           >
-                            Resume
-                          </Button>
-                        </Card>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-center py-8">
-                      <div className="text-4xl mb-2">🎯</div>
-                      <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
-                        No active sessions
-                      </p>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
+                            <div className="mb-2">
+                              <h4 className={`font-medium text-sm ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                                {formatSessionDisplayName(session)}
+                              </h4>
+                              <span className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+                                {session.startTime.toLocaleDateString()}
+                              </span>
+                            </div>
+                            
+                            <div className="flex items-center justify-between mb-2">
+                              <Badge variant="primary" className="text-xs">
+                                {session.phase === 'timed' && session.timeMode ? `${session.timeMode}` : session.phase}
+                              </Badge>
+                              <span className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                                Q: {Object.keys(session.answeredQuestions).length}
+                              </span>
+                            </div>
+                            
+                            <Button 
+                              variant="accent" 
+                              size="sm"
+                              className="w-full"
+                              onClick={() => onResumeTestSession(session.id)}
+                            >
+                              Resume
+                            </Button>
+                          </Card>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-center h-full">
+                        <div className="text-center">
+                          <div className="text-4xl mb-2">🎯</div>
+                          <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+                            No active sessions
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
 
-              {/* Review & Archived - Compact Side by Side */}
-              <div className="flex-shrink-0 grid grid-cols-2 gap-3">
+              {/* Review & Archived - Fixed height bottom section */}
+              <div className="flex-shrink-0 grid grid-cols-2 gap-3 h-48">
                 {/* Ready for Review */}
-                <Card padding="default" hover>
-                  <CardHeader className="pb-2">
+                <Card padding="default" hover className="h-full flex flex-col">
+                  <CardHeader className="pb-2 flex-shrink-0">
                     <CardTitle icon={<Target className="h-4 w-4 text-teal-500" />} className="text-sm">
                       Ready for Review
                     </CardTitle>
                   </CardHeader>
                   
-                  <CardContent>
+                  <CardContent className="flex-1 min-h-0 overflow-y-auto">
                     {readyForBlindReviewSessions.length > 0 || readyForStrategyReviewSessions.length > 0 ? (
                       <div className="space-y-2">
-                        {[...readyForBlindReviewSessions, ...readyForStrategyReviewSessions].slice(0, 2).map((session) => {
+                        {[...readyForBlindReviewSessions, ...readyForStrategyReviewSessions].slice(0, 4).map((session) => {
                           const isBlindReview = readyForBlindReviewSessions.includes(session);
                           return (
                             <div key={session.id} className={`p-2 rounded-lg border text-center ${
@@ -222,14 +226,14 @@ const Dashboard: React.FC<DashboardProps> = ({
                             </div>
                           );
                         })}
-                        {(readyForBlindReviewSessions.length + readyForStrategyReviewSessions.length) > 2 && (
+                        {(readyForBlindReviewSessions.length + readyForStrategyReviewSessions.length) > 4 && (
                           <p className={`text-xs text-center ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
-                            +{(readyForBlindReviewSessions.length + readyForStrategyReviewSessions.length) - 2} more
+                            +{(readyForBlindReviewSessions.length + readyForStrategyReviewSessions.length) - 4} more
                           </p>
                         )}
                       </div>
                     ) : (
-                      <div className="text-center py-4">
+                      <div className="flex items-center justify-center h-full">
                         <p className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
                           None ready
                         </p>
@@ -239,17 +243,17 @@ const Dashboard: React.FC<DashboardProps> = ({
                 </Card>
 
                 {/* Archived Sessions */}
-                <Card padding="default" hover>
-                  <CardHeader className="pb-2">
+                <Card padding="default" hover className="h-full flex flex-col">
+                  <CardHeader className="pb-2 flex-shrink-0">
                     <CardTitle icon={<Archive className="h-4 w-4 text-gray-500" />} className="text-sm">
                       Archived
                     </CardTitle>
                   </CardHeader>
                   
-                  <CardContent>
+                  <CardContent className="flex-1 min-h-0 overflow-y-auto">
                     {archivedSessions.length > 0 ? (
                       <div className="space-y-2">
-                        {archivedSessions.slice(0, 2).map((session) => (
+                        {archivedSessions.slice(0, 4).map((session) => (
                           <div key={session.id} className={`p-2 rounded-lg border text-center ${
                             theme === 'dark' ? 'bg-gray-750 border-gray-600' : 'bg-gray-50 border-gray-200'
                           }`}>
@@ -266,14 +270,14 @@ const Dashboard: React.FC<DashboardProps> = ({
                             </Button>
                           </div>
                         ))}
-                        {archivedSessions.length > 2 && (
+                        {archivedSessions.length > 4 && (
                           <p className={`text-xs text-center ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
-                            +{archivedSessions.length - 2} more
+                            +{archivedSessions.length - 4} more
                           </p>
                         )}
                       </div>
                     ) : (
-                      <div className="text-center py-4">
+                      <div className="flex items-center justify-center h-full">
                         <p className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
                           None archived
                         </p>
@@ -285,111 +289,115 @@ const Dashboard: React.FC<DashboardProps> = ({
             </div>
 
             {/* Right Column: Stats & Performance (1/3 width) */}
-            <div className="min-h-0 flex flex-col space-y-3">
+            <div className="min-h-0 flex flex-col">
               
-              {/* Performance Overview */}
-              <Card padding="default" className="flex-1">
-                <CardHeader className="pb-2">
-                  <CardTitle icon={<TrendingUp className="h-4 w-4 text-green-500" />} className="text-sm">
-                    Performance
-                  </CardTitle>
-                </CardHeader>
-                
-                <CardContent className="space-y-3">
-                  <div>
-                    <div className="flex justify-between items-center mb-1">
-                      <span className={`text-xs font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>Circuit Quality</span>
-                      <span className={`text-sm font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>85%</span>
-                    </div>
-                    <ProgressBar value={85} variant="success" />
-                  </div>
+              {/* Performance Overview - Takes half of available space */}
+              <div className="flex-1 min-h-0 mb-4">
+                <Card padding="default" className="h-full flex flex-col">
+                  <CardHeader className="pb-2 flex-shrink-0">
+                    <CardTitle icon={<TrendingUp className="h-4 w-4 text-green-500" />} className="text-sm">
+                      Performance
+                    </CardTitle>
+                  </CardHeader>
                   
-                  <div>
-                    <div className="flex justify-between items-center mb-1">
-                      <span className={`text-xs font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>Analysis Depth</span>
-                      <span className={`text-sm font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>92%</span>
-                    </div>
-                    <ProgressBar value={92} variant="primary" />
-                  </div>
-                  
-                  <div>
-                    <div className="flex justify-between items-center mb-1">
-                      <span className={`text-xs font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>Consistency</span>
-                      <span className={`text-sm font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>78%</span>
-                    </div>
-                    <ProgressBar value={78} variant="warning" />
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Combined Stats & Leaderboard */}
-              <Card padding="default" className="flex-1">
-                <CardHeader className="pb-2">
-                  <CardTitle icon={<Award className="h-4 w-4 text-yellow-500" />} className="text-sm">
-                    Stats & Rankings
-                  </CardTitle>
-                </CardHeader>
-                
-                <CardContent className="space-y-3">
-                  {/* Personal Stats */}
-                  <div className="grid grid-cols-3 gap-2">
-                    <div className="text-center">
-                      <div className={`text-lg font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                        {user.stats.circuitsCreated}
+                  <CardContent className="flex-1 flex flex-col justify-center space-y-4">
+                    <div>
+                      <div className="flex justify-between items-center mb-1">
+                        <span className={`text-xs font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>Circuit Quality</span>
+                        <span className={`text-sm font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>85%</span>
                       </div>
-                      <div className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Circuits</div>
-                    </div>
-                    <div className="text-center">
-                      <div className={`text-lg font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                        {user.stats.testsCompleted}
-                      </div>
-                      <div className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Tests</div>
-                    </div>
-                    <div className="text-center">
-                      <div className={`text-lg font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                        {user.stats.averageAnalysisScore}%
-                      </div>
-                      <div className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Analysis</div>
-                    </div>
-                  </div>
-
-                  {/* Study Streak */}
-                  <div className="text-center py-2 border-t border-b border-gray-200 dark:border-gray-700">
-                    <div className={`text-2xl font-bold mb-1 ${
-                      theme === 'dark' 
-                        ? 'text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-400' 
-                        : 'text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-red-500'
-                    }`}>7</div>
-                    <div className={`text-xs flex items-center justify-center ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                      <Calendar className="h-3 w-3 mr-1" />
-                      Day Streak 🔥
-                    </div>
-                  </div>
-
-                  {/* Compact Leaderboard */}
-                  <div className="space-y-1">
-                    <div className={`flex items-center justify-between p-1.5 rounded border text-xs ${
-                      theme === 'dark' ? 'bg-gray-750 border-yellow-600/30' : 'bg-yellow-50 border-yellow-200'
-                    }`}>
-                      <div className="flex items-center">
-                        <div className="w-5 h-5 bg-gradient-to-br from-yellow-400 to-yellow-500 text-gray-900 text-xs font-bold rounded-full flex items-center justify-center mr-1">1</div>
-                        <span className={`font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Sarah</span>
-                      </div>
-                      <span className={`font-semibold ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>847</span>
+                      <ProgressBar value={85} variant="success" />
                     </div>
                     
-                    <div className={`flex items-center justify-between p-1.5 rounded border text-xs ${
-                      theme === 'dark' ? 'bg-gray-750 border-blue-500/50' : 'bg-blue-50 border-blue-300'
-                    }`}>
-                      <div className="flex items-center">
-                        <div className="w-5 h-5 bg-gradient-to-br from-blue-500 to-purple-500 text-white text-xs font-bold rounded-full flex items-center justify-center mr-1">{user.stats.rank}</div>
-                        <span className={`font-medium ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`}>You</span>
+                    <div>
+                      <div className="flex justify-between items-center mb-1">
+                        <span className={`text-xs font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>Analysis Depth</span>
+                        <span className={`text-sm font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>92%</span>
                       </div>
-                      <span className={`font-semibold ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>{user.stats.circuitsCreated}</span>
+                      <ProgressBar value={92} variant="primary" />
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
+                    
+                    <div>
+                      <div className="flex justify-between items-center mb-1">
+                        <span className={`text-xs font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>Consistency</span>
+                        <span className={`text-sm font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>78%</span>
+                      </div>
+                      <ProgressBar value={78} variant="warning" />
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Combined Stats & Leaderboard - Takes remaining space */}
+              <div className="flex-1 min-h-0">
+                <Card padding="default" className="h-full flex flex-col">
+                  <CardHeader className="pb-2 flex-shrink-0">
+                    <CardTitle icon={<Award className="h-4 w-4 text-yellow-500" />} className="text-sm">
+                      Stats & Rankings
+                    </CardTitle>
+                  </CardHeader>
+                  
+                  <CardContent className="flex-1 flex flex-col justify-center space-y-4">
+                    {/* Personal Stats */}
+                    <div className="grid grid-cols-3 gap-2">
+                      <div className="text-center">
+                        <div className={`text-lg font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                          {user.stats.circuitsCreated}
+                        </div>
+                        <div className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Circuits</div>
+                      </div>
+                      <div className="text-center">
+                        <div className={`text-lg font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                          {user.stats.testsCompleted}
+                        </div>
+                        <div className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Tests</div>
+                      </div>
+                      <div className="text-center">
+                        <div className={`text-lg font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                          {user.stats.averageAnalysisScore}%
+                        </div>
+                        <div className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Analysis</div>
+                      </div>
+                    </div>
+
+                    {/* Study Streak */}
+                    <div className="text-center py-2 border-t border-b border-gray-200 dark:border-gray-700">
+                      <div className={`text-2xl font-bold mb-1 ${
+                        theme === 'dark' 
+                          ? 'text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-400' 
+                          : 'text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-red-500'
+                      }`}>7</div>
+                      <div className={`text-xs flex items-center justify-center ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                        <Calendar className="h-3 w-3 mr-1" />
+                        Day Streak 🔥
+                      </div>
+                    </div>
+
+                    {/* Compact Leaderboard */}
+                    <div className="space-y-1">
+                      <div className={`flex items-center justify-between p-1.5 rounded border text-xs ${
+                        theme === 'dark' ? 'bg-gray-750 border-yellow-600/30' : 'bg-yellow-50 border-yellow-200'
+                      }`}>
+                        <div className="flex items-center">
+                          <div className="w-5 h-5 bg-gradient-to-br from-yellow-400 to-yellow-500 text-gray-900 text-xs font-bold rounded-full flex items-center justify-center mr-1">1</div>
+                          <span className={`font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Sarah</span>
+                        </div>
+                        <span className={`font-semibold ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>847</span>
+                      </div>
+                      
+                      <div className={`flex items-center justify-between p-1.5 rounded border text-xs ${
+                        theme === 'dark' ? 'bg-gray-750 border-blue-500/50' : 'bg-blue-50 border-blue-300'
+                      }`}>
+                        <div className="flex items-center">
+                          <div className="w-5 h-5 bg-gradient-to-br from-blue-500 to-purple-500 text-white text-xs font-bold rounded-full flex items-center justify-center mr-1">{user.stats.rank}</div>
+                          <span className={`font-medium ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`}>You</span>
+                        </div>
+                        <span className={`font-semibold ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>{user.stats.circuitsCreated}</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
             </div>
           </div>
 
