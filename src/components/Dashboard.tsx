@@ -161,7 +161,7 @@ const Dashboard: React.FC<DashboardProps> = ({
                   className="w-full"
                   onClick={handleStartNewSessionClick}
                 >
-                  <Play className="h-6 w-4 mr-2" />
+                  <Play className="h-4 w-4 mr-2" />
                   Start New Test Session
                 </Button>
               </Card>
