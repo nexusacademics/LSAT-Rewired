@@ -66,7 +66,7 @@ const Dashboard: React.FC<DashboardProps> = ({
 
   return (
     <div className={`min-h-screen w-full transition-all duration-500 ${backgroundClasses}`}>
-      <div className="w-full pt-22 p-6">
+      <div className="w-full pt-24 p-6">
         <div className="max-w-7xl mx-auto space-y-8">
         
         {/* Theme Toggle */}
