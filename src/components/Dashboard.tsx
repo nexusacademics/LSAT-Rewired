@@ -167,206 +167,50 @@ const Dashboard: React.FC<DashboardProps> = ({
               </Card>
             </Card>
 
-            {/* Active Sessions - Compressed */}
-            <Card padding="default" hover>
-              <CardHeader className="pb-3">
-                <CardTitle icon={<Activity className="h-5 w-5 text-orange-500" />}>
-                  Your Active Sessions
-                </CardTitle>
-              </CardHeader>
-              
-              <CardContent>
-                {activeSessions.length > 0 ? (
-                  <div className="space-y-3">
-                    {activeSessions.map((session) => (
-                      <Card 
-                        key={session.id} 
-                        variant="accent" 
-                        padding="sm"
-                        hover
-                        className={theme === 'dark' ? 'hover:border-orange-500/50' : 'hover:border-orange-300'}
-                      >
-                        <div className="flex items-center justify-between mb-3">
-                          <h3 className={`font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                            {formatSessionDisplayName(session)}
-                          </h3>
-                          <span className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
-                            Started: {session.startTime.toLocaleDateString()}
-                          </span>
-                        </div>
-                        
-                        <div className="flex items-center justify-between mb-3">
-                          <Badge variant={
-                            session.phase === 'strategy-review' ? 'warning' :
-                            session.phase === 'blind-review' ? 'info' : 'primary'
-                          }>
-                            {session.phase === 'timed' && session.timeMode ? `Timed (${session.timeMode})` : session.phase.replace('-', ' ')}
-                          </Badge>
-                          
-                          <div className={`flex space-x-3 text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                            <span>Q: {session.currentSectionIndex + 1}-{Object.keys(session.answeredQuestions).length}</span>
-                            <span>Circuits: {session.circuits.length}</span>
-                          </div>
-                        </div>
-                        
-                        <Button 
-                          variant="accent" 
-                          size="sm"
-                          className="w-full"
-                          onClick={() => onResumeTestSession(session.id)}
-                        >
-                          Resume Session
-                        </Button>
-                      </Card>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-8">
-                    <div className="text-4xl mb-3">🎯</div>
-                    <p className={`${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
-                      No active sessions. Start a new PrepTest above!
-                    </p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+            {/* Session Management - Collapsible Sections */}
+            <div className="space-y-2">
+              {/* Active Sessions */}
+              <SessionSection
+                title="Active Sessions"
+                icon={<Activity className="h-4 w-4 text-orange-500" />}
+                count={activeSessions.length}
+                sessions={activeSessions}
+                emptyMessage="No active sessions. Start a new PrepTest above!"
+                emptyIcon="🎯"
+                theme={theme}
+                onResumeSession={onResumeTestSession}
+                formatSessionDisplayName={formatSessionDisplayName}
+                type="active"
+              />
 
-            {/* Ready for Review Sessions - Compressed */}
-            <Card padding="default" hover>
-              <CardHeader className="pb-3">
-                <CardTitle icon={<Target className="h-5 w-5 text-teal-500" />}>
-                  Ready for Review
-                </CardTitle>
-              </CardHeader>
-              
-              <CardContent>
-                {readyForBlindReviewSessions.length > 0 || readyForStrategyReviewSessions.length > 0 ? (
-                  <div className="space-y-3">
-                    {readyForBlindReviewSessions.map((session) => (
-                      <Card 
-                        key={session.id} 
-                        variant="accent" 
-                        padding="sm"
-                        hover
-                        className={theme === 'dark' ? 'border-teal-600/30 bg-teal-900/10 hover:bg-teal-900/20' : 'border-teal-200 bg-teal-50/30 hover:bg-teal-50/50'}
-                      >
-                        <div className="flex items-center justify-between mb-3">
-                          <h3 className={`font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                            {formatSessionDisplayName(session)}
-                          </h3>
-                          <span className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
-                            Completed: {session.endTime?.toLocaleDateString()}
-                          </span>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <Badge variant="primary">
-                            Timed Phase Completed
-                          </Badge>
-                          <Button
-                            variant="accent"
-                            size="sm"
-                            onClick={() => onResumeTestSession(session.id, 'blind-review')}
-                            className="flex items-center"
-                          >
-                            Start Blind Review <ChevronRight className="h-3 w-3 ml-1" />
-                          </Button>
-                        </div>
-                      </Card>
-                    ))}
+              {/* Ready for Review Sessions */}
+              <SessionSection
+                title="Ready for Review"
+                icon={<Target className="h-4 w-4 text-teal-500" />}
+                count={readyForBlindReviewSessions.length + readyForStrategyReviewSessions.length}
+                sessions={[...readyForBlindReviewSessions, ...readyForStrategyReviewSessions]}
+                emptyMessage="No sessions ready for review."
+                emptyIcon="📝"
+                theme={theme}
+                onResumeSession={onResumeTestSession}
+                formatSessionDisplayName={formatSessionDisplayName}
+                type="review"
+              />
 
-                    {readyForStrategyReviewSessions.map((session) => (
-                      <Card 
-                        key={session.id} 
-                        variant="accent" 
-                        padding="sm"
-                        hover
-                        className={theme === 'dark' ? 'border-orange-600/30 bg-orange-900/10 hover:bg-orange-900/20' : 'border-orange-200 bg-orange-50/30 hover:bg-orange-50/50'}
-                      >
-                        <div className="flex items-center justify-between mb-3">
-                          <h3 className={`font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                            {formatSessionDisplayName(session)}
-                          </h3>
-                          <span className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
-                            Completed: {session.endTime?.toLocaleDateString()}
-                          </span>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <Badge variant="info">
-                            Blind Review Completed
-                          </Badge>
-                          <Button
-                            variant="danger"
-                            size="sm"
-                            onClick={() => onResumeTestSession(session.id, 'strategy-review')}
-                            className="flex items-center"
-                          >
-                            Start Strategy Review <ChevronRight className="h-3 w-3 ml-1" />
-                          </Button>
-                        </div>
-                      </Card>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-6">
-                    <p className={theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}>
-                      No sessions ready for review.
-                    </p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Archived Sessions - Compressed */}
-            <Card padding="default" hover>
-              <CardHeader className="pb-3">
-                <CardTitle icon={<Archive className="h-5 w-5 text-gray-500" />}>
-                  Archived Sessions
-                </CardTitle>
-              </CardHeader>
-              
-              <CardContent>
-                {archivedSessions.length > 0 ? (
-                  <div className="space-y-3">
-                    {archivedSessions.map((session) => (
-                      <Card 
-                        key={session.id} 
-                        variant="accent" 
-                        padding="sm"
-                        hover
-                      >
-                        <div className="flex items-center justify-between mb-3">
-                          <h3 className={`font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                            {formatSessionDisplayName(session)}
-                          </h3>
-                          <span className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
-                            Archived: {session.endTime?.toLocaleDateString()}
-                          </span>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <Badge variant="warning">
-                            Strategy Review Completed
-                          </Badge>
-                          <Button
-                            variant="secondary"
-                            size="sm"
-                            onClick={() => alert('Viewing archived session details (not implemented yet)')}
-                            className="flex items-center"
-                          >
-                            View Details <Archive className="h-3 w-3 ml-1" />
-                          </Button>
-                        </div>
-                      </Card>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-6">
-                    <p className={theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}>
-                      No archived sessions.
-                    </p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+              {/* Archived Sessions */}
+              <SessionSection
+                title="Archived Sessions"
+                icon={<Archive className="h-4 w-4 text-gray-500" />}
+                count={archivedSessions.length}
+                sessions={archivedSessions}
+                emptyMessage="No archived sessions."
+                emptyIcon="📦"
+                theme={theme}
+                onResumeSession={() => {}}
+                formatSessionDisplayName={formatSessionDisplayName}
+                type="archived"
+              />
+            </div>
           </div>
 
           {/* Sidebar - Now takes 1 column */}
@@ -510,6 +354,200 @@ const Dashboard: React.FC<DashboardProps> = ({
         </div>
       </div>
     </div>
+  );
+};
+
+// Collapsible Session Section Component
+interface SessionSectionProps {
+  title: string;
+  icon: React.ReactNode; 
+  count: number;
+  sessions: TestSession[];
+  emptyMessage: string;
+  emptyIcon: string;
+  theme: 'light' | 'dark';
+  onResumeSession: (sessionId: string, targetPhase?: 'blind-review' | 'strategy-review') => void;
+  formatSessionDisplayName: (session: TestSession) => string;
+  type: 'active' | 'review' | 'archived';
+}
+
+const SessionSection: React.FC<SessionSectionProps> = ({
+  title,
+  icon,
+  count,
+  sessions,
+  emptyMessage,
+  emptyIcon,
+  theme,
+  onResumeSession,
+  formatSessionDisplayName,
+  type
+}) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const getButtonVariant = () => {
+    if (type === 'active') return count > 0 ? 'accent' : 'ghost';
+    if (type === 'review') return count > 0 ? 'primary' : 'ghost';
+    return count > 0 ? 'secondary' : 'ghost';
+  };
+
+  const renderSession = (session: TestSession) => {
+    const isBlindReview = session.endTime && session.completedPhases.includes('timed') && !session.completedPhases.includes('blind-review');
+    const isStrategyReview = session.endTime && session.completedPhases.includes('blind-review') && !session.completedPhases.includes('strategy-review');
+    const isArchived = session.endTime && session.completedPhases.includes('strategy-review');
+
+    if (type === 'active') {
+      return (
+        <Card 
+          key={session.id} 
+          variant="accent" 
+          padding="sm"
+          hover
+          className={theme === 'dark' ? 'hover:border-orange-500/50' : 'hover:border-orange-300'}
+        >
+          <div className="flex items-center justify-between mb-2">
+            <h3 className={`font-medium text-sm ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+              {formatSessionDisplayName(session)}
+            </h3>
+            <span className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+              {session.startTime.toLocaleDateString()}
+            </span>
+          </div>
+          
+          <div className="flex items-center justify-between mb-2">
+            <Badge variant={
+              session.phase === 'strategy-review' ? 'warning' :
+              session.phase === 'blind-review' ? 'info' : 'primary'
+            }>
+              {session.phase === 'timed' && session.timeMode ? `Timed (${session.timeMode})` : session.phase.replace('-', ' ')}
+            </Badge>
+            
+            <div className={`flex space-x-2 text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+              <span>Q: {session.currentSectionIndex + 1}-{Object.keys(session.answeredQuestions).length}</span>
+              <span>Circuits: {session.circuits.length}</span>
+            </div>
+          </div>
+          
+          <Button 
+            variant="accent" 
+            size="sm"
+            className="w-full"
+            onClick={() => onResumeSession(session.id)}
+          >
+            Resume Session
+          </Button>
+        </Card>
+      );
+    }
+
+    if (type === 'review') {
+      return (
+        <Card 
+          key={session.id} 
+          variant="accent" 
+          padding="sm"
+          hover
+          className={
+            isBlindReview 
+              ? (theme === 'dark' ? 'border-teal-600/30 bg-teal-900/10 hover:bg-teal-900/20' : 'border-teal-200 bg-teal-50/30 hover:bg-teal-50/50')
+              : (theme === 'dark' ? 'border-orange-600/30 bg-orange-900/10 hover:bg-orange-900/20' : 'border-orange-200 bg-orange-50/30 hover:bg-orange-50/50')
+          }
+        >
+          <div className="flex items-center justify-between mb-2">
+            <h3 className={`font-medium text-sm ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+              {formatSessionDisplayName(session)}
+            </h3>
+            <span className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+              {session.endTime?.toLocaleDateString()}
+            </span>
+          </div>
+          <div className="flex items-center justify-between">
+            <Badge variant={isBlindReview ? "primary" : "info"}>
+              {isBlindReview ? "Timed Phase Completed" : "Blind Review Completed"}
+            </Badge>
+            <Button
+              variant={isBlindReview ? "accent" : "danger"}
+              size="sm"
+              onClick={() => onResumeSession(session.id, isBlindReview ? 'blind-review' : 'strategy-review')}
+              className="flex items-center"
+            >
+              {isBlindReview ? 'Start Blind Review' : 'Start Strategy Review'} 
+              <ChevronRight className="h-3 w-3 ml-1" />
+            </Button>
+          </div>
+        </Card>
+      );
+    }
+
+    // Archived sessions
+    return (
+      <Card 
+        key={session.id} 
+        variant="accent" 
+        padding="sm"
+        hover
+      >
+        <div className="flex items-center justify-between mb-2">
+          <h3 className={`font-medium text-sm ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+            {formatSessionDisplayName(session)}
+          </h3>
+          <span className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+            {session.endTime?.toLocaleDateString()}
+          </span>
+        </div>
+        <div className="flex items-center justify-between">
+          <Badge variant="warning">
+            Strategy Review Completed
+          </Badge>
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => alert('Viewing archived session details (not implemented yet)')}
+            className="flex items-center"
+          >
+            View Details <Archive className="h-3 w-3 ml-1" />
+          </Button>
+        </div>
+      </Card>
+    );
+  };
+
+  return (
+    <Card padding="sm" hover>
+      <Button
+        variant={getButtonVariant()}
+        className="w-full flex items-center justify-between p-3 mb-0"
+        onClick={() => setIsExpanded(!isExpanded)}
+      >
+        <div className="flex items-center space-x-2">
+          {icon}
+          <span className="font-medium">{title}</span>
+          <Badge variant="secondary" className="text-xs">
+            {count}
+          </Badge>
+        </div>
+        <ChevronRight 
+          className={`h-4 w-4 transition-transform duration-200 ${
+            isExpanded ? 'rotate-90' : ''
+          }`} 
+        />
+      </Button>
+      
+      {isExpanded && (
+        <div className="mt-3 space-y-2 animate-in slide-in-from-top-2 duration-200">
+          {sessions.length > 0 ? (
+            sessions.map(renderSession)
+          ) : (
+            <div className="text-center py-4">
+              <div className="text-2xl mb-2">{emptyIcon}</div>
+              <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+                {emptyMessage}
+              </p>
+            </div>
+          )}
+        </div>
+      )}
+    </Card>
   );
 };
 
