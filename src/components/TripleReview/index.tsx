@@ -242,6 +242,8 @@ const TripleReview: React.FC<TripleReviewProps> = ({
               selectedAnswerIndex={selectedAnswerIndex}
               existingCircuitForQuestion={existingCircuitForQuestion}
               onShowCircuitBuilder={() => setShowCircuitBuilder(true)}
+                isCircuitBuilderOpen={showCircuitBuilder}  // ← ADD THIS LINE
+
             />
             <div className="lg:col-span-2 h-full">
              <CircuitBuilder
@@ -263,6 +265,8 @@ const TripleReview: React.FC<TripleReviewProps> = ({
               selectedAnswerIndex={selectedAnswerIndex}
               existingCircuitForQuestion={existingCircuitForQuestion}
               onShowCircuitBuilder={() => setShowCircuitBuilder(true)}
+                isCircuitBuilderOpen={showCircuitBuilder}  // ← ADD THIS LINE
+
             />
 
             {session.phase !== 'timed' && (
