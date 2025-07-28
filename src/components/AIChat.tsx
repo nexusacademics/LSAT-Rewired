@@ -301,7 +301,7 @@ Goldilocks Principle: The correct assumption is just strong enough to make the r
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 break-words break-all whitespace-normal"> {/* Adjusted padding and spacing */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 break-words whitespace-normal"> {/* Adjusted padding and spacing */}
         {messages.map((message) => (
           <div
             key={message.id}
