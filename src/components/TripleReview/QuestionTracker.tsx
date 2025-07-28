@@ -157,7 +157,7 @@ export const QuestionTracker: React.FC<QuestionTrackerProps> = ({
         {questionsInCurrentSection.map((q, index) => {
           const isCurrent = index === session.currentQuestionIndex;
           const isAnswered = session.answeredQuestions.hasOwnProperty(q.id);
-          const flags = q.flags || {};
+         const flags = session.questionFlags?.[q.id] || {};
           
           // Check both new flag system and legacy flaggedQuestions array
           const isLegacyFlagged = session.flaggedQuestions?.includes(q.id) || false;
