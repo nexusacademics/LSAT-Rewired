@@ -130,8 +130,8 @@ const Dashboard: React.FC<DashboardProps> = ({
         </Card>
 
         <div className="grid lg:grid-cols-4 gap-4">
-          {/* Test Selection - Now takes 3 columns */}
-          <div className="lg:col-span-3 space-y-4">
+          {/* Test Selection - Now takes 2 columns */}
+          <div className="lg:col-span-2 space-y-4">
             
             {/* Start New Session - Compressed */}
             <Card padding="default" hover>
