@@ -75,7 +75,7 @@ export const useAnswerSelection = ({
       console.log('🔵 Toggling strategyPlanning to:', updatedFlags.strategyPlanning);
       break;
   }
-  }
+  
   console.log('🔵 Final updatedFlags:', updatedFlags);
 
   // Update session with new flags
