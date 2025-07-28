@@ -120,9 +120,10 @@ const toggleChat = () => {
             hasInitialChatWelcomeBeenSent={hasInitialChatWelcomeBeenSent}
             setHasInitialChatWelcomeBeenSent={setHasInitialChatWelcomeBeenSent}
           />
-        )}
+       
           </Resizable>
       </div>
+         )}
   );
 };
 
