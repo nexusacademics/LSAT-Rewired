@@ -50,42 +50,45 @@ export const useAnswerSelection = ({
   };
 
   const handleToggleFlag = (questionId: string) => {
-    console.log('🔵 handleToggleFlag called with questionId:', questionId);
-    console.log('🔵 Current session.phase:', session.phase);
-    console.log('🔵 Current session.questionFlags:', session.questionFlags);
-    
-    const currentFlags = session.questionFlags?.[questionId] || {};
-    console.log('🔵 Current flags for this question:', currentFlags);
-    
-    const updatedFlags = { ...currentFlags };
-    
-    // Toggle the appropriate flag based on current phase
-    switch (session.phase) {
-      case 'timed':
-        updatedFlags.timedSection = !currentFlags.timedSection;
-        console.log('🔵 Toggling timedSection to:', updatedFlags.timedSection);
-        break;
-      case 'blind-review':
-        updatedFlags.blindReview = !currentFlags.blindReview;
-        console.log('🔵 Toggling blindReview to:', updatedFlags.blindReview);
-        break;
-      case 'strategy-review':
-        updatedFlags.strategyPlanning = !currentFlags.strategyPlanning;
-        console.log('🔵 Toggling strategyPlanning to:', updatedFlags.strategyPlanning);
-        break;
+  console.log('🔵 handleToggleFlag called with questionId:', questionId);
+  console.log('🔵 Current session.phase:', session.phase);
+  console.log('🔵 Current session.questionFlags:', session.questionFlags);
+  
+  const currentFlags = session.questionFlags?.[questionId] || {};
+  console.log('🔵 Current flags for this question:', currentFlags);
+  
+  const updatedFlags = { ...currentFlags };
+  
+  // Toggle the appropriate flag based on current phase
+  switch (session.phase) {
+    case 'timed':
+      updatedFlags.timedSection = !currentFlags.timedSection;
+      console.log('🔵 Toggling timedSection to:', updatedFlags.timedSection);
+      break;
+    case 'blind-review':
+      updatedFlags.blindReview = !currentFlags.blindReview;
+      console.log('🔵 Toggling blindReview to:', updatedFlags.blindReview);
+      break;
+    case 'strategy-review':
+      updatedFlags.strategyPlanning = !currentFlags.strategyPlanning;
+      console.log('🔵 Toggling strategyPlanning to:', updatedFlags.strategyPlanning);
+      break;
+  }
+  
+  console.log('🔵 Final updatedFlags:', updatedFlags);
+  
+  // Update session with new flags - handle undefined questionFlags
+  const updatedSession = {
+    ...session,
+    questionFlags: {
+      ...(session.questionFlags || {}), // Handle undefined case
+      [questionId]: updatedFlags
     }
-    
-    console.log('🔵 Final updatedFlags:', updatedFlags);
-    
-    // Update session with new flags
-    onUpdateSession({
-      ...session,
-      questionFlags: {
-        ...session.questionFlags,
-        [questionId]: updatedFlags
-      }
-    });
   };
+  
+  console.log('🔵 Updated session being sent:', updatedSession);
+  onUpdateSession(updatedSession);
+};
 
   const handleNoteChange = (questionId: string, noteType: keyof QuestionAnalysisNotes, value: string) => {
     onUpdateSession({
