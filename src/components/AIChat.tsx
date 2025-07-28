@@ -291,10 +291,10 @@ Goldilocks Principle: The correct assumption is just strong enough to make the r
       <div className="bg-white border-b border-slate-200 px-4 py-1"> {/* Adjusted padding */}
         <div className="flex items-center space-x-3">
           <div className="p-2 bg-purple-100 rounded-xl">
-            <Bot className="h-5 w-5 text-purple-600" /> {/* Adjusted icon size */}
+            <Bot className="h-3 w-3 text-purple-600" /> {/* Adjusted icon size */}
           </div>
           <div>
-            <h1 className="text-lg font-semibold text-slate-900">AI Analysis Assistant</h1> {/* Adjusted font size */}
+            <h1 className="text-base font-semibold text-slate-900">AI Analysis Assistant</h1> {/* Adjusted font size */}
             <p className="text-xs text-slate-600">Your guide to better logical reasoning</p> {/* Adjusted font size */}
           </div>
         </div>
