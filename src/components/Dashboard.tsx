@@ -282,7 +282,7 @@ const Dashboard: React.FC<DashboardProps> = ({
               </CardContent>
             </Card>
           </div>
-        </div>
+      
         {/* Right Column- Now takes 1 column */}
           <div className="space-y-4">
                       {/* Leaderboard Preview - Compressed */}
@@ -346,6 +346,7 @@ const Dashboard: React.FC<DashboardProps> = ({
             </Card>
           </div>
         </div>
+       </div>
         {/* Time Mode Selection Modal */}
         <TimeModeSelectionModal
           isOpen={isTimeModeModalOpen}
