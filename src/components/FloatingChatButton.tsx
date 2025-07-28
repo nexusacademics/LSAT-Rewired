@@ -125,7 +125,7 @@ const toggleChat = () => {
               )}
       </div>
         
-  );
+  )}
 };
 
 export default FloatingChatButton;
