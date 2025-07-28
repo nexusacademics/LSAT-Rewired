@@ -121,6 +121,7 @@ const toggleChat = () => {
             setHasInitialChatWelcomeBeenSent={setHasInitialChatWelcomeBeenSent}
           />
         )}
+          </Resizable>
       </div>
     </>
   );
