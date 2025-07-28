@@ -35,12 +35,16 @@ const FloatingChatButton: React.FC<FloatingChatButtonProps> = ({
   setHasInitialChatWelcomeBeenSent,
 }) => {
   // Hide the chat completely during timed phase
-  const isTimedPhase = currentView === 'triple-review' && currentSession?.phase === 'timed';
-  if (isTimedPhase || currentView === 'dashboard') return null;
+const isNonChatPhase =
+  currentView === 'dashboard' ||
+  currentView !== 'triple-review' ||
+  (currentSession?.phase !== 'blindReview' && currentSession?.phase !== 'strategyPlanning');
 
-  const toggleChat = () => {
-    setIsOpen(!isOpen);
-  };
+if (isNonChatPhase) return null;
+
+const toggleChat = () => {
+  setIsOpen(!isOpen);
+};
 
   return (
     <>
