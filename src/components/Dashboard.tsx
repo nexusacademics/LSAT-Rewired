@@ -251,66 +251,6 @@ const Dashboard: React.FC<DashboardProps> = ({
               </CardContent>
             </Card>
 
-            {/* Leaderboard Preview - Compressed */}
-            <Card padding="sm">
-              <CardHeader className="pb-2">
-                <div className="flex items-center justify-between">
-                  <CardTitle icon={<Award className="h-4 w-4 text-yellow-500" />}>
-                    Circuit Masters
-                  </CardTitle>
-                  <Users className={`h-4 w-4 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-400'}`} />
-                </div>
-              </CardHeader>
-              
-              <CardContent className="space-y-2">
-                <div className={`flex items-center justify-between p-3 rounded-xl border ${
-                  theme === 'dark' ? 'bg-gray-750 border-yellow-600/30' : 'bg-yellow-50 border-yellow-200'
-                }`}>
-                  <div className="flex items-center">
-                    <div className="w-6 h-6 bg-gradient-to-br from-yellow-400 to-yellow-500 text-gray-900 text-xs font-bold rounded-full flex items-center justify-center mr-2 shadow-lg">1</div>
-                    <span className={`font-bold text-sm ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Sarah Chen</span>
-                  </div>
-                  <span className={`text-xs font-semibold ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>847</span>
-                </div>
-                
-                <div className={`flex items-center justify-between p-3 rounded-xl border ${
-                  theme === 'dark' ? 'bg-gray-750 border-gray-600' : 'bg-gray-50 border-gray-200'
-                }`}>
-                  <div className="flex items-center">
-                    <div className="w-6 h-6 bg-gradient-to-br from-gray-400 to-gray-500 text-white text-xs font-bold rounded-full flex items-center justify-center mr-2 shadow-lg">2</div>
-                    <span className={`font-bold text-sm ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Marcus Johnson</span>
-                  </div>
-                  <span className={`text-xs font-semibold ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>792</span>
-                </div>
-                
-                <div className={`flex items-center justify-between p-3 rounded-xl border ${
-                  theme === 'dark' ? 'bg-gray-750 border-orange-600/30' : 'bg-orange-50 border-orange-200'
-                }`}>
-                  <div className="flex items-center">
-                    <div className="w-6 h-6 bg-gradient-to-br from-orange-400 to-orange-500 text-gray-900 text-xs font-bold rounded-full flex items-center justify-center mr-2 shadow-lg">3</div>
-                    <span className={`font-bold text-sm ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Emily Rodriguez</span>
-                  </div>
-                  <span className={`text-xs font-semibold ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>738</span>
-                </div>
-                
-                <div className={`flex items-center justify-between p-3 rounded-xl border-2 ${
-                  theme === 'dark' ? 'bg-gray-750 border-blue-500/50' : 'bg-blue-50 border-blue-300'
-                }`}>
-                  <div className="flex items-center">
-                    <div className="w-6 h-6 bg-gradient-to-br from-blue-500 to-purple-500 text-white text-xs font-bold rounded-full flex items-center justify-center mr-2 shadow-lg">{user.stats.rank}</div>
-                    <span className={`font-bold text-sm ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`}>You</span>
-                  </div>
-                  <span className={`text-xs font-semibold ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>{user.stats.circuitsCreated}</span>
-                </div>
-              </CardContent>
-              
-              <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
-                <Button variant="ghost" size="sm" className="w-full text-xs">
-                  View Full Leaderboard
-                </Button>
-              </div>
-            </Card>
-
             {/* Study Streak - Compressed */}
             <Card padding="sm">
               <CardHeader className="pb-2">
