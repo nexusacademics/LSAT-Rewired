@@ -9,13 +9,17 @@ interface QuestionFlags {
 
 interface Question {
   id: string;
-  flags: QuestionFlags;
+  // flags property no longer needed - stored in session
 }
 
 interface Session {
   currentQuestionIndex: number;
   answeredQuestions: Record<string, any>;
   phase: 'timed' | 'blindReview' | 'strategyReview' | 'strategyPlanning' | 'archive';
+  flaggedQuestions?: string[]; // Legacy support for old flag system
+  questionFlags?: {
+    [questionId: string]: QuestionFlags;
+  };
 }
 
 interface QuestionTrackerProps {
@@ -154,12 +158,19 @@ export const QuestionTracker: React.FC<QuestionTrackerProps> = ({
           const isCurrent = index === session.currentQuestionIndex;
           const isAnswered = session.answeredQuestions.hasOwnProperty(q.id);
           const flags = q.flags || {};
-          const hasAnyFlag = flags.timedSection || flags.blindReview || flags.strategyPlanning;
+          
+          // Check both new flag system and legacy flaggedQuestions array
+          const isLegacyFlagged = session.flaggedQuestions?.includes(q.id) || false;
+          const effectiveFlags = {
+            ...flags,
+            // If using legacy system in timed phase, treat as timed flag
+            timedSection: flags.timedSection || (session.phase === 'timed' && isLegacyFlagged)
+          };
           
           const flagTooltip = [];
-          if (flags.timedSection) flagTooltip.push('Flagged in Timed Section');
-          if (flags.blindReview) flagTooltip.push('Flagged in Blind Review');
-          if (flags.strategyPlanning) flagTooltip.push('Flagged in Strategy Planning');
+          if (effectiveFlags.timedSection) flagTooltip.push('Flagged in Timed Section');
+          if (effectiveFlags.blindReview) flagTooltip.push('Flagged in Blind Review');
+          if (effectiveFlags.strategyPlanning) flagTooltip.push('Flagged in Strategy Planning');
           
           const tooltipText = `Question ${index + 1}${isAnswered ? ' (Answered)' : ''}${flagTooltip.length > 0 ? '\n' + flagTooltip.join('\n') : ''}`;
           
@@ -171,7 +182,7 @@ export const QuestionTracker: React.FC<QuestionTrackerProps> = ({
               title={tooltipText}
             >
               <ConcentricFlagIndicator 
-                flags={flags}
+                flags={effectiveFlags}
                 isAnswered={isAnswered}
                 isCurrent={isCurrent}
                 questionNumber={index + 1}
@@ -191,22 +202,32 @@ const QuestionTrackerDemo: React.FC = () => {
   
   // Sample questions with different flag combinations
   const sampleQuestions: Question[] = [
-    { id: '1', flags: {} }, // No flags
-    { id: '2', flags: { timedSection: true } }, // Timed only
-    { id: '3', flags: { blindReview: true } }, // BR only  
-    { id: '4', flags: { timedSection: true, blindReview: true } }, // Both timed and BR
-    { id: '5', flags: { strategyPlanning: true } }, // Strategy only
-    { id: '6', flags: { timedSection: true, strategyPlanning: true } }, // Timed and Strategy
-    { id: '7', flags: { blindReview: true, strategyPlanning: true } }, // BR and Strategy
-    { id: '8', flags: { timedSection: true, blindReview: true, strategyPlanning: true } }, // All three
-    { id: '9', flags: {} }, // No flags
-    { id: '10', flags: { timedSection: true } }, // Timed only
+    { id: '1' }, // No flags
+    { id: '2' }, // Timed only
+    { id: '3' }, // BR only  
+    { id: '4' }, // Both timed and BR
+    { id: '5' }, // Strategy only
+    { id: '6' }, // Timed and Strategy
+    { id: '7' }, // BR and Strategy
+    { id: '8' }, // All three
+    { id: '9' }, // No flags
+    { id: '10' }, // Timed only
   ];
   
   const sampleSession: Session = {
     currentQuestionIndex: currentQuestion,
     answeredQuestions: { '1': 'A', '3': 'B', '5': 'C', '8': 'D' },
-    phase: currentPhase
+    phase: currentPhase,
+    questionFlags: {
+      '2': { timedSection: true },
+      '3': { blindReview: true },
+      '4': { timedSection: true, blindReview: true },
+      '5': { strategyPlanning: true },
+      '6': { timedSection: true, strategyPlanning: true },
+      '7': { blindReview: true, strategyPlanning: true },
+      '8': { timedSection: true, blindReview: true, strategyPlanning: true },
+      '10': { timedSection: true }
+    }
   };
   
   return (
