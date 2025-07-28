@@ -49,6 +49,13 @@ interface ProcessedQuestion {
 
 interface TestSession {
   id: string;
+   questionFlags?: {
+    [questionId: string]: {
+      timedSection?: boolean;
+      blindReview?: boolean;
+      strategyPlanning?: boolean;
+    }
+  };
 }
 
 // Custom Node Components
