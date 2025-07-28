@@ -26,7 +26,7 @@ export default function FloatingCircuitBuilderButton({
   if (!showButton) return null;
 
   return (
-    <div className="fixed bottom-32 left-5 z-50 flex flex-col items-start space-y-2">
+    <div className="fixed bottom-32 left-5 z-100 flex flex-col items-start space-y-2">
       {/* Tooltip Bubble */}
       {showIntroTooltip && (
         <div className="bg-white border border-teal-200 shadow-lg rounded-xl p-3 w-64 text-sm text-teal-800 relative">
