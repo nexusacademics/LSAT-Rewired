@@ -280,10 +280,10 @@ Goldilocks Principle: The correct assumption is just strong enough to make the r
   };
 
   // Reduced quick prompts to two
-  const quickPrompts = [
-    "How do I identify the conclusion?",
-    "Help me build a circuit for this argument"
-  ];
+ // const quickPrompts = [
+  //  "How do I identify the conclusion?",
+   // "Help me build a circuit for this argument"
+  // ];
 
   return (
     <div className="h-full flex flex-col bg-slate-50 rounded-2xl overflow-hidden"> {/* Adjusted for bubble */}
