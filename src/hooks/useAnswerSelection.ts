@@ -49,10 +49,21 @@ export const useAnswerSelection = ({
     });
   };
 
-  const handleToggleFlag = (questionId: string) => {
-    const newFlaggedQuestions = session.flaggedQuestions.includes(questionId)
-      ? session.flaggedQuestions.filter(id => id !== questionId)
-      : [...session.flaggedQuestions, questionId];
+  onst handleToggleFlag = (questionId: string) => {
+  const currentFlags = session.questionFlags?.[questionId] || {};
+  const updatedFlags = { ...currentFlags };
+  
+  switch (session.phase) {
+    case 'timed':
+      updatedFlags.timedSection = !currentFlags.timedSection;
+      break;
+    case 'blind-review':
+      updatedFlags.blindReview = !currentFlags.blindReview;
+      break;
+    case 'strategy-review':
+      updatedFlags.strategyPlanning = !currentFlags.strategyPlanning;
+      break;
+  }
 
     onUpdateSession({ ...session, flaggedQuestions: newFlaggedQuestions });
   };
