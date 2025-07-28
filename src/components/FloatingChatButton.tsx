@@ -122,8 +122,9 @@ const toggleChat = () => {
           />
        
           </Resizable>
+              )}
       </div>
-         )}
+        
   );
 };
 
