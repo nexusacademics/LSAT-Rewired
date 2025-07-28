@@ -1,128 +1,5 @@
 import React from 'react';
 
-// Enhanced flag system to track multiple phases
-interface QuestionFlags {
-  timedSection?: boolean;
-  blindReview?: boolean;
-  strategyPlanning?: boolean;
-}
-
-interface Question {
-  id: string;
-  flags: QuestionFlags;
-}
-
-interface Session {
-  currentQuestionIndex: number;
-  answeredQuestions: Record<string, any>;
-  phase: 'timed' | 'blindReview' | 'strategyReview' | 'strategyPlanning' | 'archive';
-}
-
-interface QuestionTrackerProps {
-  session: Session;
-  questionsInCurrentSection: Question[];
-  onQuestionJump: (index: number) => void;
-}
-
-// Flag visualization component
-const FlagIndicator: React.FC<{ flags: QuestionFlags; isAnswered: boolean; isCurrent: boolean }> = ({ 
-  flags, 
-  isAnswered, 
-  isCurrent 
-}) => {
-  const hasTimedFlag = flags.timedSection;
-  const hasBlindReviewFlag = flags.blindReview;
-  const hasStrategyFlag = flags.strategyPlanning;
-  
-  const flagCount = [hasTimedFlag, hasBlindReviewFlag, hasStrategyFlag].filter(Boolean).length;
-  
-  if (flagCount === 0) {
-    // No flags - show answered/current state
-    if (isCurrent) return 'bg-purple-600 ring-2 ring-purple-300 text-white';
-    if (isAnswered) return 'bg-blue-500 text-white';
-    return 'bg-slate-200 text-slate-600';
-  }
-  
-  // Single flag
-  if (flagCount === 1) {
-    let baseClasses = 'text-white ';
-    if (hasTimedFlag) baseClasses += 'bg-yellow-500';
-    else if (hasBlindReviewFlag) baseClasses += 'bg-orange-500';
-    else if (hasStrategyFlag) baseClasses += 'bg-red-500';
-    
-    if (isCurrent) baseClasses += ' ring-2 ring-white';
-    return baseClasses;
-  }
-  
-  // Multiple flags - use gradient or special styling
-  let gradientClass = 'text-white ';
-  if (hasTimedFlag && hasBlindReviewFlag && hasStrategyFlag) {
-    gradientClass += 'bg-gradient-to-br from-yellow-500 via-orange-500 to-red-500';
-  } else if (hasTimedFlag && hasBlindReviewFlag) {
-    gradientClass += 'bg-gradient-to-br from-yellow-500 to-orange-500';
-  } else if (hasTimedFlag && hasStrategyFlag) {
-    gradientClass += 'bg-gradient-to-br from-yellow-500 to-red-500';
-  } else if (hasBlindReviewFlag && hasStrategyFlag) {
-    gradientClass += 'bg-gradient-to-br from-orange-500 to-red-500';
-  }
-  
-  if (isCurrent) gradientClass += ' ring-2 ring-white';
-  return gradientClass;
-};
-
-// Enhanced concentric circles approach for multiple flags
-const ConcentricFlagIndicator: React.FC<{ flags: QuestionFlags; isAnswered: boolean; isCurrent: boolean; questionNumber: number }> = ({ 
-  flags, 
-  isAnswered, 
-  isCurrent,
-  questionNumber 
-}) => {
-  const hasTimedFlag = flags.timedSection;
-  const hasBlindReviewFlag = flags.blindReview;
-  const hasStrategyFlag = flags.strategyPlanning;
-  
-  const hasFlagsCount = [hasTimedFlag, hasBlindReviewFlag, hasStrategyFlag].filter(Boolean).length;
-  
-  if (hasFlagsCount === 0) {
-    // No flags - standard button
-    let classes = 'min-w-[36px] h-9 rounded-full flex items-center justify-center text-sm font-semibold transition-all ';
-    if (isCurrent) classes += 'bg-purple-600 ring-2 ring-purple-300 text-white';
-    else if (isAnswered) classes += 'bg-blue-500 text-white';
-    else classes += 'bg-slate-200 text-slate-600';
-    
-    return (
-      <div className={classes}>
-        {questionNumber}
-      </div>
-    );
-  }
-  
-  // Multiple flags - concentric circles
-  return (
-    <div className="relative min-w-[36px] h-9 flex items-center justify-center">
-      {/* Outermost circle - Strategy Planning (Red) */}
-      {hasStrategyFlag && (
-        <div className={`absolute inset-0 rounded-full bg-red-500 ${isCurrent ? 'ring-2 ring-white' : ''}`} />
-      )}
-      
-      {/* Middle circle - Blind Review (Orange) */}
-      {hasBlindReviewFlag && (
-        <div className="absolute inset-[3px] rounded-full bg-orange-500" />
-      )}
-      
-      {/* Inner circle - Timed Section (Yellow) */}
-      {hasTimedFlag && (
-        <div className="absolute inset-[6px] rounded-full bg-yellow-500" />
-      )}
-      
-      {/* Center content */}
-      <div className="relative z-10 text-white text-sm font-semibold">
-        {questionNumber}
-      </div>
-    </div>
-  );
-};
-
 export const QuestionTracker: React.FC<QuestionTrackerProps> = ({
   session,
   questionsInCurrentSection,
@@ -130,51 +7,36 @@ export const QuestionTracker: React.FC<QuestionTrackerProps> = ({
 }) => {
   return (
     <div className="bg-white shadow-lg border-t border-slate-200 p-2 overflow-x-auto">
-      {/* Phase indicator */}
-      <div className="text-xs text-slate-600 mb-2 flex items-center justify-between">
-        <span>Phase: {session.phase.charAt(0).toUpperCase() + session.phase.slice(1)}</span>
-        <div className="flex items-center space-x-4 text-xs">
-          <div className="flex items-center space-x-1">
-            <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-            <span>Timed</span>
-          </div>
-          <div className="flex items-center space-x-1">
-            <div className="w-3 h-3 rounded-full bg-orange-500"></div>
-            <span>BR</span>
-          </div>
-          <div className="flex items-center space-x-1">
-            <div className="w-3 h-3 rounded-full bg-red-500"></div>
-            <span>Strategy</span>
-          </div>
-        </div>
-      </div>
-      
       <div className="flex space-x-2 max-w-full">
         {questionsInCurrentSection.map((q, index) => {
           const isCurrent = index === session.currentQuestionIndex;
           const isAnswered = session.answeredQuestions.hasOwnProperty(q.id);
-          const hasAnyFlag = q.flags.timedSection || q.flags.blindReview || q.flags.strategyPlanning;
-          
-          const flagTooltip = [];
-          if (q.flags.timedSection) flagTooltip.push('Flagged in Timed Section');
-          if (q.flags.blindReview) flagTooltip.push('Flagged in Blind Review');
-          if (q.flags.strategyPlanning) flagTooltip.push('Flagged in Strategy Planning');
-          
-          const tooltipText = `Question ${index + 1}${isAnswered ? ' (Answered)' : ''}${flagTooltip.length > 0 ? '\n' + flagTooltip.join('\n') : ''}`;
-          
+          const isFlagged = session.flaggedQuestions.includes(q.id);
+
+          let bgColor = 'bg-slate-200';
+          let textColor = 'text-slate-600';
+
+          if (isAnswered) {
+            bgColor = 'bg-blue-500';
+            textColor = 'text-white';
+          }
+          if (isFlagged) {
+            bgColor = 'bg-yellow-500';
+            textColor = 'text-white';
+          }
+          if (isCurrent) {
+            bgColor = 'bg-purple-600 ring-2 ring-purple-300';
+            textColor = 'text-white';
+          }
+
           return (
             <button
               key={q.id}
               onClick={() => onQuestionJump(index)}
-              className="transition-all hover:scale-105"
-              title={tooltipText}
+              className={`min-w-[36px] h-9 rounded-full flex items-center justify-center text-sm font-semibold transition-all ${bgColor} ${textColor}`}
+              title={`Question ${index + 1}${isFlagged ? ' (Flagged)' : ''}${isAnswered ? ' (Answered)' : ''}`}
             >
-              <ConcentricFlagIndicator 
-                flags={q.flags}
-                isAnswered={isAnswered}
-                isCurrent={isCurrent}
-                questionNumber={index + 1}
-              />
+              {index + 1}
             </button>
           );
         })}
@@ -182,110 +44,3 @@ export const QuestionTracker: React.FC<QuestionTrackerProps> = ({
     </div>
   );
 };
-
-// Demo component to show the system in action
-const QuestionTrackerDemo: React.FC = () => {
-  const [currentPhase, setCurrentPhase] = React.useState<'timed' | 'blindReview' | 'strategyReview' | 'strategyPlanning' | 'archive'>('timed');
-  const [currentQuestion, setCurrentQuestion] = React.useState(0);
-  
-  // Sample questions with different flag combinations
-  const sampleQuestions: Question[] = [
-    { id: '1', flags: {} }, // No flags
-    { id: '2', flags: { timedSection: true } }, // Timed only
-    { id: '3', flags: { blindReview: true } }, // BR only  
-    { id: '4', flags: { timedSection: true, blindReview: true } }, // Both timed and BR
-    { id: '5', flags: { strategyPlanning: true } }, // Strategy only
-    { id: '6', flags: { timedSection: true, strategyPlanning: true } }, // Timed and Strategy
-    { id: '7', flags: { blindReview: true, strategyPlanning: true } }, // BR and Strategy
-    { id: '8', flags: { timedSection: true, blindReview: true, strategyPlanning: true } }, // All three
-    { id: '9', flags: {} }, // No flags
-    { id: '10', flags: { timedSection: true } }, // Timed only
-  ];
-  
-  const sampleSession: Session = {
-    currentQuestionIndex: currentQuestion,
-    answeredQuestions: { '1': 'A', '3': 'B', '5': 'C', '8': 'D' },
-    phase: currentPhase
-  };
-  
-  return (
-    <div className="p-4 bg-slate-100 min-h-screen">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-2xl font-bold mb-4">Multi-Phase Question Tracker</h1>
-        
-        {/* Phase controls */}
-        <div className="mb-4 p-4 bg-white rounded-lg">
-          <h3 className="font-semibold mb-2">Current Phase:</h3>
-          <div className="flex space-x-2">
-            {(['timed', 'blindReview', 'strategyReview', 'strategyPlanning', 'archive'] as const).map(phase => (
-              <button
-                key={phase}
-                onClick={() => setCurrentPhase(phase)}
-                className={`px-3 py-1 rounded text-sm ${
-                  currentPhase === phase 
-                    ? 'bg-blue-500 text-white' 
-                    : 'bg-slate-200 hover:bg-slate-300'
-                }`}
-              >
-                {phase.charAt(0).toUpperCase() + phase.slice(1)}
-              </button>
-            ))}
-          </div>
-        </div>
-        
-        {/* Question tracker */}
-        <QuestionTracker
-          session={sampleSession}
-          questionsInCurrentSection={sampleQuestions}
-          onQuestionJump={setCurrentQuestion}
-        />
-        
-        {/* Legend */}
-        <div className="mt-4 p-4 bg-white rounded-lg">
-          <h3 className="font-semibold mb-2">Flag Legend:</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-            <div>
-              <h4 className="font-medium mb-2">Single Flags:</h4>
-              <div className="space-y-1">
-                <div className="flex items-center space-x-2">
-                  <div className="w-6 h-6 rounded-full bg-yellow-500"></div>
-                  <span>Timed Section Flag</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <div className="w-6 h-6 rounded-full bg-orange-500"></div>
-                  <span>Blind Review Flag</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <div className="w-6 h-6 rounded-full bg-red-500"></div>
-                  <span>Strategy Planning Flag</span>
-                </div>
-              </div>
-            </div>
-            <div>
-              <h4 className="font-medium mb-2">Multiple Flags (Concentric):</h4>
-              <div className="space-y-1">
-                <div className="flex items-center space-x-2">
-                  <div className="relative w-6 h-6">
-                    <div className="absolute inset-0 rounded-full bg-orange-500"></div>
-                    <div className="absolute inset-[3px] rounded-full bg-yellow-500"></div>
-                  </div>
-                  <span>Timed + BR</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <div className="relative w-6 h-6">
-                    <div className="absolute inset-0 rounded-full bg-red-500"></div>
-                    <div className="absolute inset-[2px] rounded-full bg-orange-500"></div>
-                    <div className="absolute inset-[4px] rounded-full bg-yellow-500"></div>
-                  </div>
-                  <span>All Three Flags</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-export default QuestionTrackerDemo;
