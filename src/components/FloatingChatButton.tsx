@@ -38,7 +38,7 @@ const FloatingChatButton: React.FC<FloatingChatButtonProps> = ({
 const isNonChatPhase =
   currentView === 'dashboard' ||
   currentView !== 'triple-review' ||
-  (currentSession?.phase !== 'blindReview' && currentSession?.phase !== 'strategyPlanning');
+  (currentSession?.phase !== 'blind-Review' && currentSession?.phase !== 'strategy-Review');
 
 if (isNonChatPhase) return null;
 
