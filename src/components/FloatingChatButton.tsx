@@ -51,9 +51,9 @@ const toggleChat = () => {
       {/* Floating Chat Button */}
       <button
         onClick={toggleChat}
-        className={fixed bottom-32 left-5 p-4 rounded-full shadow-lg transition-all duration-300 ease-in-out z-50
+        className={`fixed bottom-32 left-5 p-4 rounded-full shadow-lg transition-all duration-300 ease-in-out z-50
           ${isOpen ? 'bg-purple-700' : 'bg-purple-600 hover:bg-purple-700'}
-        }
+        `}
         title="Toggle AI Assistant"
       >
         {isOpen ? (
@@ -65,10 +65,10 @@ const toggleChat = () => {
 
       {/* Chat Window */}
       <div
-        className={fixed bottom-24 left-20 w-[500px] h-[500px] bg-white rounded-2xl shadow-xl border border-slate-200 z-50
+        className={`fixed bottom-24 left-20 w-[500px] h-[500px] bg-white rounded-2xl shadow-xl border border-slate-200 z-50
           transform transition-all duration-300 ease-in-out
           ${isOpen ? 'translate-y-0 opacity-100 visible' : 'translate-y-4 opacity-0 invisible'}
-        }
+        `}
       >
         {isOpen && (
           <AIChat
