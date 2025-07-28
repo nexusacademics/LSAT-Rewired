@@ -214,7 +214,7 @@ const Dashboard: React.FC<DashboardProps> = ({
           </div>
 
           {/* Sidebar - Now takes 1 column */}
-          <div className="space-y-4">
+          <div className="space-y-5">
             
             {/* Performance Overview - Compressed */}
             <Card padding="sm">
