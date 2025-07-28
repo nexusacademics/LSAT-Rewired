@@ -123,7 +123,6 @@ const toggleChat = () => {
         )}
           </Resizable>
       </div>
-    </>
   );
 };
 
