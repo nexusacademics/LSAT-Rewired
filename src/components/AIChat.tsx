@@ -290,7 +290,7 @@ Goldilocks Principle: The correct assumption is just strong enough to make the r
       {/* Header */}
       <div className="bg-white border-b border-slate-200 px-4 py-3"> {/* Adjusted padding */}
         <div className="flex items-center space-x-3">
-          <div className="p-1 bg-purple-100 rounded-xl">
+          <div className="p-2 bg-purple-100 rounded-xl">
             <Bot className="h-5 w-5 text-purple-600" /> {/* Adjusted icon size */}
           </div>
           <div>
