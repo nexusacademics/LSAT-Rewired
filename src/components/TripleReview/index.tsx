@@ -45,6 +45,7 @@ const TripleReview: React.FC<TripleReviewProps> = ({
     : processedPrepTest.sections;
 
   const currentSectionData = currentSections[session.currentSectionIndex];
+  console.log('Current section data:', currentSectionData); // Add this line
   const questionsInCurrentSection = currentSectionData?.questions || [];
   const currentQuestionData = questionsInCurrentSection[session.currentQuestionIndex];
 
