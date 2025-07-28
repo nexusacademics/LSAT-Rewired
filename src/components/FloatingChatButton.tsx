@@ -65,7 +65,7 @@ const toggleChat = () => {
 
       {/* Chat Window */}
       <div
-        className={`fixed bottom-24 left-25 w-[450px] h-[600px] bg-white rounded-2xl shadow-xl border border-slate-200 z-50
+        className={`fixed bottom-24 left-20 w-[450px] h-[600px] bg-white rounded-2xl shadow-xl border border-slate-200 z-50
           transform transition-all duration-300 ease-in-out
           ${isOpen ? 'translate-y-0 opacity-100 visible' : 'translate-y-4 opacity-0 invisible'}
         `}
