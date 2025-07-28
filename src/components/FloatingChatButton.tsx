@@ -3,7 +3,10 @@ import { MessageCircle, X } from 'lucide-react';
 import AIChat from './AIChat';
 import { User, TestSession, ProcessedQuestion, ProcessedPrepTest, Message } from '../App';
 import { Resizable } from 're-resizable';
-
+export default function FloatingChatButton() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [size, setSize] = useState({ width: 360, height: 420 });
+  
 interface FloatingChatButtonProps {
   user: User;
   currentView: 'landing' | 'dashboard' | 'triple-review' | 'circuit-builder' | 'performance' | 'chat';
@@ -46,10 +49,6 @@ if (isNonChatPhase) return null;
 const toggleChat = () => {
   setIsOpen(!isOpen);
 };
-
-export default function FloatingChatButton() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [size, setSize] = useState({ width: 360, height: 420 });
 
   
   return (
