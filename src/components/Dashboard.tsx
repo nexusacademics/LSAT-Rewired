@@ -415,7 +415,7 @@ const Dashboard: React.FC<DashboardProps> = ({
         />
         </div>
       </div>
-    </div>
+  
   );
 };
 
