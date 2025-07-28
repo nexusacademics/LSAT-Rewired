@@ -76,10 +76,43 @@ export const Header: React.FC<HeaderProps> = ({
   const PhaseIcon = getPhaseIcon(session.phase);
   const phaseColor = getPhaseColor(session.phase);
 
+  // Helper function to check if current question is flagged based on phase
+  const isCurrentQuestionFlagged = () => {
+    const currentFlags = currentQuestionData.flags || {};
+    switch (session.phase) {
+      case 'timed':
+        return currentFlags.timedSection || session.flaggedQuestions?.includes(currentQuestionData.id) || false;
+      case 'blind-review':
+        return currentFlags.blindReview || false;
+      case 'strategy-review':
+        return currentFlags.strategyPlanning || false;
+      default:
+        return session.flaggedQuestions?.includes(currentQuestionData.id) || false;
+    }
+  };
+
+  // Get the appropriate flag color based on phase
+  const getFlagButtonColor = () => {
+    if (!isCurrentQuestionFlagged()) {
+      return 'bg-slate-100 text-slate-600 hover:bg-slate-200';
+    }
+    
+    switch (session.phase) {
+      case 'timed':
+        return 'bg-yellow-100 text-yellow-600 hover:bg-yellow-200';
+      case 'blind-review':
+        return 'bg-orange-100 text-orange-600 hover:bg-orange-200';
+      case 'strategy-review':
+        return 'bg-red-100 text-red-600 hover:bg-red-200';
+      default:
+        return 'bg-yellow-100 text-yellow-600 hover:bg-yellow-200';
+    }
+  };
+
   return (
     <div className="bg-white shadow-sm border-b border-slate-200 py-4 px-6 rounded-b-2xl">
-<div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-<div className="flex items-center space-x-4 md:mb-0 mb-2">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div className="flex items-center space-x-4 md:mb-0 mb-2">
           <div className={`p-3 bg-${phaseColor}-100 rounded-xl`}>
             <PhaseIcon className={`h-6 w-6 text-${phaseColor}-600`} />
           </div>
@@ -114,12 +147,8 @@ export const Header: React.FC<HeaderProps> = ({
 
           <button
             onClick={onToggleFlag}
-            className={`p-2 rounded-lg transition-colors ${
-              session.flaggedQuestions.includes(currentQuestionData.id)
-                ? 'bg-yellow-100 text-yellow-600 hover:bg-yellow-200'
-                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-            }`}
-            title={session.flaggedQuestions.includes(currentQuestionData.id) ? "Unflag Question" : "Flag Question"}
+            className={`p-2 rounded-lg transition-colors ${getFlagButtonColor()}`}
+            title={isCurrentQuestionFlagged() ? "Unflag Question" : "Flag Question"}
           >
             <Flag className="h-5 w-5" />
           </button>
