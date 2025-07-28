@@ -84,41 +84,41 @@ const ConcentricFlagIndicator: React.FC<{ flags: QuestionFlags; isAnswered: bool
   const hasTimedFlag = flags?.timedSection || false;
   const hasBlindReviewFlag = flags?.blindReview || false;
   const hasStrategyFlag = flags?.strategyPlanning || false;
-  
+
   const hasFlagsCount = [hasTimedFlag, hasBlindReviewFlag, hasStrategyFlag].filter(Boolean).length;
-  
+
   if (hasFlagsCount === 0) {
     // No flags - standard button
     let classes = 'min-w-[36px] h-9 rounded-full flex items-center justify-center text-sm font-semibold transition-all ';
-    if (isCurrent) classes += 'bg-purple-600 ring-2 ring-purple-300 text-white';
+    if (isCurrent) classes += 'bg-purple-600 ring-2 ring-purple-800 text-white'; // ← changed from ring-purple-300
     else if (isAnswered) classes += 'bg-blue-500 text-white';
     else classes += 'bg-slate-200 text-slate-600';
-    
+
     return (
       <div className={classes}>
         {questionNumber}
       </div>
     );
   }
-  
+
   // Multiple flags - concentric circles
   return (
-    <div className="relative min-w-[36px] h-9 flex items-center justify-center">
+    <div className={`relative min-w-[36px] h-9 flex items-center justify-center ${isCurrent ? 'ring-2 ring-purple-800' : ''}`}> {/* ← NEW: outer ring for active */}
       {/* Outermost circle - Strategy Planning (Red) */}
       {hasStrategyFlag && (
-        <div className={`absolute inset-0 rounded-full bg-red-500 ${isCurrent ? 'ring-2 ring-white' : ''}`} />
+        <div className="absolute inset-0 rounded-full bg-red-500" />
       )}
-      
+
       {/* Middle circle - Blind Review (Orange) */}
       {hasBlindReviewFlag && (
         <div className="absolute inset-[3px] rounded-full bg-orange-500" />
       )}
-      
+
       {/* Inner circle - Timed Section (Yellow) */}
       {hasTimedFlag && (
         <div className="absolute inset-[6px] rounded-full bg-yellow-500" />
       )}
-      
+
       {/* Center content */}
       <div className="relative z-10 text-white text-sm font-semibold">
         {questionNumber}
