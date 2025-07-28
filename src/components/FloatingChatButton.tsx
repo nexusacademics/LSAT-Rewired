@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { MessageCircle, X } from 'lucide-react';
 import AIChat from './AIChat';
 import { User, TestSession, ProcessedQuestion, ProcessedPrepTest, Message } from '../App';
@@ -94,7 +94,7 @@ const handleMouseUp = () => {
       {/* Chat Window */}
      <div
   className={`fixed bottom-24 left-20 bg-white rounded-2xl shadow-xl border border-slate-200 z-50
-    transform transition-all duration-300 ease-in-out
+    transform transition-all duration-300 ease-in-out resize
     ${isOpen ? 'translate-y-0 opacity-100 visible' : 'translate-y-4 opacity-0 invisible'}
   `}
   style={{ width: chatSize.width, height: chatSize.height }}
