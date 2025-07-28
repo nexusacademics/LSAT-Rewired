@@ -297,6 +297,7 @@ const TripleReview: React.FC<TripleReviewProps> = ({
       />
 
       {/* ✅ NEW: Updated floating button with tooltip/success integration */}
+      {!currentSectionData.name.startsWith('RC') && (
       <FloatingCircuitBuilderButton
         session={session}
         isOpen={showCircuitBuilder}
@@ -306,6 +307,7 @@ const TripleReview: React.FC<TripleReviewProps> = ({
         showSuccessMessage={showSuccessMessage}
         analysisQualityScore={lastSavedScore}
       />
+      )}
     </div>
   );
 };
