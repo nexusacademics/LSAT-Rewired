@@ -92,7 +92,12 @@ const Dashboard: React.FC<DashboardProps> = ({
                   </Badge>
                 )}
               </div>
-
+ <div className={`text-3xl font-bold mb-2 ${
+                    theme === 'dark' 
+                      ? 'text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-400' 
+                      : 'text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-red-500'
+                  }`}>7</div>
+                  <div className={`text-xs mb-4 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Days in a row 🔥</div>
               <div className="flex items-center space-x-6">
                 <div className="text-center group cursor-pointer">
                   <div className={`text-3xl font-bold mb-1 transition-colors duration-300 ${
