@@ -135,23 +135,26 @@ export const QuestionTracker: React.FC<QuestionTrackerProps> = ({
   return (
     <div className="bg-white shadow-lg border-t border-slate-200 p-2 overflow-x-auto">
       {/* Phase indicator */}
-      <div className="text-xs text-slate-600 mb-2 flex items-center justify-between">
-        <span>Phase: {session.phase.charAt(0).toUpperCase() + session.phase.slice(1)}</span>
-        <div className="flex items-center space-x-4 text-xs">
-          <div className="flex items-center space-x-1">
-            <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-            <span>Timed</span>
-          </div>
-          <div className="flex items-center space-x-1">
-            <div className="w-3 h-3 rounded-full bg-orange-500"></div>
-            <span>BR</span>
-          </div>
-          <div className="flex items-center space-x-1">
-            <div className="w-3 h-3 rounded-full bg-red-500"></div>
-            <span>Strategy</span>
-          </div>
-        </div>
-      </div>
+      <div className="text-xs text-slate-600 mb-2 flex items-center space-x-6">
+  <span className="whitespace-nowrap">
+    <strong>Phase:</strong> {session.phase.charAt(0).toUpperCase() + session.phase.slice(1)}
+  </span>
+  <div className="flex items-center space-x-4 text-xs">
+    <div className="flex items-center space-x-1">
+      <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+      <span>Timed</span>
+    </div>
+    <div className="flex items-center space-x-1">
+      <div className="w-3 h-3 rounded-full bg-orange-500"></div>
+      <span>BR</span>
+    </div>
+    <div className="flex items-center space-x-1">
+      <div className="w-3 h-3 rounded-full bg-red-500"></div>
+      <span>Strategy</span>
+    </div>
+  </div>
+</div>
+
       
       <div className="flex space-x-2 max-w-full">
         {questionsInCurrentSection.map((q, index) => {
