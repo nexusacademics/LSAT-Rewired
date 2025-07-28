@@ -26,13 +26,13 @@ interface QuestionTrackerProps {
 
 // Flag visualization component
 const FlagIndicator: React.FC<{ flags: QuestionFlags; isAnswered: boolean; isCurrent: boolean }> = ({ 
-  flags, 
+  flags = {}, 
   isAnswered, 
   isCurrent 
 }) => {
-  const hasTimedFlag = flags.timedSection;
-  const hasBlindReviewFlag = flags.blindReview;
-  const hasStrategyFlag = flags.strategyPlanning;
+  const hasTimedFlag = flags?.timedSection || false;
+  const hasBlindReviewFlag = flags?.blindReview || false;
+  const hasStrategyFlag = flags?.strategyPlanning || false;
   
   const flagCount = [hasTimedFlag, hasBlindReviewFlag, hasStrategyFlag].filter(Boolean).length;
   
@@ -72,14 +72,14 @@ const FlagIndicator: React.FC<{ flags: QuestionFlags; isAnswered: boolean; isCur
 
 // Enhanced concentric circles approach for multiple flags
 const ConcentricFlagIndicator: React.FC<{ flags: QuestionFlags; isAnswered: boolean; isCurrent: boolean; questionNumber: number }> = ({ 
-  flags, 
+  flags = {}, 
   isAnswered, 
   isCurrent,
   questionNumber 
 }) => {
-  const hasTimedFlag = flags.timedSection;
-  const hasBlindReviewFlag = flags.blindReview;
-  const hasStrategyFlag = flags.strategyPlanning;
+  const hasTimedFlag = flags?.timedSection || false;
+  const hasBlindReviewFlag = flags?.blindReview || false;
+  const hasStrategyFlag = flags?.strategyPlanning || false;
   
   const hasFlagsCount = [hasTimedFlag, hasBlindReviewFlag, hasStrategyFlag].filter(Boolean).length;
   
@@ -153,12 +153,13 @@ export const QuestionTracker: React.FC<QuestionTrackerProps> = ({
         {questionsInCurrentSection.map((q, index) => {
           const isCurrent = index === session.currentQuestionIndex;
           const isAnswered = session.answeredQuestions.hasOwnProperty(q.id);
-          const hasAnyFlag = q.flags.timedSection || q.flags.blindReview || q.flags.strategyPlanning;
+          const flags = q.flags || {};
+          const hasAnyFlag = flags.timedSection || flags.blindReview || flags.strategyPlanning;
           
           const flagTooltip = [];
-          if (q.flags.timedSection) flagTooltip.push('Flagged in Timed Section');
-          if (q.flags.blindReview) flagTooltip.push('Flagged in Blind Review');
-          if (q.flags.strategyPlanning) flagTooltip.push('Flagged in Strategy Planning');
+          if (flags.timedSection) flagTooltip.push('Flagged in Timed Section');
+          if (flags.blindReview) flagTooltip.push('Flagged in Blind Review');
+          if (flags.strategyPlanning) flagTooltip.push('Flagged in Strategy Planning');
           
           const tooltipText = `Question ${index + 1}${isAnswered ? ' (Answered)' : ''}${flagTooltip.length > 0 ? '\n' + flagTooltip.join('\n') : ''}`;
           
@@ -170,7 +171,7 @@ export const QuestionTracker: React.FC<QuestionTrackerProps> = ({
               title={tooltipText}
             >
               <ConcentricFlagIndicator 
-                flags={q.flags}
+                flags={flags}
                 isAnswered={isAnswered}
                 isCurrent={isCurrent}
                 questionNumber={index + 1}
