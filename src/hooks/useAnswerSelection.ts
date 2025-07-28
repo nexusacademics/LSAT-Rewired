@@ -33,6 +33,7 @@ export const useAnswerSelection = ({
     setGreyedOutOptions(prev => {
       const currentGreyed = prev[questionId] || [];
       let newGreyed;
+      
       if (currentGreyed.includes(optionIndex)) {
         newGreyed = currentGreyed.filter(idx => idx !== optionIndex);
       } else {
@@ -49,23 +50,31 @@ export const useAnswerSelection = ({
     });
   };
 
-  onst handleToggleFlag = (questionId: string) => {
-  const currentFlags = session.questionFlags?.[questionId] || {};
-  const updatedFlags = { ...currentFlags };
-  
-  switch (session.phase) {
-    case 'timed':
-      updatedFlags.timedSection = !currentFlags.timedSection;
-      break;
-    case 'blind-review':
-      updatedFlags.blindReview = !currentFlags.blindReview;
-      break;
-    case 'strategy-review':
-      updatedFlags.strategyPlanning = !currentFlags.strategyPlanning;
-      break;
-  }
+  const handleToggleFlag = (questionId: string) => {
+    const currentFlags = session.questionFlags?.[questionId] || {};
+    const updatedFlags = { ...currentFlags };
+    
+    // Toggle the appropriate flag based on current phase
+    switch (session.phase) {
+      case 'timed':
+        updatedFlags.timedSection = !currentFlags.timedSection;
+        break;
+      case 'blind-review':
+        updatedFlags.blindReview = !currentFlags.blindReview;
+        break;
+      case 'strategy-review':
+        updatedFlags.strategyPlanning = !currentFlags.strategyPlanning;
+        break;
+    }
 
-    onUpdateSession({ ...session, flaggedQuestions: newFlaggedQuestions });
+    // Update session with new flags
+    onUpdateSession({
+      ...session,
+      questionFlags: {
+        ...session.questionFlags,
+        [questionId]: updatedFlags
+      }
+    });
   };
 
   const handleNoteChange = (questionId: string, noteType: keyof QuestionAnalysisNotes, value: string) => {
