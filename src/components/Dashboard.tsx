@@ -92,35 +92,7 @@ const Dashboard: React.FC<DashboardProps> = ({
                   </Badge>
                 )}
               </div>
-              <Card padding="sm">
-              <CardHeader className="pb-2">
-                <CardTitle icon={<Calendar className="h-4 w-4 text-orange-500" />}>
-                  Study Streak
-                </CardTitle>
-              </CardHeader>
               
-              <CardContent>
-                <div className="text-center">
-                  <div className={`text-3xl font-bold mb-2 ${
-                    theme === 'dark' 
-                      ? 'text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-400' 
-                      : 'text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-red-500'
-                  }`}>7</div>
-                  <div className={`text-xs mb-4 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Days in a row 🔥</div>
-                  
-                  <div className="grid grid-cols-7 gap-1">
-                    {[...Array(7)].map((_, i) => (
-                      <div 
-                        key={i} 
-                        className={`h-6 w-6 rounded-lg bg-gradient-to-br from-orange-500 to-red-500 shadow-sm transform hover:scale-110 transition-transform ${
-                          theme === 'dark' ? 'border border-orange-400/30' : ''
-                        }`}
-                      />
-                    ))}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
               <div className="flex items-center space-x-6">
                 <div className="text-center group cursor-pointer">
                   <div className={`text-3xl font-bold mb-1 transition-colors duration-300 ${
