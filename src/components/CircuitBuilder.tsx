@@ -563,7 +563,7 @@ const CircuitBuilderFlow = () => {
         </div>
       </div>
 
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex">
                 {/* Sidebar */}
         <div className="w-56 bg-white border-r border-slate-200 p-4 space-y-6 overflow-y-auto">
           <div>
