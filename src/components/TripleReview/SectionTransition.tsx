@@ -29,7 +29,8 @@ export const SectionTransition: React.FC<SectionTransitionProps> = ({
   }}
 >
   <div 
-    className="bg-white rounded-2xl shadow-lg max-w-md w-full mx-4 transform transition-all"  
+    className="bg-white rounded-2xl shadow-lg max-w-md w-full mx-4 transform transition-all"
+    onClick={(e) => e.stopPropagation()}
   >
     {/* Header */}
     <div className="flex items-center justify-between p-6 border-b border-slate-200">
