@@ -29,7 +29,7 @@ export default function FloatingCircuitBuilderButton({
     <div className="fixed bottom-52 left-5 z-50 flex flex-col items-start space-y-2">
       {/* Tooltip Bubble */}
       {showIntroTooltip && (
-        <div className="bg-white border border-teal-200 shadow-lg rounded-xl p-3 w-64 text-sm text-teal-800 relative">
+        <div className="bg-white border border-teal-200 shadow-lg rounded-xl p-3 text-sm text-teal-800 relative">
           <div className="flex items-center mb-1">
             <Target className="h-4 w-4 mr-2 text-teal-600" />
             <span className="font-semibold">Build your circuit</span>
