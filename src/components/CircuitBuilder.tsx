@@ -636,7 +636,33 @@ const CircuitBuilderFlow = () => {
         </div>
 
         {/* React Flow Canvas */}
-        <div className="flex-1" ref={reactFlowWrapper}>
+        <div className="flex-1" ref={reactFlowWrapper}
+           onDragOver={(event) => event.preventDefault()} // Allow drop by preventing default
+  onDrop={(event) => {
+    event.preventDefault();
+    if (!reactFlowWrapper.current) return;
+
+    const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
+    const type = event.dataTransfer.getData('application/reactflow');
+    if (!type) return;
+
+    const position = project({
+      x: event.clientX - reactFlowBounds.left,
+      y: event.clientY - reactFlowBounds.top,
+    });
+
+    const newNode: Node = {
+      id: `node-${Date.now()}`,
+      type,
+      position,
+      data: {
+        content: type === 'assumption' ? JSON.stringify(['', '']) : '',
+        onContentChange: handleNodeContentChange,
+      },
+    };
+
+    setNodes((nds) => nds.concat(newNode));
+  }}>
           <ReactFlow
             nodes={nodes}
             edges={edges}
