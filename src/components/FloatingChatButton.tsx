@@ -91,7 +91,7 @@ const toggleChat = () => {
             setHasInitialChatWelcomeBeenSent={setHasInitialChatWelcomeBeenSent}
           />
         )}
-      </div>
+      </motion.div>
     </>
   );
 };
