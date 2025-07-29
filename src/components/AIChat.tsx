@@ -291,7 +291,7 @@ Goldilocks Principle: The correct assumption is just strong enough to make the r
   drag
   dragMomentum={false}
   dragElastic={0.2}
-  className="h-full flex flex-col bg-slate-50 rounded-2xl overflow-hidden cursor-move">
+  className="h-full flex flex-col bg-slate-50 rounded-2xl border overflow-hidden cursor-move">
       <div className="h-full flex flex-col bg-slate-50 rounded-2xl overflow-hidden"> {/* Adjusted for bubble */}
       {/* Header */}
       <div className="chat-drag-handle bg-white border-b border-slate-200 px-4 py-1"> {/* Adjusted padding */}
