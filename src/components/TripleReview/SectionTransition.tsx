@@ -80,7 +80,7 @@ export const SectionTransition: React.FC<SectionTransitionProps> = ({
 
   const getTransitionMessage = (): React.ReactNode => {
     if (isLastSection) {
-      return 'Once you click the Finish Test button, you will no longer be able to work on this session and will move on to the next phase of review.';
+      return 'Once you click the End Testing Session button, you will no longer be able to work on this session and will move on to the next phase of review.';
     }
 
     if (showingCountdown) {
@@ -191,7 +191,7 @@ export const SectionTransition: React.FC<SectionTransitionProps> = ({
           onClick={onConfirm}
           className="w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center"
         >
-          {isLastSection ? 'Finish Session' : 'Next Section'}
+          {isLastSection ? 'End Testing Session' : 'Next Section'}
         </button>
       </>
     );
