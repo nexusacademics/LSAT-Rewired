@@ -20,7 +20,7 @@ import type { ProcessedQuestion, ProcessedPrepTest } from './types/test-data'; /
 import { ThemeProvider, useTheme } from './contexts/ThemeContext'; // Import ThemeProvider and useTheme
 
 // Define view type
-type AppView = 'dashboard' | 'triple-review' | 'performance' | 'subscription';
+type AppView = 'dashboard' | 'triple-review' | 'performance' | 'Study Schedule' | 'subscription';
 
 // Define Message interface for chat history
 export interface Message { // Exported for use in FloatingChatButton
