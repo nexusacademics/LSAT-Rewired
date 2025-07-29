@@ -1,6 +1,7 @@
 // components/TripleReview/SectionTransition.tsx
 import React from 'react';
 import { TestSession } from '../../App';
+import { AlertTriangle, Play, Home, X } from 'lucide-react';
 
 interface SectionTransitionProps {
   session: TestSession;
