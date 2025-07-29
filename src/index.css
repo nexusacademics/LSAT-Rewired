@@ -1,3 +1,12 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+input[type="number"].dark-input {
+  background-color: #1f2937 !important; /* Tailwind gray-800 */
+  color: #fff !important;
+}
+
+input[type="number"].dark-input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px #1f2937 inset !important;
+  -webkit-text-fill-color: #fff !important;
+}
