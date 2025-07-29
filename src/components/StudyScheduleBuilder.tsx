@@ -12,8 +12,8 @@ export default function StudyScheduleBuilder() {
 
   const labelClasses =
     theme === 'dark'
-      ? 'block mb-1 font-medium text-gray-300'
-      : 'block mb-1 font-medium text-gray-700';
+    ? 'bg-gray-800 text-gray-100 border border-gray-700'
+    : 'bg-white text-slate-800 border border-slate-200';
 
  const inputClasses =
   theme === 'dark'
