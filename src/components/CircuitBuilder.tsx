@@ -1,11 +1,548 @@
-import React from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
+import ReactFlow, {
+  Node,
+  Edge,
+  addEdge,
+  Background,
+  Controls,
+  MiniMap,
+  useNodesState,
+  useEdgesState,
+  Connection,
+  ConnectionMode,
+  Panel,
+  NodeProps,
+  Handle,
+  Position,
+  MarkerType,
+  useReactFlow,
+  ReactFlowProvider,
+} from 'reactflow';
+import { ArrowLeft, Plus, Trash2, Save, RotateCcw, Info } from 'lucide-react';
+import 'reactflow/dist/style.css';
 
-const CircuitBuilder = () => {
+// Types matching your original structure
+interface DiagramNode {
+  id: string;
+  type: 'conclusion-subject' | 'conclusion-predicate' | 'minor-premise' | 'major-premise' | 'backing-premise' | 'assumption' | 'counterclaim' | 'correct-answer';
+  shape: 'rectangle' | 'rounded-rectangle' | 'ellipse';
+  content: string;
+  position: { x: number; y: number };
+  size?: { width: number; height: number };
+  connections: { targetId: string; style: string }[];
+}
+
+interface Circuit {
+  id: string;
+  questionId: string;
+  diagram: DiagramNode[];
+  annotations: any[];
+  analysisQuality: number;
+  createdAt: Date;
+}
+
+interface ProcessedQuestion {
+  id: string;
+  correctAnswer: number;
+  options: string[];
+}
+
+interface TestSession {
+  id: string;
+   questionFlags?: {
+    [questionId: string]: {
+      timedSection?: boolean;
+      blindReview?: boolean;
+      strategyPlanning?: boolean;
+    }
+  };
+}
+
+// Custom Node Components
+const ConclusionSubjectNode = ({ id, data, selected }: NodeProps) => {
+  const [content, setContent] = useState(data.content || '');
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setContent(e.target.value);
+    data.onContentChange?.(id, e.target.value);
+    // Auto-resize
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = textareaRef.current.scrollHeight + 'px';
+    }
+  };
+
   return (
-    // Main container using CSS Grid with 3 rows
-    <div className="h-screen grid grid-rows-[auto_1fr_auto] bg-slate-50">
+    <div className={`px-4 py-3 shadow-md rounded-lg bg-purple-50 border-2 ${
+      selected ? 'border-purple-500' : 'border-purple-200'
+    } min-w-[120px] min-h-[70px] relative`} 
+       style={
+    selected
+      ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
+      : undefined
+  }>
+         {/* Handles on all four sides */}
+      <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
+      <Handle type="target" position={Position.Left} id="left" className="w-3 h-3" />
+      <Handle type="source" position={Position.Bottom} id="bottom" className="w-3 h-3" />
+      <Handle type="source" position={Position.Right} id="right" className="w-3 h-3" />
+      <div className="text-xs font-medium mb-2 text-purple-700">Conclusion Subject</div>
+      <textarea
+        ref={textareaRef}
+        className="w-full bg-transparent text-xs resize-none outline-none text-center overflow-hidden text-purple-700"
+        value={content}
+        onChange={handleContentChange}
+        placeholder="Click to edit"
+        rows={1}
+      />
+      <Handle type="source" position={Position.Bottom} className="w-3 h-3" />
+    </div>
+  );
+};
+
+const ConclusionPredicateNode = ({ id, data, selected }: NodeProps) => {
+  const [content, setContent] = useState(data.content || '');
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setContent(e.target.value);
+    data.onContentChange?.(id, e.target.value);
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = textareaRef.current.scrollHeight + 'px';
+    }
+  };
+
+  return (
+    <div className={`px-4 py-3 shadow-md rounded-lg bg-purple-200 border-2 ${
+      selected ? 'border-purple-600' : 'border-purple-400'
+    } min-w-[120px] min-h-[70px] relative`} 
+       style={
+    selected
+      ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
+      : undefined}
+      >
+         {/* Handles on all four sides */}
+      <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
+      <Handle type="target" position={Position.Left} id="left" className="w-3 h-3" />
+      <Handle type="source" position={Position.Bottom} id="bottom" className="w-3 h-3" />
+      <Handle type="source" position={Position.Right} id="right" className="w-3 h-3" />
+      <div className="text-xs font-medium mb-2 text-purple-900">Conclusion Predicate/Claim</div>
+      <textarea
+        ref={textareaRef}
+        className="w-full bg-transparent text-xs resize-none outline-none text-center overflow-hidden text-purple-900"
+        value={content}
+        onChange={handleContentChange}
+        placeholder="Click to edit"
+        rows={1}
+      />
+      <Handle type="source" position={Position.Bottom} className="w-3 h-3" />
+    </div>
+  );
+};
+
+const MinorPremiseNode = ({ id, data, selected }: NodeProps) => {
+  const [content, setContent] = useState(data.content || '');
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setContent(e.target.value);
+    data.onContentChange?.(id, e.target.value);
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = textareaRef.current.scrollHeight + 'px';
+    }
+  };
+
+  return (
+    <div className={`px-4 py-3 shadow-md rounded-lg bg-gray-50 border-2 ${
+      selected ? 'border-gray-600' : 'border-black'
+    } min-w-[120px] min-h-[70px] relative`} 
+       style={
+    selected
+      ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
+      : undefined}>
+         {/* Handles on all four sides */}
+      <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
+      <Handle type="target" position={Position.Left} id="left" className="w-3 h-3" />
+      <Handle type="source" position={Position.Bottom} id="bottom" className="w-3 h-3" />
+      <Handle type="source" position={Position.Right} id="right" className="w-3 h-3" />
+      <div className="text-xs font-medium mb-2 text-black">Minor Premise</div>
+      <textarea
+        ref={textareaRef}
+        className="w-full bg-transparent text-xs resize-none outline-none text-center overflow-hidden text-black"
+        value={content}
+        onChange={handleContentChange}
+        placeholder="Click to edit"
+        rows={1}
+      />
+      <Handle type="source" position={Position.Bottom} className="w-3 h-3" />
+    </div>
+  );
+};
+
+const MajorPremiseNode = ({ id, data, selected }: NodeProps) => {
+  const [content, setContent] = useState(data.content || '');
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setContent(e.target.value);
+    data.onContentChange?.(id, e.target.value);
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = textareaRef.current.scrollHeight + 'px';
+    }
+  };
+
+  return (
+    <div className={`px-4 py-3 shadow-md rounded-lg bg-blue-100 border-2 ${
+      selected ? 'border-blue-600' : 'border-blue-300'
+    } min-w-[120px] min-h-[70px] relative`} 
+       style={
+    selected
+      ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
+      : undefined}>
+         {/* Handles on all four sides */}
+      <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
+      <Handle type="target" position={Position.Left} id="left" className="w-3 h-3" />
+      <Handle type="source" position={Position.Bottom} id="bottom" className="w-3 h-3" />
+      <Handle type="source" position={Position.Right} id="right" className="w-3 h-3" />
+      <div className="text-xs font-medium mb-2 text-blue-800">Major Premise</div>
+      <textarea
+        ref={textareaRef}
+        className="w-full bg-transparent text-xs resize-none outline-none text-center overflow-hidden text-blue-800"
+        value={content}
+        onChange={handleContentChange}
+        placeholder="Click to edit"
+        rows={1}
+      />
+      <Handle type="source" position={Position.Bottom} className="w-3 h-3" />
+    </div>
+  );
+};
+
+const BackingPremiseNode = ({ id, data, selected }: NodeProps) => {
+  const [content, setContent] = useState(data.content || '');
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setContent(e.target.value);
+    data.onContentChange?.(id, e.target.value);
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = textareaRef.current.scrollHeight + 'px';
+    }
+  };
+
+  return (
+    <div className={`px-4 py-3 shadow-md rounded-lg bg-gray-50 border-2 ${
+      selected ? 'border-gray-600' : 'border-gray-300'
+    } min-w-[120px] min-h-[70px] relative`} 
+       style={
+    selected
+      ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
+      : undefined}>
+         {/* Handles on all four sides */}
+      <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
+      <Handle type="target" position={Position.Left} id="left" className="w-3 h-3" />
+      <Handle type="source" position={Position.Bottom} id="bottom" className="w-3 h-3" />
+      <Handle type="source" position={Position.Right} id="right" className="w-3 h-3" />
+      <div className="text-xs font-medium mb-2 text-gray-800">Backing/Linking Premise</div>
+      <textarea
+        ref={textareaRef}
+        className="w-full bg-transparent text-xs resize-none outline-none text-center overflow-hidden text-gray-800"
+        value={content}
+        onChange={handleContentChange}
+        placeholder="Click to edit"
+        rows={1}
+      />
+      <Handle type="source" position={Position.Bottom} className="w-3 h-3" />
+    </div>
+  );
+};
+
+const AssumptionNode = ({ id, data, selected }: NodeProps) => {
+  const [assumptionParts, setAssumptionParts] = useState(() => {
+    try {
+      return JSON.parse(data.content || '["", ""]');
+    } catch {
+      return ['', ''];
+    }
+  });
+
+  const textareaRef1 = useRef<HTMLTextAreaElement>(null);
+  const textareaRef2 = useRef<HTMLTextAreaElement>(null);
+
+  const handlePartChange = (index: number, value: string) => {
+    const newParts = [...assumptionParts];
+    newParts[index] = value;
+    setAssumptionParts(newParts);
+    data.onContentChange?.(id, JSON.stringify(newParts));
+    
+    // Auto-resize textareas
+    const textareaRef = index === 0 ? textareaRef1 : textareaRef2;
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = textareaRef.current.scrollHeight + 'px';
+    }
+  };
+
+  return (
+    <div className={`px-4 py-3 shadow-md rounded-lg bg-red-100 border-2 ${
+      selected ? 'border-red-600' : 'border-red-300'
+    } min-w-[300px] min-h-[120px] relative`} 
+       style={
+    selected
+      ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
+      : undefined}>
+         {/* Handles on all four sides */}
+      <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
+      <Handle type="target" position={Position.Left} id="left" className="w-3 h-3" />
+      <Handle type="source" position={Position.Bottom} id="bottom" className="w-3 h-3" />
+      <Handle type="source" position={Position.Right} id="right" className="w-3 h-3" />
       
-      {/* Header - takes only the space it needs */}
+      <div className="text-xs font-medium mb-3 text-red-800">Assumption/Flaw</div>
+      
+      <div className="text-xs leading-relaxed text-red-800 space-y-2">
+        <div className="flex flex-col">
+          <span className="mb-1">The author assumes that:</span>
+          <textarea
+            ref={textareaRef1}
+            className="bg-red-50 border border-red-300 rounded px-2 py-1 outline-none w-full text-red-900 resize-none min-h-[32px]"
+            value={assumptionParts[0]}
+            onChange={(e) => handlePartChange(0, e.target.value)}
+            placeholder="Enter assumption..."
+            style={{ 
+              overflow: 'hidden',
+              lineHeight: '1.4'
+            }}
+          />
+        </div>
+        
+        <div className="flex flex-col">
+          <span className="mb-1">and overlooks the possibility that:</span>
+          <textarea
+            ref={textareaRef2}
+            className="bg-red-50 border border-red-300 rounded px-2 py-1 outline-none w-full text-red-900 resize-none min-h-[32px]"
+            value={assumptionParts[1]}
+            onChange={(e) => handlePartChange(1, e.target.value)}
+            placeholder="Enter overlooked possibility..."
+            style={{ 
+              overflow: 'hidden',
+              lineHeight: '1.4'
+            }}
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const CounterclaimNode = ({ id, data, selected }: NodeProps) => {
+  const [content, setContent] = useState(data.content || '');
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setContent(e.target.value);
+    data.onContentChange?.(id, e.target.value);
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = textareaRef.current.scrollHeight + 'px';
+    }
+  };
+
+  return (
+    <div className={`px-4 py-3 shadow-md rounded-lg bg-gray-100 border-2 ${
+      selected ? 'border-red-600' : 'border-red-300'
+    } min-w-[120px] min-h-[70px] relative`} 
+       style={
+    selected
+      ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
+      : undefined}>
+          {/* Handles on all four sides */}
+      <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
+      <Handle type="target" position={Position.Left} id="left" className="w-3 h-3" />
+      <Handle type="source" position={Position.Bottom} id="bottom" className="w-3 h-3" />
+      <Handle type="source" position={Position.Right} id="right" className="w-3 h-3" />
+      <div className="text-xs font-medium mb-2 text-red-800">Counterclaim/Concession</div>
+      <textarea
+        ref={textareaRef}
+        className="w-full bg-transparent text-xs resize-none outline-none text-center overflow-hidden text-red-800"
+        value={content}
+        onChange={handleContentChange}
+        placeholder="Click to edit"
+        rows={1}
+      />
+      <Handle type="source" position={Position.Bottom} className="w-3 h-3" />
+    </div>
+  );
+};
+
+const CorrectAnswerNode = ({ id, data, selected }: NodeProps) => {
+  const [content, setContent] = useState(data.content || '');
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setContent(e.target.value);
+    data.onContentChange?.(id, e.target.value);
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = textareaRef.current.scrollHeight + 'px';
+    }
+  };
+
+  return (
+    <div className={`px-4 py-3 shadow-md rounded-lg bg-green-200 border-2 ${
+      selected ? 'border-green-600' : 'border-green-400'
+    } min-w-[120px] min-h-[70px] relative`} 
+       style={
+    selected
+      ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
+      : undefined}>
+         {/* Handles on all four sides */}
+      <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
+      <Handle type="target" position={Position.Left} id="left" className="w-3 h-3" />
+      <Handle type="source" position={Position.Bottom} id="bottom" className="w-3 h-3" />
+      <Handle type="source" position={Position.Right} id="right" className="w-3 h-3" />
+      <div className="text-xs font-medium mb-2 text-green-800">Correct Answer</div>
+      <textarea
+        ref={textareaRef}
+        className="w-full bg-transparent text-xs resize-none outline-none text-center overflow-hidden text-green-800"
+        value={content}
+        onChange={handleContentChange}
+        placeholder="Click to edit"
+        rows={1}
+      />
+      <Handle type="source" position={Position.Bottom} className="w-3 h-3" />
+    </div>
+  );
+};
+
+// Define node types for React Flow
+const nodeTypes = {
+  'conclusion-subject': ConclusionSubjectNode,
+  'conclusion-predicate': ConclusionPredicateNode,
+  'minor-premise': MinorPremiseNode,
+  'major-premise': MajorPremiseNode,
+  'backing-premise': BackingPremiseNode,
+  'assumption': AssumptionNode,
+  'counterclaim': CounterclaimNode,
+  'correct-answer': CorrectAnswerNode,
+};
+
+// Main Circuit Builder Component
+const CircuitBuilderFlow = () => {
+  const [nodes, setNodes, onNodesChange] = useNodesState([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const [selectedNodeType, setSelectedNodeType] = useState<DiagramNode['type']>('conclusion-subject');
+  const [analysisScore, setAnalysisScore] = useState(0);
+  const [showInstructions, setShowInstructions] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
+  
+  const { project } = useReactFlow();
+  const reactFlowWrapper = useRef<HTMLDivElement>(null);
+
+  // Node type definitions for the toolbar
+  const nodeTypeOptions = [
+    { type: 'conclusion-subject' as const, label: 'Conclusion Subject', color: 'bg-purple-50 border-purple-200 text-purple-700', description: 'The entity or concept the conclusion is about' },
+    { type: 'conclusion-predicate' as const, label: 'Conclusion Predicate/Claim', color: 'bg-purple-200 border-purple-400 text-purple-900', description: 'The specific claim or assertion made about the subject' },
+    { type: 'minor-premise' as const, label: 'Minor Premise', color: 'bg-gray-50 border-black text-black', description: 'Supporting evidence' },
+    { type: 'major-premise' as const, label: 'Major Premise', color: 'bg-blue-100 border-blue-300 text-blue-800', description: 'A broad statement or principle' },
+    { type: 'backing-premise' as const, label: 'Backing/Linking Premise', color: 'bg-gray-50 border-gray-300 text-gray-800', description: 'Provides support for another premise or conclusion' },
+    { type: 'counterclaim' as const, label: 'Counterclaim/Concession', color: 'bg-gray-100 border-red-300 text-red-800', description: 'An opposing argument or point conceded' },
+    { type: 'assumption' as const, label: 'Assumption/Flaw', color: 'bg-red-100 border-red-300 text-red-800', description: 'Unstated Premise implied by the author' },
+    { type: 'correct-answer' as const, label: 'Correct Answer', color: 'bg-green-200 border-green-400 text-green-800', description: 'The correct answer choice for the question' }
+  ];
+
+  // Handle content changes from nodes
+  const handleNodeContentChange = useCallback((nodeId: string, content: string) => {
+    setNodes(nds => nds.map(node => 
+      node.id === nodeId 
+        ? { ...node, data: { ...node.data, content } }
+        : node
+    ));
+  }, [setNodes]);
+
+  // Handle edge connections
+  const onConnect = useCallback(
+    (params: Connection) => {
+      const edge: Edge = {
+        ...params,
+        id: `edge-${params.source}-${params.target}`,
+        markerEnd: { type: MarkerType.ArrowClosed },
+        style: { stroke: '#64748b', strokeWidth: 2 },
+      };
+      setEdges(eds => addEdge(edge, eds));
+    },
+    [setEdges]
+  );
+
+  // Calculate analysis score
+  const calculateAnalysisScore = useCallback(() => {
+    let score = 0;
+    const hasConclusion = nodes.some(node => 
+      node.type === 'conclusion-subject' || node.type === 'conclusion-predicate'
+    );
+    const hasPremises = nodes.filter(node => 
+      node.type === 'minor-premise' || node.type === 'major-premise' || node.type === 'backing-premise'
+    ).length >= 2;
+    const hasContent = nodes.every(node => {
+      if (node.type === 'assumption') {
+        try {
+          const assumptionContent: string[] = JSON.parse(node.data.content || '["", ""]');
+          return assumptionContent.every(part => part.trim().length > 0);
+        } catch {
+          return false;
+        }
+      }
+      return (node.data.content || '').trim().length > 0;
+    });
+    
+    if (hasConclusion) score += 30;
+    if (hasPremises) score += 40;
+    if (hasContent) score += 30;
+    
+    setAnalysisScore(score);
+    return score;
+  }, [nodes]);
+
+  // Auto-calculate score when nodes change
+  useEffect(() => {
+    calculateAnalysisScore();
+  }, [calculateAnalysisScore]);
+
+  // Save circuit function
+  const saveCircuit = useCallback(() => {
+    setSaveStatus('saving');
+    try {
+      const score = calculateAnalysisScore();
+      // Here you would typically call your save function
+      console.log('Saving circuit with score:', score);
+      setSaveStatus('saved');
+      setTimeout(() => setSaveStatus('idle'), 2000);
+    } catch (error) {
+      console.error('Failed to save circuit:', error);
+      setSaveStatus('error');
+      setTimeout(() => setSaveStatus('idle'), 3000);
+    }
+  }, [calculateAnalysisScore]);
+
+  // Delete selected elements
+  const deleteSelected = useCallback(() => {
+    setNodes(nds => nds.filter(node => !node.selected));
+    setEdges(eds => eds.filter(edge => !edge.selected));
+  }, [setNodes, setEdges]);
+
+  // Clear all
+  const clearAll = useCallback(() => {
+    setNodes([]);
+    setEdges([]);
+  }, [setNodes, setEdges]);
+
+  return (
+    <div className="flex flex-col bg-slate-50">
+      {/* Header */}
       <div className="bg-white border-b border-slate-200 px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
@@ -47,11 +584,9 @@ const CircuitBuilder = () => {
         </div>
       </div>
 
-      {/* Main content area - takes remaining space and has its own grid */}
-      <div className="grid grid-cols-[224px_1fr] overflow-hidden">
-        
-        {/* Sidebar - fixed width */}
-        <div className="bg-white border-r border-slate-200 p-4 space-y-6 overflow-y-auto">
+      <div className="flex-1 flex h-[calc(100vh-72px)]  overflow-hidden">
+                {/* Sidebar */}
+        <div className="w-56 bg-white border-r border-slate-200 p-4 space-y-6 overflow-y-auto">
           <div>
             <h3 className="text-base font-semibold text-slate-900 mb-3">Node Types</h3>
             <div className="space-y-2">
@@ -63,7 +598,8 @@ const CircuitBuilder = () => {
                     event.dataTransfer.setData('application/reactflow', type);
                     event.dataTransfer.effectAllowed = 'move';
                   }}
-                  className={`group w-full p-2 text-left border-2 rounded-lg cursor-move select-none transition-colors ${color}`}
+                 className={`group w-full p-2 text-left border-2 rounded-lg cursor-move select-none transition-colors ${color}`}
+
                 >
                   <div className="text-sm font-medium">{label}</div>
                   <div className="text-xs opacity-75 group-hover:block hidden">{description}</div>
@@ -92,37 +628,34 @@ const CircuitBuilder = () => {
           </div>
         </div>
 
-        {/* React Flow Canvas - takes remaining width and all available height */}
-        <div 
-          className="w-full h-full overflow-hidden" 
-          ref={reactFlowWrapper}
-          onDragOver={(event) => event.preventDefault()}
-          onDrop={(event) => {
-            event.preventDefault();
-            if (!reactFlowWrapper.current) return;
-        
-            const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
-            const type = event.dataTransfer.getData('application/reactflow');
-            if (!type) return;
-        
-            const position = project({
-              x: event.clientX - reactFlowBounds.left,
-              y: event.clientY - reactFlowBounds.top,
-            });
-        
-            const newNode = {
-              id: `node-${Date.now()}`,
-              type,
-              position,
-              data: {
-                content: type === 'assumption' ? JSON.stringify(['', '']) : '',
-                onContentChange: handleNodeContentChange
-              }, 
-            };
-        
-            setNodes((nds) => nds.concat(newNode));
-          }}
-        >
+        {/* React Flow Canvas */}
+        <div className="flex-1" ref={reactFlowWrapper}  style={{ height: 'calc(100vh - 72px)', overflow: 'hidden' }}
+           onDragOver={(event) => event.preventDefault()} // Allow drop by preventing default
+            onDrop={(event) => {
+              event.preventDefault();
+              if (!reactFlowWrapper.current) return;
+          
+              const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
+              const type = event.dataTransfer.getData('application/reactflow');
+              if (!type) return;
+          
+              const position = project({
+                x: event.clientX - reactFlowBounds.left,
+                y: event.clientY - reactFlowBounds.top,
+              });
+          
+              const newNode: Node = {
+                id: `node-${Date.now()}`,
+                type,
+                position,
+                data: {
+                  content: type === 'assumption' ? JSON.stringify(['', '']) : '',
+                  onContentChange: handleNodeContentChange
+                }, 
+              };
+          
+              setNodes((nds) => nds.concat(newNode));
+            }}>
           <ReactFlow
             nodes={nodes}
             edges={edges}
@@ -132,9 +665,11 @@ const CircuitBuilder = () => {
             nodeTypes={nodeTypes}
             connectionMode={ConnectionMode.Strict}
             fitView
-          >
+           >
             <Background color="#e2e8f0" gap={20} />
-            <Controls position="top-left" />
+            <Controls position="top-left"
+              />
+           
             
             {nodes.length === 0 && (
               <Panel position="center">
@@ -145,43 +680,6 @@ const CircuitBuilder = () => {
               </Panel>
             )}
           </ReactFlow>
-        </div>
-      </div>
-
-      {/* QuestionTracker - takes only the space it needs */}
-      <div className="bg-white shadow-lg border-t border-slate-200 p-2 overflow-x-auto">
-        {/* QuestionTracker content would go here */}
-        <div className="text-xs text-slate-600 mb-2 flex items-center space-x-6">
-          <span className="whitespace-nowrap">
-            <strong>Phase:</strong> Timed
-          </span>
-          <div className="flex items-center space-x-4 text-xs">
-            <div className="flex items-center space-x-1">
-              <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-              <span>Timed</span>
-            </div>
-            <div className="flex items-center space-x-1">
-              <div className="w-3 h-3 rounded-full bg-orange-500"></div>
-              <span>BR</span>
-            </div>
-            <div className="flex items-center space-x-1">
-              <div className="w-3 h-3 rounded-full bg-red-500"></div>
-              <span>Strategy</span>
-            </div>
-          </div>
-        </div>
-        
-        <div className="flex space-x-2 max-w-full">
-          {/* Question buttons would go here */}
-          <div className="min-w-[36px] h-9 rounded-full flex items-center justify-center text-sm font-semibold bg-purple-600 ring-2 ring-purple-800 text-white">
-            1
-          </div>
-          <div className="min-w-[36px] h-9 rounded-full flex items-center justify-center text-sm font-semibold bg-blue-500 text-white">
-            2
-          </div>
-          <div className="min-w-[36px] h-9 rounded-full flex items-center justify-center text-sm font-semibold bg-slate-200 text-slate-600">
-            3
-          </div>
         </div>
       </div>
 
@@ -218,4 +716,13 @@ const CircuitBuilder = () => {
   );
 };
 
-export default CircuitBuilder;
+// Wrapper component with ReactFlowProvider
+const CircuitBuilderWithProvider = () => {
+  return (
+    <ReactFlowProvider>
+      <CircuitBuilderFlow />
+    </ReactFlowProvider>
+  );
+};
+
+export default CircuitBuilderWithProvider;
