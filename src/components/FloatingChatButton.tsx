@@ -65,10 +65,7 @@ const toggleChat = () => {
       </button>
 
       {/* Chat Window */}
-     <motion.div
-  drag
-  dragMomentum={false}
-  dragElastic={0.2}
+     <div
   className={`fixed bottom-24 left-20 w-[500px] h-[500px] bg-transparent rounded-2xl z-50
     transform transition-all duration-300 ease-in-out cursor-move
     ${isOpen ? 'translate-y-0 opacity-100 visible' : 'translate-y-4 opacity-0 invisible'}
@@ -91,7 +88,7 @@ const toggleChat = () => {
             setHasInitialChatWelcomeBeenSent={setHasInitialChatWelcomeBeenSent}
           />
         )}
-      </motion.div>
+      </div>
     </>
   );
 };
