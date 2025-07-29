@@ -588,26 +588,32 @@ const CircuitBuilderFlow = () => {
 
       <div className="flex-1 flex">
         {/* Sidebar */}
-        <div className="w-56 bg-white border-r border-slate-200 p-4 space-y-6 overflow-y-auto">
-          <div>
-            <h3 className="text-base font-semibold text-slate-900 mb-3">Node Types</h3>
-            <div className="space-y-2">
-              {nodeTypeOptions.map(({ type, label, color, description }) => (
-                <button
-                  key={type}
-                  onClick={() => setSelectedNodeType(type)}
-                  className={`group w-full p-2 text-left border-2 rounded-lg transition-colors ${
-                    selectedNodeType === type 
-                      ? `${color} border-current` 
-                      : 'border-slate-200 hover:border-slate-300 text-slate-700'
-                  }`}
-                >
-                  <div className="text-sm font-medium">{label}</div>
-                  <div className="text-xs opacity-75 group-hover:block hidden">{description}</div>
-                </button>
-              ))}
-            </div>
-          </div>
+<div className="w-56 bg-white border-r border-slate-200 p-4 space-y-6 overflow-y-auto">
+  <div>
+    <h3 className="text-base font-semibold text-slate-900 mb-3">Node Types</h3>
+    <div className="space-y-2">
+      {nodeTypeOptions.map(({ type, label, color, description }) => (
+        <div
+          key={type}
+          draggable
+          onDragStart={(event) => {
+            event.dataTransfer.setData('application/reactflow', type);
+            event.dataTransfer.effectAllowed = 'move';
+          }}
+          className={`group w-full p-2 text-left border-2 rounded-lg cursor-move select-none transition-colors ${
+            selectedNodeType === type
+              ? `${color} border-current`
+              : 'border-slate-200 hover:border-slate-300 text-slate-700'
+          }`}
+        >
+          <div className="text-sm font-medium">{label}</div>
+          <div className="text-xs opacity-75 group-hover:block hidden">{description}</div>
+        </div>
+      ))}
+    </div>
+  </div>
+</div>
+
 
           <div>
             <h3 className="text-base font-semibold text-slate-900 mb-3">Instructions</h3>
