@@ -21,6 +21,8 @@ import ReactFlow, {
 import { ArrowLeft, Plus, Trash2, Save, RotateCcw, Info } from 'lucide-react';
 import 'reactflow/dist/style.css';
 
+
+
 // Types matching your original structure
 interface DiagramNode {
   id: string;
@@ -49,6 +51,13 @@ interface ProcessedQuestion {
 
 interface TestSession {
   id: string;
+   questionFlags?: {
+    [questionId: string]: {
+      timedSection?: boolean;
+      blindReview?: boolean;
+      strategyPlanning?: boolean;
+    }
+  };
 }
 
 // Custom Node Components
@@ -69,8 +78,17 @@ const ConclusionSubjectNode = ({ id, data, selected }: NodeProps) => {
   return (
     <div className={`px-4 py-3 shadow-md rounded-lg bg-purple-50 border-2 ${
       selected ? 'border-purple-500' : 'border-purple-200'
-    } min-w-[120px] min-h-[70px]`}>
-      <Handle type="target" position={Position.Top} className="w-3 h-3" />
+    } min-w-[120px] min-h-[70px] relative`} 
+       style={
+    selected
+      ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
+      : undefined
+  }>
+         {/* Handles on all four sides */}
+      <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
+      <Handle type="target" position={Position.Left} id="left" className="w-3 h-3" />
+      <Handle type="source" position={Position.Bottom} id="bottom" className="w-3 h-3" />
+      <Handle type="source" position={Position.Right} id="right" className="w-3 h-3" />
       <div className="text-xs font-medium mb-2 text-purple-700">Conclusion Subject</div>
       <textarea
         ref={textareaRef}
@@ -101,8 +119,17 @@ const ConclusionPredicateNode = ({ id, data, selected }: NodeProps) => {
   return (
     <div className={`px-4 py-3 shadow-md rounded-lg bg-purple-200 border-2 ${
       selected ? 'border-purple-600' : 'border-purple-400'
-    } min-w-[120px] min-h-[70px]`}>
-      <Handle type="target" position={Position.Top} className="w-3 h-3" />
+    } min-w-[120px] min-h-[70px] relative`} 
+       style={
+    selected
+      ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
+      : undefined}
+      >
+         {/* Handles on all four sides */}
+      <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
+      <Handle type="target" position={Position.Left} id="left" className="w-3 h-3" />
+      <Handle type="source" position={Position.Bottom} id="bottom" className="w-3 h-3" />
+      <Handle type="source" position={Position.Right} id="right" className="w-3 h-3" />
       <div className="text-xs font-medium mb-2 text-purple-900">Conclusion Predicate/Claim</div>
       <textarea
         ref={textareaRef}
@@ -133,8 +160,16 @@ const MinorPremiseNode = ({ id, data, selected }: NodeProps) => {
   return (
     <div className={`px-4 py-3 shadow-md rounded-lg bg-gray-50 border-2 ${
       selected ? 'border-gray-600' : 'border-black'
-    } min-w-[120px] min-h-[70px]`}>
-      <Handle type="target" position={Position.Top} className="w-3 h-3" />
+    } min-w-[120px] min-h-[70px] relative`} 
+       style={
+    selected
+      ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
+      : undefined}>
+         {/* Handles on all four sides */}
+      <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
+      <Handle type="target" position={Position.Left} id="left" className="w-3 h-3" />
+      <Handle type="source" position={Position.Bottom} id="bottom" className="w-3 h-3" />
+      <Handle type="source" position={Position.Right} id="right" className="w-3 h-3" />
       <div className="text-xs font-medium mb-2 text-black">Minor Premise</div>
       <textarea
         ref={textareaRef}
@@ -165,8 +200,16 @@ const MajorPremiseNode = ({ id, data, selected }: NodeProps) => {
   return (
     <div className={`px-4 py-3 shadow-md rounded-lg bg-blue-100 border-2 ${
       selected ? 'border-blue-600' : 'border-blue-300'
-    } min-w-[120px] min-h-[70px]`}>
-      <Handle type="target" position={Position.Top} className="w-3 h-3" />
+    } min-w-[120px] min-h-[70px] relative`} 
+       style={
+    selected
+      ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
+      : undefined}>
+         {/* Handles on all four sides */}
+      <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
+      <Handle type="target" position={Position.Left} id="left" className="w-3 h-3" />
+      <Handle type="source" position={Position.Bottom} id="bottom" className="w-3 h-3" />
+      <Handle type="source" position={Position.Right} id="right" className="w-3 h-3" />
       <div className="text-xs font-medium mb-2 text-blue-800">Major Premise</div>
       <textarea
         ref={textareaRef}
@@ -197,8 +240,16 @@ const BackingPremiseNode = ({ id, data, selected }: NodeProps) => {
   return (
     <div className={`px-4 py-3 shadow-md rounded-lg bg-gray-50 border-2 ${
       selected ? 'border-gray-600' : 'border-gray-300'
-    } min-w-[120px] min-h-[70px]`}>
-      <Handle type="target" position={Position.Top} className="w-3 h-3" />
+    } min-w-[120px] min-h-[70px] relative`} 
+       style={
+    selected
+      ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
+      : undefined}>
+         {/* Handles on all four sides */}
+      <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
+      <Handle type="target" position={Position.Left} id="left" className="w-3 h-3" />
+      <Handle type="source" position={Position.Bottom} id="bottom" className="w-3 h-3" />
+      <Handle type="source" position={Position.Right} id="right" className="w-3 h-3" />
       <div className="text-xs font-medium mb-2 text-gray-800">Backing/Linking Premise</div>
       <textarea
         ref={textareaRef}
@@ -221,105 +272,43 @@ const AssumptionNode = ({ id, data, selected }: NodeProps) => {
       return ['', ''];
     }
   });
-  
-  const textarea1Ref = useRef<HTMLTextAreaElement>(null);
-  const textarea2Ref = useRef<HTMLTextAreaElement>(null);
-  const { setNodes } = useReactFlow();
-
-  const autoResize = (textarea: HTMLTextAreaElement) => {
-    textarea.style.height = 'auto';
-    textarea.style.height = textarea.scrollHeight + 'px';
-  };
-
-  const calculateNodeHeight = () => {
-    // Base height for title and padding
-    let totalHeight = 80; // Base padding and title height
-    
-    // Add height for each textarea based on content
-    if (textarea1Ref.current) {
-      const lines1 = Math.max(1, Math.ceil(assumptionParts[0].length / 30) || 1);
-      totalHeight += lines1 * 16; // Approximate line height
-    }
-    
-    if (textarea2Ref.current) {
-      const lines2 = Math.max(1, Math.ceil(assumptionParts[1].length / 30) || 1);
-      totalHeight += lines2 * 16;
-    }
-    
-    // Add space for the connecting text
-    totalHeight += 40;
-    
-    return Math.max(120, totalHeight); // Minimum height of 120px
-  };
 
   const handlePartChange = (index: number, value: string) => {
     const newParts = [...assumptionParts];
     newParts[index] = value;
     setAssumptionParts(newParts);
     data.onContentChange?.(id, JSON.stringify(newParts));
-    
-    // Auto-resize the specific textarea
-    const textarea = index === 0 ? textarea1Ref.current : textarea2Ref.current;
-    if (textarea) {
-      setTimeout(() => autoResize(textarea), 0);
-    }
-    
-    // Update node height based on content
-    setTimeout(() => {
-      const newHeight = calculateNodeHeight();
-      setNodes(nodes => nodes.map(node => 
-        node.id === id 
-          ? { 
-              ...node, 
-              style: { 
-                ...node.style, 
-                height: newHeight,
-                minHeight: '120px'
-              }
-            }
-          : node
-      ));
-    }, 0);
   };
-
-  // Auto-resize on mount and when content changes
-  useEffect(() => {
-    if (textarea1Ref.current) autoResize(textarea1Ref.current);
-    if (textarea2Ref.current) autoResize(textarea2Ref.current);
-  }, [assumptionParts]);
 
   return (
     <div className={`px-4 py-3 shadow-md rounded-lg bg-red-100 border-2 ${
       selected ? 'border-red-600' : 'border-red-300'
-    } min-w-[280px] min-h-[120px] flex flex-col`}>
-      <Handle type="target" position={Position.Top} className="w-3 h-3" />
-      <div className="text-xs font-medium mb-3 text-red-800">Assumption/Flaw</div>
-      <div className="text-xs leading-relaxed flex flex-col text-red-800 flex-1">
-        <div className="mb-2">
-          <div className="mb-1">The author assumes that</div>
-          <textarea
-            ref={textarea1Ref}
-            className="bg-red-50 border border-red-300 rounded px-2 py-1 outline-none w-full text-red-900 resize-none overflow-hidden focus:border-red-500 focus:bg-white"
-            value={assumptionParts[0]}
-            onChange={(e) => handlePartChange(0, e.target.value)}
-            placeholder="Enter assumption here..."
-            rows={1}
-            style={{ minHeight: '20px' }}
-          />
-        </div>
-        
-        <div className="mb-2">
-          <div className="mb-1">and overlooks the possibility that</div>
-          <textarea
-            ref={textarea2Ref}
-            className="bg-red-50 border border-red-300 rounded px-2 py-1 outline-none w-full text-red-900 resize-none overflow-hidden focus:border-red-500 focus:bg-white"
-            value={assumptionParts[1]}
-            onChange={(e) => handlePartChange(1, e.target.value)}
-            placeholder="Enter overlooked possibility here..."
-            rows={1}
-            style={{ minHeight: '20px' }}
-          />
-        </div>
+    } min-w-[280px] min-h-[100px] relative`} 
+       style={
+    selected
+      ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
+      : undefined}>
+         {/* Handles on all four sides */}
+      <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
+      <Handle type="target" position={Position.Left} id="left" className="w-3 h-3" />
+      <Handle type="source" position={Position.Bottom} id="bottom" className="w-3 h-3" />
+      <Handle type="source" position={Position.Right} id="right" className="w-3 h-3" />
+      <div className="text-xs font-medium mb-2 text-red-800">Assumption/Flaw</div>
+      <div className="text-xs leading-tight flex flex-col items-start w-full text-red-800">
+        <span>The author assumes that </span>
+        <textarea
+          className="bg-transparent border-b border-red-400 outline-none w-full text-red-900 resize-none overflow-hidden"
+          value={assumptionParts[0]}
+          onChange={(e) => handlePartChange(0, e.target.value)}
+          rows={1}
+        />
+        <span> and overlooks the possibility that </span>
+        <textarea
+          className="bg-transparent border-b border-red-400 outline-none w-full text-red-900 resize-none overflow-hidden"
+          value={assumptionParts[1]}
+          onChange={(e) => handlePartChange(1, e.target.value)}
+          rows={1}
+        />
       </div>
       <Handle type="source" position={Position.Bottom} className="w-3 h-3" />
     </div>
@@ -342,8 +331,16 @@ const CounterclaimNode = ({ id, data, selected }: NodeProps) => {
   return (
     <div className={`px-4 py-3 shadow-md rounded-lg bg-gray-100 border-2 ${
       selected ? 'border-red-600' : 'border-red-300'
-    } min-w-[120px] min-h-[70px]`}>
-      <Handle type="target" position={Position.Top} className="w-3 h-3" />
+    } min-w-[120px] min-h-[70px] relative`} 
+       style={
+    selected
+      ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
+      : undefined}>
+          {/* Handles on all four sides */}
+      <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
+      <Handle type="target" position={Position.Left} id="left" className="w-3 h-3" />
+      <Handle type="source" position={Position.Bottom} id="bottom" className="w-3 h-3" />
+      <Handle type="source" position={Position.Right} id="right" className="w-3 h-3" />
       <div className="text-xs font-medium mb-2 text-red-800">Counterclaim/Concession</div>
       <textarea
         ref={textareaRef}
@@ -374,8 +371,16 @@ const CorrectAnswerNode = ({ id, data, selected }: NodeProps) => {
   return (
     <div className={`px-4 py-3 shadow-md rounded-lg bg-green-200 border-2 ${
       selected ? 'border-green-600' : 'border-green-400'
-    } min-w-[120px] min-h-[70px]`}>
-      <Handle type="target" position={Position.Top} className="w-3 h-3" />
+    } min-w-[120px] min-h-[70px] relative`} 
+       style={
+    selected
+      ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
+      : undefined}>
+         {/* Handles on all four sides */}
+      <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
+      <Handle type="target" position={Position.Left} id="left" className="w-3 h-3" />
+      <Handle type="source" position={Position.Bottom} id="bottom" className="w-3 h-3" />
+      <Handle type="source" position={Position.Right} id="right" className="w-3 h-3" />
       <div className="text-xs font-medium mb-2 text-green-800">Correct Answer</div>
       <textarea
         ref={textareaRef}
@@ -421,8 +426,8 @@ const CircuitBuilderFlow = () => {
     { type: 'minor-premise' as const, label: 'Minor Premise', color: 'bg-gray-50 border-black text-black', description: 'Supporting evidence' },
     { type: 'major-premise' as const, label: 'Major Premise', color: 'bg-blue-100 border-blue-300 text-blue-800', description: 'A broad statement or principle' },
     { type: 'backing-premise' as const, label: 'Backing/Linking Premise', color: 'bg-gray-50 border-gray-300 text-gray-800', description: 'Provides support for another premise or conclusion' },
-    { type: 'assumption' as const, label: 'Assumption/Flaw', color: 'bg-red-100 border-red-300 text-red-800', description: 'Unstated Premise implied by the author' },
     { type: 'counterclaim' as const, label: 'Counterclaim/Concession', color: 'bg-gray-100 border-red-300 text-red-800', description: 'An opposing argument or point conceded' },
+    { type: 'assumption' as const, label: 'Assumption/Flaw', color: 'bg-red-100 border-red-300 text-red-800', description: 'Unstated Premise implied by the author' },
     { type: 'correct-answer' as const, label: 'Correct Answer', color: 'bg-green-200 border-green-400 text-green-800', description: 'The correct answer choice for the question' }
   ];
 
@@ -450,30 +455,7 @@ const CircuitBuilderFlow = () => {
   );
 
   // Add new node on canvas click (when a node type is selected)
-  const onPaneClick = useCallback(
-    (event: React.MouseEvent) => {
-      if (!reactFlowWrapper.current) return;
-
-      const bounds = reactFlowWrapper.current.getBoundingClientRect();
-      const position = project({
-        x: event.clientX - bounds.left,
-        y: event.clientY - bounds.top,
-      });
-
-      const newNode: Node = {
-        id: `node-${Date.now()}`,
-        type: selectedNodeType,
-        position,
-        data: { 
-          content: selectedNodeType === 'assumption' ? JSON.stringify(['', '']) : '',
-          onContentChange: handleNodeContentChange
-        },
-      };
-
-      setNodes(nds => nds.concat(newNode));
-    },
-    [project, selectedNodeType, handleNodeContentChange, setNodes]
-  );
+  
 
   // Calculate analysis score
   const calculateAnalysisScore = useCallback(() => {
@@ -538,7 +520,7 @@ const CircuitBuilderFlow = () => {
   }, [setNodes, setEdges]);
 
   return (
-    <div className="h-screen flex flex-col bg-slate-50">
+    <div className="min-h-screen flex flex-col bg-slate-50">
       {/* Header */}
       <div className="bg-white border-b border-slate-200 px-6 py-4">
         <div className="flex items-center justify-between">
@@ -546,7 +528,7 @@ const CircuitBuilderFlow = () => {
             <button className="p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors">
               <ArrowLeft className="h-5 w-5" />
             </button>
-            <h1 className="text-xl font-semibold text-slate-900">Circuit Builder (React Flow)</h1>
+            <h1 className="text-xl font-semibold text-slate-900">Circuit Builder</h1>
           </div>
 
           <div className="flex items-center space-x-4">
@@ -581,28 +563,31 @@ const CircuitBuilderFlow = () => {
         </div>
       </div>
 
-      <div className="flex-1 flex">
-        {/* Sidebar */}
+      <div className="flex-1 flex h-[calc(100vh-72px)]  overflow-hidden">
+                {/* Sidebar */}
         <div className="w-56 bg-white border-r border-slate-200 p-4 space-y-6 overflow-y-auto">
           <div>
             <h3 className="text-base font-semibold text-slate-900 mb-3">Node Types</h3>
             <div className="space-y-2">
               {nodeTypeOptions.map(({ type, label, color, description }) => (
-                <button
+                <div
                   key={type}
-                  onClick={() => setSelectedNodeType(type)}
-                  className={`group w-full p-2 text-left border-2 rounded-lg transition-colors ${
-                    selectedNodeType === type 
-                      ? `${color} border-current` 
-                      : 'border-slate-200 hover:border-slate-300 text-slate-700'
-                  }`}
+                  draggable
+                  onDragStart={(event) => {
+                    event.dataTransfer.setData('application/reactflow', type);
+                    event.dataTransfer.effectAllowed = 'move';
+                  }}
+                 className={`group w-full p-2 text-left border-2 rounded-lg cursor-move select-none transition-colors ${color}`}
+
                 >
                   <div className="text-sm font-medium">{label}</div>
                   <div className="text-xs opacity-75 group-hover:block hidden">{description}</div>
-                </button>
+                </div>
               ))}
             </div>
           </div>
+
+
 
           <div>
             <h3 className="text-base font-semibold text-slate-900 mb-3">Instructions</h3>
@@ -625,32 +610,53 @@ const CircuitBuilderFlow = () => {
         </div>
 
         {/* React Flow Canvas */}
-        <div className="flex-1" ref={reactFlowWrapper}>
+        <div className="flex-1" ref={reactFlowWrapper}  style={{ height: 'calc(100vh - 72px)', overflow: 'hidden' }}
+           onDragOver={(event) => event.preventDefault()} // Allow drop by preventing default
+            onDrop={(event) => {
+              event.preventDefault();
+              if (!reactFlowWrapper.current) return;
+          
+              const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
+              const type = event.dataTransfer.getData('application/reactflow');
+              if (!type) return;
+          
+              const position = project({
+                x: event.clientX - reactFlowBounds.left,
+                y: event.clientY - reactFlowBounds.top,
+              });
+          
+              const newNode: Node = {
+                id: `node-${Date.now()}`,
+                type,
+                position,
+                data: {
+                  content: type === 'assumption' ? JSON.stringify(['', '']) : '',
+                  onContentChange: handleNodeContentChange
+                }, 
+              };
+          
+              setNodes((nds) => nds.concat(newNode));
+            }}>
           <ReactFlow
             nodes={nodes}
             edges={edges}
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
             onConnect={onConnect}
-            onPaneClick={onPaneClick}
             nodeTypes={nodeTypes}
-            connectionMode={ConnectionMode.Loose}
+            connectionMode={ConnectionMode.Strict}
             fitView
-            className="bg-slate-50"
-          >
+           >
             <Background color="#e2e8f0" gap={20} />
-            <Controls />
-            <MiniMap 
-              nodeColor="#64748b"
-              className="bg-white border border-slate-200"
-            />
+            <Controls position="top-left"
+              />
+           
             
             {nodes.length === 0 && (
               <Panel position="center">
                 <div className="text-center text-slate-400 bg-white p-8 rounded-lg shadow-sm border border-slate-200">
                   <Plus className="h-12 w-12 mx-auto mb-4" />
-                  <p className="text-lg font-medium">Select a node type and click to add</p>
-                  <p className="text-sm">Start building your argument circuit</p>
+                  <p className="text-lg font-medium">Click and drag the elements to the left to start building your circuit</p>
                 </div>
               </Panel>
             )}
