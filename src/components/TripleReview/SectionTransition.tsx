@@ -17,7 +17,7 @@ export const SectionTransition: React.FC<SectionTransitionProps> = ({
 }) => {
   return (
     <div 
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" 
+      className="p-6" 
       onClick={onCancel}
     >
       <div 
@@ -25,7 +25,7 @@ export const SectionTransition: React.FC<SectionTransitionProps> = ({
         onClick={(e) => e.stopPropagation()}
       >
         <h3 className="text-2xl font-semibold text-slate-900 mb-4">
-          {isLastSection ? 'Test Complete!' : `Section ${session.currentSectionIndex + 1} Complete!`}
+          {isLastSection ? 'Section Complete!' : `Section ${session.currentSectionIndex + 1} Complete!`}
         </h3>
        <p className="text-slate-600 mb-6">
   {isLastSection ? (
