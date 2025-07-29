@@ -455,30 +455,7 @@ const CircuitBuilderFlow = () => {
   );
 
   // Add new node on canvas click (when a node type is selected)
-  const onPaneClick = useCallback(
-    (event: React.MouseEvent) => {
-      if (!reactFlowWrapper.current) return;
-
-      const bounds = reactFlowWrapper.current.getBoundingClientRect();
-      const position = project({
-        x: event.clientX - bounds.left,
-        y: event.clientY - bounds.top,
-      });
-
-      const newNode: Node = {
-        id: `node-${Date.now()}`,
-        type: selectedNodeType,
-        position,
-        data: { 
-          content: selectedNodeType === 'assumption' ? JSON.stringify(['', '']) : '',
-          onContentChange: handleNodeContentChange
-        },
-      };
-
-      setNodes(nds => nds.concat(newNode));
-    },
-    [project, selectedNodeType, handleNodeContentChange, setNodes]
-  );
+  
 
   // Calculate analysis score
   const calculateAnalysisScore = useCallback(() => {
@@ -669,7 +646,6 @@ const CircuitBuilderFlow = () => {
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
             onConnect={onConnect}
-            onPaneClick={onPaneClick}
             nodeTypes={nodeTypes}
             connectionMode={ConnectionMode.Strict}
             fitView
