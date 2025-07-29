@@ -646,7 +646,7 @@ const CircuitBuilderFlow = () => {
             nodeTypes={nodeTypes}
             connectionMode={ConnectionMode.Strict}
             fitView
-           className="w-full h-full bg-slate-50"
+          
           >
             <Background color="#e2e8f0" gap={20} />
             <Controls />
