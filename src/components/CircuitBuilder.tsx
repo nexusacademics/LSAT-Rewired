@@ -610,7 +610,7 @@ const CircuitBuilderFlow = () => {
         </div>
 
         {/* React Flow Canvas */}
-        <div className="flex-1" ref={reactFlowWrapper}
+        <div className="flex-1" ref={reactFlowWrapper}  style={{ height: 'calc(100vh - 72px)', overflow: 'hidden' }}
            onDragOver={(event) => event.preventDefault()} // Allow drop by preventing default
             onDrop={(event) => {
               event.preventDefault();
@@ -645,9 +645,8 @@ const CircuitBuilderFlow = () => {
             onConnect={onConnect}
             nodeTypes={nodeTypes}
             connectionMode={ConnectionMode.Strict}
-            style={{ height: '100%' }}
             fitView
-            className="bg-slate-50"
+           className="w-full h-full bg-slate-50"
           >
             <Background color="#e2e8f0" gap={20} />
             <Controls />
