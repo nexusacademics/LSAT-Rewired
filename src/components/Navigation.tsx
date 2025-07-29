@@ -100,7 +100,7 @@ export default function Navigation({ currentView, onViewChange, userStats }: Nav
               Performance
             </NavButton>
               <NavButton active={currentView === 'studyscheduler'} onClick={() => handleLinkClick('studyscheduler')} theme={theme}>
-              Subscription
+              Study Scheduler
             </NavButton>
             <NavButton active={currentView === 'subscription'} onClick={() => handleLinkClick('subscription')} theme={theme}>
               Subscription
