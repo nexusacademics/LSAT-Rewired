@@ -55,16 +55,16 @@ export const SectionTransition: React.FC<SectionTransitionProps> = ({
             Are you ready to move on to the next section?
             <br /><br />
            <span>
-  {triggeredByTimer ? (
-    <span className="font-semibold text-red-600">
-      Time is up!
-    </span>
-  ) : (
-    <>
-      <span className="font-semibold text-red-600">NOTE:</span> You will not be permitted to come back to this section once you move on.
-    </>
-  )}
-</span>
+              {triggeredByTimer ? (
+                <span className="font-semibold text-red-600">
+                  Time is up!
+                </span>
+              ) : (
+                <>
+                  <span className="font-semibold text-red-600">NOTE:</span> You will not be permitted to come back to this section once you move on.
+                </>
+              )}
+            </span>
           </>
         )}
       </p>
