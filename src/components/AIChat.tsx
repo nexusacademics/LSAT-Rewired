@@ -1,4 +1,3 @@
-import Draggable from 'react-draggable';
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Bot, User, Lightbulb, AlertCircle, ThumbsUp, ThumbsDown } from 'lucide-react';
 import { GoogleGenerativeAI } from '@google/generative-ai';
@@ -52,20 +51,20 @@ const AIChat: React.FC<AIChatProps> = ({ user, isChatDisabled = false, currentVi
 
   // Helper function to get human-readable question reference
   const getQuestionReference = (questionId: string): string => {
-    if (!currentSession || !allProcessedTests) return `Question ${questionId}`;
+    if (!currentSession || !allProcessedTests) return Question ${questionId};
 
     const test = allProcessedTests[currentSession.testId];
-    if (!test) return `Question ${questionId}`;
+    if (!test) return Question ${questionId};
 
     for (let sectionIndex = 0; sectionIndex < test.sections.length; sectionIndex++) {
       const section = test.sections[sectionIndex];
       for (let questionIndex = 0; questionIndex < section.questions.length; questionIndex++) {
         if (section.questions[questionIndex].id === questionId) {
-          return `Section ${sectionIndex + 1}, Question ${questionIndex + 1}`;
+          return Section ${sectionIndex + 1}, Question ${questionIndex + 1};
         }
       }
     }
-    return `Question ${questionId}`; // Fallback if not found
+    return Question ${questionId}; // Fallback if not found
   };
 
   // NEW: Effect to manage chat context when currentQuestionData changes or view changes
@@ -76,7 +75,7 @@ const AIChat: React.FC<AIChatProps> = ({ user, isChatDisabled = false, currentVi
         {
           id: 'initial-load-general',
           type: 'ai',
-          content: `Hi ${user.name}! I'm your LSAT analysis assistant. I'm here to help guide your thinking , but I won't give you direct answers.`,
+          content: Hi ${user.name}! I'm your LSAT analysis assistant. I'm here to help guide your thinking , but I won't give you direct answers.,
           timestamp: new Date()
         }
       ]);
@@ -99,11 +98,11 @@ const AIChat: React.FC<AIChatProps> = ({ user, isChatDisabled = false, currentVi
 
         // Define an array of introductory phrases
         const introPhrases = [
-          `I see you've moved on to ${questionRef}. What are your initial thoughts on the passage or question stem?`,
-          `Alright, we're now on ${questionRef}. What's standing out to you in the stimulus or question?`,
-          `Moving to ${questionRef}. How are you approaching this one?`,
-          `New question, ${questionRef}! What's your first impression of the argument presented?`,
-          `Let's tackle ${questionRef}. What's the core issue or argument you're seeing here?`
+          I see you've moved on to ${questionRef}. What are your initial thoughts on the passage or question stem?,
+          Alright, we're now on ${questionRef}. What's standing out to you in the stimulus or question?,
+          Moving to ${questionRef}. How are you approaching this one?,
+          New question, ${questionRef}! What's your first impression of the argument presented?,
+          Let's tackle ${questionRef}. What's the core issue or argument you're seeing here?
         ];
 
         // Randomly select one phrase
@@ -113,7 +112,7 @@ const AIChat: React.FC<AIChatProps> = ({ user, isChatDisabled = false, currentVi
         setMessages(prev => [
           ...prev,
           {
-            id: `new-question-intro-${Date.now()}`,
+            id: new-question-intro-${Date.now()},
             type: 'ai',
             content: randomPhrase, // Use the randomly selected phrase
             timestamp: new Date()
@@ -154,7 +153,7 @@ const AIChat: React.FC<AIChatProps> = ({ user, isChatDisabled = false, currentVi
       const initialHistory = [
         {
           role: 'user',
-          parts: [{ text: `You are a 25 year veteran educator and standardized testing expert. You are an expert on LSAT analysis and are helping students with as they review their practice tests. Your role is to:
+          parts: [{ text: You are a 25 year veteran educator and standardized testing expert. You are an expert on LSAT analysis and are helping students with as they review their practice tests. Your role is to:
 
 1.
 2. Guide students' thinking through Socratic questioning
@@ -204,7 +203,7 @@ Strategy: Look for contrast markers or objections acknowledged and dismissed.
 
 7. Assumption / Flaw
 Definition: An unstated idea that must be true for the argument to work — it bridges the gap between two parts of the argument or is the one of the missing pieces of the argument (major or minor premise).
-Goldilocks Principle: The correct assumption is just strong enough to make the reasoning valid — not overly strong or absolute, and not too weak or vague.` }]
+Goldilocks Principle: The correct assumption is just strong enough to make the reasoning valid — not overly strong or absolute, and not too weak or vague. }]
         },
         {
           role: 'model',
@@ -217,11 +216,11 @@ Goldilocks Principle: The correct assumption is just strong enough to make the r
       // Add question context if applicable (only for Blind Review or Strategy Review)
       if (currentQuestionData && currentView === 'triple-review' &&
           (currentSession?.phase === 'blind-review' || currentSession?.phase === 'strategy-review')) {
-        const questionContext = `The user is currently working on the following LSAT question:\n\n` +
-                                `Passage:\n${currentQuestionData.passage}\n\n` +
-                                `Question Stem:\n${currentQuestionData.question}\n\n` +
-                                `Options:\n${currentQuestionData.options.map((opt, i) => `${String.fromCharCode(65 + i)}. ${opt}`).join('\n')}\n\n` +
-                                `Please help guide the user's thinking through analyzing this content, but remember not to give direct answers.`;
+        const questionContext = The user is currently working on the following LSAT question:\n\n +
+                                Passage:\n${currentQuestionData.passage}\n\n +
+                                Question Stem:\n${currentQuestionData.question}\n\n +
+                                Options:\n${currentQuestionData.options.map((opt, i) => ${String.fromCharCode(65 + i)}. ${opt}).join('\n')}\n\n +
+                                Please help guide the user's thinking through analyzing this content, but remember not to give direct answers.;
         
         dynamicHistory.push({
           role: 'user', // This is a user-like message providing context
@@ -287,9 +286,7 @@ Goldilocks Principle: The correct assumption is just strong enough to make the r
   ];
 
   return (
-     <Draggable handle=".chat-drag-handle">
-      <div className="fixed bottom-6 right-6 z-50 shadow-xl rounded-2xl w-[375px] max-h-[90vh] bg-white overflow-hidden">
-        <div className="h-full flex flex-col bg-slate-50 rounded-2xl overflow-hidden"> {/* Adjusted for bubble */}
+    <div className="h-full flex flex-col bg-slate-50 rounded-2xl overflow-hidden"> {/* Adjusted for bubble */}
       {/* Header */}
       <div className="bg-white border-b border-slate-200 px-4 py-1"> {/* Adjusted padding */}
         <div className="flex items-center space-x-3">
@@ -308,15 +305,15 @@ Goldilocks Principle: The correct assumption is just strong enough to make the r
         {messages.map((message) => (
           <div
             key={message.id}
-            className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
+            className={flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}}
           >
-            <div className={`max-w-[80%] ${message.type === 'user' ? 'order-2' : 'order-1'}`}> {/* Adjusted max-width */}
-              <div className={`flex items-start space-x-2 ${message.type === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}> {/* Adjusted spacing */}
-                <div className={`p-1 rounded-lg ${ // Adjusted padding and border-radius
+            <div className={max-w-[80%] ${message.type === 'user' ? 'order-2' : 'order-1'}}> {/* Adjusted max-width */}
+              <div className={flex items-start space-x-2 ${message.type === 'user' ? 'flex-row-reverse space-x-reverse' : ''}}> {/* Adjusted spacing */}
+                <div className={p-1 rounded-lg ${ // Adjusted padding and border-radius
                   message.type === 'user' 
                     ? 'bg-blue-600' 
                     : 'bg-purple-100'
-                }`}>
+                }}>
                   {message.type === 'user' ? (
                     <User className="h-4 w-4 text-white" /> // Adjusted icon size
                   ) : (
@@ -324,18 +321,18 @@ Goldilocks Principle: The correct assumption is just strong enough to make the r
                   )}
                 </div>
 
-                <div className={`rounded-xl p-3 ${ // Adjusted padding and border-radius
+                <div className={rounded-xl p-3 ${ // Adjusted padding and border-radius
                   message.type === 'user'
                     ? 'bg-blue-600 text-white'
                     : 'bg-white border border-slate-200 text-slate-900'
-                }`}>
+                }}>
                   <div className="text-sm leading-relaxed break-words whitespace-normal">
                     <ReactMarkdown>{message.content}</ReactMarkdown>
                   </div>
                   
-                  <div className={`text-xs mt-1 ${ // Adjusted font size and margin
+                  <div className={text-xs mt-1 ${ // Adjusted font size and margin
                     message.type === 'user' ? 'text-blue-100' : 'text-slate-500'
-                  }`}>
+                  }}>
                     {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </div>
                 </div>
@@ -346,21 +343,21 @@ Goldilocks Principle: The correct assumption is just strong enough to make the r
                 <div className="flex items-center space-x-1 mt-1 ml-8"> {/* Adjusted spacing and margin */}
                   <button
                     onClick={() => handleFeedback(message.id, 'helpful')}
-                    className={`p-0.5 rounded transition-colors ${ // Adjusted padding
+                    className={p-0.5 rounded transition-colors ${ // Adjusted padding
                       message.feedback === 'helpful'
                         ? 'bg-green-100 text-green-600'
                         : 'text-slate-400 hover:text-green-600 hover:bg-green-50'
-                    }`}
+                    }}
                   >
                     <ThumbsUp className="h-3 w-3" /> {/* Adjusted icon size */}
                   </button>
                   <button
                     onClick={() => handleFeedback(message.id, 'not-helpful')}
-                    className={`p-0.5 rounded transition-colors ${ // Adjusted padding
+                    className={p-0.5 rounded transition-colors ${ // Adjusted padding
                       message.feedback === 'not-helpful'
                         ? 'bg-red-100 text-red-600'
                         : 'text-slate-400 hover:text-red-600 hover:bg-red-50'
-                    }`}
+                    }}
                   >
                     <ThumbsDown className="h-3 w-3" /> {/* Adjusted icon size */}
                   </button>
@@ -446,8 +443,6 @@ Goldilocks Principle: The correct assumption is just strong enough to make the r
         </div>
       </div>
     </div>
-         </div>
-    </Draggable>
   );
 };
 
