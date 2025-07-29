@@ -1,3 +1,4 @@
+import Draggable from 'react-draggable';
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Bot, User, Lightbulb, AlertCircle, ThumbsUp, ThumbsDown } from 'lucide-react';
 import { GoogleGenerativeAI } from '@google/generative-ai';
@@ -286,7 +287,9 @@ Goldilocks Principle: The correct assumption is just strong enough to make the r
   ];
 
   return (
-    <div className="h-full flex flex-col bg-slate-50 rounded-2xl overflow-hidden"> {/* Adjusted for bubble */}
+     <Draggable handle=".chat-drag-handle">
+      <div className="fixed bottom-6 right-6 z-50 shadow-xl rounded-2xl w-[375px] max-h-[90vh] bg-white overflow-hidden">
+        <div className="h-full flex flex-col bg-slate-50 rounded-2xl overflow-hidden"> {/* Adjusted for bubble */}
       {/* Header */}
       <div className="bg-white border-b border-slate-200 px-4 py-1"> {/* Adjusted padding */}
         <div className="flex items-center space-x-3">
@@ -443,6 +446,8 @@ Goldilocks Principle: The correct assumption is just strong enough to make the r
         </div>
       </div>
     </div>
+         </div>
+    </Draggable>
   );
 };
 
