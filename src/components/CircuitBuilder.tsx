@@ -612,7 +612,7 @@ const CircuitBuilderFlow = () => {
       ))}
     </div>
   </div>
-</div>
+
 
 
           <div>
