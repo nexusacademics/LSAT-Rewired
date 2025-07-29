@@ -610,7 +610,7 @@ const CircuitBuilderFlow = () => {
         </div>
 
         {/* React Flow Canvas */}
-        <div className="flex flex-1" ref={reactFlowWrapper}
+        <div className="flex-1 h-full" ref={reactFlowWrapper}
            onDragOver={(event) => event.preventDefault()} // Allow drop by preventing default
             onDrop={(event) => {
               event.preventDefault();
