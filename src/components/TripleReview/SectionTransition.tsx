@@ -41,7 +41,7 @@ export const SectionTransition: React.FC<SectionTransitionProps> = ({
         onClick={onCancel}
         className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 transition-colors"
       >
-        <X className="w-4 h-4 text-slate-500" />
+    
       </button>
     </div>
 
