@@ -3,7 +3,8 @@ import { Send, Bot, User, Lightbulb, AlertCircle, ThumbsUp, ThumbsDown } from 'l
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import ReactMarkdown from 'react-markdown';
 import { User as UserType, ProcessedQuestion, TestSession, ProcessedPrepTest, Message } from '../App'; // Import Message from App
-import Draggable from 'react-draggable';
+import { motion } from "framer-motion";
+import { Bot, User, ThumbsUp, ThumbsDown, AlertCircle, Send, Lightbulb } from "lucide-react";
 
 interface AIChatProps {
   user: UserType;
@@ -287,7 +288,11 @@ Goldilocks Principle: The correct assumption is just strong enough to make the r
   ];
 
   return (
-    <Draggable>
+   <motion.div
+  drag
+  dragMomentum={false}
+  dragElastic={0.2}
+  className="h-full flex flex-col bg-slate-50 rounded-2xl overflow-hidden cursor-move">
       <div className="h-full flex flex-col bg-slate-50 rounded-2xl overflow-hidden"> {/* Adjusted for bubble */}
       {/* Header */}
       <div className="chat-drag-handle bg-white border-b border-slate-200 px-4 py-1"> {/* Adjusted padding */}
@@ -445,7 +450,7 @@ Goldilocks Principle: The correct assumption is just strong enough to make the r
         </div>
       </div>
     </div>
-   </Draggable>
+</motion.div>
   );
 };
 
