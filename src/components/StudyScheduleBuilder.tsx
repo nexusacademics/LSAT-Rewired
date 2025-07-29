@@ -6,8 +6,8 @@ export default function StudyScheduleBuilder() {
 
  const boxClasses =
   theme === 'dark'
-    ? 'bg-gray-800 text-gray-100 border border-gray-700'
-    : 'bg-white text-slate-800 border border-slate-200';
+   ? 'bg-gray-900 border border-gray-700 text-white placeholder-gray-400'
+    : 'bg-white border border-gray-300 text-gray-900 placeholder-gray-500';
 
 
   const labelClasses =
@@ -17,7 +17,7 @@ export default function StudyScheduleBuilder() {
 
  const inputClasses =
   theme === 'dark'
-    ? 'bg-gray-800 border border-gray-700 text-gray-100 placeholder-gray-500'
+   ? 'bg-gray-900 border border-gray-700 text-white placeholder-gray-400'
     : 'bg-white border border-gray-300 text-gray-900 placeholder-gray-500';
 
   const calendarIconFix =
