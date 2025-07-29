@@ -20,7 +20,7 @@ interface HeaderProps {
   onEndSection: () => void;
   onPreviousQuestion: () => void;
   onNextQuestion: () => void;
-  onSubmitSection: () => void;
+  onSubmitSection: (isTimerTriggered: boolean) => void; // <--- CRITICAL: Ensure this accepts a boolean
   isLastQuestionOfSection: boolean;
   isLastSection: boolean;
 }
