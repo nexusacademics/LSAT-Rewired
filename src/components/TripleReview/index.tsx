@@ -35,6 +35,8 @@ const TripleReview: React.FC<TripleReviewProps> = ({
   const [showStrategySummary, setShowStrategySummary] = useState(
     session.phase === 'strategy-review' && !session.completedPhases.includes('strategy-review')
   );
+  const [isSectionTransitionTriggeredByTimer, setIsSectionTransitionTriggeredByTimer] = useState(false);
+
   
   // Add pause popup state
   const [showPausePopup, setShowPausePopup] = useState(false);
@@ -104,7 +106,7 @@ const TripleReview: React.FC<TripleReviewProps> = ({
     isRunning: isTimerRunning,
     onTimeUp: () => {
       setIsTimerRunning(false);
-      handleSubmitSection();
+      handleSubmitSection(true);
     },
     phase: session.phase
   });
@@ -241,11 +243,12 @@ const TripleReview: React.FC<TripleReviewProps> = ({
 
       <div ref={mainContentRef} className="flex-1 p-6 overflow-y-auto">
         {showSectionTransition && (
-          <SectionTransition
+         <SectionTransition
             session={session}
             isLastSection={isLastSection}
             onCancel={() => setShowSectionTransition(false)}
             onConfirm={handleConfirmSectionSubmit}
+            triggeredByTimer={isSectionTransitionTriggeredByTimer} // NEW PROP
           />
         )}
 
