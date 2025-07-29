@@ -17,7 +17,7 @@ export default function StudyScheduleBuilder() {
 
  const inputClasses =
   theme === 'dark'
-    ? 'bg-gray-1000 border border-gray-700 text-gray-100 placeholder-gray-500'
+    ? 'bg-gray-800 border border-gray-700 text-gray-100 placeholder-gray-500'
     : 'bg-white border border-gray-300 text-gray-900 placeholder-gray-500';
 
   const calendarIconFix =
