@@ -3,6 +3,7 @@ import { Send, Bot, User, Lightbulb, AlertCircle, ThumbsUp, ThumbsDown } from 'l
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import ReactMarkdown from 'react-markdown';
 import { User as UserType, ProcessedQuestion, TestSession, ProcessedPrepTest, Message } from '../App'; // Import Message from App
+import { motion } from "framer-motion";
 
 interface AIChatProps {
   user: UserType;
@@ -280,28 +281,33 @@ Goldilocks Principle: The correct assumption is just strong enough to make the r
   };
 
   // Reduced quick prompts to two
-  const quickPrompts = [
-    "How do I identify the conclusion?",
-    "Help me build a circuit for this argument"
+ const quickPrompts = [
+  //  "How do I identify the conclusion?",
+   // "Help me build a circuit for this argument"
   ];
 
   return (
-    <div className="h-full flex flex-col bg-slate-50 rounded-2xl overflow-hidden"> {/* Adjusted for bubble */}
+   <motion.div
+  drag
+  dragMomentum={false}
+  dragElastic={0.2}
+  className="h-full flex flex-col bg-slate-50 rounded-2xl border overflow-hidden cursor-move">
+      <div className="h-full flex flex-col bg-slate-50 rounded-2xl overflow-hidden"> {/* Adjusted for bubble */}
       {/* Header */}
-      <div className="bg-white border-b border-slate-200 px-4 py-3"> {/* Adjusted padding */}
+      <div className="chat-drag-handle bg-white border-b border-slate-200 px-4 py-1"> {/* Adjusted padding */}
         <div className="flex items-center space-x-3">
           <div className="p-2 bg-purple-100 rounded-xl">
-            <Bot className="h-5 w-5 text-purple-600" /> {/* Adjusted icon size */}
+            <Bot className="h-3 w-3 text-purple-600" /> {/* Adjusted icon size */}
           </div>
           <div>
-            <h1 className="text-lg font-semibold text-slate-900">AI Analysis Assistant</h1> {/* Adjusted font size */}
+            <h1 className="text-base font-semibold text-slate-900">AI Analysis Assistant</h1> {/* Adjusted font size */}
             <p className="text-xs text-slate-600">Your guide to better logical reasoning</p> {/* Adjusted font size */}
           </div>
         </div>
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4"> {/* Adjusted padding and spacing */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 break-words whitespace-normal"> {/* Adjusted padding and spacing */}
         {messages.map((message) => (
           <div
             key={message.id}
@@ -326,7 +332,7 @@ Goldilocks Principle: The correct assumption is just strong enough to make the r
                     ? 'bg-blue-600 text-white'
                     : 'bg-white border border-slate-200 text-slate-900'
                 }`}>
-                  <div className="text-sm leading-relaxed"> {/* Adjusted font size */}
+                  <div className="text-sm leading-relaxed break-words whitespace-normal">
                     <ReactMarkdown>{message.content}</ReactMarkdown>
                   </div>
                   
@@ -429,7 +435,7 @@ Goldilocks Principle: The correct assumption is just strong enough to make the r
               placeholder="Ask about argument structure, circuit building, or analysis techniques..."
               className="w-full px-3 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 pr-10 text-sm resize-none overflow-hidden min-h-[42px]" // Added resize-none, overflow-hidden, min-h
               disabled={isChatDisabled} // Disable input when chat is disabled
-              rows={1} // Start with 1 row
+              rows={2} // Start with 1 row
             />
             <Lightbulb className="absolute right-2.5 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" /> {/* Adjusted position and icon size */}
           </div>
@@ -443,6 +449,7 @@ Goldilocks Principle: The correct assumption is just strong enough to make the r
         </div>
       </div>
     </div>
+</motion.div>
   );
 };
 

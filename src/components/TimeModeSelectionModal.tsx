@@ -16,7 +16,8 @@ const TimeModeSelectionModal: React.FC<TimeModeSelectionModalProps> = ({ isOpen,
   const [selectedTestId, setSelectedTestId] = useState<string | null>(null);
   const [selectedSectionId, setSelectedSectionId] = useState<string | undefined>(undefined); // undefined for whole test
   const [selectedTimeMode, setSelectedTimeMode] = useState<'regular' | '1.5x' | '2x' | 'custom' | 'untimed'>('regular');
-  const [customMinutes, setCustomMinutes] = useState(35);
+  const [customMinutes, setCustomMinutes] = useState<string>('35');
+  const [customError, setCustomError] = useState(false);  
   const [searchTerm, setSearchTerm] = useState('');
 
 console.log('All Processed Tests received by TimeModeSelectionModal:', allProcessedTests);
@@ -34,11 +35,24 @@ console.log('All Processed Tests received by TimeModeSelectionModal:', allProces
   if (!isOpen) return null;
 
   const handleConfirm = () => {
-    if (selectedTestId) {
-      onSelectTimeMode(selectedTestId, selectedTimeMode, selectedTimeMode === 'custom' ? customMinutes : undefined, selectedSectionId);
-      onClose();
-    }
-  };
+      if (selectedTimeMode === 'custom') {
+        const customVal = parseInt(customMinutes);
+        if (isNaN(customVal) || customVal < 1) {
+          setCustomError(true);
+          return;
+        }
+      }
+    
+      if (selectedTestId) {
+        onSelectTimeMode(
+          selectedTestId,
+          selectedTimeMode,
+          selectedTimeMode === 'custom' ? parseInt(customMinutes) : undefined,
+          selectedSectionId
+        );
+        onClose();
+      }
+    };
 
   const handleBack = () => {
     if (currentStep === 'selectTiming') {
@@ -50,9 +64,15 @@ console.log('All Processed Tests received by TimeModeSelectionModal:', allProces
 
   const processedTest = selectedTestId ? allProcessedTests[selectedTestId] : undefined;
 
-  // Helper to format section names for display
+  // Helper to format section names for display with section type
   const formatSectionDisplayName = (section: ProcessedSection, index: number) => {
-    return `Section ${index + 1}`; // Always display as "Section #"
+    const sectionType = section.name.startsWith('LR') ? 'Logical Reasoning' : 
+                       section.name.startsWith('RC') ? 'Reading Comprehension' : 
+                       'Unknown';
+    return {
+      title: `Section ${index + 1}`,
+      type: sectionType
+    };
   };
 
   return (
@@ -78,17 +98,17 @@ console.log('All Processed Tests received by TimeModeSelectionModal:', allProces
           <>
             <h2 className="text-2xl font-bold text-slate-900 mb-6 text-center">Select a PrepTest</h2>
             <input
-  type="text"
-  placeholder="Search tests..."
-  value={searchTerm}
-  onChange={(e) => setSearchTerm(e.target.value)}
-  className="w-full px-4 py-2 border border-slate-300 rounded-lg mb-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-/>
+              type="text"
+              placeholder="Search tests..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full px-4 py-2 border border-slate-300 rounded-lg mb-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
 
             <div className="space-y-3">
              {Object.values(allProcessedTests)
-  .filter(test => test.name.toLowerCase().includes(searchTerm.toLowerCase()))
-  .map((test) => (
+              .filter(test => test.name.toLowerCase().includes(searchTerm.toLowerCase()))
+              .map((test) => (
                 <button
                   key={test.id}
                   onClick={() => {
@@ -109,7 +129,12 @@ console.log('All Processed Tests received by TimeModeSelectionModal:', allProces
 
         {currentStep === 'selectSection' && processedTest && (
           <>
-            <h2 className="text-2xl font-bold text-slate-900 mb-6 text-center">Select Section for {processedTest.name}</h2>
+            {/* Fixed title with better spacing for navigation buttons */}
+            <div className="px-8 mb-6">
+              <h2 className="text-lg sm:text-xl font-bold text-slate-900 text-center leading-tight">
+                Select Section for {processedTest.name}
+              </h2>
+            </div>
             <div className="space-y-3">
               <button
                 onClick={() => {
@@ -124,27 +149,37 @@ console.log('All Processed Tests received by TimeModeSelectionModal:', allProces
                 <div className="text-sm text-slate-600">All {processedTest.sections.length} sections</div>
               </button>
 
-              {processedTest.sections.map((section, index) => (
-                <button
-                  key={section.id}
-                  onClick={() => {
-                    setSelectedSectionId(section.id);
-                    setCurrentStep('selectTiming');
-                  }}
-                  className={`w-full p-3 text-left rounded-lg border-2 transition-colors ${
-                    selectedSectionId === section.id ? 'border-blue-500 bg-blue-50' : 'border-slate-200 hover:border-slate-300'
-                  }`}
-                >
-                  <div className="font-medium">{formatSectionDisplayName(section, index)}</div>
-                </button>
-              ))}
+              {processedTest.sections.map((section, index) => {
+                const { title, type } = formatSectionDisplayName(section, index);
+                return (
+                  <button
+                    key={section.id}
+                    onClick={() => {
+                      setSelectedSectionId(section.id);
+                      setCurrentStep('selectTiming');
+                    }}
+                    className={`w-full p-3 text-left rounded-lg border-2 transition-colors ${
+                      selectedSectionId === section.id ? 'border-blue-500 bg-blue-50' : 'border-slate-200 hover:border-slate-300'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="font-medium">{title}</div>
+                      <div className="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded">
+                        {type}
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
             </div>
           </>
         )}
 
         {currentStep === 'selectTiming' && (
           <>
-            <h2 className="text-2xl font-bold text-slate-900 mb-6 text-center">Select Timing</h2>
+            <div className="px-8 mb-6">
+              <h2 className="text-lg sm:text-xl font-bold text-slate-900 text-center">Select Timing</h2>
+            </div>
             <div className="space-y-3">
               <button
                 onClick={() => setSelectedTimeMode('regular')}
@@ -181,11 +216,20 @@ console.log('All Processed Tests received by TimeModeSelectionModal:', allProces
               }`}>
                 <div className="font-medium mb-2">Custom Time</div>
                 <div className="flex items-center space-x-2">
-                  <input
+                 <input
                     type="number"
                     value={customMinutes}
-                    onChange={(e) => setCustomMinutes(parseInt(e.target.value) || 35)}
-                    className="w-20 px-2 py-1 border border-slate-300 rounded text-sm"
+                    onFocus={(e) => {
+                      e.target.select();
+                      setSelectedTimeMode('custom');
+                    }}
+                    onChange={(e) => {
+                      setCustomMinutes(e.target.value);
+                      setCustomError(false); // Clear error as user edits
+                    }}
+                    className={`w-20 px-2 py-1 border rounded text-sm ${
+                      customError ? 'border-red-500' : 'border-slate-300'
+                    }`}
                     min="1"
                     max="180"
                   />
