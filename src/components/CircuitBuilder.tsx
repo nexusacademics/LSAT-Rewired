@@ -21,8 +21,6 @@ import ReactFlow, {
 import { ArrowLeft, Plus, Trash2, Save, RotateCcw, Info } from 'lucide-react';
 import 'reactflow/dist/style.css';
 
-
-
 // Types matching your original structure
 interface DiagramNode {
   id: string;
@@ -273,17 +271,27 @@ const AssumptionNode = ({ id, data, selected }: NodeProps) => {
     }
   });
 
+  const textareaRef1 = useRef<HTMLTextAreaElement>(null);
+  const textareaRef2 = useRef<HTMLTextAreaElement>(null);
+
   const handlePartChange = (index: number, value: string) => {
     const newParts = [...assumptionParts];
     newParts[index] = value;
     setAssumptionParts(newParts);
     data.onContentChange?.(id, JSON.stringify(newParts));
+    
+    // Auto-resize textareas
+    const textareaRef = index === 0 ? textareaRef1 : textareaRef2;
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = textareaRef.current.scrollHeight + 'px';
+    }
   };
 
   return (
     <div className={`px-4 py-3 shadow-md rounded-lg bg-red-100 border-2 ${
       selected ? 'border-red-600' : 'border-red-300'
-    } min-w-[280px] min-h-[100px] relative`} 
+    } min-w-[300px] min-h-[120px] relative`} 
        style={
     selected
       ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
@@ -293,24 +301,40 @@ const AssumptionNode = ({ id, data, selected }: NodeProps) => {
       <Handle type="target" position={Position.Left} id="left" className="w-3 h-3" />
       <Handle type="source" position={Position.Bottom} id="bottom" className="w-3 h-3" />
       <Handle type="source" position={Position.Right} id="right" className="w-3 h-3" />
-      <div className="text-xs font-medium mb-2 text-red-800">Assumption/Flaw</div>
-      <div className="text-xs leading-tight flex flex-col items-start w-full text-red-800">
-        <span>The author assumes that </span>
-        <textarea
-          className="bg-transparent border-b border-red-400 outline-none w-full text-red-900 resize-none overflow-hidden"
-          value={assumptionParts[0]}
-          onChange={(e) => handlePartChange(0, e.target.value)}
-          rows={1}
-        />
-        <span> and overlooks the possibility that </span>
-        <textarea
-          className="bg-transparent border-b border-red-400 outline-none w-full text-red-900 resize-none overflow-hidden"
-          value={assumptionParts[1]}
-          onChange={(e) => handlePartChange(1, e.target.value)}
-          rows={1}
-        />
+      
+      <div className="text-xs font-medium mb-3 text-red-800">Assumption/Flaw</div>
+      
+      <div className="text-xs leading-relaxed text-red-800 space-y-2">
+        <div className="flex flex-col">
+          <span className="mb-1">The author assumes that:</span>
+          <textarea
+            ref={textareaRef1}
+            className="bg-red-50 border border-red-300 rounded px-2 py-1 outline-none w-full text-red-900 resize-none min-h-[32px]"
+            value={assumptionParts[0]}
+            onChange={(e) => handlePartChange(0, e.target.value)}
+            placeholder="Enter assumption..."
+            style={{ 
+              overflow: 'hidden',
+              lineHeight: '1.4'
+            }}
+          />
+        </div>
+        
+        <div className="flex flex-col">
+          <span className="mb-1">and overlooks the possibility that:</span>
+          <textarea
+            ref={textareaRef2}
+            className="bg-red-50 border border-red-300 rounded px-2 py-1 outline-none w-full text-red-900 resize-none min-h-[32px]"
+            value={assumptionParts[1]}
+            onChange={(e) => handlePartChange(1, e.target.value)}
+            placeholder="Enter overlooked possibility..."
+            style={{ 
+              overflow: 'hidden',
+              lineHeight: '1.4'
+            }}
+          />
+        </div>
       </div>
-      <Handle type="source" position={Position.Bottom} className="w-3 h-3" />
     </div>
   );
 };
@@ -454,9 +478,6 @@ const CircuitBuilderFlow = () => {
     [setEdges]
   );
 
-  // Add new node on canvas click (when a node type is selected)
-  
-
   // Calculate analysis score
   const calculateAnalysisScore = useCallback(() => {
     let score = 0;
@@ -586,8 +607,6 @@ const CircuitBuilderFlow = () => {
               ))}
             </div>
           </div>
-
-
 
           <div>
             <h3 className="text-base font-semibold text-slate-900 mb-3">Instructions</h3>
