@@ -660,8 +660,7 @@ const CircuitBuilderFlow = () => {
               <Panel position="center">
                 <div className="text-center text-slate-400 bg-white p-8 rounded-lg shadow-sm border border-slate-200">
                   <Plus className="h-12 w-12 mx-auto mb-4" />
-                  <p className="text-lg font-medium">Select a node type and click to add</p>
-                  <p className="text-sm">Start building your argument circuit</p>
+                  <p className="text-lg font-medium">Click and drag the elements to the left to start building your circuit</p>
                 </div>
               </Panel>
             )}
