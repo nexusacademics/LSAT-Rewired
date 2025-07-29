@@ -646,10 +646,9 @@ const CircuitBuilderFlow = () => {
             nodeTypes={nodeTypes}
             connectionMode={ConnectionMode.Strict}
             fitView
-          
-          >
+           >
             <Background color="#e2e8f0" gap={20} />
-            <Controls />
+            <Controls PanelPosition.TopLeft/>
            
             
             {nodes.length === 0 && (
