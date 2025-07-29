@@ -125,7 +125,7 @@ export default function Navigation({ currentView, onViewChange, userStats }: Nav
         >
           <div
             ref={drawerRef}
-            className={`fixed left-0 top-0 w-64 h-full shadow-lg p-6 flex flex-col gap-4 transform transition-transform duration-300 ease-in-out ${
+            className={`fixed right-0 top-0 w-64 h-full shadow-lg p-6 flex flex-col gap-4 transform transition-transform duration-300 ease-in-out ${
               theme === 'dark' ? 'bg-gray-800' : 'bg-white'
             }`}
           >
