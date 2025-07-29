@@ -1,5 +1,6 @@
 // components/TripleReview/PauseReviewPopup.tsx
 import React from 'react';
+import ReactDOM from 'react-dom';
 import { AlertTriangle, Play, Home, X } from 'lucide-react';
 
 interface PauseReviewPopupProps {
@@ -19,7 +20,7 @@ export const PauseReviewPopup: React.FC<PauseReviewPopupProps> = ({
 }) => {
   if (!isOpen) return null;
 
-  return (
+  return ReactDOM.createPortal(
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-2xl shadow-lg max-w-md w-full mx-4 transform transition-all">
         {/* Header */}
@@ -44,8 +45,8 @@ export const PauseReviewPopup: React.FC<PauseReviewPopupProps> = ({
         <div className="p-6">
           <div className="mb-6">
             <p className="text-slate-700 text-center leading-relaxed">
-              You can resume your Review Session at any time by clicking 
-              <span className="font-semibold text-blue-600"> Resume Session</span> in your 
+              You can resume your Review Session at any time by clicking
+              <span className="font-semibold text-blue-600"> Resume Session</span> in your
               <span className="font-semibold"> Active Session</span>.
             </p>
           </div>
@@ -59,7 +60,7 @@ export const PauseReviewPopup: React.FC<PauseReviewPopupProps> = ({
               <Home className="w-4 h-4" />
               Return to Dashboard
             </button>
-            
+
             <button
               onClick={onContinueReviewing}
               className="w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
@@ -70,6 +71,7 @@ export const PauseReviewPopup: React.FC<PauseReviewPopupProps> = ({
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
