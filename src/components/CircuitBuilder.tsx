@@ -78,8 +78,12 @@ const ConclusionSubjectNode = ({ id, data, selected }: NodeProps) => {
   return (
     <div className={`px-4 py-3 shadow-md rounded-lg bg-purple-50 border-2 ${
       selected ? 'border-purple-500' : 'border-purple-200'
-    } min-w-[120px] min-h-[70px]`}>
-      <Handle type="target" position={Position.Top} className="w-3 h-3" />
+    } min-w-[120px] min-h-[70px] relative`}>
+         {/* Handles on all four sides */}
+      <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
+      <Handle type="target" position={Position.Left} id="left" className="w-3 h-3" />
+      <Handle type="source" position={Position.Bottom} id="bottom" className="w-3 h-3" />
+      <Handle type="source" position={Position.Right} id="right" className="w-3 h-3" />
       <div className="text-xs font-medium mb-2 text-purple-700">Conclusion Subject</div>
       <textarea
         ref={textareaRef}
@@ -110,8 +114,12 @@ const ConclusionPredicateNode = ({ id, data, selected }: NodeProps) => {
   return (
     <div className={`px-4 py-3 shadow-md rounded-lg bg-purple-200 border-2 ${
       selected ? 'border-purple-600' : 'border-purple-400'
-    } min-w-[120px] min-h-[70px]`}>
-      <Handle type="target" position={Position.Top} className="w-3 h-3" />
+    } min-w-[120px] min-h-[70px] relative`}>
+         {/* Handles on all four sides */}
+      <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
+      <Handle type="target" position={Position.Left} id="left" className="w-3 h-3" />
+      <Handle type="source" position={Position.Bottom} id="bottom" className="w-3 h-3" />
+      <Handle type="source" position={Position.Right} id="right" className="w-3 h-3" />
       <div className="text-xs font-medium mb-2 text-purple-900">Conclusion Predicate/Claim</div>
       <textarea
         ref={textareaRef}
@@ -142,8 +150,12 @@ const MinorPremiseNode = ({ id, data, selected }: NodeProps) => {
   return (
     <div className={`px-4 py-3 shadow-md rounded-lg bg-gray-50 border-2 ${
       selected ? 'border-gray-600' : 'border-black'
-    } min-w-[120px] min-h-[70px]`}>
-      <Handle type="target" position={Position.Top} className="w-3 h-3" />
+    } min-w-[120px] min-h-[70px] relative`}>
+         {/* Handles on all four sides */}
+      <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
+      <Handle type="target" position={Position.Left} id="left" className="w-3 h-3" />
+      <Handle type="source" position={Position.Bottom} id="bottom" className="w-3 h-3" />
+      <Handle type="source" position={Position.Right} id="right" className="w-3 h-3" />
       <div className="text-xs font-medium mb-2 text-black">Minor Premise</div>
       <textarea
         ref={textareaRef}
@@ -174,8 +186,12 @@ const MajorPremiseNode = ({ id, data, selected }: NodeProps) => {
   return (
     <div className={`px-4 py-3 shadow-md rounded-lg bg-blue-100 border-2 ${
       selected ? 'border-blue-600' : 'border-blue-300'
-    } min-w-[120px] min-h-[70px]`}>
-      <Handle type="target" position={Position.Top} className="w-3 h-3" />
+    } min-w-[120px] min-h-[70px] relative`}>
+         {/* Handles on all four sides */}
+      <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
+      <Handle type="target" position={Position.Left} id="left" className="w-3 h-3" />
+      <Handle type="source" position={Position.Bottom} id="bottom" className="w-3 h-3" />
+      <Handle type="source" position={Position.Right} id="right" className="w-3 h-3" />
       <div className="text-xs font-medium mb-2 text-blue-800">Major Premise</div>
       <textarea
         ref={textareaRef}
@@ -206,8 +222,12 @@ const BackingPremiseNode = ({ id, data, selected }: NodeProps) => {
   return (
     <div className={`px-4 py-3 shadow-md rounded-lg bg-gray-50 border-2 ${
       selected ? 'border-gray-600' : 'border-gray-300'
-    } min-w-[120px] min-h-[70px]`}>
-      <Handle type="target" position={Position.Top} className="w-3 h-3" />
+    } min-w-[120px] min-h-[70px] relative`}>
+         {/* Handles on all four sides */}
+      <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
+      <Handle type="target" position={Position.Left} id="left" className="w-3 h-3" />
+      <Handle type="source" position={Position.Bottom} id="bottom" className="w-3 h-3" />
+      <Handle type="source" position={Position.Right} id="right" className="w-3 h-3" />
       <div className="text-xs font-medium mb-2 text-gray-800">Backing/Linking Premise</div>
       <textarea
         ref={textareaRef}
@@ -241,8 +261,12 @@ const AssumptionNode = ({ id, data, selected }: NodeProps) => {
   return (
     <div className={`px-4 py-3 shadow-md rounded-lg bg-red-100 border-2 ${
       selected ? 'border-red-600' : 'border-red-300'
-    } min-w-[280px] min-h-[100px]`}>
-      <Handle type="target" position={Position.Top} className="w-3 h-3" />
+    } min-w-[280px] min-h-[100px] relative`}>
+         {/* Handles on all four sides */}
+      <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
+      <Handle type="target" position={Position.Left} id="left" className="w-3 h-3" />
+      <Handle type="source" position={Position.Bottom} id="bottom" className="w-3 h-3" />
+      <Handle type="source" position={Position.Right} id="right" className="w-3 h-3" />
       <div className="text-xs font-medium mb-2 text-red-800">Assumption/Flaw</div>
       <div className="text-xs leading-tight flex flex-col items-start w-full text-red-800">
         <span>The author assumes that </span>
@@ -281,8 +305,12 @@ const CounterclaimNode = ({ id, data, selected }: NodeProps) => {
   return (
     <div className={`px-4 py-3 shadow-md rounded-lg bg-gray-100 border-2 ${
       selected ? 'border-red-600' : 'border-red-300'
-    } min-w-[120px] min-h-[70px]`}>
-      <Handle type="target" position={Position.Top} className="w-3 h-3" />
+    } min-w-[120px] min-h-[70px] relative`}>
+          {/* Handles on all four sides */}
+      <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
+      <Handle type="target" position={Position.Left} id="left" className="w-3 h-3" />
+      <Handle type="source" position={Position.Bottom} id="bottom" className="w-3 h-3" />
+      <Handle type="source" position={Position.Right} id="right" className="w-3 h-3" />
       <div className="text-xs font-medium mb-2 text-red-800">Counterclaim/Concession</div>
       <textarea
         ref={textareaRef}
