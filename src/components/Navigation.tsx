@@ -3,7 +3,7 @@ import { Brain, Target, TrendingUp, Menu, X } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import ThemeToggle from '../components/ui/ThemeToggle';
 
-type AppView = 'dashboard' | 'triple-review' | 'performance' | 'subscription';
+type AppView = 'dashboard' | 'triple-review' | 'performance' |'Study Scheduler'| 'subscription';
 
 interface NavigationProps {
   currentView: AppView;
