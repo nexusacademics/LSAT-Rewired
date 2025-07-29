@@ -36,7 +36,7 @@ export default function StudyScheduleBuilder() {
           type="date"
           id="testDate"
           className={`w-full rounded-lg border px-3 py-2 appearance-none focus:outline-none focus:ring-2 focus:ring-indigo-500 ${inputClasses} ${theme === 'dark' ? 'dark-input' : ''}`}
-          style={calendarIconFix}
+          
         />
       </div>
 
@@ -48,7 +48,7 @@ export default function StudyScheduleBuilder() {
           type="date"
           id="startDate"
           className={`w-full rounded-lg border px-3 py-2 appearance-none focus:outline-none focus:ring-2 focus:ring-indigo-500 ${inputClasses} ${theme === 'dark' ? 'dark-input' : ''}`}
-          style={calendarIconFix}
+        
         />
       </div>
 
