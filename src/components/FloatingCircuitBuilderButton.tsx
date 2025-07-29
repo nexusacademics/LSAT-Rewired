@@ -40,7 +40,7 @@ export default function FloatingCircuitBuilderButton({
 
       {/* Success Bubble */}
       {showSuccessMessage && analysisQualityScore !== undefined && (
-        <div className="bg-green-50 border border-green-200 shadow-lg rounded-xl p-3 w-64 text-sm text-green-800 relative">
+        <div className="bg-green-50 border border-green-200 shadow-lg rounded-xl p-3 w-40 text-sm text-green-800 relative">
           <div className="flex items-center mb-1">
             <CheckCircle className="h-4 w-4 mr-2 text-green-700" />
             <span className="font-semibold">Circuit Created!</span>
