@@ -136,7 +136,9 @@ function AppContent() {
               processedPrepTest={processedPrepTest} // Pass the derived processedPrepTest
             />
           )}
-
+          {currentView === 'studyscheduler' && (
+  <StudyScheduleBuilder />
+)}
           {currentView === 'performance' && user && (
             <PerformanceTracker user={user} />
           )}
