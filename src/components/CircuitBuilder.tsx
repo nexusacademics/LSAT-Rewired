@@ -528,7 +528,7 @@ const CircuitBuilderFlow = () => {
             <button className="p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors">
               <ArrowLeft className="h-5 w-5" />
             </button>
-            <h1 className="text-xl font-semibold text-slate-900">Circuit Builder (React Flow)</h1>
+            <h1 className="text-xl font-semibold text-slate-900">Circuit Builder</h1>
           </div>
 
           <div className="flex items-center space-x-4">
@@ -610,7 +610,7 @@ const CircuitBuilderFlow = () => {
         </div>
 
         {/* React Flow Canvas */}
-        <div className="flex-1" ref={reactFlowWrapper}
+        <div className="flex-1 h-full relative" ref={reactFlowWrapper}
            onDragOver={(event) => event.preventDefault()} // Allow drop by preventing default
             onDrop={(event) => {
               event.preventDefault();
