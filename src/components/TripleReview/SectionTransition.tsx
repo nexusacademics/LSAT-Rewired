@@ -26,7 +26,8 @@ export const SectionTransition: React.FC<SectionTransitionProps> = ({
   const [isIntermission, setIsIntermission] = useState(false);
 
   // Determine if we should show countdown
-  const shouldShowCountdown = isTimedSession && isCompleteTest && triggeredByTimer && !isLastSection;
+  // Show countdown for any section completion in timed complete tests (not just timer expiration)
+  const shouldShowCountdown = isTimedSession && isCompleteTest && !isLastSection;
   
   // Determine if this is the intermission (after section 2, assuming 0-indexed)
   const isAfterSection2 = session.currentSectionIndex === 1; // 0-indexed, so section 2 is index 1
@@ -98,7 +99,7 @@ export const SectionTransition: React.FC<SectionTransitionProps> = ({
                 {countdown !== null ? formatTime(countdown) : '--:--'}
               </div>
               <p className="text-slate-600">
-                Prepare for the next section
+                {triggeredByTimer ? 'Time is up! ' : ''}Prepare for the next section
               </p>
             </div>
             <p className="text-sm text-slate-500 text-center">
@@ -109,20 +110,13 @@ export const SectionTransition: React.FC<SectionTransitionProps> = ({
       }
     }
 
+    // Fallback for non-timed or non-complete test scenarios
     return (
       <>
         Are you ready to move on to the next section?
         <br /><br />
         <span>
-          {triggeredByTimer ? (
-            <span className="font-semibold text-red-600">
-              Time is up!
-            </span>
-          ) : (
-            <>
-              <span className="font-semibold text-red-600">NOTE:</span> You will not be permitted to come back to this section once you move on.
-            </>
-          )}
+          <span className="font-semibold text-red-600">NOTE:</span> You will not be permitted to come back to this section once you move on.
         </span>
       </>
     );
@@ -141,32 +135,22 @@ export const SectionTransition: React.FC<SectionTransitionProps> = ({
       );
     }
 
-    if (!triggeredByTimer) {
-      return (
-        <>
-          <button
-            onClick={onCancel}
-            className="w-full px-4 py-3 bg-slate-200 hover:bg-slate-300 text-slate-900 rounded-lg font-medium transition-colors flex items-center justify-center"
-          >
-            Continue Working
-          </button>
-          <button
-            onClick={onConfirm}
-            className="w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center"
-          >
-            {isLastSection ? 'Finish Session' : 'Next Section'}
-          </button>
-        </>
-      );
-    }
-
+    // Fallback for non-timed sessions - show traditional confirmation
     return (
-      <button
-        onClick={onConfirm}
-        className="w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center"
-      >
-        {isLastSection ? 'Finish Session' : 'Next Section'}
-      </button>
+      <>
+        <button
+          onClick={onCancel}
+          className="w-full px-4 py-3 bg-slate-200 hover:bg-slate-300 text-slate-900 rounded-lg font-medium transition-colors flex items-center justify-center"
+        >
+          Continue Working
+        </button>
+        <button
+          onClick={onConfirm}
+          className="w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center"
+        >
+          {isLastSection ? 'Finish Session' : 'Next Section'}
+        </button>
+      </>
     );
   };
 
@@ -194,14 +178,14 @@ export const SectionTransition: React.FC<SectionTransitionProps> = ({
               {getTransitionTitle()}
             </h3>
           </div>
-          {!shouldShowCountdown && (
-            <button
-              onClick={onCancel}
-              className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 transition-colors"
-            >
-              <X size={16} />
-            </button>
-          )}
+        {!shouldShowCountdown && (
+          <button
+            onClick={onCancel}
+            className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 transition-colors"
+          >
+            <X size={16} />
+          </button>
+        )}
         </div>
 
         {/* Content */}
