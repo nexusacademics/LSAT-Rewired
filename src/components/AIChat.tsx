@@ -4,7 +4,6 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import ReactMarkdown from 'react-markdown';
 import { User as UserType, ProcessedQuestion, TestSession, ProcessedPrepTest, Message } from '../App'; // Import Message from App
 import { motion } from "framer-motion";
-import { Bot, User, ThumbsUp, ThumbsDown, AlertCircle, Send, Lightbulb } from "lucide-react";
 
 interface AIChatProps {
   user: UserType;
