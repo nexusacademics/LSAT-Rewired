@@ -632,8 +632,7 @@ const CircuitBuilderFlow = () => {
                 data: {
                   content: type === 'assumption' ? JSON.stringify(['', '']) : '',
                   onContentChange: handleNodeContentChange
-                },
-                style: { width: 75, height: 50 }, 
+                }, 
               };
           
               setNodes((nds) => nds.concat(newNode));
