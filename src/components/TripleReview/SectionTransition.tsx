@@ -68,7 +68,7 @@ export const SectionTransition: React.FC<SectionTransitionProps> = ({
               className="w-full px-4 py-3 bg-slate-200 hover:bg-slate-300 text-slate-900 rounded-lg font-medium transition-colors flex items-center justify-center"
             >
               Continue Working
-              <X className="w-4 h-4 text-slate-500" />
+            
             </button>
             <button
               onClick={onConfirm}
