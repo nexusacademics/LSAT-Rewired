@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { TestSession, ProcessedPrepTest, ProcessedSection, ProcessedQuestion, Circuit } from '../../App';
 import CircuitBuilder from '../CircuitBuilder';
-import FloatingCircuitBuilderButton from '../FloatingCircuitBuilderButton'; // ✅ Already present
+import FloatingCircuitBuilderButton from '../FloatingCircuitBuilderButton';
 import { Header } from './Header';
 import { PassagePanel } from './PassagePanel';
 import { QuestionPanel } from './QuestionPanel';
@@ -11,6 +11,7 @@ import { QuestionTracker } from './QuestionTracker';
 import { StrategySummary } from './StrategySummary';
 import { SectionTransition } from './SectionTransition';
 import { PausedOverlay } from './PausedOverlay';
+import { PauseReviewPopup } from './PauseReviewPopup'; // Add this import
 import { useTimer } from '../../hooks/useTimer';
 import { useQuestionNavigation } from '../../hooks/useQuestionNavigation';
 import { useAnswerSelection } from '../../hooks/useAnswerSelection';
@@ -34,10 +35,14 @@ const TripleReview: React.FC<TripleReviewProps> = ({
   const [showStrategySummary, setShowStrategySummary] = useState(
     session.phase === 'strategy-review' && !session.completedPhases.includes('strategy-review')
   );
+  
+  // Add pause popup state
+  const [showPausePopup, setShowPausePopup] = useState(false);
+  const [pauseReviewType, setPauseReviewType] = useState<'Blind Review' | 'Strategy Review'>('Blind Review');
 
-  const [hasDismissedTooltipForQuestion, setHasDismissedTooltipForQuestion] = useState(false); // ✅ NEW
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false); // ✅ NEW
-  const [lastSavedScore, setLastSavedScore] = useState<number | undefined>(); // ✅ NEW
+  const [hasDismissedTooltipForQuestion, setHasDismissedTooltipForQuestion] = useState(false);
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [lastSavedScore, setLastSavedScore] = useState<number | undefined>();
 
   // Determine sections and current question
   const currentSections: ProcessedSection[] = session.selectedSectionId
@@ -45,11 +50,11 @@ const TripleReview: React.FC<TripleReviewProps> = ({
     : processedPrepTest.sections;
 
   const currentSectionData = currentSections[session.currentSectionIndex];
-  console.log('Current section data:', currentSectionData); // Add this line
+  console.log('Current section data:', currentSectionData);
   const questionsInCurrentSection = currentSectionData?.questions || [];
   const currentQuestionData = questionsInCurrentSection[session.currentQuestionIndex];
 
-  // Reset tooltip and success bubble when question changes ✅ NEW
+  // Reset tooltip and success bubble when question changes
   useEffect(() => {
     setHasDismissedTooltipForQuestion(false);
     setShowSuccessMessage(false);
@@ -69,6 +74,24 @@ const TripleReview: React.FC<TripleReviewProps> = ({
 
   const handleSubmitSection = () => {
     setShowSectionTransition(true);
+  };
+
+  // Handle pause button clicks - show popup instead of immediately exiting
+  const handlePauseReview = () => {
+    const reviewType = session.phase === 'blind-review' ? 'Blind Review' : 'Strategy Review';
+    setPauseReviewType(reviewType);
+    setShowPausePopup(true);
+  };
+
+  // Handle popup actions
+  const handleReturnToDashboard = () => {
+    setShowPausePopup(false);
+    onExitSession(); // This will return to dashboard
+  };
+
+  const handleContinueReviewing = () => {
+    setShowPausePopup(false);
+    // Simply close popup to continue reviewing
   };
 
   const {
@@ -126,10 +149,9 @@ const TripleReview: React.FC<TripleReviewProps> = ({
     }
 
     onUpdateSession({ ...session, circuits: updatedCircuits });
-    //setShowCircuitBuilder(false); // ✅ Close after save
-    setLastSavedScore(updatedCircuit.analysisQuality); // ✅ Show score
-    setShowSuccessMessage(true); // ✅ Show message
-    setTimeout(() => setShowSuccessMessage(false), 3000); // ✅ Auto-dismiss
+    setLastSavedScore(updatedCircuit.analysisQuality);
+    setShowSuccessMessage(true);
+    setTimeout(() => setShowSuccessMessage(false), 3000);
   };
 
   const handleConfirmSectionSubmit = () => {
@@ -207,7 +229,7 @@ const TripleReview: React.FC<TripleReviewProps> = ({
         timeRemaining={timeRemaining}
         onToggleTimer={() => setIsTimerRunning(!isTimerRunning)}
         onToggleFlag={() => handleToggleFlag(currentQuestionData.id)}
-        onExitSession={onExitSession}
+        onExitSession={handlePauseReview} // Changed to show popup instead of immediate exit
         onShowStrategySummary={() => setShowStrategySummary(true)}
         onEndSection={handleSubmitSection}
         onPreviousQuestion={handlePreviousQuestion}
@@ -243,18 +265,16 @@ const TripleReview: React.FC<TripleReviewProps> = ({
               selectedAnswerIndex={selectedAnswerIndex}
               existingCircuitForQuestion={existingCircuitForQuestion}
               onShowCircuitBuilder={() => setShowCircuitBuilder(true)}
-                isCircuitBuilderOpen={showCircuitBuilder}  // ← ADD THIS LINE
-
+              isCircuitBuilderOpen={showCircuitBuilder}
             />
             <div className="lg:col-span-2 h-full">
-             <CircuitBuilder
-  onBack={() => setShowCircuitBuilder(false)}
-  onSaveCircuit={handleSaveCircuitFromBuilder} // <-- this is critical
-  questionData={currentQuestionData}
-  session={session}
-  existingCircuit={existingCircuitForQuestion}
-/>
-
+              <CircuitBuilder
+                onBack={() => setShowCircuitBuilder(false)}
+                onSaveCircuit={handleSaveCircuitFromBuilder}
+                questionData={currentQuestionData}
+                session={session}
+                existingCircuit={existingCircuitForQuestion}
+              />
             </div>
           </div>
         ) : (
@@ -266,8 +286,7 @@ const TripleReview: React.FC<TripleReviewProps> = ({
               selectedAnswerIndex={selectedAnswerIndex}
               existingCircuitForQuestion={existingCircuitForQuestion}
               onShowCircuitBuilder={() => setShowCircuitBuilder(true)}
-                isCircuitBuilderOpen={showCircuitBuilder}  // ← ADD THIS LINE
-
+              isCircuitBuilderOpen={showCircuitBuilder}
             />
 
             {session.phase !== 'timed' && (
@@ -296,18 +315,26 @@ const TripleReview: React.FC<TripleReviewProps> = ({
         onQuestionJump={handleQuestionJump}
       />
 
-      {/* ✅ NEW: Updated floating button with tooltip/success integration */}
       {!currentSectionData.name.startsWith('RC') && (
-      <FloatingCircuitBuilderButton
-        session={session}
-        isOpen={showCircuitBuilder}
-        onToggle={() => setShowCircuitBuilder(prev => !prev)}
-        showIntroTooltip={!hasDismissedTooltipForQuestion}
-        onDismissIntroTooltip={() => setHasDismissedTooltipForQuestion(true)}
-        showSuccessMessage={showSuccessMessage}
-        analysisQualityScore={lastSavedScore}
-      />
+        <FloatingCircuitBuilderButton
+          session={session}
+          isOpen={showCircuitBuilder}
+          onToggle={() => setShowCircuitBuilder(prev => !prev)}
+          showIntroTooltip={!hasDismissedTooltipForQuestion}
+          onDismissIntroTooltip={() => setHasDismissedTooltipForQuestion(true)}
+          showSuccessMessage={showSuccessMessage}
+          analysisQualityScore={lastSavedScore}
+        />
       )}
+
+      {/* Add the pause popup */}
+      <PauseReviewPopup
+        isOpen={showPausePopup}
+        reviewType={pauseReviewType}
+        onReturnToDashboard={handleReturnToDashboard}
+        onContinueReviewing={handleContinueReviewing}
+        onClose={() => setShowPausePopup(false)}
+      />
     </div>
   );
 };
