@@ -172,7 +172,7 @@ export const Header: React.FC<HeaderProps> = ({
           )}
 
           <button
-            onClick={() => onEndSection(false)}
+            onClick={() => onSubmitSection(false)}
             className="px-3 py-2 bg-red-100 text-red-600 hover:bg-red-200 rounded-lg transition-colors text-sm font-medium"
           >
             End Section
