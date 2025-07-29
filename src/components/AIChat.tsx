@@ -3,6 +3,7 @@ import { Send, Bot, User, Lightbulb, AlertCircle, ThumbsUp, ThumbsDown } from 'l
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import ReactMarkdown from 'react-markdown';
 import { User as UserType, ProcessedQuestion, TestSession, ProcessedPrepTest, Message } from '../App'; // Import Message from App
+import Draggable from 'react-draggable';
 
 interface AIChatProps {
   user: UserType;
