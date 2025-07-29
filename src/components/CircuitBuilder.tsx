@@ -650,10 +650,7 @@ const CircuitBuilderFlow = () => {
           >
             <Background color="#e2e8f0" gap={20} />
             <Controls />
-            <MiniMap 
-              nodeColor="#64748b"
-              className="bg-white border border-slate-200"
-            />
+           
             
             {nodes.length === 0 && (
               <Panel position="center">
