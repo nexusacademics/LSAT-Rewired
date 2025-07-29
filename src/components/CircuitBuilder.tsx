@@ -541,7 +541,150 @@ const CircuitBuilderFlow = () => {
   }, [setNodes, setEdges]);
 
   return (
-    <div className="h-screen grid grid-rows-[auto_1fr_auto] bg-slate-50">
+   
+
+<div className="flex flex-col bg-slate-50"> {/* Header */} <div className="bg-white border-b border-slate-200 px-6 py-4"> <div className="flex items-center justify-between"> <div className="flex items-center space-x-4"> <button className="p-2 text-slate-600
+
+pasted
+
+
+import React from 'react'; // Enhanced flag system to track multiple phases interface QuestionFlags { timedSection?: boolean; blindReview?: boolean; strategyPlanning?: boolean; } interface Question { id: string; // flags property no longer needed - stored in session } interface Session
+
+pasted
+
+
+// components/TripleReview/Header.tsx import React from 'react'; import { Timer, Play, Pause, Flag, ChevronRight, Brain, BookOpen, Target } from 'lucide-react'; import { TestSession, ProcessedQuestion } from '../../App'; interface HeaderProps { session: TestSession; currentQuestionData: Process
+
+pasted
+
+This div I have pasted below is extending beyond the bottom of the screen, likely because it is not taking into account the height of the header and QuestionTracker (also pasted.
+
+Can you help me find a dynamic solution to restrict the height of the circuit builder div to accommodate?
+
+Edit
+Looking at your code, the issue is that the React Flow canvas div is using a fixed height calculation calc(100vh - 72px) which only accounts for the header height (72px) but doesn't consider the QuestionTracker component at the bottom.
+
+Here's a dynamic solution using CSS Grid that will automatically distribute the available space:
+
+
+Dynamic Height Circuit Builder
+Code 
+The key changes I made:
+
+Main Structure (CSS Grid):
+jsx
+<div className="h-screen grid grid-rows-[auto_1fr_auto] bg-slate-50">
+This creates a 3-row grid:
+
+auto - Header takes only what it needs
+1fr - Main content takes all remaining space
+auto - QuestionTracker takes only what it needs
+Content Area (Nested Grid):
+jsx
+<div className="grid grid-cols-[224px_1fr] overflow-hidden">
+This creates a 2-column layout:
+
+224px - Fixed width sidebar (56 × 4 = 224px from w-56)
+1fr - ReactFlow canvas takes remaining width
+ReactFlow Container:
+jsx
+<div className="w-full h-full overflow-hidden" ref={reactFlowWrapper}>
+Removed the fixed calc(100vh - 72px) height
+Uses h-full to fill available space in the grid
+The grid automatically handles the dynamic sizing
+Benefits:
+Fully responsive - adapts to any screen size
+Dynamic - automatically adjusts if header or QuestionTracker height changes
+No overflow - content stays within viewport bounds
+Clean CSS - uses modern CSS Grid instead of manual calculations
+This solution will ensure your circuit builder always fits perfectly between the header and QuestionTracker, regardless of their heights or screen size changes.
+
+
+
+
+
+It seems there's a lot of code missing from your version of the CircuitBuilder
+
+Edit
+You're absolutely right! I only showed the structural changes but removed most of your actual code. Let me provide the complete solution that preserves all your existing functionality:
+
+
+Dynamic Height Circuit Builder
+Code ∙ Version 2 
+
+Dynamic Height Circuit Builder
+Code ∙ Version 3 
+You're absolutely right! I apologize for removing your code. The artifact above now shows exactly what changes you need to make to your existing code.
+
+Here's a summary of the minimal changes needed:
+
+3 Simple Changes:
+Main container - Change from:
+jsx
+<div className="flex flex-col bg-slate-50">
+To:
+jsx
+<div className="h-screen grid grid-rows-[auto_1fr_auto] bg-slate-50">
+Content area - Change from:
+jsx
+<div className="flex-1 flex h-[calc(100vh-72px)] overflow-hidden">
+To:
+jsx
+<div className="grid grid-cols-[224px_1fr] overflow-hidden">
+ReactFlow container - Change from:
+jsx
+<div className="flex-1" ref={reactFlowWrapper} style={{ height: 'calc(100vh - 72px)', overflow: 'hidden' }}
+To:
+jsx
+<div className="w-full h-full overflow-hidden" ref={reactFlowWrapper}
+Add QuestionTracker as the third row after your main content div
+All your existing logic, state, functions, event handlers, and content stay exactly the same - just these structural div changes to fix the height issue!
+
+
+
+
+
+
+import React, { useState, useCallback, useEffect, useRef } from 'react'; import ReactFlow, { Node, Edge, addEdge, Background, Controls, MiniMap, useNodesState, useEdgesState, Connection, ConnectionMode, Panel, NodeProps, Handle, Position, MarkerType, useReactFlow, R
+
+pasted
+
+Did I do it right?
+
+Edit
+Almost perfect! You implemented the grid structure correctly, but there are a couple of small issues to fix:
+
+
+Circuit Builder Corrections
+Code 
+You did great! Just two small fixes needed:
+
+Issues to Fix:
+Sidebar width conflict: Remove the w-56 class from your sidebar div since grid-cols-[224px_1fr] already handles the width.
+Missing third grid row: You defined 3 rows (grid-rows-[auto_1fr_auto]) but only have 2. Add the QuestionTracker component as the third row.
+Quick Fix:
+jsx
+// Change this:
+<div className="w-56 bg-white border-r border-slate-200 p-4 space-y-6 overflow-y-auto">
+
+// To this (remove w-56):
+<div className="bg-white border-r border-slate-200 p-4 space-y-6 overflow-y-auto">
+And add the QuestionTracker component after your main content div but before the instructions modal.
+
+With these two small changes, your Circuit Builder will have perfect dynamic height sizing that automatically adjusts to accommodate the header and QuestionTracker! 🎯
+
+
+
+
+
+
+
+
+Pasted content
+7.45 KB •172 lines
+•
+Formatting may be inconsistent from source
+ <div className="flex flex-col bg-slate-50">
       {/* Header */}
       <div className="bg-white border-b border-slate-200 px-6 py-4">
         <div className="flex items-center justify-between">
@@ -584,7 +727,7 @@ const CircuitBuilderFlow = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-[224px_1fr] overflow-hidden">
+      <div className="flex-1 flex h-[calc(100vh-72px)]  overflow-hidden">
                 {/* Sidebar */}
         <div className="w-56 bg-white border-r border-slate-200 p-4 space-y-6 overflow-y-auto">
           <div>
@@ -629,7 +772,7 @@ const CircuitBuilderFlow = () => {
         </div>
 
         {/* React Flow Canvas */}
-        <div className="w-full h-full overflow-hidden" ref={reactFlowWrapper}  
+        <div className="flex-1" ref={reactFlowWrapper}  style={{ height: 'calc(100vh - 72px)', overflow: 'hidden' }}
            onDragOver={(event) => event.preventDefault()} // Allow drop by preventing default
             onDrop={(event) => {
               event.preventDefault();
