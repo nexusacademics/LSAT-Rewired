@@ -8,13 +8,15 @@ interface SectionTransitionProps {
   isLastSection: boolean;
   onCancel: () => void;
   onConfirm: () => void;
+  triggeredByTimer: boolean; // Add this new prop
 }
 
 export const SectionTransition: React.FC<SectionTransitionProps> = ({
   session,
   isLastSection,
   onCancel,
-  onConfirm
+  onConfirm,
+  triggeredByTimer
 }) => {
   return (
    <div 
@@ -54,22 +56,24 @@ export const SectionTransition: React.FC<SectionTransitionProps> = ({
 
       {/* Buttons */}
       <div className="flex flex-col gap-3">
-        <button
-          onClick={onCancel}
-          className="w-full px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-medium transition-colors flex items-center justify-center"
-        >
-          Continue Working
-        </button>
-        <button
-          onClick={onConfirm}
-          className="w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center"
-        >
-          {isLastSection
-            ? 'Finish Test'
-            : session.selectedSectionId
-              ? 'Finish Section'
-              : 'Next Section'}
-        </button>
+         {!triggeredByTimer && (
+            <button
+                  onClick={onCancel}
+                  className="w-full px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-medium transition-colors flex items-center justify-center"
+                >
+                  Continue Working
+                </button>
+                <button
+                  onClick={onConfirm}
+                  className="w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center"
+                >
+                  {isLastSection
+                    ? 'Finish Test'
+                    : session.selectedSectionId
+                      ? 'Finish Section'
+                      : 'Next Section'}
+                </button>
+      )}
       </div>
     </div>
   </div>
