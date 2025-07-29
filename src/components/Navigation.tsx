@@ -76,6 +76,9 @@ export default function Navigation({ currentView, onViewChange, userStats }: Nav
             <NavButton active={currentView === 'performance'} onClick={() => handleLinkClick('performance')} theme={theme}>
               Performance
             </NavButton>
+            <NavButton active={currentView === 'StudyScheduler'} onClick={() => handleLinkClick('studyscheduler')} theme={theme}>
+              Subscription
+            </NavButton>
             <NavButton active={currentView === 'subscription'} onClick={() => handleLinkClick('subscription')} theme={theme}>
               Subscription
             </NavButton>
