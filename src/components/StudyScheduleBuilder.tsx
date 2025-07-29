@@ -1,101 +1,65 @@
-// components/StudyScheduleBuilder.tsx
-import React, { useState } from 'react';
+import React from 'react';
+import { useTheme } from '../contexts/ThemeContext';
 
-interface ScheduleEntry {
-  date: string;
-  activity: string;
-}
+export default function StudyScheduleBuilder() {
+  const { theme } = useTheme();
 
-const StudyScheduleBuilder: React.FC = () => {
-  const [testDate, setTestDate] = useState('');
-  const [hoursPerWeek, setHoursPerWeek] = useState(10);
-  const [schedule, setSchedule] = useState<ScheduleEntry[]>([]);
+  const boxClasses = theme === 'dark'
+    ? 'bg-gray-800 text-gray-100 border border-gray-700'
+    : 'bg-white text-slate-800 border border-slate-200';
 
-  const buildSchedule = () => {
-    if (!testDate) {
-      alert('Please enter your test date');
-      return;
-    }
-
-    // Simple demo schedule logic: build a weekly schedule leading up to testDate
-    const scheduleEntries: ScheduleEntry[] = [];
-    const today = new Date();
-    const endDate = new Date(testDate);
-    if (endDate <= today) {
-      alert('Test date must be in the future');
-      return;
-    }
-
-    const msPerWeek = 7 * 24 * 60 * 60 * 1000;
-    let currentDate = new Date(today);
-
-    while (currentDate < endDate) {
-      scheduleEntries.push({
-        date: currentDate.toDateString(),
-        activity: `Drill Practice (${hoursPerWeek / 2} hours)`,
-      });
-      currentDate = new Date(currentDate.getTime() + msPerWeek);
-
-      if (currentDate < endDate) {
-        scheduleEntries.push({
-          date: currentDate.toDateString(),
-          activity: `Full Practice Test (${hoursPerWeek / 2} hours)`,
-        });
-        currentDate = new Date(currentDate.getTime() + msPerWeek);
-      }
-    }
-
-    setSchedule(scheduleEntries);
-  };
+  const inputClasses = theme === 'dark'
+    ? 'bg-gray-900 border-gray-600 text-gray-100 placeholder-gray-400'
+    : 'bg-white border-gray-300 text-slate-900 placeholder-slate-400';
 
   return (
-    <div className="max-w-xl mx-auto p-6 bg-white rounded-lg shadow">
-      <h2 className="text-2xl font-semibold mb-4">Study Schedule Builder</h2>
-      <div className="mb-4">
-        <label htmlFor="testDate" className="block mb-1 font-medium">Your Test Date:</label>
-        <input
-          type="date"
-          id="testDate"
-          value={testDate}
-          onChange={(e) => setTestDate(e.target.value)}
-          className="w-full p-2 border rounded"
-        />
-      </div>
+    <div className={`rounded-2xl shadow-md p-6 max-w-3xl mx-auto mt-10 ${boxClasses}`}>
+      <h2 className="text-2xl font-semibold mb-4">Build Your Study Schedule</h2>
 
-      <div className="mb-4">
-        <label htmlFor="hoursPerWeek" className="block mb-1 font-medium">Hours Available per Week:</label>
-        <input
-          type="number"
-          id="hoursPerWeek"
-          value={hoursPerWeek}
-          min={1}
-          max={40}
-          onChange={(e) => setHoursPerWeek(Number(e.target.value))}
-          className="w-full p-2 border rounded"
-        />
-      </div>
-
-      <button
-        onClick={buildSchedule}
-        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-      >
-        Build Schedule
-      </button>
-
-      {schedule.length > 0 && (
-        <div className="mt-6">
-          <h3 className="text-xl font-semibold mb-2">Your Study Schedule:</h3>
-          <ul className="list-disc pl-5 space-y-1">
-            {schedule.map((entry, index) => (
-              <li key={index}>
-                <strong>{entry.date}:</strong> {entry.activity}
-              </li>
-            ))}
-          </ul>
+      <form className="space-y-4">
+        <div>
+          <label htmlFor="startDate" className="block text-sm font-medium mb-1">
+            Start Date
+          </label>
+          <input
+            type="date"
+            id="startDate"
+            className={`w-full rounded-lg border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 ${inputClasses}`}
+          />
         </div>
-      )}
+
+        <div>
+          <label htmlFor="targetDate" className="block text-sm font-medium mb-1">
+            Target Test Date
+          </label>
+          <input
+            type="date"
+            id="targetDate"
+            className={`w-full rounded-lg border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 ${inputClasses}`}
+          />
+        </div>
+
+        <div>
+          <label htmlFor="weeklyHours" className="block text-sm font-medium mb-1">
+            Weekly Study Hours
+          </label>
+          <input
+            type="number"
+            id="weeklyHours"
+            placeholder="e.g. 10"
+            className={`w-full rounded-lg border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 ${inputClasses}`}
+          />
+        </div>
+
+        <div className="pt-4">
+          <button
+            type="submit"
+            className="bg-indigo-600 text-white px-4 py-2 rounded-xl hover:bg-indigo-700 transition"
+          >
+            Generate Schedule
+          </button>
+        </div>
+      </form>
     </div>
   );
-};
-
-export default StudyScheduleBuilder;
+}
