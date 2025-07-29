@@ -119,7 +119,11 @@ const ConclusionPredicateNode = ({ id, data, selected }: NodeProps) => {
   return (
     <div className={`px-4 py-3 shadow-md rounded-lg bg-purple-200 border-2 ${
       selected ? 'border-purple-600' : 'border-purple-400'
-    } min-w-[120px] min-h-[70px] relative`}>
+    } min-w-[120px] min-h-[70px] relative`} 
+       style={
+    selected
+      ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
+      : undefined>
          {/* Handles on all four sides */}
       <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
       <Handle type="target" position={Position.Left} id="left" className="w-3 h-3" />
@@ -155,7 +159,11 @@ const MinorPremiseNode = ({ id, data, selected }: NodeProps) => {
   return (
     <div className={`px-4 py-3 shadow-md rounded-lg bg-gray-50 border-2 ${
       selected ? 'border-gray-600' : 'border-black'
-    } min-w-[120px] min-h-[70px] relative`}>
+    } min-w-[120px] min-h-[70px] relative`} 
+       style={
+    selected
+      ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
+      : undefined>
          {/* Handles on all four sides */}
       <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
       <Handle type="target" position={Position.Left} id="left" className="w-3 h-3" />
@@ -191,7 +199,11 @@ const MajorPremiseNode = ({ id, data, selected }: NodeProps) => {
   return (
     <div className={`px-4 py-3 shadow-md rounded-lg bg-blue-100 border-2 ${
       selected ? 'border-blue-600' : 'border-blue-300'
-    } min-w-[120px] min-h-[70px] relative`}>
+    } min-w-[120px] min-h-[70px] relative`} 
+       style={
+    selected
+      ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
+      : undefined>
          {/* Handles on all four sides */}
       <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
       <Handle type="target" position={Position.Left} id="left" className="w-3 h-3" />
@@ -227,7 +239,11 @@ const BackingPremiseNode = ({ id, data, selected }: NodeProps) => {
   return (
     <div className={`px-4 py-3 shadow-md rounded-lg bg-gray-50 border-2 ${
       selected ? 'border-gray-600' : 'border-gray-300'
-    } min-w-[120px] min-h-[70px] relative`}>
+    } min-w-[120px] min-h-[70px] relative`} 
+       style={
+    selected
+      ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
+      : undefined>
          {/* Handles on all four sides */}
       <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
       <Handle type="target" position={Position.Left} id="left" className="w-3 h-3" />
@@ -266,7 +282,11 @@ const AssumptionNode = ({ id, data, selected }: NodeProps) => {
   return (
     <div className={`px-4 py-3 shadow-md rounded-lg bg-red-100 border-2 ${
       selected ? 'border-red-600' : 'border-red-300'
-    } min-w-[280px] min-h-[100px] relative`}>
+    } min-w-[280px] min-h-[100px] relative`} 
+       style={
+    selected
+      ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
+      : undefined>
          {/* Handles on all four sides */}
       <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
       <Handle type="target" position={Position.Left} id="left" className="w-3 h-3" />
@@ -310,7 +330,11 @@ const CounterclaimNode = ({ id, data, selected }: NodeProps) => {
   return (
     <div className={`px-4 py-3 shadow-md rounded-lg bg-gray-100 border-2 ${
       selected ? 'border-red-600' : 'border-red-300'
-    } min-w-[120px] min-h-[70px] relative`}>
+    } min-w-[120px] min-h-[70px] relative`} 
+       style={
+    selected
+      ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
+      : undefined>
           {/* Handles on all four sides */}
       <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
       <Handle type="target" position={Position.Left} id="left" className="w-3 h-3" />
@@ -346,7 +370,11 @@ const CorrectAnswerNode = ({ id, data, selected }: NodeProps) => {
   return (
     <div className={`px-4 py-3 shadow-md rounded-lg bg-green-200 border-2 ${
       selected ? 'border-green-600' : 'border-green-400'
-    } min-w-[120px] min-h-[70px] relative`}>
+    } min-w-[120px] min-h-[70px] relative`} 
+       style={
+    selected
+      ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
+      : undefined>
          {/* Handles on all four sides */}
       <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
       <Handle type="target" position={Position.Left} id="left" className="w-3 h-3" />
