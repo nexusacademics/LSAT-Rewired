@@ -53,21 +53,22 @@ export const PauseReviewPopup: React.FC<PauseReviewPopupProps> = ({
 
           {/* Action Buttons */}
           <div className="flex flex-col gap-3">
+           
             <button
+              onClick={onContinueReviewing}
+              className="w-full px-4 py-3 bg-slate-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
+            >
+              <Play className="w-4 h-4" />
+              Continue Reviewing
+            </button>
+             <button
               onClick={onReturnToDashboard}
-              className="w-full px-4 py-3 bg-slate-600 hover:bg-slate-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
+              className="w-full px-4 py-3 bg-blue-600 hover:bg-slate-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
             >
               <Home className="w-4 h-4" />
               Return to Dashboard
             </button>
 
-            <button
-              onClick={onContinueReviewing}
-              className="w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
-            >
-              <Play className="w-4 h-4" />
-              Continue Reviewing
-            </button>
           </div>
         </div>
       </div>
