@@ -55,26 +55,32 @@ export const SectionTransition: React.FC<SectionTransitionProps> = ({
       </p>
 
       {/* Buttons */}
-      <div className="flex flex-col gap-3">
-         {!triggeredByTimer && (
+      <div className="flex flex-col gap-3 mt-6">
+        {!triggeredByTimer ? (
+          <>
             <button
-                  onClick={onCancel}
-                  className="w-full px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-medium transition-colors flex items-center justify-center"
-                >
-                  Continue Working
-                </button>
-                <button
-                  onClick={onConfirm}
-                  className="w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center"
-                >
-                  {isLastSection
-                    ? 'Finish Test'
-                    : session.selectedSectionId
-                      ? 'Finish Section'
-                      : 'Next Section'}
-                </button>
-      )}
+              onClick={onCancel}
+              className="w-full px-4 py-3 bg-slate-200 hover:bg-slate-300 text-slate-900 rounded-lg font-medium transition-colors flex items-center justify-center"
+            >
+              Continue Working
+            </button>
+            <button
+              onClick={onConfirm}
+              className="w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center"
+            >
+              {isLastSection ? 'Finish Session' : 'Next Section'}
+            </button>
+          </>
+        ) : (
+          <button
+            onClick={onConfirm}
+            className="w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center"
+          >
+            {isLastSection ? 'Finish Session' : 'Next Section'}
+          </button>
+        )}
       </div>
+
     </div>
   </div>
 </div>
