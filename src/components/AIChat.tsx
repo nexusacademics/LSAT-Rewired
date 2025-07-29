@@ -294,7 +294,7 @@ Goldilocks Principle: The correct assumption is just strong enough to make the r
   className="h-full flex flex-col bg-slate-50 rounded-2xl border overflow-hidden cursor-move">
       <div className="h-full flex flex-col bg-slate-50 rounded-2xl overflow-hidden"> {/* Adjusted for bubble */}
       {/* Header */}
-      <div className="chat-drag-handle bg-white border-b border-slate-200 px-4 py-1"> {/* Adjusted padding */}
+      <div className="chat-drag-handle bg-purple-100 border-b border-slate-200 px-4 py-1"> {/* Adjusted padding */}
         <div className="flex items-center space-x-3">
           <div className="p-2 bg-purple-100 rounded-xl">
             <Bot className="h-3 w-3 text-purple-600" /> {/* Adjusted icon size */}
