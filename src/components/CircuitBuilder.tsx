@@ -340,7 +340,7 @@ const CorrectAnswerNode = ({ id, data, selected }: NodeProps) => {
 
   return (
     <div className={`px-4 py-3 shadow-md rounded-lg bg-green-200 border-2 ${
-      selected ? 'border-4 border-green-600' : 'border-2 border-green-400'
+      selected ? 'border-6 border-green-600' : 'border-2 border-green-400'
     } min-w-[120px] min-h-[70px] relative`}>
          {/* Handles on all four sides */}
       <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
