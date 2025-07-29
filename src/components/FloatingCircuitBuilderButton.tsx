@@ -34,9 +34,7 @@ export default function FloatingCircuitBuilderButton({
             <Target className="h-4 w-4 mr-2 text-teal-600" />
             <span className="font-semibold">Build your circuit</span>
           </div>
-          
-          <div className="absolute top-1/2 -right-3 w-0 h-0 border-t-8 border-b-8 border-l-8 border-transparent border-l-white" />
-        </div>
+        
       )}
 
       {/* Success Bubble */}
