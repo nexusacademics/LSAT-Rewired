@@ -4,21 +4,20 @@ import { useTheme } from '../contexts/ThemeContext';
 export default function StudyScheduleBuilder() {
   const { theme } = useTheme();
 
- const boxClasses =
-  theme === 'dark'
-   ? 'bg-gray-900 border border-gray-700 text-white placeholder-gray-400'
-    : 'bg-white border border-gray-300 text-gray-900 placeholder-gray-500';
-
+  const boxClasses =
+    theme === 'dark'
+      ? 'bg-gray-800 text-gray-100 border border-gray-700'
+      : 'bg-white text-slate-800 border border-slate-200';
 
   const labelClasses =
     theme === 'dark'
       ? 'block mb-1 font-medium text-gray-300'
       : 'block mb-1 font-medium text-gray-700';
 
- const inputClasses =
-  theme === 'dark'
-   ? 'bg-gray-900 border border-gray-700 text-white placeholder-gray-400'
-    : 'bg-white border border-gray-300 text-gray-900 placeholder-gray-500';
+  const inputClasses =
+    theme === 'dark'
+      ? 'bg-gray-900 border border-gray-700 text-white placeholder-gray-400'
+      : 'bg-white border border-gray-300 text-gray-900 placeholder-gray-500';
 
   const calendarIconFix =
     theme === 'dark'
@@ -61,7 +60,7 @@ export default function StudyScheduleBuilder() {
           type="number"
           id="weeklyHours"
           min={1}
-          className={`w-full rounded-lg border px-3 py-2 appearance-none focus:outline-none focus:ring-2 focus:ring-indigo-500 ${inputClasses}`}
+          className={`w-full rounded-lg border px-3 py-2 appearance-none focus:outline-none focus:ring-2 focus:ring-indigo-500 ${inputClasses} ${theme === 'dark' ? 'dark-input' : ''}`}
         />
       </div>
 
