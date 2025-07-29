@@ -29,7 +29,7 @@ export const SectionTransition: React.FC<SectionTransitionProps> = ({
         </h3>
        <p className="text-slate-600 mb-6">
   {isLastSection ? (
-    'You have completed all sections of this test.'
+    'You have completed all sections for this timed session. Once you click continue, you will no longer be able to work on this session and will move on to the next phase of review.'
   ) : (
     <>
      Are you ready to move on to the next section?
