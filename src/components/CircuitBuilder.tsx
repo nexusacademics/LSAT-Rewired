@@ -426,8 +426,8 @@ const CircuitBuilderFlow = () => {
     { type: 'minor-premise' as const, label: 'Minor Premise', color: 'bg-gray-50 border-black text-black', description: 'Supporting evidence' },
     { type: 'major-premise' as const, label: 'Major Premise', color: 'bg-blue-100 border-blue-300 text-blue-800', description: 'A broad statement or principle' },
     { type: 'backing-premise' as const, label: 'Backing/Linking Premise', color: 'bg-gray-50 border-gray-300 text-gray-800', description: 'Provides support for another premise or conclusion' },
-    { type: 'assumption' as const, label: 'Assumption/Flaw', color: 'bg-red-100 border-red-300 text-red-800', description: 'Unstated Premise implied by the author' },
     { type: 'counterclaim' as const, label: 'Counterclaim/Concession', color: 'bg-gray-100 border-red-300 text-red-800', description: 'An opposing argument or point conceded' },
+    { type: 'assumption' as const, label: 'Assumption/Flaw', color: 'bg-red-100 border-red-300 text-red-800', description: 'Unstated Premise implied by the author' },
     { type: 'correct-answer' as const, label: 'Correct Answer', color: 'bg-green-200 border-green-400 text-green-800', description: 'The correct answer choice for the question' }
   ];
 
