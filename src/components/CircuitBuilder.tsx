@@ -541,7 +541,7 @@ const CircuitBuilderFlow = () => {
   }, [setNodes, setEdges]);
 
   return (
-    <div className="flex flex-col bg-slate-50">
+    <div className="h-screen grid grid-rows-[auto_1fr_auto] bg-slate-50">
       {/* Header */}
       <div className="bg-white border-b border-slate-200 px-6 py-4">
         <div className="flex items-center justify-between">
@@ -584,7 +584,7 @@ const CircuitBuilderFlow = () => {
         </div>
       </div>
 
-      <div className="flex-1 flex h-[calc(100vh-72px)]  overflow-hidden">
+      <div className="grid grid-cols-[224px_1fr] overflow-hidden">
                 {/* Sidebar */}
         <div className="w-56 bg-white border-r border-slate-200 p-4 space-y-6 overflow-y-auto">
           <div>
@@ -629,7 +629,7 @@ const CircuitBuilderFlow = () => {
         </div>
 
         {/* React Flow Canvas */}
-        <div className="flex-1" ref={reactFlowWrapper}  style={{ height: 'calc(100vh - 72px)', overflow: 'hidden' }}
+        <div className="w-full h-full overflow-hidden" ref={reactFlowWrapper}  
            onDragOver={(event) => event.preventDefault()} // Allow drop by preventing default
             onDrop={(event) => {
               event.preventDefault();
