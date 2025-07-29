@@ -123,7 +123,8 @@ const ConclusionPredicateNode = ({ id, data, selected }: NodeProps) => {
        style={
     selected
       ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
-      : undefined>
+      : undefined}
+      >
          {/* Handles on all four sides */}
       <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
       <Handle type="target" position={Position.Left} id="left" className="w-3 h-3" />
@@ -163,7 +164,7 @@ const MinorPremiseNode = ({ id, data, selected }: NodeProps) => {
        style={
     selected
       ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
-      : undefined>
+      : undefined}>
          {/* Handles on all four sides */}
       <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
       <Handle type="target" position={Position.Left} id="left" className="w-3 h-3" />
@@ -203,7 +204,7 @@ const MajorPremiseNode = ({ id, data, selected }: NodeProps) => {
        style={
     selected
       ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
-      : undefined>
+      : undefined}>
          {/* Handles on all four sides */}
       <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
       <Handle type="target" position={Position.Left} id="left" className="w-3 h-3" />
@@ -243,7 +244,7 @@ const BackingPremiseNode = ({ id, data, selected }: NodeProps) => {
        style={
     selected
       ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
-      : undefined>
+      : undefined}>
          {/* Handles on all four sides */}
       <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
       <Handle type="target" position={Position.Left} id="left" className="w-3 h-3" />
@@ -286,7 +287,7 @@ const AssumptionNode = ({ id, data, selected }: NodeProps) => {
        style={
     selected
       ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
-      : undefined>
+      : undefined}>
          {/* Handles on all four sides */}
       <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
       <Handle type="target" position={Position.Left} id="left" className="w-3 h-3" />
@@ -334,7 +335,7 @@ const CounterclaimNode = ({ id, data, selected }: NodeProps) => {
        style={
     selected
       ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
-      : undefined>
+      : undefined}>
           {/* Handles on all four sides */}
       <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
       <Handle type="target" position={Position.Left} id="left" className="w-3 h-3" />
@@ -374,7 +375,7 @@ const CorrectAnswerNode = ({ id, data, selected }: NodeProps) => {
        style={
     selected
       ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
-      : undefined>
+      : undefined}>
          {/* Handles on all four sides */}
       <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
       <Handle type="target" position={Position.Left} id="left" className="w-3 h-3" />
