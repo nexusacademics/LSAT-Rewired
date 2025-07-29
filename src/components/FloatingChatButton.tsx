@@ -2,6 +2,7 @@ import React from 'react';
 import { MessageCircle, X } from 'lucide-react';
 import AIChat from './AIChat';
 import { User, TestSession, ProcessedQuestion, ProcessedPrepTest, Message } from '../App';
+import { motion } from "framer-motion";
 
 interface FloatingChatButtonProps {
   user: User;
@@ -64,12 +65,15 @@ const toggleChat = () => {
       </button>
 
       {/* Chat Window */}
-      <div
-        className={`fixed bottom-24 left-20 w-[500px] h-[500px] bg-white rounded-2xl shadow-xl border border-slate-200 z-50
-          transform transition-all duration-300 ease-in-out
-          ${isOpen ? 'translate-y-0 opacity-100 visible' : 'translate-y-4 opacity-0 invisible'}
-       ` }
-      >
+     <motion.div
+  drag
+  dragMomentum={false}
+  dragElastic={0.2}
+  className={`fixed bottom-24 left-20 w-[500px] h-[500px] bg-white rounded-2xl shadow-xl border border-slate-200 z-50
+    transform transition-all duration-300 ease-in-out cursor-move
+    ${isOpen ? 'translate-y-0 opacity-100 visible' : 'translate-y-4 opacity-0 invisible'}
+  `}
+>
         {isOpen && (
           <AIChat
             user={user}
