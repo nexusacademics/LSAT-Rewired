@@ -21,7 +21,7 @@ export const SectionTransition: React.FC<SectionTransitionProps> = ({
       onClick={onCancel}
     >
       <div 
-        className="mb-6" 
+        className="bg-white rounded-2xl p-4 sm:p-8 max-w-md w-full mx-4 text-center" 
         onClick={(e) => e.stopPropagation()}
       >
         <h3 className="text-2xl font-semibold text-slate-900 mb-4">
