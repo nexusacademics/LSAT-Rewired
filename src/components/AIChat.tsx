@@ -287,7 +287,8 @@ Goldilocks Principle: The correct assumption is just strong enough to make the r
   ];
 
   return (
-    <div className="h-full flex flex-col bg-slate-50 rounded-2xl overflow-hidden"> {/* Adjusted for bubble */}
+    <Draggable>
+      <div className="h-full flex flex-col bg-slate-50 rounded-2xl overflow-hidden"> {/* Adjusted for bubble */}
       {/* Header */}
       <div className="bg-white border-b border-slate-200 px-4 py-1"> {/* Adjusted padding */}
         <div className="flex items-center space-x-3">
@@ -444,6 +445,7 @@ Goldilocks Principle: The correct assumption is just strong enough to make the r
         </div>
       </div>
     </div>
+   </Draggable>
   );
 };
 
