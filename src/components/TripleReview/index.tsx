@@ -106,6 +106,7 @@ const TripleReview: React.FC<TripleReviewProps> = ({
     isRunning: isTimerRunning,
     onTimeUp: () => {
       setIsTimerRunning(false);
+       setIsSectionTransitionTriggeredByTimer(true);
       handleSubmitSection(true);
     },
     phase: session.phase
