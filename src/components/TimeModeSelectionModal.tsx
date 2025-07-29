@@ -16,7 +16,8 @@ const TimeModeSelectionModal: React.FC<TimeModeSelectionModalProps> = ({ isOpen,
   const [selectedTestId, setSelectedTestId] = useState<string | null>(null);
   const [selectedSectionId, setSelectedSectionId] = useState<string | undefined>(undefined); // undefined for whole test
   const [selectedTimeMode, setSelectedTimeMode] = useState<'regular' | '1.5x' | '2x' | 'custom' | 'untimed'>('regular');
-  const [customMinutes, setCustomMinutes] = useState(35);
+  const [customMinutes, setCustomMinutes] = useState<string>('35');
+  const [customError, setCustomError] = useState(false);  
   const [searchTerm, setSearchTerm] = useState('');
 
 console.log('All Processed Tests received by TimeModeSelectionModal:', allProcessedTests);
@@ -34,11 +35,24 @@ console.log('All Processed Tests received by TimeModeSelectionModal:', allProces
   if (!isOpen) return null;
 
   const handleConfirm = () => {
-    if (selectedTestId) {
-      onSelectTimeMode(selectedTestId, selectedTimeMode, selectedTimeMode === 'custom' ? customMinutes : undefined, selectedSectionId);
-      onClose();
-    }
-  };
+      if (selectedTimeMode === 'custom') {
+        const customVal = parseInt(customMinutes);
+        if (isNaN(customVal) || customVal < 1) {
+          setCustomError(true);
+          return;
+        }
+      }
+    
+      if (selectedTestId) {
+        onSelectTimeMode(
+          selectedTestId,
+          selectedTimeMode,
+          selectedTimeMode === 'custom' ? parseInt(customMinutes) : undefined,
+          selectedSectionId
+        );
+        onClose();
+      }
+    };
 
   const handleBack = () => {
     if (currentStep === 'selectTiming') {
@@ -202,11 +216,20 @@ console.log('All Processed Tests received by TimeModeSelectionModal:', allProces
               }`}>
                 <div className="font-medium mb-2">Custom Time</div>
                 <div className="flex items-center space-x-2">
-                  <input
+                 <input
                     type="number"
                     value={customMinutes}
-                    onChange={(e) => setCustomMinutes(parseInt(e.target.value) || 35)}
-                    className="w-20 px-2 py-1 border border-slate-300 rounded text-sm"
+                    onFocus={(e) => {
+                      e.target.select();
+                      setSelectedTimeMode('custom');
+                    }}
+                    onChange={(e) => {
+                      setCustomMinutes(e.target.value);
+                      setCustomError(false); // Clear error as user edits
+                    }}
+                    className={`w-20 px-2 py-1 border rounded text-sm ${
+                      customError ? 'border-red-500' : 'border-slate-300'
+                    }`}
                     min="1"
                     max="180"
                   />
