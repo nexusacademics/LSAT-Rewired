@@ -21,6 +21,8 @@ import ReactFlow, {
 import { ArrowLeft, Plus, Trash2, Save, RotateCcw, Info } from 'lucide-react';
 import 'reactflow/dist/style.css';
 
+
+
 // Types matching your original structure
 interface DiagramNode {
   id: string;
@@ -311,8 +313,12 @@ const CorrectAnswerNode = ({ id, data, selected }: NodeProps) => {
   return (
     <div className={`px-4 py-3 shadow-md rounded-lg bg-green-200 border-2 ${
       selected ? 'border-green-600' : 'border-green-400'
-    } min-w-[120px] min-h-[70px]`}>
-      <Handle type="target" position={Position.Top} className="w-3 h-3" />
+    } min-w-[120px] min-h-[70px] relative`}>
+         {/* Handles on all four sides */}
+      <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
+      <Handle type="target" position={Position.Left} id="left" className="w-3 h-3" />
+      <Handle type="source" position={Position.Bottom} id="bottom" className="w-3 h-3" />
+      <Handle type="source" position={Position.Right} id="right" className="w-3 h-3" />
       <div className="text-xs font-medium mb-2 text-green-800">Correct Answer</div>
       <textarea
         ref={textareaRef}
