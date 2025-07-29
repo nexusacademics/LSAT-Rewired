@@ -605,7 +605,7 @@ const CircuitBuilderFlow = () => {
             onConnect={onConnect}
             onPaneClick={onPaneClick}
             nodeTypes={nodeTypes}
-            connectionMode={ConnectionMode.Loose}
+            connectionMode={ConnectionMode.Strict}
             fitView
             className="bg-slate-50"
           >
