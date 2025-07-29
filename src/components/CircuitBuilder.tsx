@@ -77,7 +77,7 @@ const ConclusionSubjectNode = ({ id, data, selected }: NodeProps) => {
 
   return (
     <div className={`px-4 py-3 shadow-md rounded-lg bg-purple-50 border-2 ${
-      selected ? 'border-purple-500 shadow-[0_0_10px_4px)]' : 'border-purple-200'
+      selected ? 'border-purple-500 shadow-[0_0_10px_4px_rgba(4,120,87,0.7)]' : 'border-purple-200'
     } min-w-[120px] min-h-[70px] relative`}>
          {/* Handles on all four sides */}
       <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
