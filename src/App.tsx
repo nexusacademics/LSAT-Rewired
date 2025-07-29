@@ -13,6 +13,7 @@ import PerformanceTracker from './components/PerformanceTracker';
 import FloatingChatButton from './components/FloatingChatButton';
 import LoadingSpinner from './components/LoadingSpinner';
 import Navigation from './components/Navigation';
+import StudyScheduleBuilder from './components/StudyScheduleBuilder';
 
 // Import types
 import type { TestSession } from './types/user';
