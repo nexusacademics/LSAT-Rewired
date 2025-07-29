@@ -188,7 +188,7 @@ export const Header: React.FC<HeaderProps> = ({
             </button>
             {isLastQuestionOfSection ? (
               <button
-                onClick={onSubmitSection}
+               onClick={() => onSubmitSection(false)}
                 className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center"
               >
                 {isLastSection ? 'Finish Test' : (session.selectedSectionId ? 'Finish Section' : 'Next Section')}
