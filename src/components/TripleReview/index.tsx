@@ -74,9 +74,15 @@ const TripleReview: React.FC<TripleReviewProps> = ({
     }
   };
 
-  const handleSubmitSection = () => {
-    setShowSectionTransition(true);
-  };
+  const handleSubmitSection = (triggeredByTimer: boolean = false) => {
+  if (triggeredByTimer) {
+    setIsSectionTransitionTriggeredByTimer(true);
+  } else {
+    setIsSectionTransitionTriggeredByTimer(false);
+  }
+  setShowSectionTransition(true);
+};
+
 
   // Handle pause button clicks - show popup instead of immediately exiting
   const handlePauseReview = () => {
@@ -105,7 +111,7 @@ const TripleReview: React.FC<TripleReviewProps> = ({
     initialTime: getInitialTime(),
     isRunning: isTimerRunning,
     onTimeUp: () => {
-      setIsTimerRunning(false);
+      
        setIsSectionTransitionTriggeredByTimer(true);
       handleSubmitSection(true);
     },
@@ -158,37 +164,43 @@ const TripleReview: React.FC<TripleReviewProps> = ({
   };
 
   const handleConfirmSectionSubmit = () => {
-    const nextSectionIndex = session.currentSectionIndex + 1;
-    const updatedCompletedSectionIds = [...session.completedSectionIds, currentSectionData.id];
+  const nextSectionIndex = session.currentSectionIndex + 1;
+  const updatedCompletedSectionIds = [...session.completedSectionIds, currentSectionData.id];
 
-    let updatedSession = { ...session };
+  let updatedSession = { ...session };
+  if (session.phase === 'timed') {
+    updatedSession.timedAnswers = { ...session.answeredQuestions };
+  } else if (session.phase === 'blind-review') {
+    updatedSession.blindReviewAnswers = { ...session.answeredQuestions };
+  }
+  updatedSession.answeredQuestions = {};
+
+  if (nextSectionIndex < currentSections.length) {
+    onUpdateSession({
+      ...updatedSession,
+      currentSectionIndex: nextSectionIndex,
+      currentQuestionIndex: 0,
+      completedSectionIds: updatedCompletedSectionIds,
+    });
+    setShowSectionTransition(false);
+    setIsSectionTransitionTriggeredByTimer(false);
+    // Restart timer for next section if it was running
     if (session.phase === 'timed') {
-      updatedSession.timedAnswers = { ...session.answeredQuestions };
-    } else if (session.phase === 'blind-review') {
-      updatedSession.blindReviewAnswers = { ...session.answeredQuestions };
+      setIsTimerRunning(true);
     }
-    updatedSession.answeredQuestions = {};
-
-    if (nextSectionIndex < currentSections.length) {
-      onUpdateSession({
-        ...updatedSession,
-        currentSectionIndex: nextSectionIndex,
-        currentQuestionIndex: 0,
-        completedSectionIds: updatedCompletedSectionIds,
-      });
-      setShowSectionTransition(false);
-    } else {
-      const updatedCompletedPhases = [...session.completedPhases, session.phase];
-      onUpdateSession({
-        ...updatedSession,
-        endTime: new Date(),
-        completedSectionIds: updatedCompletedSectionIds,
-        completedPhases: updatedCompletedPhases,
-      });
-      setShowSectionTransition(false);
-      onExitSession();
-    }
-  };
+  } else {
+    const updatedCompletedPhases = [...session.completedPhases, session.phase];
+    onUpdateSession({
+      ...updatedSession,
+      endTime: new Date(),
+      completedSectionIds: updatedCompletedSectionIds,
+      completedPhases: updatedCompletedPhases,
+    });
+    setShowSectionTransition(false);
+    setIsSectionTransitionTriggeredByTimer(false);
+    onExitSession();
+  }
+};
 
   const isLastSection = session.currentSectionIndex === currentSections.length - 1;
 
@@ -243,22 +255,27 @@ const TripleReview: React.FC<TripleReviewProps> = ({
       />
 
       <div ref={mainContentRef} className="flex-1 p-6 overflow-y-auto">
-        {showSectionTransition && (
-         <SectionTransition
+       {showSectionTransition && (
+          <SectionTransition
             session={session}
             isLastSection={isLastSection}
-            onCancel={() => setShowSectionTransition(false)}
+            onCancel={() => {
+              setShowSectionTransition(false);
+              setIsSectionTransitionTriggeredByTimer(false);
+            }}
             onConfirm={handleConfirmSectionSubmit}
-            triggeredByTimer={isSectionTransitionTriggeredByTimer} // NEW PROP
+            triggeredByTimer={isSectionTransitionTriggeredByTimer}
+            isTimedSession={session.phase === 'timed'} // ADD THIS
+            isCompleteTest={!session.selectedSectionId} // ADD THIS - true if no specific section selected
           />
         )}
 
-        {session.phase === 'timed' && !isTimerRunning && (
-          <PausedOverlay
-            onResume={() => setIsTimerRunning(true)}
-            onExit={onExitSession}
-          />
-        )}
+           {session.phase === 'timed' && !isTimerRunning && !showSectionTransition && (
+              <PausedOverlay
+                  onResume={() => setIsTimerRunning(true)}
+                  onExit={onExitSession}
+                />
+            )}
 
         {showCircuitBuilder && session.phase !== 'timed' ? (
           <div className="grid lg:grid-cols-3 gap-6 h-full">
