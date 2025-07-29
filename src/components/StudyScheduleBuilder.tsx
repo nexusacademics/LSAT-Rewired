@@ -25,7 +25,11 @@ export default function StudyScheduleBuilder() {
       : {};
 
   return (
-    <div className={`rounded-xl shadow-lg p-6 max-w-2xl mx-auto mt-8 ${boxClasses}`}>
+    <div
+      className="flex justify-center items-center pt-16"
+      style={{ height: 'calc(100vh - 64px)' }}
+    >
+      <div className={`rounded-xl shadow-lg p-6 max-w-2xl mx-auto mt-8 ${boxClasses}`}>
       <h2 className="text-2xl font-semibold mb-4">Study Schedule Builder</h2>
 
       <div className="mb-4">
@@ -70,5 +74,6 @@ export default function StudyScheduleBuilder() {
         Generate Schedule
       </button>
     </div>
+   </div>
   );
 }
