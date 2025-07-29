@@ -77,7 +77,7 @@ const ConclusionSubjectNode = ({ id, data, selected }: NodeProps) => {
 
   return (
     <div className={`px-4 py-3 shadow-md rounded-lg bg-purple-50 border-2 ${
-      selected ? 'border-purple-500 shadow-[0_0_12px_5px_rgba(202, 138, 4, 0.8)]' : 'border-purple-200'
+      selected ? 'border-purple-500' : 'border-purple-200'
     } min-w-[120px] min-h-[70px] relative`}>
          {/* Handles on all four sides */}
       <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
@@ -113,7 +113,7 @@ const ConclusionPredicateNode = ({ id, data, selected }: NodeProps) => {
 
   return (
     <div className={`px-4 py-3 shadow-md rounded-lg bg-purple-200 border-2 ${
-      selected ? 'border-purple-600 shadow-[0_0_12px_5px_rgba(202, 138, 4, 0.8)]' : 'border-purple-400'
+      selected ? 'border-purple-600' : 'border-purple-400'
     } min-w-[120px] min-h-[70px] relative`}>
          {/* Handles on all four sides */}
       <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
@@ -149,7 +149,7 @@ const MinorPremiseNode = ({ id, data, selected }: NodeProps) => {
 
   return (
     <div className={`px-4 py-3 shadow-md rounded-lg bg-gray-50 border-2 ${
-      selected ? 'border-gray-600 shadow-[0_0_12px_5px_rgba(202, 138, 4, 0.8)]' : 'border-black'
+      selected ? 'border-gray-600' : 'border-black'
     } min-w-[120px] min-h-[70px] relative`}>
          {/* Handles on all four sides */}
       <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
@@ -185,7 +185,7 @@ const MajorPremiseNode = ({ id, data, selected }: NodeProps) => {
 
   return (
     <div className={`px-4 py-3 shadow-md rounded-lg bg-blue-100 border-2 ${
-      selected ? 'border-blue-600 shadow-[0_0_12px_5px_rgba(202, 138, 4, 0.8)]' : 'border-blue-300'
+      selected ? 'border-blue-600' : 'border-blue-300'
     } min-w-[120px] min-h-[70px] relative`}>
          {/* Handles on all four sides */}
       <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
@@ -221,7 +221,7 @@ const BackingPremiseNode = ({ id, data, selected }: NodeProps) => {
 
   return (
     <div className={`px-4 py-3 shadow-md rounded-lg bg-gray-50 border-2 ${
-      selected ? 'border-gray-600 shadow-[0_0_12px_5px_rgba(202, 138, 4, 0.8)]' : 'border-gray-300'
+      selected ? 'border-gray-600' : 'border-gray-300'
     } min-w-[120px] min-h-[70px] relative`}>
          {/* Handles on all four sides */}
       <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
@@ -260,7 +260,7 @@ const AssumptionNode = ({ id, data, selected }: NodeProps) => {
 
   return (
     <div className={`px-4 py-3 shadow-md rounded-lg bg-red-100 border-2 ${
-      selected ? 'border-red-600 shadow-[0_0_12px_5px_rgba(202, 138, 4, 0.8)]' : 'border-red-300'
+      selected ? 'border-red-600' : 'border-red-300'
     } min-w-[280px] min-h-[100px] relative`}>
          {/* Handles on all four sides */}
       <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
@@ -304,7 +304,7 @@ const CounterclaimNode = ({ id, data, selected }: NodeProps) => {
 
   return (
     <div className={`px-4 py-3 shadow-md rounded-lg bg-gray-100 border-2 ${
-      selected ? 'border-red-600 shadow-[0_0_12px_5px_rgba(202, 138, 4, 0.8)]' : 'border-red-300'
+      selected ? 'border-red-600' : 'border-red-300'
     } min-w-[120px] min-h-[70px] relative`}>
           {/* Handles on all four sides */}
       <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
@@ -340,7 +340,7 @@ const CorrectAnswerNode = ({ id, data, selected }: NodeProps) => {
 
   return (
     <div className={`px-4 py-3 shadow-md rounded-lg bg-green-200 border-2 ${
-      selected ? 'border-green-600 shadow-[0_0_12px_5px_rgba(202, 138, 4, 0.8)]' : 'border-green-400'
+      selected ? 'border-green-600' : 'border-green-400'
     } min-w-[120px] min-h-[70px] relative`}>
          {/* Handles on all four sides */}
       <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
