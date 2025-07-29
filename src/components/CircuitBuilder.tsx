@@ -648,7 +648,8 @@ const CircuitBuilderFlow = () => {
             fitView
            >
             <Background color="#e2e8f0" gap={20} />
-            <Controls />
+            <Controls position="top-left"
+              />
            
             
             {nodes.length === 0 && (
