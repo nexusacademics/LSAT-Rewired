@@ -726,6 +726,9 @@ const CircuitBuilderFlow = () => {
               </Panel>
             )}
            
+          </ReactFlow>
+        </div>
+      </div>
 
       {/* Instructions Modal */}
       {showInstructions && (
