@@ -8,7 +8,6 @@ import ReactFlow, {
   MiniMap,
   useNodesState,
   useEdgesState,
-   BaseEdge, EdgeProps, getBezierPath, //NEW STUFF FOR EDGES 
   Connection,
   ConnectionMode,
   Panel,
