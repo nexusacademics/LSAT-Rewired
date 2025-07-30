@@ -13,6 +13,7 @@ import PerformanceTracker from './components/PerformanceTracker';
 import FloatingChatButton from './components/FloatingChatButton';
 import LoadingSpinner from './components/LoadingSpinner';
 import Navigation from './components/Navigation';
+import StudyScheduleBuilder from './components/StudyScheduleBuilder';
 
 // Import types
 import type { TestSession } from './types/user';
@@ -20,7 +21,7 @@ import type { ProcessedQuestion, ProcessedPrepTest } from './types/test-data'; /
 import { ThemeProvider, useTheme } from './contexts/ThemeContext'; // Import ThemeProvider and useTheme
 
 // Define view type
-type AppView = 'dashboard' | 'triple-review' | 'performance' | 'subscription';
+type AppView = 'dashboard' | 'triple-review' | 'performance' | 'studyscheduler' | 'subscription';
 
 // Define Message interface for chat history
 export interface Message { // Exported for use in FloatingChatButton
@@ -135,7 +136,9 @@ function AppContent() {
               processedPrepTest={processedPrepTest} // Pass the derived processedPrepTest
             />
           )}
-
+          {currentView === 'studyscheduler' && (
+  <StudyScheduleBuilder />
+)}
           {currentView === 'performance' && user && (
             <PerformanceTracker user={user} />
           )}

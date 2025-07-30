@@ -1,3 +1,19 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+input.dark-input,
+input.dark-input:-webkit-autofill,
+input.dark-input:-webkit-autofill:hover,
+input.dark-input:-webkit-autofill:focus,
+input.dark-input:-webkit-autofill:active {
+  background-color: #1f2937 !important;
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  box-shadow: 0 0 0px 1000px #1f2937 inset !important;
+  -webkit-box-shadow: 0 0 0px 1000px #1f2937 inset !important;
+  transition: background-color 9999s ease-in-out 0s !important;
+}
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  cursor: pointer;
+}

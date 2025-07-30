@@ -3,7 +3,7 @@ import { Brain, Target, TrendingUp, Menu, X } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import ThemeToggle from '../components/ui/ThemeToggle';
 
-type AppView = 'dashboard' | 'triple-review' | 'performance' | 'subscription';
+type AppView = 'dashboard' | 'triple-review' | 'performance' |'Study Scheduler'| 'subscription';
 
 interface NavigationProps {
   currentView: AppView;
@@ -76,6 +76,9 @@ export default function Navigation({ currentView, onViewChange, userStats }: Nav
             <NavButton active={currentView === 'performance'} onClick={() => handleLinkClick('performance')} theme={theme}>
               Performance
             </NavButton>
+            <NavButton active={currentView === 'studyscheduler'} onClick={() => handleLinkClick('studyscheduler')} theme={theme}>
+              Study Scheduler
+            </NavButton>
             <NavButton active={currentView === 'subscription'} onClick={() => handleLinkClick('subscription')} theme={theme}>
               Subscription
             </NavButton>
@@ -95,6 +98,9 @@ export default function Navigation({ currentView, onViewChange, userStats }: Nav
             </NavButton>
             <NavButton active={currentView === 'performance'} onClick={() => handleLinkClick('performance')} theme={theme}>
               Performance
+            </NavButton>
+              <NavButton active={currentView === 'studyscheduler'} onClick={() => handleLinkClick('studyscheduler')} theme={theme}>
+              Study Scheduler
             </NavButton>
             <NavButton active={currentView === 'subscription'} onClick={() => handleLinkClick('subscription')} theme={theme}>
               Subscription
@@ -119,7 +125,7 @@ export default function Navigation({ currentView, onViewChange, userStats }: Nav
         >
           <div
             ref={drawerRef}
-            className={`fixed left-0 top-0 w-64 h-full shadow-lg p-6 flex flex-col gap-4 transform transition-transform duration-300 ease-in-out ${
+            className={`fixed right-0 top-0 w-64 h-full shadow-lg p-6 flex flex-col gap-4 transform transition-transform duration-300 ease-in-out ${
               theme === 'dark' ? 'bg-gray-800' : 'bg-white'
             }`}
           >
@@ -135,7 +141,10 @@ export default function Navigation({ currentView, onViewChange, userStats }: Nav
             <NavButton active={currentView === 'performance'} onClick={() => handleLinkClick('performance')} theme={theme}>
               Performance
             </NavButton>
-            <NavButton active={currentView === 'subscription'} onClick={() => handleLinkClick('subscription')} theme={theme}>
+            <NavButton active={currentView === 'studyscheduler'} onClick={() => handleLinkClick('studyscheduler')} theme={theme}>
+              Study Scheduler
+            </NavButton>
+              <NavButton active={currentView === 'subscription'} onClick={() => handleLinkClick('subscription')} theme={theme}>
               Subscription
             </NavButton>
             <ThemeToggle />
