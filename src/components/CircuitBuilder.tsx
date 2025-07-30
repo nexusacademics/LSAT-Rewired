@@ -130,10 +130,17 @@ const ConclusionPredicateNode = ({ id, data, selected }: NodeProps) => {
       : undefined}
       >
          {/* Handles on all four sides */}
-      <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
-      <Handle type="target" position={Position.Left} id="left" className="w-3 h-3" />
-      <Handle type="source" position={Position.Bottom} id="bottom" className="w-3 h-3" />
-      <Handle type="source" position={Position.Right} id="right" className="w-3 h-3" />
+      <Handle type="target" position={Position.Top} id="top-target" className="w-3 h-3" />
+       <Handle type="source" position={Position.Top} id="top-source" className="w-3 h-3" />
+      
+       <Handle type="target" position={Position.Left} id="left-target" className="w-3 h-3" />
+       <Handle type="source" position={Position.Left} id="left-source" className="w-3 h-3" />
+      
+       <Handle type="target" position={Position.Bottom} id="bottom-target" className="w-3 h-3" />
+       <Handle type="source" position={Position.Bottom} id="bottom-source" className="w-3 h-3" />
+      
+       <Handle type="target" position={Position.Right} id="right-target" className="w-3 h-3" />
+       <Handle type="source" position={Position.Right} id="right-source" className="w-3 h-3" />
       <div className="text-xs font-medium mb-2 text-purple-900">Conclusion Predicate/Claim</div>
       <textarea
         ref={textareaRef}
@@ -143,7 +150,6 @@ const ConclusionPredicateNode = ({ id, data, selected }: NodeProps) => {
         placeholder="Click to edit"
         rows={1}
       />
-      <Handle type="source" position={Position.Bottom} className="w-3 h-3" />
     </div>
   );
 };
@@ -170,10 +176,17 @@ const MinorPremiseNode = ({ id, data, selected }: NodeProps) => {
       ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
       : undefined}>
          {/* Handles on all four sides */}
-      <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
-      <Handle type="target" position={Position.Left} id="left" className="w-3 h-3" />
-      <Handle type="source" position={Position.Bottom} id="bottom" className="w-3 h-3" />
-      <Handle type="source" position={Position.Right} id="right" className="w-3 h-3" />
+      <Handle type="target" position={Position.Top} id="top-target" className="w-3 h-3" />
+       <Handle type="source" position={Position.Top} id="top-source" className="w-3 h-3" />
+      
+       <Handle type="target" position={Position.Left} id="left-target" className="w-3 h-3" />
+       <Handle type="source" position={Position.Left} id="left-source" className="w-3 h-3" />
+      
+       <Handle type="target" position={Position.Bottom} id="bottom-target" className="w-3 h-3" />
+       <Handle type="source" position={Position.Bottom} id="bottom-source" className="w-3 h-3" />
+      
+       <Handle type="target" position={Position.Right} id="right-target" className="w-3 h-3" />
+       <Handle type="source" position={Position.Right} id="right-source" className="w-3 h-3" />
       <div className="text-xs font-medium mb-2 text-black">Minor Premise</div>
       <textarea
         ref={textareaRef}
@@ -183,7 +196,6 @@ const MinorPremiseNode = ({ id, data, selected }: NodeProps) => {
         placeholder="Click to edit"
         rows={1}
       />
-      <Handle type="source" position={Position.Bottom} className="w-3 h-3" />
     </div>
   );
 };
@@ -210,10 +222,17 @@ const MajorPremiseNode = ({ id, data, selected }: NodeProps) => {
       ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
       : undefined}>
          {/* Handles on all four sides */}
-      <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
-      <Handle type="target" position={Position.Left} id="left" className="w-3 h-3" />
-      <Handle type="source" position={Position.Bottom} id="bottom" className="w-3 h-3" />
-      <Handle type="source" position={Position.Right} id="right" className="w-3 h-3" />
+     <Handle type="target" position={Position.Top} id="top-target" className="w-3 h-3" />
+       <Handle type="source" position={Position.Top} id="top-source" className="w-3 h-3" />
+      
+       <Handle type="target" position={Position.Left} id="left-target" className="w-3 h-3" />
+       <Handle type="source" position={Position.Left} id="left-source" className="w-3 h-3" />
+      
+       <Handle type="target" position={Position.Bottom} id="bottom-target" className="w-3 h-3" />
+       <Handle type="source" position={Position.Bottom} id="bottom-source" className="w-3 h-3" />
+      
+       <Handle type="target" position={Position.Right} id="right-target" className="w-3 h-3" />
+       <Handle type="source" position={Position.Right} id="right-source" className="w-3 h-3" />
       <div className="text-xs font-medium mb-2 text-blue-800">Major Premise</div>
       <textarea
         ref={textareaRef}
@@ -223,7 +242,6 @@ const MajorPremiseNode = ({ id, data, selected }: NodeProps) => {
         placeholder="Click to edit"
         rows={1}
       />
-      <Handle type="source" position={Position.Bottom} className="w-3 h-3" />
     </div>
   );
 };
@@ -250,10 +268,17 @@ const BackingPremiseNode = ({ id, data, selected }: NodeProps) => {
       ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
       : undefined}>
          {/* Handles on all four sides */}
-      <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
-      <Handle type="target" position={Position.Left} id="left" className="w-3 h-3" />
-      <Handle type="source" position={Position.Bottom} id="bottom" className="w-3 h-3" />
-      <Handle type="source" position={Position.Right} id="right" className="w-3 h-3" />
+     <Handle type="target" position={Position.Top} id="top-target" className="w-3 h-3" />
+       <Handle type="source" position={Position.Top} id="top-source" className="w-3 h-3" />
+      
+       <Handle type="target" position={Position.Left} id="left-target" className="w-3 h-3" />
+       <Handle type="source" position={Position.Left} id="left-source" className="w-3 h-3" />
+      
+       <Handle type="target" position={Position.Bottom} id="bottom-target" className="w-3 h-3" />
+       <Handle type="source" position={Position.Bottom} id="bottom-source" className="w-3 h-3" />
+      
+       <Handle type="target" position={Position.Right} id="right-target" className="w-3 h-3" />
+       <Handle type="source" position={Position.Right} id="right-source" className="w-3 h-3" />
       <div className="text-xs font-medium mb-2 text-gray-800">Backing/Linking Premise</div>
       <textarea
         ref={textareaRef}
@@ -263,7 +288,6 @@ const BackingPremiseNode = ({ id, data, selected }: NodeProps) => {
         placeholder="Click to edit"
         rows={1}
       />
-      <Handle type="source" position={Position.Bottom} className="w-3 h-3" />
     </div>
   );
 };
@@ -303,11 +327,17 @@ const AssumptionNode = ({ id, data, selected }: NodeProps) => {
       ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
       : undefined}>
          {/* Handles on all four sides */}
-      <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
-      <Handle type="target" position={Position.Left} id="left" className="w-3 h-3" />
-      <Handle type="source" position={Position.Bottom} id="bottom" className="w-3 h-3" />
-      <Handle type="source" position={Position.Right} id="right" className="w-3 h-3" />
+     <Handle type="target" position={Position.Top} id="top-target" className="w-3 h-3" />
+       <Handle type="source" position={Position.Top} id="top-source" className="w-3 h-3" />
       
+       <Handle type="target" position={Position.Left} id="left-target" className="w-3 h-3" />
+       <Handle type="source" position={Position.Left} id="left-source" className="w-3 h-3" />
+      
+       <Handle type="target" position={Position.Bottom} id="bottom-target" className="w-3 h-3" />
+       <Handle type="source" position={Position.Bottom} id="bottom-source" className="w-3 h-3" />
+      
+       <Handle type="target" position={Position.Right} id="right-target" className="w-3 h-3" />
+       <Handle type="source" position={Position.Right} id="right-source" className="w-3 h-3" />
       <div className="text-xs font-medium mb-3 text-red-800">Assumption/Flaw</div>
       
       <div className="text-xs leading-relaxed text-red-800 space-y-2">
@@ -367,10 +397,17 @@ const CounterclaimNode = ({ id, data, selected }: NodeProps) => {
       ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
       : undefined}>
           {/* Handles on all four sides */}
-      <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
-      <Handle type="target" position={Position.Left} id="left" className="w-3 h-3" />
-      <Handle type="source" position={Position.Bottom} id="bottom" className="w-3 h-3" />
-      <Handle type="source" position={Position.Right} id="right" className="w-3 h-3" />
+     <Handle type="target" position={Position.Top} id="top-target" className="w-3 h-3" />
+       <Handle type="source" position={Position.Top} id="top-source" className="w-3 h-3" />
+      
+       <Handle type="target" position={Position.Left} id="left-target" className="w-3 h-3" />
+       <Handle type="source" position={Position.Left} id="left-source" className="w-3 h-3" />
+      
+       <Handle type="target" position={Position.Bottom} id="bottom-target" className="w-3 h-3" />
+       <Handle type="source" position={Position.Bottom} id="bottom-source" className="w-3 h-3" />
+      
+       <Handle type="target" position={Position.Right} id="right-target" className="w-3 h-3" />
+       <Handle type="source" position={Position.Right} id="right-source" className="w-3 h-3" />
       <div className="text-xs font-medium mb-2 text-red-800">Counterclaim/Concession</div>
       <textarea
         ref={textareaRef}
@@ -380,7 +417,6 @@ const CounterclaimNode = ({ id, data, selected }: NodeProps) => {
         placeholder="Click to edit"
         rows={1}
       />
-      <Handle type="source" position={Position.Bottom} className="w-3 h-3" />
     </div>
   );
 };
@@ -407,10 +443,17 @@ const CorrectAnswerNode = ({ id, data, selected }: NodeProps) => {
       ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
       : undefined}>
          {/* Handles on all four sides */}
-      <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
-      <Handle type="target" position={Position.Left} id="left" className="w-3 h-3" />
-      <Handle type="source" position={Position.Bottom} id="bottom" className="w-3 h-3" />
-      <Handle type="source" position={Position.Right} id="right" className="w-3 h-3" />
+  <Handle type="target" position={Position.Top} id="top-target" className="w-3 h-3" />
+       <Handle type="source" position={Position.Top} id="top-source" className="w-3 h-3" />
+      
+       <Handle type="target" position={Position.Left} id="left-target" className="w-3 h-3" />
+       <Handle type="source" position={Position.Left} id="left-source" className="w-3 h-3" />
+      
+       <Handle type="target" position={Position.Bottom} id="bottom-target" className="w-3 h-3" />
+       <Handle type="source" position={Position.Bottom} id="bottom-source" className="w-3 h-3" />
+      
+       <Handle type="target" position={Position.Right} id="right-target" className="w-3 h-3" />
+       <Handle type="source" position={Position.Right} id="right-source" className="w-3 h-3" />
       <div className="text-xs font-medium mb-2 text-green-800">Correct Answer</div>
       <textarea
         ref={textareaRef}
@@ -420,7 +463,6 @@ const CorrectAnswerNode = ({ id, data, selected }: NodeProps) => {
         placeholder="Click to edit"
         rows={1}
       />
-      <Handle type="source" position={Position.Bottom} className="w-3 h-3" />
     </div>
   );
 };
