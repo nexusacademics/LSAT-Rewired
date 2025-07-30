@@ -496,7 +496,7 @@ const CircuitBuilderFlow = () => {
       style: {
         stroke: '#64748b',
         strokeWidth: 2,
-         type: 'highlightable',
+        type: 'highlightable',
       },
     };
     setEdges((eds) => addEdge(newEdge, eds));
