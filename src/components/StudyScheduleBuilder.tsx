@@ -83,8 +83,7 @@ export default function StudyScheduleBuilder() {
             ✨ Generate My Schedule
           </button>
           
-          {/* Optional: Add a subtle accent element */}
-          <div className={`mt-6 h-1 rounded-full ${theme === 'dark' ? 'bg-gradient-to-r from-indigo-500 to-purple-500' : 'bg-gradient-to-r from-indigo-400 to-blue-400'}`}></div>
+        
         </div>
       </div>
     </div>
