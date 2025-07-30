@@ -725,7 +725,8 @@ const CircuitBuilderFlow = () => {
                 </div>
               </Panel>
             )}
-           <svg style={{ height: 0, width: 0 }}>
+     {/* SVG Markers for custom edges */}
+  <svg style={{ height: 0, width: 0 }}>
     <defs>
       {/* Unselected arrow marker */}
       <marker
@@ -733,7 +734,7 @@ const CircuitBuilderFlow = () => {
         markerWidth="10"
         markerHeight="10"
         viewBox="0 0 10 10"
-        refX="9"
+        refX="1"
         refY="3"
         orient="auto"
         markerUnits="strokeWidth"
@@ -750,7 +751,7 @@ const CircuitBuilderFlow = () => {
         markerWidth="10"
         markerHeight="10"
         viewBox="0 0 10 10"
-        refX="9"
+        refX="1"
         refY="3"
         orient="auto"
         markerUnits="strokeWidth"
