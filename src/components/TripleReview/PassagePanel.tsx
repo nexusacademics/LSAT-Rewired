@@ -15,7 +15,7 @@ interface PassagePanelProps {
   onClearPassageFormatting: React.MutableRefObject<(() => void) | null>;
   // New props for text size and line spacing
   textSize: 'small' | 'medium' | 'large';
-  lineSpacing: 'normal' | 'relaxed' | 'loose';
+  lineSpacing: 'normal' | 'loose' | 'relaxed';
 }
 
 export const PassagePanel: React.FC<PassagePanelProps> = ({
@@ -44,9 +44,9 @@ export const PassagePanel: React.FC<PassagePanelProps> = ({
   // Get line spacing classes
   const getLineSpacingClass = () => {
     switch (lineSpacing) {
-      case 'normal': return 'leading-relaxed';
-      case 'relaxed': return 'leading-loose';
-      case 'loose': return 'leading-8';
+       case 'normal': return 'leading-[1.5]';   // default "normal"
+  case 'relaxed': return 'leading-[1.85]'; // noticeably looser than relaxed
+  case 'loose': return 'leading-[2.2]';    // even more spaced
       default: return 'leading-relaxed';
     }
   };
