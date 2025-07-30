@@ -188,14 +188,14 @@ export const QuestionTracker: React.FC<QuestionTrackerProps> = ({
       <button
         onClick={onPreviousQuestion}
         disabled={session.currentQuestionIndex === 0}
-        className="px-3 py-1 text-blue-600 hover:bg-blue-50 rounded-md transition-colors text-xs disabled:opacity-50 disabled:cursor-not-allowed"
+        className="px-3 py-1 text-blue-600 hover:bg-blue-50 rounded-md transition-colors text-small disabled:opacity-50 disabled:cursor-not-allowed"
       >
         Previous
       </button>
       {isLastQuestionOfSection ? (
         <button
           onClick={() => onSubmitSection(false)}
-          className="px-3 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-xs flex items-center"
+          className="px-3 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-small flex items-center"
         >
           {isLastSection ? 'Finish Test' : (session.selectedSectionId ? 'Finish Section' : 'Next Section')}
           <ChevronRight className="h-3 w-3 ml-1" />
@@ -203,7 +203,7 @@ export const QuestionTracker: React.FC<QuestionTrackerProps> = ({
       ) : (
         <button
           onClick={onNextQuestion}
-          className="px-3 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-xs flex items-center"
+          className="px-3 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-small flex items-center"
         >
           Next
           <ChevronRight className="h-3 w-3 ml-1" />
