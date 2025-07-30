@@ -66,6 +66,7 @@ const ConclusionSubjectNode = ({ id, data, selected }: NodeProps) => {
   const edgeTypes = {
     highlightable: HighlightableEdge,
   };
+  
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setContent(e.target.value);
     data.onContentChange?.(id, e.target.value);
