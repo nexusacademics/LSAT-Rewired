@@ -320,6 +320,8 @@ const handleLineSpacingChange = (spacing: 'normal' | 'relaxed' | 'loose') => {
               // Add formatting props
               selectedTool={selectedTool}
               onClearPassageFormatting={clearPassageFormattingRef}
+              textSize={textSize}
+              lineSpacing={lineSpacing}
             />
             <div className="lg:col-span-2 h-full">
               <CircuitBuilder
