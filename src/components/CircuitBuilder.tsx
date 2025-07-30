@@ -484,26 +484,21 @@ const CircuitBuilderFlow = () => {
   // Handle edge connections
  const onConnect = useCallback(
   (params: Connection) => {
-    setEdges((eds) =>
-      addEdge(
-        {
-          ...params,
-          id: `edge-${params.source}-${params.target}`,
-          // You can add default arrow here
-          markerEnd: {
-            type: MarkerType.ArrowClosed,
-          },
-          style: {
-            stroke: '#64748b',
-            strokeWidth: 2,
-          },
-        },
-        eds
-      )
-    );
+    const newEdge: Edge = {
+      ...params,
+      id: `edge-${params.source}-${params.target}`,
+      markerEnd: { type: MarkerType.ArrowClosed },
+      data: { style: 'solid' },
+      style: {
+        stroke: '#64748b',
+        strokeWidth: 2,
+      },
+    };
+    setEdges((eds) => addEdge(newEdge, eds));
   },
   [setEdges]
 );
+
 
   // Calculate analysis score
   const calculateAnalysisScore = useCallback(() => {
