@@ -726,7 +726,7 @@ const CircuitBuilderFlow = () => {
             }}>
           <ReactFlow
             nodes={nodes}
-            edges={edges}
+            edges={styledEdges}
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
             onConnect={onConnect}
