@@ -532,7 +532,10 @@ const CircuitBuilderFlow = () => {
   const styledEdges = edges.map(edge => ({
       ...edge,
       style: selectedEdgeIds.has(edge.id)
-        ? { stroke: 'orange', strokeWidth: 4 }
+        ? {  stroke: '#FFD700', // bright yellow stroke
+        strokeWidth: 3,
+        filter: 'drop-shadow(0 0 8px #FFD700)', // yellow glow
+        transition: 'all 0.3s ease', }
         : edge.style || { stroke: '#64748b', strokeWidth: 2 },
     }));
   const onConnect = useCallback(
