@@ -683,8 +683,7 @@ const CircuitBuilderFlow = () => {
             }}>
           <ReactFlow
             nodes={nodes}
-            edgeTypes={edgeTypes}
-            edges={edges.map(e => ({ ...e, type: 'custom' }))}
+            edges={edges}
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
             onConnect={onConnect}
@@ -696,23 +695,7 @@ const CircuitBuilderFlow = () => {
             <Controls position="top-left"
               />
           
-            {/*Arrowhead definition*/}
-            <svg style={{ height: 0 }}>
-            <defs>
-              <marker
-                id="arrowhead"
-                markerWidth="10"
-                markerHeight="7"
-                viewBox="0 0 10 10"
-                refX="10"
-                refY="5"
-                orient="auto-start-reverse"
-                markerUnits="strokeWidth"
-              >
-                <path d="M 0 0 L 10 5 L 0 10 z" fill="#555" />
-              </marker>
-            </defs>
-          </svg>
+           
             
             {nodes.length === 0 && (
               <Panel position="center">
