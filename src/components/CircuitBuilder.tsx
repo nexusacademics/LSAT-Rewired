@@ -486,18 +486,18 @@ const CircuitBuilderFlow = () => {
   const [showInstructions, setShowInstructions] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const onPaneClick = useCallback(() => {
-  setSelectedEdgeIds(new Set());
-}, []);
+        setSelectedEdgeIds(new Set());
+      }, []);
   const onEdgeClick = useCallback(
-  (event: React.MouseEvent, edge: Edge) => {
-    event.stopPropagation();
-    setSelectedEdgeIds(new Set([edge.id])); // Deselect others, just this one
-  },
-  []
-);
+      (event: React.MouseEvent, edge: Edge) => {
+        event.stopPropagation();
+        setSelectedEdgeIds(new Set([edge.id])); // Deselect others, just this one
+      },
+      []
+    );
   const onNodeClick = useCallback(() => {
-  setSelectedEdgeIds(new Set());
-}, []);
+      setSelectedEdgeIds(new Set());
+    }, []);
   const { project } = useReactFlow();
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
 
