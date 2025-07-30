@@ -70,7 +70,7 @@ const HighlightableEdge = ({ id, sourceX, sourceY, targetX, targetY, selected, d
         markerEnd={`url(#${markerId})`}
         style={{
           stroke: edgeColor,
-          strokeWidth: selected ? 3 : 2,
+          strokeWidth: selected ? 5 : 2,
           strokeDasharray: isDashed ? '6 4' : 'none',
           filter: selected ? 'drop-shadow(0 0 4px #facc15)' : 'none',
           transition: 'stroke 0.2s, filter 0.2s',
