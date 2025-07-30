@@ -723,5 +723,26 @@ const CircuitBuilderWithProvider = () => {
     </ReactFlowProvider>
   );
 };
+export default function CustomEdge(props: EdgeProps) {
+  const { id, sourceX, sourceY, targetX, targetY, selected } = props;
+  const [edgePath] = getBezierPath({
+    sourceX,
+    sourceY,
+    targetX,
+    targetY,
+  });
 
+  return (
+    <>
+      <BaseEdge
+        id={id}
+        path={edgePath}
+        style={{
+          stroke: selected ? '#8b5cf6' : '#999',
+          strokeWidth: selected ? 3 : 2,
+        }}
+      />
+    </>
+  );
+}
 export default CircuitBuilderWithProvider;
