@@ -478,16 +478,17 @@ const nodeTypes = {
 };
 
 const CircuitBuilderFlow = () => {
-  // Rename setters here to avoid conflict with useReactFlow's methods
   const [nodes, setNodesState, onNodesChange] = useNodesState([]);
   const [edges, setEdgesState, onEdgesChange] = useEdgesState([]);
+  const [selectedEdgeIds, setSelectedEdgeIds] = useState<Set<string>>(new Set()); // <-- added this
   const [selectedNodeType, setSelectedNodeType] = useState<DiagramNode['type']>('conclusion-subject');
   const [analysisScore, setAnalysisScore] = useState(0);
   const [showInstructions, setShowInstructions] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
 
-  // UseReactFlow methods
   const { getSelectedElements } = useReactFlow();
+  const reactFlowWrapper = useRef<HTMLDivElement>(null);
+  const { project } = useReactFlow();
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -514,7 +515,6 @@ const CircuitBuilderFlow = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [getSelectedElements, setNodesState, setEdgesState]);
 
-  // Your existing callbacks (make sure setSelectedEdgeIds is defined somewhere)
   const onPaneClick = useCallback(() => {
     setSelectedEdgeIds(new Set());
   }, []);
@@ -522,6 +522,7 @@ const CircuitBuilderFlow = () => {
   const onNodeClick = useCallback(() => {
     setSelectedEdgeIds(new Set());
   }, []);
+
 
   const { project } = useReactFlow();
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
