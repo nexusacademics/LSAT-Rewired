@@ -493,10 +493,11 @@ const CircuitBuilderFlow = () => {
       id: `edge-${params.source}-${params.target}`,
       markerEnd: { type: MarkerType.ArrowClosed },
       data: { style: 'solid' },
+      type: 'highlightable',
       style: {
         stroke: '#64748b',
         strokeWidth: 2,
-        type: 'highlightable',
+       
       },
     };
     setEdges((eds) => addEdge(newEdge, eds));
