@@ -182,7 +182,8 @@ export const QuestionTracker: React.FC<QuestionTrackerProps> = ({
 </div>
 
       
-      <div className="flex space-x-2 max-w-full">
+     <div className="flex items-center justify-between space-x-4 overflow-x-auto">
+      <div className="flex space-x-2">
         {questionsInCurrentSection.map((q, index) => {
           const isCurrent = index === session.currentQuestionIndex;
           const isAnswered = session.answeredQuestions.hasOwnProperty(q.id);
@@ -246,6 +247,7 @@ export const QuestionTracker: React.FC<QuestionTrackerProps> = ({
                 </button>
               )}
             </div>
+     </div>
     </div>
   );
 };
