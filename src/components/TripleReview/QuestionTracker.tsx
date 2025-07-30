@@ -130,12 +130,12 @@ const ConcentricFlagIndicator: React.FC<{ flags: QuestionFlags; isAnswered: bool
 
       {/* Middle circle - Blind Review (Orange) */}
       {hasBlindReviewFlag && (
-        <div className="absolute inset-[3px] rounded-full bg-orange-500" />
+        <div className="absolute inset-[4px] rounded-full bg-orange-500" />
       )}
 
       {/* Inner circle - Timed Section (Yellow) */}
       {hasTimedFlag && (
-        <div className="absolute inset-[6px] rounded-full bg-yellow-500" />
+        <div className="absolute inset-[8px] rounded-full bg-yellow-500" />
       )}
 
       {/* Center content */}
