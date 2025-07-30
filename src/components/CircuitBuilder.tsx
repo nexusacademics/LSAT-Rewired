@@ -717,9 +717,6 @@ const CircuitBuilderFlow = () => {
             <Background color="#e2e8f0" gap={20} />
             <Controls position="top-left"
               />
-          
-           
-            
             {nodes.length === 0 && (
               <Panel position="center">
                 <div className="text-center text-slate-400 bg-white p-8 rounded-lg shadow-sm border border-slate-200">
@@ -728,6 +725,22 @@ const CircuitBuilderFlow = () => {
                 </div>
               </Panel>
             )}
+            <svg style={{ height: 0 }}>
+              <defs>
+                <marker
+                  id="reactflow__arrowclosed"
+                  markerWidth="20"
+                  markerHeight="20"
+                  viewBox="0 0 20 20"
+                  refX="10"
+                  refY="10"
+                  orient="auto"
+                  markerUnits="strokeWidth"
+                >
+                  <path d="M0,0 L20,10 L0,20 L6,10 L0,0" fill="#222" />
+                </marker>
+              </defs>
+            </svg>
           </ReactFlow>
         </div>
       </div>
