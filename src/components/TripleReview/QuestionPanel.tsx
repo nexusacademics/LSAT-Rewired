@@ -1,6 +1,6 @@
 // components/TripleReview/QuestionPanel.tsx
 import React from 'react';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff,  ChevronRight } from 'lucide-react';
 import { TestSession, ProcessedQuestion } from '../../App';
 
 interface QuestionPanelProps {
