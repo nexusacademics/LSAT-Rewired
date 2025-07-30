@@ -6,7 +6,7 @@ const HighlightableEdge = ({ id, sourceX, sourceY, targetX, targetY, selected, d
   const isDashed = data?.style === 'dashed';
   
   // How far back from the target handle the arrow tip should be placed
-  const HANDLE_RADIUS = 10;
+  const HANDLE_RADIUS = 5;
   
   // Compute vector from source to target
   const dx = targetX - sourceX;
