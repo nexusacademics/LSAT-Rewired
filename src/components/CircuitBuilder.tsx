@@ -20,6 +20,11 @@ import ReactFlow, {
 } from 'reactflow';
 import { ArrowLeft, Plus, Trash2, Save, RotateCcw, Info } from 'lucide-react';
 import 'reactflow/dist/style.css';
+import CustomEdge from './components/CustomEdge';
+
+const edgeTypes = {
+  custom: CustomEdge,
+};
 
 // Types matching your original structure
 interface DiagramNode {
