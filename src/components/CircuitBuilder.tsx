@@ -749,6 +749,8 @@ const CircuitBuilderFlow = () => {
             onEdgeClick={onEdgeClick}
             connectionMode={ConnectionMode.Loose}
             onPaneClick={onPaneClick}
+            onEdgeClick={onEdgeClick}
+            onNodeClick={onNodeClick}
             fitView
            >
             <Background color="#e2e8f0" gap={20} />
