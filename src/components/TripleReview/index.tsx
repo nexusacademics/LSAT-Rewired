@@ -1,5 +1,5 @@
 // components/TripleReview/index.tsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { TestSession, ProcessedPrepTest, ProcessedSection, ProcessedQuestion, Circuit } from '../../App';
 import CircuitBuilder from '../CircuitBuilder';
 import FloatingCircuitBuilderButton from '../FloatingCircuitBuilderButton';
@@ -11,7 +11,7 @@ import { QuestionTracker } from './QuestionTracker';
 import { StrategySummary } from './StrategySummary';
 import { SectionTransition } from './SectionTransition';
 import { PausedOverlay } from './PausedOverlay';
-import { PauseReviewPopup } from './PauseReviewPopup'; // Add this import
+import { PauseReviewPopup } from './PauseReviewPopup';
 import { useTimer } from '../../hooks/useTimer';
 import { useQuestionNavigation } from '../../hooks/useQuestionNavigation';
 import { useAnswerSelection } from '../../hooks/useAnswerSelection';
@@ -37,7 +37,6 @@ const TripleReview: React.FC<TripleReviewProps> = ({
   );
   const [isSectionTransitionTriggeredByTimer, setIsSectionTransitionTriggeredByTimer] = useState(false);
 
-  
   // Add pause popup state
   const [showPausePopup, setShowPausePopup] = useState(false);
   const [pauseReviewType, setPauseReviewType] = useState<'Blind Review' | 'Strategy Review'>('Blind Review');
@@ -45,6 +44,10 @@ const TripleReview: React.FC<TripleReviewProps> = ({
   const [hasDismissedTooltipForQuestion, setHasDismissedTooltipForQuestion] = useState(false);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [lastSavedScore, setLastSavedScore] = useState<number | undefined>();
+
+  // Add formatting toolbar state
+  const [selectedTool, setSelectedTool] = useState<string | null>(null);
+  const clearPassageFormattingRef = useRef<(() => void) | null>(null);
 
   // Determine sections and current question
   const currentSections: ProcessedSection[] = session.selectedSectionId
@@ -56,12 +59,25 @@ const TripleReview: React.FC<TripleReviewProps> = ({
   const questionsInCurrentSection = currentSectionData?.questions || [];
   const currentQuestionData = questionsInCurrentSection[session.currentQuestionIndex];
 
-  // Reset tooltip and success bubble when question changes
+  // Reset tooltip, success bubble, and formatting tool when question changes
   useEffect(() => {
     setHasDismissedTooltipForQuestion(false);
     setShowSuccessMessage(false);
     setLastSavedScore(undefined);
+    setSelectedTool(null); // Clear selected tool when navigating between questions
   }, [currentQuestionData?.id]);
+
+  // Formatting toolbar handlers
+  const handleToolSelect = (toolId: string | null) => {
+    setSelectedTool(selectedTool === toolId ? null : toolId);
+  };
+
+  const handleClearFormatting = () => {
+    if (clearPassageFormattingRef.current) {
+      clearPassageFormattingRef.current();
+    }
+    setSelectedTool(null);
+  };
 
   const getInitialTime = () => {
     const baseTime = 35 * 60;
@@ -75,14 +91,13 @@ const TripleReview: React.FC<TripleReviewProps> = ({
   };
 
   const handleSubmitSection = (triggeredByTimer: boolean = false) => {
-  if (triggeredByTimer) {
-    setIsSectionTransitionTriggeredByTimer(true);
-  } else {
-    setIsSectionTransitionTriggeredByTimer(false);
-  }
-  setShowSectionTransition(true);
-};
-
+    if (triggeredByTimer) {
+      setIsSectionTransitionTriggeredByTimer(true);
+    } else {
+      setIsSectionTransitionTriggeredByTimer(false);
+    }
+    setShowSectionTransition(true);
+  };
 
   // Handle pause button clicks - show popup instead of immediately exiting
   const handlePauseReview = () => {
@@ -111,8 +126,7 @@ const TripleReview: React.FC<TripleReviewProps> = ({
     initialTime: getInitialTime(),
     isRunning: isTimerRunning,
     onTimeUp: () => {
-      
-       setIsSectionTransitionTriggeredByTimer(true);
+      setIsSectionTransitionTriggeredByTimer(true);
       handleSubmitSection(true);
     },
     phase: session.phase
@@ -164,43 +178,43 @@ const TripleReview: React.FC<TripleReviewProps> = ({
   };
 
   const handleConfirmSectionSubmit = () => {
-  const nextSectionIndex = session.currentSectionIndex + 1;
-  const updatedCompletedSectionIds = [...session.completedSectionIds, currentSectionData.id];
+    const nextSectionIndex = session.currentSectionIndex + 1;
+    const updatedCompletedSectionIds = [...session.completedSectionIds, currentSectionData.id];
 
-  let updatedSession = { ...session };
-  if (session.phase === 'timed') {
-    updatedSession.timedAnswers = { ...session.answeredQuestions };
-  } else if (session.phase === 'blind-review') {
-    updatedSession.blindReviewAnswers = { ...session.answeredQuestions };
-  }
-  updatedSession.answeredQuestions = {};
-
-  if (nextSectionIndex < currentSections.length) {
-    onUpdateSession({
-      ...updatedSession,
-      currentSectionIndex: nextSectionIndex,
-      currentQuestionIndex: 0,
-      completedSectionIds: updatedCompletedSectionIds,
-    });
-    setShowSectionTransition(false);
-    setIsSectionTransitionTriggeredByTimer(false);
-    // Restart timer for next section if it was running
+    let updatedSession = { ...session };
     if (session.phase === 'timed') {
-      setIsTimerRunning(true);
+      updatedSession.timedAnswers = { ...session.answeredQuestions };
+    } else if (session.phase === 'blind-review') {
+      updatedSession.blindReviewAnswers = { ...session.answeredQuestions };
     }
-  } else {
-    const updatedCompletedPhases = [...session.completedPhases, session.phase];
-    onUpdateSession({
-      ...updatedSession,
-      endTime: new Date(),
-      completedSectionIds: updatedCompletedSectionIds,
-      completedPhases: updatedCompletedPhases,
-    });
-    setShowSectionTransition(false);
-    setIsSectionTransitionTriggeredByTimer(false);
-    onExitSession();
-  }
-};
+    updatedSession.answeredQuestions = {};
+
+    if (nextSectionIndex < currentSections.length) {
+      onUpdateSession({
+        ...updatedSession,
+        currentSectionIndex: nextSectionIndex,
+        currentQuestionIndex: 0,
+        completedSectionIds: updatedCompletedSectionIds,
+      });
+      setShowSectionTransition(false);
+      setIsSectionTransitionTriggeredByTimer(false);
+      // Restart timer for next section if it was running
+      if (session.phase === 'timed') {
+        setIsTimerRunning(true);
+      }
+    } else {
+      const updatedCompletedPhases = [...session.completedPhases, session.phase];
+      onUpdateSession({
+        ...updatedSession,
+        endTime: new Date(),
+        completedSectionIds: updatedCompletedSectionIds,
+        completedPhases: updatedCompletedPhases,
+      });
+      setShowSectionTransition(false);
+      setIsSectionTransitionTriggeredByTimer(false);
+      onExitSession();
+    }
+  };
 
   const isLastSection = session.currentSectionIndex === currentSections.length - 1;
 
@@ -244,7 +258,7 @@ const TripleReview: React.FC<TripleReviewProps> = ({
         timeRemaining={timeRemaining}
         onToggleTimer={() => setIsTimerRunning(!isTimerRunning)}
         onToggleFlag={() => handleToggleFlag(currentQuestionData.id)}
-        onExitSession={handlePauseReview} // Changed to show popup instead of immediate exit
+        onExitSession={handlePauseReview}
         onShowStrategySummary={() => setShowStrategySummary(true)}
         onEndSection={handleSubmitSection}
         onPreviousQuestion={handlePreviousQuestion}
@@ -252,10 +266,14 @@ const TripleReview: React.FC<TripleReviewProps> = ({
         onSubmitSection={handleSubmitSection}
         isLastQuestionOfSection={isLastQuestionOfSection}
         isLastSection={isLastSection}
+        // Add formatting toolbar props
+        selectedTool={selectedTool}
+        onToolSelect={handleToolSelect}
+        onClearFormatting={handleClearFormatting}
       />
 
       <div ref={mainContentRef} className="flex-1 p-6 overflow-y-auto">
-       {showSectionTransition && (
+        {showSectionTransition && (
           <SectionTransition
             session={session}
             isLastSection={isLastSection}
@@ -265,17 +283,17 @@ const TripleReview: React.FC<TripleReviewProps> = ({
             }}
             onConfirm={handleConfirmSectionSubmit}
             triggeredByTimer={isSectionTransitionTriggeredByTimer}
-            isTimedSession={session.phase === 'timed'} // ADD THIS
-            isCompleteTest={!session.selectedSectionId} // ADD THIS - true if no specific section selected
+            isTimedSession={session.phase === 'timed'}
+            isCompleteTest={!session.selectedSectionId}
           />
         )}
 
-           {session.phase === 'timed' && !isTimerRunning && !showSectionTransition && (
-              <PausedOverlay
-                  onResume={() => setIsTimerRunning(true)}
-                  onExit={onExitSession}
-                />
-            )}
+        {session.phase === 'timed' && !isTimerRunning && !showSectionTransition && (
+          <PausedOverlay
+            onResume={() => setIsTimerRunning(true)}
+            onExit={onExitSession}
+          />
+        )}
 
         {showCircuitBuilder && session.phase !== 'timed' ? (
           <div className="grid lg:grid-cols-3 gap-6 h-full">
@@ -287,6 +305,9 @@ const TripleReview: React.FC<TripleReviewProps> = ({
               existingCircuitForQuestion={existingCircuitForQuestion}
               onShowCircuitBuilder={() => setShowCircuitBuilder(true)}
               isCircuitBuilderOpen={showCircuitBuilder}
+              // Add formatting props
+              selectedTool={selectedTool}
+              onClearPassageFormatting={clearPassageFormattingRef}
             />
             <div className="lg:col-span-2 h-full">
               <CircuitBuilder
@@ -308,6 +329,9 @@ const TripleReview: React.FC<TripleReviewProps> = ({
               existingCircuitForQuestion={existingCircuitForQuestion}
               onShowCircuitBuilder={() => setShowCircuitBuilder(true)}
               isCircuitBuilderOpen={showCircuitBuilder}
+              // Add formatting props
+              selectedTool={selectedTool}
+              onClearPassageFormatting={clearPassageFormattingRef}
             />
 
             {session.phase !== 'timed' && (
