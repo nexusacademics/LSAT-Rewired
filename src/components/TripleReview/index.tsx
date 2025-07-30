@@ -58,7 +58,15 @@ const TripleReview: React.FC<TripleReviewProps> = ({
   console.log('Current section data:', currentSectionData);
   const questionsInCurrentSection = currentSectionData?.questions || [];
   const currentQuestionData = questionsInCurrentSection[session.currentQuestionIndex];
+  const [textSize, setTextSize] = useState<'small' | 'medium' | 'large'>('medium');
+  const [lineSpacing, setLineSpacing] = useState<'normal' | 'relaxed' | 'loose'>('normal');
+  const handleTextSizeChange = (size: 'small' | 'medium' | 'large') => {
+  setTextSize(size);
+};
 
+const handleLineSpacingChange = (spacing: 'normal' | 'relaxed' | 'loose') => {
+  setLineSpacing(spacing);
+};
   // Reset tooltip, success bubble, and formatting tool when question changes
   useEffect(() => {
     setHasDismissedTooltipForQuestion(false);
@@ -270,6 +278,10 @@ const TripleReview: React.FC<TripleReviewProps> = ({
         selectedTool={selectedTool}
         onToolSelect={handleToolSelect}
         onClearFormatting={handleClearFormatting}
+        textSize={textSize}
+        onTextSizeChange={handleTextSizeChange}
+        lineSpacing={lineSpacing}
+        onLineSpacingChange={handleLineSpacingChange}
       />
 
       <div ref={mainContentRef} className="flex-1 p-6 overflow-y-auto">
