@@ -122,7 +122,7 @@ const ConcentricFlagIndicator: React.FC<{ flags: QuestionFlags; isAnswered: bool
 
   // Multiple flags - concentric circles
   return (
-    <div className={`relative min-w-[36px] h-9 flex items-center justify-center rounded-full ${isCurrent ? 'ring-2 ring-purple-800' : ''}`}> {/* ← NEW: outer ring for active */}
+    <div className={`relative min-w-[344x] h-11 flex items-center justify-center rounded-full ${isCurrent ? 'ring-2 ring-purple-800' : ''}`}> {/* ← NEW: outer ring for active */}
       {/* Outermost circle - Strategy Planning (Red) */}
       {hasStrategyFlag && (
         <div className="absolute inset-0 rounded-full bg-red-500" />
