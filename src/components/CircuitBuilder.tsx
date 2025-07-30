@@ -513,6 +513,28 @@ const CircuitBuilderFlow = () => {
   }, [setNodes]);
 
   // Handle edge connections
+  const [selectedEdgeIds, setSelectedEdgeIds] = useState<Set<string>>(new Set());
+  const onEdgeClick = useCallback(
+    (event: React.MouseEvent, edge: Edge) => {
+      event.stopPropagation(); // Prevent React Flow canvas deselect
+      setSelectedEdgeIds(prev => {
+        const newSet = new Set(prev);
+        if (newSet.has(edge.id)) {
+          newSet.delete(edge.id);
+        } else {
+          newSet.add(edge.id);
+        }
+        return newSet;
+      });
+    },
+    []
+  );
+  const styledEdges = edges.map(edge => ({
+      ...edge,
+      style: selectedEdgeIds.has(edge.id)
+        ? { stroke: 'orange', strokeWidth: 4 }
+        : edge.style || { stroke: '#64748b', strokeWidth: 2 },
+    }));
   const onConnect = useCallback(
     (params: Connection) => {
       const edge: Edge = {
@@ -709,6 +731,7 @@ const CircuitBuilderFlow = () => {
             onEdgesChange={onEdgesChange}
             onConnect={onConnect}
             nodeTypes={nodeTypes}
+            onEdgeClick={onEdgeClick}
             connectionMode={ConnectionMode.Loose}
             fitView
            >
