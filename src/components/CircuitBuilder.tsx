@@ -661,7 +661,8 @@ const CircuitBuilderFlow = () => {
             }}>
           <ReactFlow
             nodes={nodes}
-            edges={edges}
+            edgeTypes={edgeTypes}
+            edges={edges.map(e => ({ ...e, type: 'custom' }))}
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
             onConnect={onConnect}
