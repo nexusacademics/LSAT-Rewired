@@ -73,10 +73,7 @@ const ConclusionSubjectNode = ({ id, data, selected }: NodeProps) => {
       textareaRef.current.style.height = textareaRef.current.scrollHeight + 'px';
     }
   };
- const edgeTypes = {
-    highlightable: HighlightableEdge,
-  };
-  
+
   return (
     <div className={`px-4 py-3 shadow-md rounded-lg bg-purple-50 border-2 ${
       selected ? 'border-purple-500' : 'border-purple-200'
