@@ -479,8 +479,8 @@ const nodeTypes = {
 
 // Main Circuit Builder Component
 const CircuitBuilderFlow = () => {
-  const [nodes, setNodesState, onNodesChange] = useNodesState([]);
-  const [edges, setEdgesState, onEdgesChange] = useEdgesState([]);
+  const [nodes, setNodes, onNodesChange] = useNodesState([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [selectedNodeType, setSelectedNodeType] = useState<DiagramNode['type']>('conclusion-subject');
   const [analysisScore, setAnalysisScore] = useState(0);
   const [showInstructions, setShowInstructions] = useState(false);
@@ -501,10 +501,10 @@ const CircuitBuilderFlow = () => {
           const selectedEdgeIds = selected.filter(el => el.id && el.source !== undefined).map(el => el.id);
 
           if (selectedNodeIds.length > 0) {
-            setNodesState((nds) => nds.filter((node) => !selectedNodeIds.includes(node.id)));
+            setNodes((nds) => nds.filter((node) => !selectedNodeIds.includes(node.id)));
           }
           if (selectedEdgeIds.length > 0) {
-            setEdgesState((eds) => eds.filter((edge) => !selectedEdgeIds.includes(edge.id)));
+            setEdges((eds) => eds.filter((edge) => !selectedEdgeIds.includes(edge.id)));
           }
         }
       }
@@ -512,7 +512,7 @@ const CircuitBuilderFlow = () => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [getSelectedElements, setNodesState, setEdgesState]);
+  }, [getSelectedElements, setNodes, setEdges]);
   
   const onPaneClick = useCallback(() => {
         setSelectedEdgeIds(new Set());
