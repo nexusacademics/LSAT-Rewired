@@ -57,12 +57,7 @@ interface TestSession {
     }
   };
 }
-
-// Custom Node Components
-const ConclusionSubjectNode = ({ id, data, selected }: NodeProps) => {
-  const [content, setContent] = useState(data.content || '');
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const onPaneClick = useCallback(() => {
+const onPaneClick = useCallback(() => {
   setSelectedEdgeIds(new Set());
 }, []);
   const onEdgeClick = useCallback(
@@ -75,6 +70,10 @@ const ConclusionSubjectNode = ({ id, data, selected }: NodeProps) => {
   const onNodeClick = useCallback(() => {
   setSelectedEdgeIds(new Set());
 }, []);
+// Custom Node Components
+const ConclusionSubjectNode = ({ id, data, selected }: NodeProps) => {
+  const [content, setContent] = useState(data.content || '');
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setContent(e.target.value);
     data.onContentChange?.(id, e.target.value);
