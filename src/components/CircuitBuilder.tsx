@@ -617,7 +617,7 @@ const CircuitBuilderFlow = () => {
   }, [setNodes, setEdges]);
 
   return (
-   <div className="flex flex-col bg-slate-50 max-h-400">
+   <div className="flex flex-col bg-slate-50">
       {/* Header */}
       <div className="bg-white border-b border-slate-200 px-6 py-4">
         <div className="flex items-center justify-between">
@@ -658,7 +658,7 @@ const CircuitBuilderFlow = () => {
         </div>
       </div>
 
-      <div className="flex-1 flex h-[calc(100vh-72px)]  overflow-hidden">
+      <div className="flex-1 flex h-[calc(100vh)]  overflow-hidden">
                 {/* Sidebar */}
         <div className="w-56 bg-white border-r border-slate-200 p-4 space-y-6 overflow-y-auto">
           <div>
