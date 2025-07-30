@@ -12,7 +12,7 @@ interface PassagePanelProps {
   isCircuitBuilderOpen: boolean;
   // New props for formatting
   selectedTool: string | null;
-  onClearPassageFormatting: () => void;
+  onClearPassageFormatting: React.MutableRefObject<(() => void) | null>;
 }
 
 export const PassagePanel: React.FC<PassagePanelProps> = ({
