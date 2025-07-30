@@ -59,7 +59,7 @@ const TripleReview: React.FC<TripleReviewProps> = ({
   const questionsInCurrentSection = currentSectionData?.questions || [];
   const currentQuestionData = questionsInCurrentSection[session.currentQuestionIndex];
   const [textSize, setTextSize] = useState<'small' | 'medium' | 'large'>('medium');
-  const [lineSpacing, setLineSpacing] = useState<'normal' | 'relaxed' | 'loose'>('normal');
+  const [lineSpacing, setLineSpacing] = useState<'normal' | 'relaxed' | 'loose'>('relaxed');
   const handleTextSizeChange = (size: 'small' | 'medium' | 'large') => {
   setTextSize(size);
 };
