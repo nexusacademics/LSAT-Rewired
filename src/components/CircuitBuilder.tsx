@@ -57,12 +57,10 @@ interface TestSession {
     }
   };
 }
-
 // Custom Node Components
 const ConclusionSubjectNode = ({ id, data, selected }: NodeProps) => {
   const [content, setContent] = useState(data.content || '');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setContent(e.target.value);
     data.onContentChange?.(id, e.target.value);
@@ -83,10 +81,17 @@ const ConclusionSubjectNode = ({ id, data, selected }: NodeProps) => {
       : undefined
   }>
          {/* Handles on all four sides */}
-      <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
-      <Handle type="target" position={Position.Left} id="left" className="w-3 h-3" />
-      <Handle type="source" position={Position.Bottom} id="bottom" className="w-3 h-3" />
-      <Handle type="source" position={Position.Right} id="right" className="w-3 h-3" />
+       <Handle type="target" position={Position.Top} id="top-target" className="w-3 h-3" />
+       <Handle type="source" position={Position.Top} id="top-source" className="w-3 h-3" />
+      
+       <Handle type="target" position={Position.Left} id="left-target" className="w-3 h-3" />
+       <Handle type="source" position={Position.Left} id="left-source" className="w-3 h-3" />
+      
+       <Handle type="target" position={Position.Bottom} id="bottom-target" className="w-3 h-3" />
+       <Handle type="source" position={Position.Bottom} id="bottom-source" className="w-3 h-3" />
+      
+       <Handle type="target" position={Position.Right} id="right-target" className="w-3 h-3" />
+       <Handle type="source" position={Position.Right} id="right-source" className="w-3 h-3" />
       <div className="text-xs font-medium mb-2 text-purple-700">Conclusion Subject</div>
       <textarea
         ref={textareaRef}
@@ -96,7 +101,6 @@ const ConclusionSubjectNode = ({ id, data, selected }: NodeProps) => {
         placeholder="Click to edit"
         rows={1}
       />
-      <Handle type="source" position={Position.Bottom} className="w-3 h-3" />
     </div>
   );
 };
@@ -124,10 +128,17 @@ const ConclusionPredicateNode = ({ id, data, selected }: NodeProps) => {
       : undefined}
       >
          {/* Handles on all four sides */}
-      <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
-      <Handle type="target" position={Position.Left} id="left" className="w-3 h-3" />
-      <Handle type="source" position={Position.Bottom} id="bottom" className="w-3 h-3" />
-      <Handle type="source" position={Position.Right} id="right" className="w-3 h-3" />
+      <Handle type="target" position={Position.Top} id="top-target" className="w-3 h-3" />
+       <Handle type="source" position={Position.Top} id="top-source" className="w-3 h-3" />
+      
+       <Handle type="target" position={Position.Left} id="left-target" className="w-3 h-3" />
+       <Handle type="source" position={Position.Left} id="left-source" className="w-3 h-3" />
+      
+       <Handle type="target" position={Position.Bottom} id="bottom-target" className="w-3 h-3" />
+       <Handle type="source" position={Position.Bottom} id="bottom-source" className="w-3 h-3" />
+      
+       <Handle type="target" position={Position.Right} id="right-target" className="w-3 h-3" />
+       <Handle type="source" position={Position.Right} id="right-source" className="w-3 h-3" />
       <div className="text-xs font-medium mb-2 text-purple-900">Conclusion Predicate/Claim</div>
       <textarea
         ref={textareaRef}
@@ -137,7 +148,6 @@ const ConclusionPredicateNode = ({ id, data, selected }: NodeProps) => {
         placeholder="Click to edit"
         rows={1}
       />
-      <Handle type="source" position={Position.Bottom} className="w-3 h-3" />
     </div>
   );
 };
@@ -164,10 +174,17 @@ const MinorPremiseNode = ({ id, data, selected }: NodeProps) => {
       ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
       : undefined}>
          {/* Handles on all four sides */}
-      <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
-      <Handle type="target" position={Position.Left} id="left" className="w-3 h-3" />
-      <Handle type="source" position={Position.Bottom} id="bottom" className="w-3 h-3" />
-      <Handle type="source" position={Position.Right} id="right" className="w-3 h-3" />
+      <Handle type="target" position={Position.Top} id="top-target" className="w-3 h-3" />
+       <Handle type="source" position={Position.Top} id="top-source" className="w-3 h-3" />
+      
+       <Handle type="target" position={Position.Left} id="left-target" className="w-3 h-3" />
+       <Handle type="source" position={Position.Left} id="left-source" className="w-3 h-3" />
+      
+       <Handle type="target" position={Position.Bottom} id="bottom-target" className="w-3 h-3" />
+       <Handle type="source" position={Position.Bottom} id="bottom-source" className="w-3 h-3" />
+      
+       <Handle type="target" position={Position.Right} id="right-target" className="w-3 h-3" />
+       <Handle type="source" position={Position.Right} id="right-source" className="w-3 h-3" />
       <div className="text-xs font-medium mb-2 text-black">Minor Premise</div>
       <textarea
         ref={textareaRef}
@@ -177,7 +194,6 @@ const MinorPremiseNode = ({ id, data, selected }: NodeProps) => {
         placeholder="Click to edit"
         rows={1}
       />
-      <Handle type="source" position={Position.Bottom} className="w-3 h-3" />
     </div>
   );
 };
@@ -204,10 +220,17 @@ const MajorPremiseNode = ({ id, data, selected }: NodeProps) => {
       ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
       : undefined}>
          {/* Handles on all four sides */}
-      <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
-      <Handle type="target" position={Position.Left} id="left" className="w-3 h-3" />
-      <Handle type="source" position={Position.Bottom} id="bottom" className="w-3 h-3" />
-      <Handle type="source" position={Position.Right} id="right" className="w-3 h-3" />
+     <Handle type="target" position={Position.Top} id="top-target" className="w-3 h-3" />
+       <Handle type="source" position={Position.Top} id="top-source" className="w-3 h-3" />
+      
+       <Handle type="target" position={Position.Left} id="left-target" className="w-3 h-3" />
+       <Handle type="source" position={Position.Left} id="left-source" className="w-3 h-3" />
+      
+       <Handle type="target" position={Position.Bottom} id="bottom-target" className="w-3 h-3" />
+       <Handle type="source" position={Position.Bottom} id="bottom-source" className="w-3 h-3" />
+      
+       <Handle type="target" position={Position.Right} id="right-target" className="w-3 h-3" />
+       <Handle type="source" position={Position.Right} id="right-source" className="w-3 h-3" />
       <div className="text-xs font-medium mb-2 text-blue-800">Major Premise</div>
       <textarea
         ref={textareaRef}
@@ -217,7 +240,6 @@ const MajorPremiseNode = ({ id, data, selected }: NodeProps) => {
         placeholder="Click to edit"
         rows={1}
       />
-      <Handle type="source" position={Position.Bottom} className="w-3 h-3" />
     </div>
   );
 };
@@ -244,10 +266,17 @@ const BackingPremiseNode = ({ id, data, selected }: NodeProps) => {
       ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
       : undefined}>
          {/* Handles on all four sides */}
-      <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
-      <Handle type="target" position={Position.Left} id="left" className="w-3 h-3" />
-      <Handle type="source" position={Position.Bottom} id="bottom" className="w-3 h-3" />
-      <Handle type="source" position={Position.Right} id="right" className="w-3 h-3" />
+     <Handle type="target" position={Position.Top} id="top-target" className="w-3 h-3" />
+       <Handle type="source" position={Position.Top} id="top-source" className="w-3 h-3" />
+      
+       <Handle type="target" position={Position.Left} id="left-target" className="w-3 h-3" />
+       <Handle type="source" position={Position.Left} id="left-source" className="w-3 h-3" />
+      
+       <Handle type="target" position={Position.Bottom} id="bottom-target" className="w-3 h-3" />
+       <Handle type="source" position={Position.Bottom} id="bottom-source" className="w-3 h-3" />
+      
+       <Handle type="target" position={Position.Right} id="right-target" className="w-3 h-3" />
+       <Handle type="source" position={Position.Right} id="right-source" className="w-3 h-3" />
       <div className="text-xs font-medium mb-2 text-gray-800">Backing/Linking Premise</div>
       <textarea
         ref={textareaRef}
@@ -257,7 +286,6 @@ const BackingPremiseNode = ({ id, data, selected }: NodeProps) => {
         placeholder="Click to edit"
         rows={1}
       />
-      <Handle type="source" position={Position.Bottom} className="w-3 h-3" />
     </div>
   );
 };
@@ -297,11 +325,17 @@ const AssumptionNode = ({ id, data, selected }: NodeProps) => {
       ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
       : undefined}>
          {/* Handles on all four sides */}
-      <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
-      <Handle type="target" position={Position.Left} id="left" className="w-3 h-3" />
-      <Handle type="source" position={Position.Bottom} id="bottom" className="w-3 h-3" />
-      <Handle type="source" position={Position.Right} id="right" className="w-3 h-3" />
+     <Handle type="target" position={Position.Top} id="top-target" className="w-3 h-3" />
+       <Handle type="source" position={Position.Top} id="top-source" className="w-3 h-3" />
       
+       <Handle type="target" position={Position.Left} id="left-target" className="w-3 h-3" />
+       <Handle type="source" position={Position.Left} id="left-source" className="w-3 h-3" />
+      
+       <Handle type="target" position={Position.Bottom} id="bottom-target" className="w-3 h-3" />
+       <Handle type="source" position={Position.Bottom} id="bottom-source" className="w-3 h-3" />
+      
+       <Handle type="target" position={Position.Right} id="right-target" className="w-3 h-3" />
+       <Handle type="source" position={Position.Right} id="right-source" className="w-3 h-3" />
       <div className="text-xs font-medium mb-3 text-red-800">Assumption/Flaw</div>
       
       <div className="text-xs leading-relaxed text-red-800 space-y-2">
@@ -361,10 +395,17 @@ const CounterclaimNode = ({ id, data, selected }: NodeProps) => {
       ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
       : undefined}>
           {/* Handles on all four sides */}
-      <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
-      <Handle type="target" position={Position.Left} id="left" className="w-3 h-3" />
-      <Handle type="source" position={Position.Bottom} id="bottom" className="w-3 h-3" />
-      <Handle type="source" position={Position.Right} id="right" className="w-3 h-3" />
+     <Handle type="target" position={Position.Top} id="top-target" className="w-3 h-3" />
+       <Handle type="source" position={Position.Top} id="top-source" className="w-3 h-3" />
+      
+       <Handle type="target" position={Position.Left} id="left-target" className="w-3 h-3" />
+       <Handle type="source" position={Position.Left} id="left-source" className="w-3 h-3" />
+      
+       <Handle type="target" position={Position.Bottom} id="bottom-target" className="w-3 h-3" />
+       <Handle type="source" position={Position.Bottom} id="bottom-source" className="w-3 h-3" />
+      
+       <Handle type="target" position={Position.Right} id="right-target" className="w-3 h-3" />
+       <Handle type="source" position={Position.Right} id="right-source" className="w-3 h-3" />
       <div className="text-xs font-medium mb-2 text-red-800">Counterclaim/Concession</div>
       <textarea
         ref={textareaRef}
@@ -374,7 +415,6 @@ const CounterclaimNode = ({ id, data, selected }: NodeProps) => {
         placeholder="Click to edit"
         rows={1}
       />
-      <Handle type="source" position={Position.Bottom} className="w-3 h-3" />
     </div>
   );
 };
@@ -401,10 +441,17 @@ const CorrectAnswerNode = ({ id, data, selected }: NodeProps) => {
       ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
       : undefined}>
          {/* Handles on all four sides */}
-      <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
-      <Handle type="target" position={Position.Left} id="left" className="w-3 h-3" />
-      <Handle type="source" position={Position.Bottom} id="bottom" className="w-3 h-3" />
-      <Handle type="source" position={Position.Right} id="right" className="w-3 h-3" />
+  <Handle type="target" position={Position.Top} id="top-target" className="w-3 h-3" />
+       <Handle type="source" position={Position.Top} id="top-source" className="w-3 h-3" />
+      
+       <Handle type="target" position={Position.Left} id="left-target" className="w-3 h-3" />
+       <Handle type="source" position={Position.Left} id="left-source" className="w-3 h-3" />
+      
+       <Handle type="target" position={Position.Bottom} id="bottom-target" className="w-3 h-3" />
+       <Handle type="source" position={Position.Bottom} id="bottom-source" className="w-3 h-3" />
+      
+       <Handle type="target" position={Position.Right} id="right-target" className="w-3 h-3" />
+       <Handle type="source" position={Position.Right} id="right-source" className="w-3 h-3" />
       <div className="text-xs font-medium mb-2 text-green-800">Correct Answer</div>
       <textarea
         ref={textareaRef}
@@ -414,7 +461,6 @@ const CorrectAnswerNode = ({ id, data, selected }: NodeProps) => {
         placeholder="Click to edit"
         rows={1}
       />
-      <Handle type="source" position={Position.Bottom} className="w-3 h-3" />
     </div>
   );
 };
@@ -439,7 +485,12 @@ const CircuitBuilderFlow = () => {
   const [analysisScore, setAnalysisScore] = useState(0);
   const [showInstructions, setShowInstructions] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
-  
+  const onPaneClick = useCallback(() => {
+        setSelectedEdgeIds(new Set());
+      }, []);
+  const onNodeClick = useCallback(() => {
+      setSelectedEdgeIds(new Set());
+    }, []);
   const { project } = useReactFlow();
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
 
@@ -465,6 +516,31 @@ const CircuitBuilderFlow = () => {
   }, [setNodes]);
 
   // Handle edge connections
+  const [selectedEdgeIds, setSelectedEdgeIds] = useState<Set<string>>(new Set());
+  const onEdgeClick = useCallback(
+    (event: React.MouseEvent, edge: Edge) => {
+      event.stopPropagation(); // Prevent React Flow canvas deselect
+      setSelectedEdgeIds(prev => {
+        const newSet = new Set(prev);
+        if (newSet.has(edge.id)) {
+          newSet.delete(edge.id);
+        } else {
+          newSet.add(edge.id);
+        }
+        return newSet;
+      });
+    },
+    []
+  );
+  const styledEdges = edges.map(edge => ({
+      ...edge,
+      style: selectedEdgeIds.has(edge.id)
+        ? {  stroke: '#FFD700', // bright yellow stroke
+        strokeWidth: 3,
+        filter: 'drop-shadow(0 0 8px #FFD700)', // yellow glow
+        transition: 'all 0.3s ease', }
+        : edge.style || { stroke: '#64748b', strokeWidth: 2 },
+    }));
   const onConnect = useCallback(
     (params: Connection) => {
       const edge: Edge = {
@@ -656,13 +732,18 @@ const CircuitBuilderFlow = () => {
             }}>
           <ReactFlow
             nodes={nodes}
-            edges={edges}
+            edges={styledEdges}
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
             onConnect={onConnect}
             nodeTypes={nodeTypes}
+            onEdgeClick={onEdgeClick}
             connectionMode={ConnectionMode.Loose}
+            onPaneClick={onPaneClick}
+            onEdgeClick={onEdgeClick}
+            onNodeClick={onNodeClick}
             fitView
+            defaultViewport={{ x: 0, y: 0, zoom: 1.5 }}
            >
             <Background color="#e2e8f0" gap={20} />
             <Controls position="top-left"
