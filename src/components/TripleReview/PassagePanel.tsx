@@ -93,16 +93,24 @@ export const PassagePanel: React.FC<PassagePanelProps> = ({
     // More complex multi-node selection
     const extracted = range.extractContents();
 
-    const walker = document.createTreeWalker(extracted, NodeFilter.SHOW_TEXT);
-    let node: Node | null;
+   const walker = document.createTreeWalker(extracted, NodeFilter.SHOW_TEXT);
+let node: Node | null;
 
-    while ((node = walker.nextNode())) {
-      const parent = node.parentElement;
-      if (parent?.classList.contains('formatted-text')) {
-        const unwrapped = document.createTextNode(node.textContent || '');
-        parent.replaceWith(unwrapped);
+while ((node = walker.nextNode())) {
+  const parent = node.parentElement;
+  if (parent?.classList.contains('formatted-text')) {
+    const grandParent = parent.parentNode;
+    if (grandParent) {
+      const unwrapped = document.createTextNode(node.textContent || '');
+      grandParent.insertBefore(unwrapped, parent);
+      parent.removeChild(node);
+      if (!parent.hasChildNodes()) {
+        parent.remove(); // remove empty span
       }
     }
+  }
+}
+
 
     range.insertNode(extracted);
   }
