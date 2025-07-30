@@ -17,7 +17,6 @@ import ReactFlow, {
   MarkerType,
   useReactFlow,
   ReactFlowProvider,
-  MarkerType, 
 } from 'reactflow';
 import { ArrowLeft, Plus, Trash2, Save, RotateCcw, Info } from 'lucide-react';
 import 'reactflow/dist/style.css';
