@@ -469,7 +469,7 @@ const CircuitBuilderFlow = () => {
     (params: Connection) => {
       const edge: Edge = {
         ...params,
-        id: edge-${params.source}-${params.target},
+        id: `edge-${params.source}-${params.target}`,
         markerEnd: { type: MarkerType.ArrowClosed },
         style: { stroke: '#64748b', strokeWidth: 2 },
       };
