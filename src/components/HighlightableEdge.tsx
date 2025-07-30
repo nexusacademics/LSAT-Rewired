@@ -44,25 +44,7 @@ const HighlightableEdge = ({ id, sourceX, sourceY, targetX, targetY, selected, d
   
   return (
     <>
-      {/* Create the SVG marker dynamically for this edge */}
-      <svg style={{ height: 0, width: 0, position: 'absolute' }}>
-        <defs>
-          <marker
-            id={markerId}
-            markerWidth="10"
-            markerHeight="10"
-            viewBox="0 0 10 10"
-            refX="1"
-            refY="5"
-            orient={`${angle}deg`}
-          >
-            <path
-              d="M0,2 L8,5 L0,8 L2,5 z"
-              fill={edgeColor}
-            />
-          </marker>
-        </defs>
-      </svg>
+     
       
       <BaseEdge
         id={id}
