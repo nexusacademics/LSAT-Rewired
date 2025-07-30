@@ -486,33 +486,29 @@ const CircuitBuilderFlow = () => {
   const [showInstructions, setShowInstructions] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
    // UseReactFlow gives access to graph state and helpers
-  const { project } = useReactFlow();
-  const selectedElements = useStore((store) => {
-  const selectedNodes = store.getNodes().filter((n) => n.selected);
-  const selectedEdges = store.getEdges().filter((e) => e.selected);
-  return [...selectedNodes, ...selectedEdges];
-});
+  const { getNodes, getEdges, setNodes, setEdges, project } = useReactFlow();
  useEffect(() => {
   const handleKeyDown = (event: KeyboardEvent) => {
-    if ((event.key === 'Delete' || event.key === 'Backspace') && selectedElements.length > 0) {
-      event.preventDefault();
+    if (event.key === 'Delete' || event.key === 'Backspace') {
+      const selectedNodes = getNodes().filter((node) => node.selected);
+      const selectedEdges = getEdges().filter((edge) => edge.selected);
 
-      const selectedNodeIds = selectedElements.filter(el => el.source === undefined).map(el => el.id);
-      const selectedEdgeIds = selectedElements.filter(el => el.source !== undefined).map(el => el.id);
+      if (selectedNodes.length || selectedEdges.length) {
+        event.preventDefault(); // Prevent browser default Backspace nav
 
-      if (selectedNodeIds.length > 0) {
-        setNodes(prevNodes => prevNodes.filter(n => !selectedNodeIds.includes(n.id)));
-      }
-
-      if (selectedEdgeIds.length > 0) {
-        setEdges(prevEdges => prevEdges.filter(e => !selectedEdgeIds.includes(e.id)));
+        setNodes((nodes) =>
+          nodes.filter((node) => !selectedNodes.some((sel) => sel.id === node.id))
+        );
+        setEdges((edges) =>
+          edges.filter((edge) => !selectedEdges.some((sel) => sel.id === edge.id))
+        );
       }
     }
   };
 
   window.addEventListener('keydown', handleKeyDown);
   return () => window.removeEventListener('keydown', handleKeyDown);
-}, [selectedElements, setNodes, setEdges]);
+}, [getNodes, getEdges, setNodes, setEdges]);
   
   const onPaneClick = useCallback(() => {
         setSelectedEdgeIds(new Set());
