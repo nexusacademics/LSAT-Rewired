@@ -374,7 +374,7 @@ const handleLineSpacingChange = (spacing: 'normal' | 'loose' | 'relaxed') => {
         session={session}
         questionsInCurrentSection={questionsInCurrentSection}
         onQuestionJump={handleQuestionJump}
-         onExitSession={handlePauseReview}
+        onExitSession={handlePauseReview}
         onEndSection={handleSubmitSection}
         onPreviousQuestion={handlePreviousQuestion}
         onNextQuestion={handleNextQuestion}
