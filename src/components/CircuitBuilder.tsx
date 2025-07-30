@@ -57,19 +57,6 @@ interface TestSession {
     }
   };
 }
-const onPaneClick = useCallback(() => {
-  setSelectedEdgeIds(new Set());
-}, []);
-  const onEdgeClick = useCallback(
-  (event: React.MouseEvent, edge: Edge) => {
-    event.stopPropagation();
-    setSelectedEdgeIds(new Set([edge.id])); // Deselect others, just this one
-  },
-  []
-);
-  const onNodeClick = useCallback(() => {
-  setSelectedEdgeIds(new Set());
-}, []);
 // Custom Node Components
 const ConclusionSubjectNode = ({ id, data, selected }: NodeProps) => {
   const [content, setContent] = useState(data.content || '');
@@ -498,7 +485,19 @@ const CircuitBuilderFlow = () => {
   const [analysisScore, setAnalysisScore] = useState(0);
   const [showInstructions, setShowInstructions] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
-  
+  const onPaneClick = useCallback(() => {
+  setSelectedEdgeIds(new Set());
+}, []);
+  const onEdgeClick = useCallback(
+  (event: React.MouseEvent, edge: Edge) => {
+    event.stopPropagation();
+    setSelectedEdgeIds(new Set([edge.id])); // Deselect others, just this one
+  },
+  []
+);
+  const onNodeClick = useCallback(() => {
+  setSelectedEdgeIds(new Set());
+}, []);
   const { project } = useReactFlow();
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
 
