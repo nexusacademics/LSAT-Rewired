@@ -524,7 +524,7 @@ const CircuitBuilderFlow = () => {
   }, []);
 
 
-  const reactFlowWrapper = useRef<HTMLDivElement>(null);
+  
 
   // ...render ReactFlow here using nodes, edges, onNodesChange, onEdgesChange etc.
 
