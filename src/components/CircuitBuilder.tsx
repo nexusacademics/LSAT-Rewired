@@ -486,17 +486,19 @@ const CircuitBuilderFlow = () => {
   const [showInstructions, setShowInstructions] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
    // UseReactFlow gives access to graph state and helpers
-  const { getSelectedElements, project } = useReactFlow();
-
+  const { project } = useReactFlow();
+  const selectedElements = useStore((store) => {
+  const selectedNodes = store.getNodes().filter((n) => n.selected);
+  const selectedEdges = store.getEdges().filter((e) => e.selected);
+  return [...selectedNodes, ...selectedEdges];
+});
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Delete' || event.key === 'Backspace') {
         event.preventDefault();
 
         // Get selected nodes and edges
-        const selected = getSelectedElements?.();
-
-        if (selected && selected.length > 0) {
+         if (selected && selected.length > 0) {
           const selectedNodeIds = selected.filter(el => el.id && el.source === undefined).map(el => el.id);
           const selectedEdgeIds = selected.filter(el => el.id && el.source !== undefined).map(el => el.id);
 
