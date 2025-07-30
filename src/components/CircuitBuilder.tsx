@@ -17,6 +17,7 @@ import ReactFlow, {
   MarkerType,
   useReactFlow,
   ReactFlowProvider,
+  MarkerType, 
 } from 'reactflow';
 import { ArrowLeft, Plus, Trash2, Save, RotateCcw, Info } from 'lucide-react';
 import 'reactflow/dist/style.css';
@@ -444,7 +445,24 @@ const CircuitBuilderFlow = () => {
   const [analysisScore, setAnalysisScore] = useState(0);
   const [showInstructions, setShowInstructions] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
-  
+  //New Stuff//
+  const handleStyleChange = (edgeId: string, newStyle: 'solid' | 'dashed') => {
+              setEdges((eds) =>
+                eds.map((edge) =>
+                  edge.id === edgeId
+                    ? {
+                        ...edge,
+                        data: {
+                          ...(edge.data || {}),
+                          style: newStyle,
+                          onStyleChange: handleStyleChange,
+                        },
+                      }
+                    : edge
+                )
+              );
+            };
+  //End of New Stuff//
   const { project } = useReactFlow();
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
 
@@ -470,18 +488,28 @@ const CircuitBuilderFlow = () => {
   }, [setNodes]);
 
   // Handle edge connections
-  const onConnect = useCallback(
-    (params: Connection) => {
-      const edge: Edge = {
-        ...params,
-        id: `edge-${params.source}-${params.target}`,
-        markerEnd: { type: MarkerType.ArrowClosed },
-        style: { stroke: '#64748b', strokeWidth: 2 },
-      };
-      setEdges(eds => addEdge(edge, eds));
-    },
-    [setEdges]
-  );
+ const onConnect = useCallback(
+  (params: Connection) => {
+    const edge: Edge = {
+      ...params,
+      id: `edge-${params.source}-${params.target}`,
+      type: 'custom', // ← tell ReactFlow to use your CustomEdge
+      markerEnd: {
+        type: MarkerType.ArrowClosed,
+        width: 24,
+        height: 24,
+        color: '#64748b', // same as stroke
+      },
+      data: {
+        style: 'solid', // initial style
+        onStyleChange: handleStyleChange, // inject the callback
+      },
+    };
+
+    setEdges((eds) => addEdge(edge, eds));
+  },
+  [setEdges]
+);
 
   // Calculate analysis score
   const calculateAnalysisScore = useCallback(() => {
