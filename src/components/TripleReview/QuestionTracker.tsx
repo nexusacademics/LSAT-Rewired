@@ -161,7 +161,7 @@ export const QuestionTracker: React.FC<QuestionTrackerProps> = ({
   return (
    <div className="bg-white shadow-lg border-t border-slate-200 p-2">
   {/* Phase + Buttons */}
-  <div className="flex items-center justify-between mb-2">
+  <div className="flex items-center justify-between mb-1">
     {/* Phase indicator */}
     <div className="text-small text-slate-600 flex items-center space-x-6 whitespace-nowrap">
       <span>
