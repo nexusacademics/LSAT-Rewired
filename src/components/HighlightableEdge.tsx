@@ -52,7 +52,7 @@ const HighlightableEdge = ({ id, sourceX, sourceY, targetX, targetY, selected, d
             markerWidth="10"
             markerHeight="10"
             viewBox="0 0 10 10"
-            refX="9"
+            refX="1"
             refY="5"
             orient={`${angle}deg`}
           >
