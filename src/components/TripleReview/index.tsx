@@ -59,12 +59,12 @@ const TripleReview: React.FC<TripleReviewProps> = ({
   const questionsInCurrentSection = currentSectionData?.questions || [];
   const currentQuestionData = questionsInCurrentSection[session.currentQuestionIndex];
   const [textSize, setTextSize] = useState<'small' | 'medium' | 'large'>('medium');
-  const [lineSpacing, setLineSpacing] = useState<'normal' | 'relaxed' | 'loose'>('relaxed');
+  const [lineSpacing, setLineSpacing] = useState<'normal' | 'loose' | 'relaxed'>('loose');
   const handleTextSizeChange = (size: 'small' | 'medium' | 'large') => {
   setTextSize(size);
 };
 
-const handleLineSpacingChange = (spacing: 'normal' | 'relaxed' | 'loose') => {
+const handleLineSpacingChange = (spacing: 'normal' | 'loose' | 'relaxed') => {
   setLineSpacing(spacing);
 };
   // Reset tooltip, success bubble, and formatting tool when question changes
