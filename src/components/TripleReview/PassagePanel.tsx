@@ -26,7 +26,64 @@ export const PassagePanel: React.FC<PassagePanelProps> = ({
 }) => {
   const passageRef = useRef<HTMLDivElement>(null);
 
-  const applyFormatting = (type: string, color: string) => {
+  const removeFormatting = () => {
+    const selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0) return;
+    
+    const range = selection.getRangeAt(0);
+    const selectedText = range.toString();
+    
+    if (!selectedText) return;
+
+    // Check if selection is within the passage area
+    const passageElement = passageRef.current;
+    if (!passageElement || !passageElement.contains(range.commonAncestorContainer)) {
+      return;
+    }
+
+    // Find all formatted elements within the selection
+    const commonAncestor = range.commonAncestorContainer;
+    let formattedElements: Element[] = [];
+
+    if (commonAncestor.nodeType === Node.ELEMENT_NODE) {
+      // If selecting across multiple elements
+      const element = commonAncestor as Element;
+      formattedElements = Array.from(element.querySelectorAll('.formatted-text'));
+      
+      // Also check if the common ancestor itself is formatted
+      if (element.classList.contains('formatted-text')) {
+        formattedElements.push(element);
+      }
+    } else {
+      // If selecting within a single text node, check parent elements
+      let parent = commonAncestor.parentElement;
+      while (parent && passageElement.contains(parent)) {
+        if (parent.classList.contains('formatted-text')) {
+          formattedElements.push(parent);
+          break; // Only remove the immediate formatted parent
+        }
+        parent = parent.parentElement;
+      }
+    }
+
+    // Remove formatting from found elements
+    formattedElements.forEach(element => {
+      const parent = element.parentNode;
+      if (parent) {
+        while (element.firstChild) {
+          parent.insertBefore(element.firstChild, element);
+        }
+        parent.removeChild(element);
+      }
+    });
+
+    // Normalize the text content
+    if (passageRef.current) {
+      passageRef.current.normalize();
+    }
+    
+    selection.removeAllRanges();
+  };
     const selection = window.getSelection();
     if (!selection || selection.rangeCount === 0) return;
     
@@ -115,7 +172,9 @@ export const PassagePanel: React.FC<PassagePanelProps> = ({
     
     // Small delay to ensure selection is complete
     setTimeout(() => {
-      if (selectedTool === 'underline') {
+      if (selectedTool === 'eraser') {
+        removeFormatting();
+      } else if (selectedTool === 'underline') {
         applyFormatting('underline', '#000000'); // Black underline
       } else if (selectedTool.startsWith('highlight-')) {
         const colors = {
@@ -169,8 +228,11 @@ export const PassagePanel: React.FC<PassagePanelProps> = ({
         {selectedTool && (
           <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
             <p className="text-sm text-blue-700">
-              <strong>{selectedTool === 'underline' ? 'Underline' : 'Highlight'} mode active:</strong> 
-              {' '}Select text in the passage above to apply formatting.
+              {selectedTool === 'eraser' ? (
+                <><strong>Eraser mode active:</strong> Select formatted text in the passage to remove highlighting or underlining.</>
+              ) : (
+                <><strong>{selectedTool === 'underline' ? 'Underline' : 'Highlight'} mode active:</strong> Select text in the passage above to apply formatting.</>
+              )}
             </p>
           </div>
         )}
