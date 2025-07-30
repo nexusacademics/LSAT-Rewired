@@ -62,7 +62,19 @@ interface TestSession {
 const ConclusionSubjectNode = ({ id, data, selected }: NodeProps) => {
   const [content, setContent] = useState(data.content || '');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-
+  const onPaneClick = useCallback(() => {
+  setSelectedEdgeIds(new Set());
+}, []);
+  const onEdgeClick = useCallback(
+  (event: React.MouseEvent, edge: Edge) => {
+    event.stopPropagation();
+    setSelectedEdgeIds(new Set([edge.id])); // Deselect others, just this one
+  },
+  []
+);
+  const onNodeClick = useCallback(() => {
+  setSelectedEdgeIds(new Set());
+}, []);
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setContent(e.target.value);
     data.onContentChange?.(id, e.target.value);
