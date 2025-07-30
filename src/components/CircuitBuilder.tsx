@@ -732,8 +732,8 @@ const CircuitBuilderFlow = () => {
                   markerWidth="20"
                   markerHeight="20"
                   viewBox="0 0 20 20"
-                  refX="10"
-                  refY="10"
+                  refX="8"
+                  refY="8"
                   orient="auto"
                   markerUnits="strokeWidth"
                 >
