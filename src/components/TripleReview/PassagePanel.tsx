@@ -84,6 +84,8 @@ export const PassagePanel: React.FC<PassagePanelProps> = ({
     
     selection.removeAllRanges();
   };
+
+  const applyFormatting = (type: string, color: string) => {
     const selection = window.getSelection();
     if (!selection || selection.rangeCount === 0) return;
     
