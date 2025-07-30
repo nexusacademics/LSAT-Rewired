@@ -38,60 +38,79 @@ export const PassagePanel: React.FC<PassagePanelProps> = ({
     return;
   }
 
-  // Work with a clone so we can manipulate it safely
+  // Workaround: use document fragment to hold modified content
+  const fragment = document.createDocumentFragment();
+
   const startContainer = range.startContainer;
   const endContainer = range.endContainer;
-  const startOffset = range.startOffset;
-  const endOffset = range.endOffset;
 
-  // Handle selection entirely within a single text node
-  if (startContainer === endContainer && startContainer.nodeType === Node.TEXT_NODE) {
-    const parent = startContainer.parentElement;
-    const textNode = startContainer as Text;
+  const isTextNode = (node: Node) => node.nodeType === Node.TEXT_NODE;
 
-    if (parent?.classList.contains('formatted-text')) {
-      const originalText = textNode.nodeValue || '';
-      const before = document.createTextNode(originalText.slice(0, startOffset));
-      const unwrapped = document.createTextNode(originalText.slice(startOffset, endOffset));
-      const after = document.createTextNode(originalText.slice(endOffset));
+  const processTextNode = (node: Text, start: number, end: number) => {
+    const parent = node.parentElement;
+    const isFormatted = parent?.classList.contains('formatted-text');
 
-      const grandParent = parent.parentNode;
+    const originalText = node.nodeValue || '';
+    const beforeText = originalText.slice(0, start);
+    const selectedText = originalText.slice(start, end);
+    const afterText = originalText.slice(end);
 
-      if (grandParent) {
-        if (before.textContent) grandParent.insertBefore(before, parent);
-        grandParent.insertBefore(unwrapped, parent);
-        if (after.textContent) grandParent.insertBefore(after, parent);
-        grandParent.removeChild(parent);
-      }
+    const parts: Node[] = [];
 
-      selection.removeAllRanges();
-      return;
+    if (beforeText) {
+      const beforeNode = document.createTextNode(beforeText);
+      parts.push(isFormatted ? wrapInSpan(beforeNode, parent!) : beforeNode);
     }
+
+    if (selectedText) {
+      parts.push(document.createTextNode(selectedText)); // unwrapped!
+    }
+
+    if (afterText) {
+      const afterNode = document.createTextNode(afterText);
+      parts.push(isFormatted ? wrapInSpan(afterNode, parent!) : afterNode);
+    }
+
+    return parts;
+  };
+
+  const wrapInSpan = (node: Text, originalSpan: HTMLElement) => {
+    const newSpan = document.createElement('span');
+    newSpan.className = originalSpan.className;
+    newSpan.setAttribute('data-format-type', originalSpan.getAttribute('data-format-type') || '');
+    newSpan.setAttribute('data-color', originalSpan.getAttribute('data-color') || '');
+    newSpan.appendChild(node);
+    return newSpan;
+  };
+
+  if (startContainer === endContainer && isTextNode(startContainer)) {
+    // Selection within a single text node
+    const pieces = processTextNode(startContainer as Text, range.startOffset, range.endOffset);
+    const parent = (startContainer as Text).parentNode!;
+    pieces.forEach(node => parent.insertBefore(node, startContainer));
+    parent.removeChild(startContainer);
+  } else {
+    // More complex multi-node selection
+    const extracted = range.extractContents();
+
+    const walker = document.createTreeWalker(extracted, NodeFilter.SHOW_TEXT);
+    let node: Node | null;
+
+    while ((node = walker.nextNode())) {
+      const parent = node.parentElement;
+      if (parent?.classList.contains('formatted-text')) {
+        const unwrapped = document.createTextNode(node.textContent || '');
+        parent.replaceWith(unwrapped);
+      }
+    }
+
+    range.insertNode(extracted);
   }
 
-  // For more complex selections, use extractContents + recursive unwrap
-  const contents = range.extractContents();
+  selection.removeAllRanges();
+  passageRef.current?.normalize();
+};
 
-  const unwrapFormattedNodes = (node: Node): DocumentFragment => {
-    const frag = document.createDocumentFragment();
-
-    if (node.nodeType === Node.ELEMENT_NODE && (node as Element).classList.contains('formatted-text')) {
-      // Replace formatted span with its contents
-      node.childNodes.forEach(child => {
-        frag.appendChild(unwrapFormattedNodes(child));
-      });
-    } else if (node.hasChildNodes()) {
-      const clone = node.cloneNode(false);
-      node.childNodes.forEach(child => {
-        clone.appendChild(unwrapFormattedNodes(child));
-      });
-      frag.appendChild(clone);
-    } else {
-      frag.appendChild(node.cloneNode(true));
-    }
-
-    return frag;
-  };
 
   const unwrappedFragment = unwrapFormattedNodes(contents);
   range.insertNode(unwrappedFragment);
