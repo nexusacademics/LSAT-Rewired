@@ -156,9 +156,9 @@ const MinorPremiseNode = ({ id, data, selected }: NodeProps) => {
   };
 
   return (
-    <div className={px-4 py-3 shadow-md rounded-lg bg-gray-50 border-2 ${
+    <div className={`px-4 py-3 shadow-md rounded-lg bg-gray-50 border-2 ${
       selected ? 'border-gray-600' : 'border-black'
-    } min-w-[120px] min-h-[70px] relative} 
+    } min-w-[120px] min-h-[70px] relative`} 
        style={
     selected
       ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
@@ -196,9 +196,9 @@ const MajorPremiseNode = ({ id, data, selected }: NodeProps) => {
   };
 
   return (
-    <div className={px-4 py-3 shadow-md rounded-lg bg-blue-100 border-2 ${
+    <div className={`px-4 py-3 shadow-md rounded-lg bg-blue-100 border-2 ${
       selected ? 'border-blue-600' : 'border-blue-300'
-    } min-w-[120px] min-h-[70px] relative} 
+    } min-w-[120px] min-h-[70px] relative`} 
        style={
     selected
       ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
@@ -236,9 +236,9 @@ const BackingPremiseNode = ({ id, data, selected }: NodeProps) => {
   };
 
   return (
-    <div className={px-4 py-3 shadow-md rounded-lg bg-gray-50 border-2 ${
+    <div className={`px-4 py-3 shadow-md rounded-lg bg-gray-50 border-2 ${
       selected ? 'border-gray-600' : 'border-gray-300'
-    } min-w-[120px] min-h-[70px] relative} 
+    } min-w-[120px] min-h-[70px] relative`} 
        style={
     selected
       ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
@@ -289,9 +289,9 @@ const AssumptionNode = ({ id, data, selected }: NodeProps) => {
   };
 
   return (
-    <div className={px-4 py-3 shadow-md rounded-lg bg-red-100 border-2 ${
+    <div className={`px-4 py-3 shadow-md rounded-lg bg-red-100 border-2 ${
       selected ? 'border-red-600' : 'border-red-300'
-    } min-w-[300px] min-h-[120px] relative} 
+    } min-w-[300px] min-h-[120px] relative`} 
        style={
     selected
       ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
