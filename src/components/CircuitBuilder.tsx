@@ -486,7 +486,7 @@ const CircuitBuilderFlow = () => {
   const [showInstructions, setShowInstructions] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
    // UseReactFlow gives access to graph state and helpers
-  const { getNodes, getEdges, setNodes, setEdges, project } = useReactFlow();
+  const { getNodes, getEdges, project } = useReactFlow();
  useEffect(() => {
   const handleKeyDown = (event: KeyboardEvent) => {
     if (event.key === 'Delete' || event.key === 'Backspace') {
