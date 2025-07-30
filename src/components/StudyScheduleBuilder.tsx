@@ -3,77 +3,90 @@ import { useTheme } from '../contexts/ThemeContext';
 
 export default function StudyScheduleBuilder() {
   const { theme } = useTheme();
-
-  const boxClasses =
-    theme === 'dark'
-      ? 'bg-gray-800 text-gray-100 border border-gray-700'
-      : 'bg-white text-slate-800 border border-slate-200';
-
-  const labelClasses =
-    theme === 'dark'
-      ? 'block mb-1 font-medium text-gray-300'
-      : 'block mb-1 font-medium text-gray-700';
-
-  const inputClasses =
-    theme === 'dark'
-      ? 'bg-gray-900 border border-gray-700 text-white placeholder-gray-400'
-      : 'bg-white border border-gray-300 text-gray-900 placeholder-gray-500';
-
-  const calendarIconFix =
-    theme === 'dark'
-      ? { filter: 'invert(1)' }
-      : {};
+  
+  // Background and container styling
+  const backgroundClasses = theme === 'dark' 
+    ? 'bg-gray-900 min-h-screen' 
+    : 'bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen';
+    
+  const containerClasses = theme === 'dark'
+    ? 'bg-gray-800 text-gray-100 border border-gray-700 shadow-2xl shadow-gray-900/50'
+    : 'bg-white text-slate-800 border border-slate-200 shadow-xl shadow-blue-900/10';
+    
+  // Form element styling
+  const labelClasses = theme === 'dark'
+    ? 'block mb-2 font-semibold text-gray-200 text-sm uppercase tracking-wide'
+    : 'block mb-2 font-semibold text-gray-700 text-sm uppercase tracking-wide';
+    
+  const inputClasses = theme === 'dark'
+    ? 'bg-gray-900 border-2 border-gray-600 text-white placeholder-gray-400 focus:border-indigo-400 focus:ring-indigo-400/30'
+    : 'bg-gray-50 border-2 border-gray-200 text-gray-900 placeholder-gray-500 focus:border-indigo-500 focus:ring-indigo-500/20';
+    
+  // Button styling with theme-aware colors
+  const buttonClasses = theme === 'dark'
+    ? 'bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white shadow-lg shadow-indigo-900/30'
+    : 'bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white shadow-lg shadow-indigo-500/30';
+    
+  // Header styling
+  const headerClasses = theme === 'dark'
+    ? 'text-3xl font-bold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400'
+    : 'text-3xl font-bold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-blue-600';
 
   return (
-    <div
-      className="flex justify-center items-center pt-16"
-      style={{ height: 'calc(100vh - 64px)' }}
-    >
-      <div className={`rounded-xl shadow-lg p-6 max-w-2xl mx-auto mt-8 ${boxClasses}`}>
-      <h2 className="text-2xl font-semibold mb-4">Study Schedule Builder</h2>
-
-      <div className="mb-4">
-        <label htmlFor="testDate" className={labelClasses}>
-          Your Test Date:
-        </label>
-        <input
-          type="date"
-          id="testDate"
-          className={`w-full rounded-lg border px-3 py-2 appearance-none focus:outline-none focus:ring-2 focus:ring-indigo-500 ${inputClasses} ${theme === 'dark' ? 'dark-input' : ''}`}
+    <div className={backgroundClasses}>
+      <div className="flex justify-center items-center pt-16 px-4" style={{ minHeight: 'calc(100vh - 64px)' }}>
+        <div className={`rounded-2xl p-8 max-w-2xl w-full mx-auto ${containerClasses}`}>
+          <h2 className={headerClasses}>
+            Study Schedule Builder
+          </h2>
           
-        />
+          <div className="space-y-6">
+            <div className="group">
+              <label htmlFor="testDate" className={labelClasses}>
+                📅 Your Test Date
+              </label>
+              <input
+                type="date"
+                id="testDate"
+                className={`w-full rounded-xl border px-4 py-3 text-lg transition-all duration-200 focus:outline-none focus:ring-4 focus:scale-[1.02] ${inputClasses}`}
+              />
+            </div>
+            
+            <div className="group">
+              <label htmlFor="startDate" className={labelClasses}>
+                🚀 When do you want to start?
+              </label>
+              <input
+                type="date"
+                id="startDate"
+                className={`w-full rounded-xl border px-4 py-3 text-lg transition-all duration-200 focus:outline-none focus:ring-4 focus:scale-[1.02] ${inputClasses}`}
+              />
+            </div>
+            
+            <div className="group">
+              <label htmlFor="weeklyHours" className={labelClasses}>
+                ⏰ How many hours per week can you study?
+              </label>
+              <input
+                type="number"
+                id="weeklyHours"
+                min={1}
+                placeholder="e.g., 15"
+                className={`w-full rounded-xl border px-4 py-3 text-lg transition-all duration-200 focus:outline-none focus:ring-4 focus:scale-[1.02] ${inputClasses}`}
+              />
+            </div>
+          </div>
+          
+          <button
+            className={`mt-8 w-full font-bold py-4 px-6 rounded-xl text-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] ${buttonClasses}`}
+          >
+            ✨ Generate My Schedule
+          </button>
+          
+          {/* Optional: Add a subtle accent element */}
+          <div className={`mt-6 h-1 rounded-full ${theme === 'dark' ? 'bg-gradient-to-r from-indigo-500 to-purple-500' : 'bg-gradient-to-r from-indigo-400 to-blue-400'}`}></div>
+        </div>
       </div>
-
-      <div className="mb-4">
-        <label htmlFor="startDate" className={labelClasses}>
-          When do you want to start?
-        </label>
-        <input
-          type="date"
-          id="startDate"
-          className={`w-full rounded-lg border px-3 py-2 appearance-none focus:outline-none focus:ring-2 focus:ring-indigo-500 ${inputClasses} ${theme === 'dark' ? 'dark-input' : ''}`}
-        
-        />
-      </div>
-
-      <div className="mb-4">
-        <label htmlFor="weeklyHours" className={labelClasses}>
-          How many hours per week can you study?
-        </label>
-        <input
-          type="number"
-          id="weeklyHours"
-          min={1}
-          className={`w-full rounded-lg border px-3 py-2 appearance-none focus:outline-none focus:ring-2 focus:ring-indigo-500 ${inputClasses} ${theme === 'dark' ? 'dark-input' : ''}`}
-        />
-      </div>
-
-      <button
-        className="mt-4 bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-lg transition"
-      >
-        Generate Schedule
-      </button>
     </div>
-   </div>
   );
 }
