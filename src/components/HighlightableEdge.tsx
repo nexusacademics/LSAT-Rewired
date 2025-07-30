@@ -1,43 +1,53 @@
 import React, { useState } from 'react';
-import { BaseEdge, EdgeLabelRenderer, EdgeProps, getBezierPath } from 'reactflow';
+import { BaseEdge, EdgeLabelRenderer, EdgeProps, getBezierPath, MarkerType } from 'reactflow';
 
 const HighlightableEdge = ({ id, sourceX, sourceY, targetX, targetY, selected, data, style }: EdgeProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const isDashed = data?.style === 'dashed';
-
+  
   // How far back from the target handle the arrow tip should be placed
-  const HANDLE_RADIUS = 10; // adjust if your handles are larger or smaller
-
+  const HANDLE_RADIUS = 10;
+  
   // Compute vector from source to target
   const dx = targetX - sourceX;
   const dy = targetY - sourceY;
   const length = Math.sqrt(dx * dx + dy * dy);
-
+  
   // Calculate unit vector (avoid division by zero)
   const unitX = length === 0 ? 0 : dx / length;
   const unitY = length === 0 ? 0 : dy / length;
-
+  
   // Adjust target point to be just before the handle edge
   const adjustedTargetX = targetX - unitX * HANDLE_RADIUS;
   const adjustedTargetY = targetY - unitY * HANDLE_RADIUS;
-
+  
   // Generate the Bezier path with the adjusted target coordinates
-  const [edgePath] = getBezierPath({ sourceX, sourceY, targetX: adjustedTargetX, targetY: adjustedTargetY });
-
+  const [edgePath] = getBezierPath({ 
+    sourceX, 
+    sourceY, 
+    targetX: adjustedTargetX, 
+    targetY: adjustedTargetY 
+  });
+  
   const toggleStyle = () => {
     if (data?.onStyleChange) {
       data.onStyleChange(id, isDashed ? 'solid' : 'dashed');
     }
   };
-
+  
+  const edgeColor = selected ? '#facc15' : '#64748b';
+  
   return (
     <>
       <BaseEdge
         id={id}
         path={edgePath}
-        markerEnd="url(#reactflow__arrowclosed)"
+        markerEnd={{
+          type: MarkerType.ArrowClosed,
+          color: edgeColor,
+        }}
         style={{
-          stroke: selected ? '#facc15' : '#64748b',
+          stroke: edgeColor,
           strokeWidth: selected ? 3 : 2,
           strokeDasharray: isDashed ? '6 4' : 'none',
           filter: selected ? 'drop-shadow(0 0 4px #facc15)' : 'none',
