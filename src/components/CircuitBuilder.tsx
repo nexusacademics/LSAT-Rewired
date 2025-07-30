@@ -477,24 +477,23 @@ const nodeTypes = {
   'correct-answer': CorrectAnswerNode,
 };
 
+// Main Circuit Builder Component
 const CircuitBuilderFlow = () => {
-  const [nodes, setNodesState, onNodesChange] = useNodesState([]);
-  const [edges, setEdgesState, onEdgesChange] = useEdgesState([]);
-  const [selectedEdgeIds, setSelectedEdgeIds] = useState<Set<string>>(new Set()); // <-- added this
+  const [nodes, setNodes, onNodesChange] = useNodesState([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [selectedNodeType, setSelectedNodeType] = useState<DiagramNode['type']>('conclusion-subject');
   const [analysisScore, setAnalysisScore] = useState(0);
   const [showInstructions, setShowInstructions] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
-
+   // UseReactFlow gives access to graph state and helpers
   const { getSelectedElements } = useReactFlow();
-  const reactFlowWrapper = useRef<HTMLDivElement>(null);
-  const { project } = useReactFlow();
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Delete' || event.key === 'Backspace') {
         event.preventDefault();
 
+        // Get selected nodes and edges
         const selected = getSelectedElements?.();
 
         if (selected && selected.length > 0) {
@@ -502,10 +501,10 @@ const CircuitBuilderFlow = () => {
           const selectedEdgeIds = selected.filter(el => el.id && el.source !== undefined).map(el => el.id);
 
           if (selectedNodeIds.length > 0) {
-            setNodesState(nds => nds.filter(node => !selectedNodeIds.includes(node.id)));
+            setNodesState((nds) => nds.filter((node) => !selectedNodeIds.includes(node.id)));
           }
           if (selectedEdgeIds.length > 0) {
-            setEdgesState(eds => eds.filter(edge => !selectedEdgeIds.includes(edge.id)));
+            setEdgesState((eds) => eds.filter((edge) => !selectedEdgeIds.includes(edge.id)));
           }
         }
       }
@@ -514,34 +513,15 @@ const CircuitBuilderFlow = () => {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [getSelectedElements, setNodesState, setEdgesState]);
-
-  const onPaneClick = useCallback(() => {
-    setSelectedEdgeIds(new Set());
-  }, []);
-
-  const onNodeClick = useCallback(() => {
-    setSelectedEdgeIds(new Set());
-  }, []);
-
-
   
-
-  // ...render ReactFlow here using nodes, edges, onNodesChange, onEdgesChange etc.
-
-  return (
-    <div ref={reactFlowWrapper} style={{ width: '100%', height: '100%' }}>
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onPaneClick={onPaneClick}
-        onNodeClick={onNodeClick}
-        // other props here
-      />
-    </div>
-  );
-};
+  const onPaneClick = useCallback(() => {
+        setSelectedEdgeIds(new Set());
+      }, []);
+  const onNodeClick = useCallback(() => {
+      setSelectedEdgeIds(new Set());
+    }, []);
+  const { project } = useReactFlow();
+  const reactFlowWrapper = useRef<HTMLDivElement>(null);
 
   // Node type definitions for the toolbar
   const nodeTypeOptions = [
