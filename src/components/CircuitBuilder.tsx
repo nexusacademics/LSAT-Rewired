@@ -492,29 +492,27 @@ const CircuitBuilderFlow = () => {
   const selectedEdges = store.getEdges().filter((e) => e.selected);
   return [...selectedNodes, ...selectedEdges];
 });
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Delete' || event.key === 'Backspace') {
-        event.preventDefault();
+ useEffect(() => {
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if ((event.key === 'Delete' || event.key === 'Backspace') && selectedElements.length > 0) {
+      event.preventDefault();
 
-        // Get selected nodes and edges
-         if (selected && selected.length > 0) {
-          const selectedNodeIds = selected.filter(el => el.id && el.source === undefined).map(el => el.id);
-          const selectedEdgeIds = selected.filter(el => el.id && el.source !== undefined).map(el => el.id);
+      const selectedNodeIds = selectedElements.filter(el => el.source === undefined).map(el => el.id);
+      const selectedEdgeIds = selectedElements.filter(el => el.source !== undefined).map(el => el.id);
 
-          if (selectedNodeIds.length > 0) {
-            setNodes((nds) => nds.filter((node) => !selectedNodeIds.includes(node.id)));
-          }
-          if (selectedEdgeIds.length > 0) {
-            setEdges((eds) => eds.filter((edge) => !selectedEdgeIds.includes(edge.id)));
-          }
-        }
+      if (selectedNodeIds.length > 0) {
+        setNodes(prevNodes => prevNodes.filter(n => !selectedNodeIds.includes(n.id)));
       }
-    };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [getSelectedElements, setNodes, setEdges]);
+      if (selectedEdgeIds.length > 0) {
+        setEdges(prevEdges => prevEdges.filter(e => !selectedEdgeIds.includes(e.id)));
+      }
+    }
+  };
+
+  window.addEventListener('keydown', handleKeyDown);
+  return () => window.removeEventListener('keydown', handleKeyDown);
+}, [selectedElements, setNodes, setEdges]);
   
   const onPaneClick = useCallback(() => {
         setSelectedEdgeIds(new Set());
