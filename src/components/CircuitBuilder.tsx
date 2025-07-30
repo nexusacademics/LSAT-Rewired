@@ -730,42 +730,34 @@ const CircuitBuilderFlow = () => {
       {/* Unselected arrow marker */}
       <marker
         id="arrow-unselected"
-        markerWidth="12.5"
-        markerHeight="12.5"
-        viewBox="-10 -10 20 20"
-        refX="0"
-        refY="0"
+        markerWidth="10"
+        markerHeight="10"
+        viewBox="0 0 10 10"
+        refX="9"
+        refY="3"
         orient="auto"
         markerUnits="strokeWidth"
       >
-        <polyline
-          stroke="#64748b"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth="1"
+        <path
+          d="M0,0 L0,6 L9,3 z"
           fill="#64748b"
-          points="-5,-4 0,0 -5,4 -5,-4"
         />
       </marker>
       
       {/* Selected arrow marker */}
       <marker
         id="arrow-selected"
-        markerWidth="12.5"
-        markerHeight="12.5"
-        viewBox="-10 -10 20 20"
-        refX="0"
-        refY="0"
+        markerWidth="10"
+        markerHeight="10"
+        viewBox="0 0 10 10"
+        refX="9"
+        refY="3"
         orient="auto"
         markerUnits="strokeWidth"
       >
-        <polyline
-          stroke="#facc15"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth="1"
+        <path
+          d="M0,0 L0,6 L9,3 z"
           fill="#facc15"
-          points="-5,-4 0,0 -5,4 -5,-4"
         />
       </marker>
     </defs>
