@@ -41,58 +41,43 @@ export const PassagePanel: React.FC<PassagePanelProps> = ({
       return;
     }
 
-    // Store the selection details before we modify the DOM
-    const startContainer = range.startContainer;
-    const startOffset = range.startOffset;
-    const endContainer = range.endContainer;
-    const endOffset = range.endOffset;
-
-    // Find all formatted elements that intersect with our selection
-    const walker = document.createTreeWalker(
-      range.commonAncestorContainer,
-      NodeFilter.SHOW_ELEMENT,
-      {
-        acceptNode: (node) => {
-          const element = node as Element;
-          if (element.classList.contains('formatted-text')) {
-            // Check if this formatted element intersects with our selection
-            const elementRange = document.createRange();
-            elementRange.selectNode(element);
-            
-            // If the ranges intersect, we want to remove this formatting
-            if (range.intersectsNode(element)) {
-              return NodeFilter.FILTER_ACCEPT;
-            }
-          }
-          return NodeFilter.FILTER_REJECT;
-        }
-      }
-    );
-
-    const elementsToUnformat: Element[] = [];
-    let currentNode = walker.nextNode();
+    // Create a new range that we'll modify
+    const workingRange = range.cloneRange();
     
-    while (currentNode) {
-      elementsToUnformat.push(currentNode as Element);
-      currentNode = walker.nextNode();
-    }
-
-    // Remove formatting from the identified elements
-    elementsToUnformat.forEach(element => {
-      // Check if our selection actually intersects with this element's text
-      if (range.intersectsNode(element)) {
+    try {
+      // Extract the selected content
+      const extractedContent = workingRange.extractContents();
+      
+      // Create a temporary container to process the extracted content
+      const tempContainer = document.createElement('div');
+      tempContainer.appendChild(extractedContent);
+      
+      // Remove all formatting from the extracted content
+      const formattedElements = tempContainer.querySelectorAll('.formatted-text');
+      formattedElements.forEach(element => {
         const parent = element.parentNode;
         if (parent) {
-          // Simply remove the formatting wrapper, keeping the text content
+          // Move all children out of the formatted element
           while (element.firstChild) {
             parent.insertBefore(element.firstChild, element);
           }
           parent.removeChild(element);
         }
+      });
+      
+      // Insert the unformatted content back into the document
+      const fragment = document.createDocumentFragment();
+      while (tempContainer.firstChild) {
+        fragment.appendChild(tempContainer.firstChild);
       }
-    });
+      
+      workingRange.insertNode(fragment);
+      
+    } catch (e) {
+      console.warn('Could not remove formatting from selection:', e);
+    }
 
-    // Normalize to clean up any empty text nodes
+    // Normalize to clean up any adjacent text nodes
     if (passageRef.current) {
       passageRef.current.normalize();
     }
