@@ -27,64 +27,80 @@ export const PassagePanel: React.FC<PassagePanelProps> = ({
   const passageRef = useRef<HTMLDivElement>(null);
 
   const removeFormatting = () => {
-    const selection = window.getSelection();
-    if (!selection || selection.rangeCount === 0) return;
-    
-    const range = selection.getRangeAt(0);
-    const selectedText = range.toString();
-    
-    if (!selectedText) return;
+  const selection = window.getSelection();
+  if (!selection || selection.rangeCount === 0) return;
 
-    // Check if selection is within the passage area
-    const passageElement = passageRef.current;
-    if (!passageElement || !passageElement.contains(range.commonAncestorContainer)) {
+  const range = selection.getRangeAt(0);
+  if (!range || range.collapsed) return;
+
+  const passageElement = passageRef.current;
+  if (!passageElement || !passageElement.contains(range.commonAncestorContainer)) {
+    return;
+  }
+
+  // Work with a clone so we can manipulate it safely
+  const startContainer = range.startContainer;
+  const endContainer = range.endContainer;
+  const startOffset = range.startOffset;
+  const endOffset = range.endOffset;
+
+  // Handle selection entirely within a single text node
+  if (startContainer === endContainer && startContainer.nodeType === Node.TEXT_NODE) {
+    const parent = startContainer.parentElement;
+    const textNode = startContainer as Text;
+
+    if (parent?.classList.contains('formatted-text')) {
+      const originalText = textNode.nodeValue || '';
+      const before = document.createTextNode(originalText.slice(0, startOffset));
+      const unwrapped = document.createTextNode(originalText.slice(startOffset, endOffset));
+      const after = document.createTextNode(originalText.slice(endOffset));
+
+      const grandParent = parent.parentNode;
+
+      if (grandParent) {
+        if (before.textContent) grandParent.insertBefore(before, parent);
+        grandParent.insertBefore(unwrapped, parent);
+        if (after.textContent) grandParent.insertBefore(after, parent);
+        grandParent.removeChild(parent);
+      }
+
+      selection.removeAllRanges();
       return;
     }
+  }
 
-    // Create a new range that we'll modify
-    const workingRange = range.cloneRange();
-    
-    try {
-      // Extract the selected content
-      const extractedContent = workingRange.extractContents();
-      
-      // Create a temporary container to process the extracted content
-      const tempContainer = document.createElement('div');
-      tempContainer.appendChild(extractedContent);
-      
-      // Remove all formatting from the extracted content
-      const formattedElements = tempContainer.querySelectorAll('.formatted-text');
-      formattedElements.forEach(element => {
-        const parent = element.parentNode;
-        if (parent) {
-          // Move all children out of the formatted element
-          while (element.firstChild) {
-            parent.insertBefore(element.firstChild, element);
-          }
-          parent.removeChild(element);
-        }
+  // For more complex selections, use extractContents + recursive unwrap
+  const contents = range.extractContents();
+
+  const unwrapFormattedNodes = (node: Node): DocumentFragment => {
+    const frag = document.createDocumentFragment();
+
+    if (node.nodeType === Node.ELEMENT_NODE && (node as Element).classList.contains('formatted-text')) {
+      // Replace formatted span with its contents
+      node.childNodes.forEach(child => {
+        frag.appendChild(unwrapFormattedNodes(child));
       });
-      
-      // Insert the unformatted content back into the document
-      const fragment = document.createDocumentFragment();
-      while (tempContainer.firstChild) {
-        fragment.appendChild(tempContainer.firstChild);
-      }
-      
-      workingRange.insertNode(fragment);
-      
-    } catch (e) {
-      console.warn('Could not remove formatting from selection:', e);
+    } else if (node.hasChildNodes()) {
+      const clone = node.cloneNode(false);
+      node.childNodes.forEach(child => {
+        clone.appendChild(unwrapFormattedNodes(child));
+      });
+      frag.appendChild(clone);
+    } else {
+      frag.appendChild(node.cloneNode(true));
     }
 
-    // Normalize to clean up any adjacent text nodes
-    if (passageRef.current) {
-      passageRef.current.normalize();
-    }
-    
-    // Clear the selection
-    selection.removeAllRanges();
+    return frag;
   };
+
+  const unwrappedFragment = unwrapFormattedNodes(contents);
+  range.insertNode(unwrappedFragment);
+  selection.removeAllRanges();
+
+  // Normalize to clean up empty/adjacent text nodes
+  passageRef.current.normalize();
+};
+
 
   const applyFormatting = (type: string, color: string) => {
     const selection = window.getSelection();
