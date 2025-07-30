@@ -41,65 +41,63 @@ export const PassagePanel: React.FC<PassagePanelProps> = ({
       return;
     }
 
-    // Create a temporary container to process the selection
-    const tempDiv = document.createElement('div');
-    let rangeContents;
-    
-    try {
-      rangeContents = range.cloneContents();
-      tempDiv.appendChild(rangeContents);
-      
-      // Find all formatted elements in the cloned content
-      const formattedElements = tempDiv.querySelectorAll('.formatted-text');
-      
-      // Remove formatting classes and styles from cloned elements
-      formattedElements.forEach(element => {
-        element.removeAttribute('class');
-        element.removeAttribute('data-format-type');
-        element.removeAttribute('data-color');
-        element.removeAttribute('style');
-      });
-      
-      // Replace the original selection with the unformatted version
-      range.deleteContents();
-      
-      // Insert the cleaned content
-      while (tempDiv.firstChild) {
-        range.insertNode(tempDiv.firstChild);
-      }
-      
-    } catch (e) {
-      // Fallback: find and remove formatted parent elements that contain the selection
-      let currentNode = range.commonAncestorContainer;
-      
-      // If we're in a text node, check its parent
-      if (currentNode.nodeType === Node.TEXT_NODE) {
-        currentNode = currentNode.parentElement;
-      }
-      
-      // Check if we're inside a formatted element
-      while (currentNode && passageElement.contains(currentNode as Node)) {
-        if ((currentNode as Element).classList?.contains('formatted-text')) {
-          const formattedElement = currentNode as Element;
-          const parent = formattedElement.parentNode;
-          if (parent) {
-            // Move all children out of the formatted element
-            while (formattedElement.firstChild) {
-              parent.insertBefore(formattedElement.firstChild, formattedElement);
+    // Store the selection details before we modify the DOM
+    const startContainer = range.startContainer;
+    const startOffset = range.startOffset;
+    const endContainer = range.endContainer;
+    const endOffset = range.endOffset;
+
+    // Find all formatted elements that intersect with our selection
+    const walker = document.createTreeWalker(
+      range.commonAncestorContainer,
+      NodeFilter.SHOW_ELEMENT,
+      {
+        acceptNode: (node) => {
+          const element = node as Element;
+          if (element.classList.contains('formatted-text')) {
+            // Check if this formatted element intersects with our selection
+            const elementRange = document.createRange();
+            elementRange.selectNode(element);
+            
+            // If the ranges intersect, we want to remove this formatting
+            if (range.intersectsNode(element)) {
+              return NodeFilter.FILTER_ACCEPT;
             }
-            parent.removeChild(formattedElement);
           }
-          break;
+          return NodeFilter.FILTER_REJECT;
         }
-        currentNode = (currentNode as Element).parentElement;
       }
+    );
+
+    const elementsToUnformat: Element[] = [];
+    let currentNode = walker.nextNode();
+    
+    while (currentNode) {
+      elementsToUnformat.push(currentNode as Element);
+      currentNode = walker.nextNode();
     }
 
-    // Normalize the text content
+    // Remove formatting from the identified elements
+    elementsToUnformat.forEach(element => {
+      // Check if our selection actually intersects with this element's text
+      if (range.intersectsNode(element)) {
+        const parent = element.parentNode;
+        if (parent) {
+          // Simply remove the formatting wrapper, keeping the text content
+          while (element.firstChild) {
+            parent.insertBefore(element.firstChild, element);
+          }
+          parent.removeChild(element);
+        }
+      }
+    });
+
+    // Normalize to clean up any empty text nodes
     if (passageRef.current) {
       passageRef.current.normalize();
     }
     
+    // Clear the selection
     selection.removeAllRanges();
   };
 
