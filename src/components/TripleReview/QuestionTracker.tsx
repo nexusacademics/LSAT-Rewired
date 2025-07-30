@@ -26,6 +26,24 @@ interface QuestionTrackerProps {
   session: Session;
   questionsInCurrentSection: Question[];
   onQuestionJump: (index: number) => void;
+  currentQuestionData: ProcessedQuestion;
+  questionsInCurrentSection: ProcessedQuestion[];
+  formattedSectionDisplay: string;
+  isTimerRunning: boolean;
+  timeDisplay: string;
+  timerColor: string;
+  timerBgColor: string;
+  timeRemaining: number;
+  onToggleTimer: () => void;
+  onToggleFlag: () => void;
+  onExitSession: () => void;
+  onShowStrategySummary: () => void;
+  onEndSection: () => void;
+  onPreviousQuestion: () => void;
+  onNextQuestion: () => void;
+  onSubmitSection: (isTimerTriggered: boolean) => void;
+  isLastQuestionOfSection: boolean;
+  isLastSection: boolean;
 }
 
 // Flag visualization component
