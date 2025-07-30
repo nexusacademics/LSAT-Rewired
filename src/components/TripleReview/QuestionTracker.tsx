@@ -167,7 +167,7 @@ export const QuestionTracker: React.FC<QuestionTrackerProps> = ({
       <span>
         <strong>Phase:</strong> {session.phase.charAt(0).toUpperCase() + session.phase.slice(1)}
       </span>
-      <div className="flex items-center space-x-4 text-xs">
+      <div className="flex items-center space-x-4 text-small">
         <div className="flex items-center space-x-1">
           <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
           <span>Timed</span>
