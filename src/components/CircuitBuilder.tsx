@@ -83,10 +83,10 @@ const ConclusionSubjectNode = ({ id, data, selected }: NodeProps) => {
       : undefined
   }>
          {/* Handles on all four sides */}
-      <Handle type="target" position={Position.Top} id="top" className="w-3 h-3" />
-      <Handle type="target" position={Position.Left} id="left" className="w-3 h-3" />
-      <Handle type="source" position={Position.Bottom} id="bottom" className="w-3 h-3" />
-      <Handle type="source" position={Position.Right} id="right" className="w-3 h-3" />
+      <Handle type="source" type="target" position={Position.Top} id="top" className="w-3 h-3" />
+      <Handle type="source" type="target" position={Position.Left} id="left" className="w-3 h-3" />
+      <Handle type="source" type="target" position={Position.Bottom} id="bottom" className="w-3 h-3" />
+      <Handle type="source" type="target" position={Position.Right} id="right" className="w-3 h-3" />
       <div className="text-xs font-medium mb-2 text-purple-700">Conclusion Subject</div>
       <textarea
         ref={textareaRef}
