@@ -111,16 +111,6 @@ export const PassagePanel: React.FC<PassagePanelProps> = ({
   passageRef.current?.normalize();
 };
 
-
-  const unwrappedFragment = unwrapFormattedNodes(contents);
-  range.insertNode(unwrappedFragment);
-  selection.removeAllRanges();
-
-  // Normalize to clean up empty/adjacent text nodes
-  passageRef.current.normalize();
-};
-
-
   const applyFormatting = (type: string, color: string) => {
     const selection = window.getSelection();
     if (!selection || selection.rangeCount === 0) return;
