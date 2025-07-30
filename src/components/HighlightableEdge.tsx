@@ -17,6 +17,9 @@ const HighlightableEdge = ({ id, sourceX, sourceY, targetX, targetY, selected, d
   const unitX = length === 0 ? 0 : dx / length;
   const unitY = length === 0 ? 0 : dy / length;
   
+  // Calculate rotation angle in degrees
+  const angle = Math.atan2(dy, dx) * (180 / Math.PI);
+  
   // Adjust target point to be just before the handle edge
   const adjustedTargetX = targetX - unitX * HANDLE_RADIUS;
   const adjustedTargetY = targetY - unitY * HANDLE_RADIUS;
@@ -36,11 +39,31 @@ const HighlightableEdge = ({ id, sourceX, sourceY, targetX, targetY, selected, d
   };
   
   const edgeColor = selected ? '#facc15' : '#64748b';
-  // Create unique marker IDs for selected and unselected states
-  const markerId = selected ? 'arrow-selected' : 'arrow-unselected';
+  // Create unique marker IDs for each edge with its angle
+  const markerId = `arrow-${id}-${selected ? 'selected' : 'unselected'}`;
   
   return (
     <>
+      {/* Create the SVG marker dynamically for this edge */}
+      <svg style={{ height: 0, width: 0, position: 'absolute' }}>
+        <defs>
+          <marker
+            id={markerId}
+            markerWidth="10"
+            markerHeight="10"
+            viewBox="0 0 10 10"
+            refX="9"
+            refY="5"
+            orient={`${angle}deg`}
+          >
+            <path
+              d="M0,2 L8,5 L0,8 L2,5 z"
+              fill={edgeColor}
+            />
+          </marker>
+        </defs>
+      </svg>
+      
       <BaseEdge
         id={id}
         path={edgePath}
