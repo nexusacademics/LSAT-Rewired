@@ -484,23 +484,23 @@ const CircuitBuilderFlow = () => {
   // Handle edge connections
  const onConnect = useCallback(
   (params: Connection) => {
-    const edge: Edge = {
-      ...params,
-      id: `edge-${params.source}-${params.target}`,
-      type: 'custom', // ← tell ReactFlow to use your CustomEdge
-      markerEnd: {
-        type: MarkerType.ArrowClosed,
-        width: 24,
-        height: 24,
-        color: '#64748b', // same as stroke
-      },
-      data: {
-        style: 'solid', // initial style
-        onStyleChange: handleStyleChange, // inject the callback
-      },
-    };
-
-    setEdges((eds) => addEdge(edge, eds));
+    setEdges((eds) =>
+      addEdge(
+        {
+          ...params,
+          id: `edge-${params.source}-${params.target}`,
+          // You can add default arrow here
+          markerEnd: {
+            type: MarkerType.ArrowClosed,
+          },
+          style: {
+            stroke: '#64748b',
+            strokeWidth: 2,
+          },
+        },
+        eds
+      )
+    );
   },
   [setEdges]
 );
