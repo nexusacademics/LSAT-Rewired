@@ -485,30 +485,26 @@ const CircuitBuilderFlow = () => {
   const [analysisScore, setAnalysisScore] = useState(0);
   const [showInstructions, setShowInstructions] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
-  //new stuff
-  const { getNodes, getEdges, setNodes, setEdges, getSelectedElements } = useReactFlow();
+   // UseReactFlow gives access to graph state and helpers
+  const { getSelectedElements } = useReactFlow();
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Delete' || event.key === 'Backspace') {
         event.preventDefault();
 
-        // Get selected elements (nodes and edges)
+        // Get selected nodes and edges
         const selected = getSelectedElements?.();
 
         if (selected && selected.length > 0) {
-          // Separate nodes and edges to remove
           const selectedNodeIds = selected.filter(el => el.id && el.source === undefined).map(el => el.id);
           const selectedEdgeIds = selected.filter(el => el.id && el.source !== undefined).map(el => el.id);
 
-          // Remove nodes
           if (selectedNodeIds.length > 0) {
-            setNodes(nodes => nodes.filter(node => !selectedNodeIds.includes(node.id)));
+            setNodesState((nds) => nds.filter((node) => !selectedNodeIds.includes(node.id)));
           }
-
-          // Remove edges
           if (selectedEdgeIds.length > 0) {
-            setEdges(edges => edges.filter(edge => !selectedEdgeIds.includes(edge.id)));
+            setEdgesState((eds) => eds.filter((edge) => !selectedEdgeIds.includes(edge.id)));
           }
         }
       }
@@ -516,8 +512,7 @@ const CircuitBuilderFlow = () => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [getSelectedElements, setNodes, setEdges]);
-  //end new stuff
+  }, [getSelectedElements, setNodesState, setEdgesState]);
   
   const onPaneClick = useCallback(() => {
         setSelectedEdgeIds(new Set());
