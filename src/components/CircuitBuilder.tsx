@@ -96,7 +96,7 @@ const ConclusionSubjectNode = ({ id, data, selected }: NodeProps) => {
         placeholder="Click to edit"
         rows={1}
       />
-      <Handle type="source" position={Position.Bottom} className="w-3 h-3" />
+     
     </div>
   );
 };
