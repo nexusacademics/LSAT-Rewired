@@ -1,347 +1,265 @@
-// components/TripleReview/Header.tsx
-import React, { useState } from 'react';
-import { 
-  Timer, 
-  Play, 
-  Pause, 
-  Flag, 
-  ChevronRight, 
-  Brain, 
-  BookOpen, 
-  Target,
-  Underline,
-  Highlighter,
-  Palette,
-  Type,
-  AlignLeft,
-  RotateCcw,
-  Eraser
-} from 'lucide-react';
-import { TestSession, ProcessedQuestion } from '../../App';
+// components/TripleReview/PassagePanel.tsx
+import React, { useRef, useEffect } from 'react';
+import { TestSession, ProcessedQuestion, Circuit } from '../../App';
 
-interface HeaderProps {
-  session: TestSession;
+interface PassagePanelProps {
   currentQuestionData: ProcessedQuestion;
-  questionsInCurrentSection: ProcessedQuestion[];
-  formattedSectionDisplay: string;
-  isTimerRunning: boolean;
-  timeDisplay: string;
-  timerColor: string;
-  timerBgColor: string;
-  timeRemaining: number;
-  onToggleTimer: () => void;
-  onToggleFlag: () => void;
-  onExitSession: () => void;
-  onShowStrategySummary: () => void;
-  onEndSection: () => void;
-  onPreviousQuestion: () => void;
-  onNextQuestion: () => void;
-  onSubmitSection: (isTimerTriggered: boolean) => void;
-  isLastQuestionOfSection: boolean;
-  isLastSection: boolean;
-  // New props for formatting toolbar
+  session: TestSession;
+  selectedAnswerText: string | null;
+  selectedAnswerIndex: number | undefined;
+  existingCircuitForQuestion: Circuit | undefined;
+  onShowCircuitBuilder: () => void;
+  isCircuitBuilderOpen: boolean;
+  // New props for formatting
   selectedTool: string | null;
-  onToolSelect: (toolId: string | null) => void;
-  onClearFormatting: () => void;
+  onClearPassageFormatting: React.MutableRefObject<(() => void) | null>;
+  // New props for text size and line spacing
+  textSize: 'small' | 'medium' | 'large';
+  lineSpacing: 'normal' | 'relaxed' | 'loose';
 }
 
-const getPhaseColor = (phase: string) => {
-  switch (phase) {
-    case 'timed': return 'blue';
-    case 'blind-review': return 'teal';
-    case 'strategy-review': return 'orange';
-    default: return 'slate';
-  }
-};
-
-const getPhaseIcon = (phase: string) => {
-  switch (phase) {
-    case 'timed': return Timer;
-    case 'blind-review': return Target;
-    case 'strategy-review': return BookOpen;
-    default: return Brain;
-  }
-};
-
-const getPhaseTitle = (phase: string) => {
-  switch (phase) {
-    case 'timed': return 'Timed Test';
-    case 'blind-review': return 'Blind Review';
-    case 'strategy-review': return 'Strategy Review & Action Plan';
-    default: return 'Test Session';
-  }
-};
-
-export const Header: React.FC<HeaderProps> = ({
-  session,
+export const PassagePanel: React.FC<PassagePanelProps> = ({
   currentQuestionData,
-  questionsInCurrentSection,
-  formattedSectionDisplay,
-  isTimerRunning,
-  timeDisplay,
-  timerColor,
-  timerBgColor,
-  timeRemaining,
-  onToggleTimer,
-  onToggleFlag,
-  onExitSession,
-  onShowStrategySummary,
-  onEndSection,
-  onPreviousQuestion,
-  onNextQuestion,
-  onSubmitSection,
-  isLastQuestionOfSection,
-  isLastSection,
+  session,
+  selectedAnswerText,
+  selectedAnswerIndex,
+  isCircuitBuilderOpen,
   selectedTool,
-  onToolSelect,
-  onClearFormatting
+  onClearPassageFormatting,
+  textSize,
+  lineSpacing
 }) => {
-  const PhaseIcon = getPhaseIcon(session.phase);
-  const phaseColor = getPhaseColor(session.phase);
+  const passageRef = useRef<HTMLDivElement>(null);
 
-  const formattingTools = [
-    { 
-      id: 'underline', 
-      icon: Underline, 
-      label: 'Underline', 
-      color: '#000000',
-      bgColor: 'hover:bg-slate-100'
-    },
-    { 
-      id: 'highlight-yellow', 
-      icon: Highlighter, 
-      label: 'Yellow Highlight', 
-      color: '#ffff00',
-      bgColor: 'hover:bg-yellow-100'
-    },
-    { 
-      id: 'highlight-pink', 
-      icon: Highlighter, 
-      label: 'Pink Highlight', 
-      color: '#ffb3d9',
-      bgColor: 'hover:bg-pink-100'
-    },
-    { 
-      id: 'highlight-red', 
-      icon: Highlighter, 
-      label: 'Red Highlight', 
-      color: '#ff6b6b',
-      bgColor: 'hover:bg-red-100'
-    },
-    { 
-      id: 'eraser', 
-      icon: Eraser, 
-      label: 'Eraser - Remove Formatting',
-      bgColor: 'hover:bg-orange-100'
-    },
-    { 
-      id: 'text-size', 
-      icon: Type, 
-      label: 'Text Size',
-      bgColor: 'hover:bg-slate-100'
-    },
-    { 
-      id: 'paragraph', 
-      icon: AlignLeft, 
-      label: 'Paragraph',
-      bgColor: 'hover:bg-slate-100'
-    }
-  ];
-
-  // Helper function to check if current question is flagged based on phase
-  const isCurrentQuestionFlagged = () => {
-    const currentFlags = currentQuestionData.flags || {};
-    switch (session.phase) {
-      case 'timed':
-        return currentFlags.timedSection || session.flaggedQuestions?.includes(currentQuestionData.id) || false;
-      case 'blind-review':
-        return currentFlags.blindReview || false;
-      case 'strategy-review':
-        return currentFlags.strategyPlanning || false;
-      default:
-        return session.flaggedQuestions?.includes(currentQuestionData.id) || false;
+  // Get text size classes
+  const getTextSizeClass = () => {
+    switch (textSize) {
+      case 'small': return 'text-sm';
+      case 'medium': return 'text-base';
+      case 'large': return 'text-lg';
+      default: return 'text-base';
     }
   };
 
-  // Get the appropriate flag color based on phase
-  const getFlagButtonColor = () => {
-    if (!isCurrentQuestionFlagged()) {
-      return 'bg-slate-100 text-slate-600 hover:bg-slate-200';
-    }
-    
-    switch (session.phase) {
-      case 'timed':
-        return 'bg-yellow-100 text-yellow-600 hover:bg-yellow-200';
-      case 'blind-review':
-        return 'bg-orange-100 text-orange-600 hover:bg-orange-200';
-      case 'strategy-review':
-        return 'bg-red-100 text-red-600 hover:bg-red-200';
-      default:
-        return 'bg-yellow-100 text-yellow-600 hover:bg-yellow-200';
+  // Get line spacing classes
+  const getLineSpacingClass = () => {
+    switch (lineSpacing) {
+      case 'normal': return 'leading-relaxed';
+      case 'relaxed': return 'leading-loose';
+      case 'loose': return 'leading-8';
+      default: return 'leading-relaxed';
     }
   };
 
-  const handleToolClick = (toolId: string) => {
-    onToolSelect(selectedTool === toolId ? null : toolId);
+ const removeFormatting = () => {
+  const selection = window.getSelection();
+  if (!selection || selection.rangeCount === 0) return;
+
+  const range = selection.getRangeAt(0);
+  if (!range || range.collapsed) return;
+
+  const passageElement = passageRef.current;
+  if (!passageElement || !passageElement.contains(range.commonAncestorContainer)) {
+    return;
+  }
+
+  const unwrapSpan = (textNode: Text, start: number, end: number) => {
+    const parent = textNode.parentElement;
+    if (!parent || !parent.classList.contains('formatted-text')) return;
+
+    const fullText = textNode.nodeValue || '';
+    const before = fullText.slice(0, start);
+    const selected = fullText.slice(start, end);
+    const after = fullText.slice(end);
+
+    const grandParent = parent.parentNode;
+    if (!grandParent) return;
+
+    // Create and insert the 3 parts
+    if (before) {
+      const beforeNode = document.createTextNode(before);
+      const beforeSpan = parent.cloneNode(false) as HTMLElement;
+      beforeSpan.textContent = before;
+      grandParent.insertBefore(beforeSpan, parent);
+    }
+
+    if (selected) {
+      const unwrappedNode = document.createTextNode(selected);
+      grandParent.insertBefore(unwrappedNode, parent);
+    }
+
+    if (after) {
+      const afterNode = document.createTextNode(after);
+      const afterSpan = parent.cloneNode(false) as HTMLElement;
+      afterSpan.textContent = after;
+      grandParent.insertBefore(afterSpan, parent);
+    }
+
+    // Remove original span
+    parent.remove();
   };
 
-  return (
-    <div className="bg-white shadow-sm border-b border-slate-200 rounded-b-2xl">
-      {/* Main Header */}
-      <div className="py-4 px-6">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div className="flex items-center space-x-4 md:mb-0 mb-2">
-            <div className={`p-3 bg-${phaseColor}-100 rounded-xl`}>
-              <PhaseIcon className={`h-6 w-6 text-${phaseColor}-600`} />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold text-slate-900">
-                {getPhaseTitle(session.phase)}
-              </h1>
-              <p className="text-slate-600">
-                {formattedSectionDisplay} • Question {session.currentQuestionIndex + 1} of {questionsInCurrentSection.length}
-              </p>
-            </div>
-          </div>
+  // Case 1: single text node
+  if (
+    range.startContainer === range.endContainer &&
+    range.startContainer.nodeType === Node.TEXT_NODE
+  ) {
+    unwrapSpan(range.startContainer as Text, range.startOffset, range.endOffset);
+  } else {
+    // Case 2: multi-node
+    const selectedContents = range.cloneContents();
+    const walker = document.createTreeWalker(selectedContents, NodeFilter.SHOW_TEXT);
+    let node: Node | null;
+    const textNodes: Text[] = [];
 
-          <div className="flex items-center space-x-4">
-            {session.phase === 'timed' && (
-              <div className="flex items-center space-x-2">
-                <div className={`text-2xl font-mono font-bold transition-all ${timerColor} ${timerBgColor} ${timeRemaining <= 60 ? 'animate-pulse' : ''} px-2 py-1 rounded`}>
-                  {timeDisplay}
-                </div>
-                <button
-                  onClick={onToggleTimer}
-                  className={`p-2 rounded-lg ${
-                    isTimerRunning
-                      ? 'bg-red-100 text-red-600 hover:bg-red-200'
-                      : 'bg-green-100 text-green-600 hover:bg-green-200'
-                  }`}
-                >
-                  {isTimerRunning ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}
-                </button>
-              </div>
-            )}
+    while ((node = walker.nextNode())) {
+      if (node.nodeType === Node.TEXT_NODE) {
+        textNodes.push(node as Text);
+      }
+    }
 
-            <button
-              onClick={onToggleFlag}
-              className={`p-2 rounded-lg transition-colors ${getFlagButtonColor()}`}
-              title={isCurrentQuestionFlagged() ? "Unflag Question" : "Flag Question"}
-            >
-              <Flag className="h-5 w-5" />
-            </button>
+    // We need to map those text nodes back to the live DOM
+    for (const node of textNodes) {
+      const original = findMatchingTextNodeInDOM(passageElement, node.nodeValue || '');
+      if (!original) continue;
 
-            {(session.phase === 'blind-review' || session.phase === 'strategy-review') && (
-              <button
-                onClick={onExitSession}
-                className="px-3 py-2 bg-slate-100 text-slate-600 hover:bg-slate-200 rounded-lg transition-colors text-sm font-medium"
-              >
-                {session.phase === 'blind-review' ? 'Pause Blind Review' : 'Pause Strategy Review'}
-              </button>
-            )}
+      const isStart = node === textNodes[0];
+      const isEnd = node === textNodes[textNodes.length - 1];
 
-            {session.phase === 'strategy-review' && (
-              <button
-                onClick={onShowStrategySummary}
-                className="px-3 py-2 bg-orange-100 text-orange-600 hover:bg-orange-200 rounded-lg transition-colors text-sm font-medium"
-              >
-                View Summary
-              </button>
-            )}
+      const start = isStart ? range.startOffset : 0;
+      const end = isEnd ? range.endOffset : (original.nodeValue || '').length;
 
-            <button
-              onClick={() => onSubmitSection(false)}
-              className="px-3 py-2 bg-red-100 text-red-600 hover:bg-red-200 rounded-lg transition-colors text-sm font-medium"
-            >
-              End Section
-            </button>
+      unwrapSpan(original, start, end);
+    }
+  }
 
-            <div className="flex space-x-1">
-              <button
-                onClick={onPreviousQuestion}
-                disabled={session.currentQuestionIndex === 0}
-                className="px-4 py-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                Previous
-              </button>
-              {isLastQuestionOfSection ? (
-                <button
-                 onClick={() => onSubmitSection(false)}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center"
-                >
-                  {isLastSection ? 'Finish Test' : (session.selectedSectionId ? 'Finish Section' : 'Next Section')}
-                  <ChevronRight className="h-4 w-4 ml-1" />
-                </button>
-              ) : (
-                <button
-                  onClick={onNextQuestion}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center"
-                >
-                  Next
-                  <ChevronRight className="h-4 w-4 ml-1" />
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Formatting Toolbar */}
-      <div className="border-t border-slate-200 px-6 py-3 bg-slate-50">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-1">
-            {formattingTools.map((tool) => {
-              const Icon = tool.icon;
-              const isSelected = selectedTool === tool.id;
-              
-              return (
-                <button
-                  key={tool.id}
-                  onClick={() => handleToolClick(tool.id)}
-                  className={`p-2 rounded-lg border transition-all ${
-                    isSelected 
-                      ? 'bg-blue-100 border-blue-300 text-blue-700 shadow-sm' 
-                      : `bg-white border-slate-200 text-slate-600 ${tool.bgColor}`
-                  }`}
-                  title={tool.label}
-                >
-                  {tool.id.startsWith('highlight-') ? (
-                    <div className="relative">
-                      <Icon className="h-4 w-4" />
-                      <div 
-                        className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full border border-white"
-                        style={{ backgroundColor: tool.color }}
-                      />
-                    </div>
-                  ) : (
-                    <Icon className="h-4 w-4" />
-                  )}
-                </button>
-              );
-            })}
-            
-            <div className="w-px h-6 bg-slate-300 mx-2" />
-            
-            <button
-              onClick={onClearFormatting}
-              className="p-2 rounded-lg border bg-white border-slate-200 text-slate-600 hover:bg-slate-100 transition-colors"
-              title="Clear Formatting"
-            >
-              <RotateCcw className="h-4 w-4" />
-            </button>
-          </div>
-          
-          <div className="text-sm text-slate-500">
-            {selectedTool === 'eraser' ? (
-              <span>Select formatted text to remove highlighting or underlining</span>
-            ) : selectedTool ? (
-              <span>Select text in the passage to apply formatting</span>
-            ) : (
-              <span>Choose a formatting tool, then select text in the passage</span>
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+  selection.removeAllRanges();
+  passageRef.current?.normalize();
 };
+
+// Utility: finds a text node in the DOM that matches by content and isn't already processed
+const findMatchingTextNodeInDOM = (root: HTMLElement, text: string): Text | null => {
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  let node: Node | null;
+
+  while ((node = walker.nextNode())) {
+    if (node.nodeType === Node.TEXT_NODE && node.nodeValue === text) {
+      return node as Text;
+    }
+  }
+
+  return null;
+};
+
+
+  const applyFormatting = (type: string, color: string) => {
+    const selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0) return;
+    
+    const range = selection.getRangeAt(0);
+    const selectedText = range.toString();
+    
+    if (!selectedText) return;
+
+    // Check if selection is within the passage area
+    const passageElement = passageRef.current;
+    if (!passageElement || !passageElement.contains(range.commonAncestorContainer)) {
+      return; // Don't apply formatting outside passage
+    }
+
+    // Check if the selection contains already formatted text
+    const commonAncestor = range.commonAncestorContainer;
+    let hasExistingFormatting = false;
+    
+    // Check if we're selecting within or across formatted elements
+    if (commonAncestor.nodeType === Node.ELEMENT_NODE) {
+      const element = commonAncestor as Element;
+      const formattedElements = element.querySelectorAll('.formatted-text');
+      hasExistingFormatting = formattedElements.length > 0;
+    } else if (commonAncestor.parentElement?.classList.contains('formatted-text')) {
+      hasExistingFormatting = true;
+    }
+
+    // If there's existing formatting, don't apply new formatting
+    if (hasExistingFormatting) {
+      selection.removeAllRanges();
+      return;
+    }
+
+    // Don't format if we're selecting across different elements
+    try {
+      const span = document.createElement('span');
+      
+      if (type === 'highlight') {
+        span.style.backgroundColor = color;
+        span.style.padding = '2px 1px';
+        span.style.borderRadius = '3px';
+        span.style.boxDecorationBreak = 'clone';
+      } else if (type === 'underline') {
+        span.style.borderBottom = `4px solid #000000`; // Always black for underline
+        span.style.paddingBottom = '1px';
+      }
+      
+      span.className = `formatted-text ${type}`;
+      span.setAttribute('data-format-type', type);
+      span.setAttribute('data-color', type === 'underline' ? '#000000' : color);
+      
+      // Try to wrap the selection
+      range.surroundContents(span);
+      selection.removeAllRanges();
+    } catch (e) {
+      // Handle complex selections by extracting and wrapping contents
+      try {
+        const span = document.createElement('span');
+        
+        if (type === 'highlight') {
+          span.style.backgroundColor = color;
+          span.style.padding = '2px 1px';
+          span.style.borderRadius = '3px';
+          span.style.boxDecorationBreak = 'clone';
+        } else if (type === 'underline') {
+          span.style.borderBottom = `4px solid #000000`; // Always black for underline
+          span.style.paddingBottom = '1px';
+        }
+        
+        span.className = `formatted-text ${type}`;
+        span.setAttribute('data-format-type', type);
+        span.setAttribute('data-color', type === 'underline' ? '#000000' : color);
+        
+        const contents = range.extractContents();
+        span.appendChild(contents);
+        range.insertNode(span);
+        selection.removeAllRanges();
+      } catch (e2) {
+        console.warn('Could not apply formatting to complex selection');
+      }
+    }
+  };
+
+  const handleMouseUp = () => {
+    if (!selectedTool) return;
+    
+    // Small delay to ensure selection is complete
+    setTimeout(() => {
+      if (selectedTool === 'eraser') {
+        removeFormatting();
+      } else if (selectedTool === 'underline') {
+        applyFormatting('underline', '#000000'); // Black underline
+      } else if (selectedTool.startsWith('highlight-')) {
+        const colors = {
+          'highlight-yellow': '#ffff00',
+          'highlight-pink': '#ffb3d9',
+          'highlight-red': '#ff6b6b'
+        };
+        applyFormatting('highlight', colors[selectedTool as keyof typeof colors]);
+      }
+    }, 10);
+  };
+
+  const clearFormatting = () => {
+    if (passageRef.current) {
+      const formattedElements = passageRef.current.querySelectorAll('.formatted-text');
+      formattedElements.forEach(element => {
+        const parent = element.parentNode;
+        if (parent) {
+          while (element.first
