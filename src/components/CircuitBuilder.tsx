@@ -486,7 +486,7 @@ const CircuitBuilderFlow = () => {
   const [showInstructions, setShowInstructions] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
    // UseReactFlow gives access to graph state and helpers
-  const { getSelectedElements } = useReactFlow();
+  const { getSelectedElements, project } = useReactFlow();
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -520,7 +520,6 @@ const CircuitBuilderFlow = () => {
   const onNodeClick = useCallback(() => {
       setSelectedEdgeIds(new Set());
     }, []);
-  const { project } = useReactFlow();
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
 
   // Node type definitions for the toolbar
