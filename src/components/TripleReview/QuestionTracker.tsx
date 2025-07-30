@@ -163,7 +163,7 @@ export const QuestionTracker: React.FC<QuestionTrackerProps> = ({
   {/* Phase + Buttons */}
   <div className="flex items-center justify-between mb-3">
     {/* Phase indicator */}
-    <div className="text-xs text-slate-600 flex items-center space-x-6 whitespace-nowrap">
+    <div className="text-small text-slate-600 flex items-center space-x-6 whitespace-nowrap">
       <span>
         <strong>Phase:</strong> {session.phase.charAt(0).toUpperCase() + session.phase.slice(1)}
       </span>
