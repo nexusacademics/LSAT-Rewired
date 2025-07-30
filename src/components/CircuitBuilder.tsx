@@ -661,7 +661,7 @@ const CircuitBuilderFlow = () => {
             onEdgesChange={onEdgesChange}
             onConnect={onConnect}
             nodeTypes={nodeTypes}
-            connectionMode={ConnectionMode.Strict}
+            connectionMode={ConnectionMode.Loose}
             fitView
            >
             <Background color="#e2e8f0" gap={20} />
