@@ -374,6 +374,13 @@ const handleLineSpacingChange = (spacing: 'normal' | 'loose' | 'relaxed') => {
         session={session}
         questionsInCurrentSection={questionsInCurrentSection}
         onQuestionJump={handleQuestionJump}
+        onExitSession={handlePauseReview}
+        onEndSection={handleSubmitSection}
+        onPreviousQuestion={handlePreviousQuestion}
+        onNextQuestion={handleNextQuestion}
+        onSubmitSection={handleSubmitSection}
+        isLastQuestionOfSection={isLastQuestionOfSection}
+        isLastSection={isLastSection}
       />
 
       {!currentSectionData.name.startsWith('RC') && (
