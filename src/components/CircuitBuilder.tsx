@@ -20,7 +20,7 @@ import ReactFlow, {
 } from 'reactflow';
 import { ArrowLeft, Plus, Trash2, Save, RotateCcw, Info } from 'lucide-react';
 import 'reactflow/dist/style.css';
-import CustomEdge from '/CustomEdge';
+import CustomEdge from './CustomEdge';
 
 const edgeTypes = {
   custom: CustomEdge,
