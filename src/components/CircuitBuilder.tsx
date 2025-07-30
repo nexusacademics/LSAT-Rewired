@@ -491,7 +491,6 @@ const CircuitBuilderFlow = () => {
     const newEdge: Edge = {
       ...params,
       id: `edge-${params.source}-${params.target}`,
-      markerEnd: 'url(#reactflow__arrowclosed)',
       data: { style: 'solid' },
       type: 'highlightable',
       style: {
