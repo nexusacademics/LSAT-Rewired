@@ -729,11 +729,11 @@ const CircuitBuilderFlow = () => {
               <defs>
                 <marker
                   id="reactflow__arrowclosed"
-                  markerWidth="20"
-                  markerHeight="20"
+                  markerWidth="10"
+                  markerHeight="10"
                   viewBox="0 0 20 20"
-                  refX="8"
-                  refY="8"
+                  refX="10"
+                  refY="10"
                   orient="auto"
                   markerUnits="strokeWidth"
                 >
