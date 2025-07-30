@@ -488,13 +488,6 @@ const CircuitBuilderFlow = () => {
   const onPaneClick = useCallback(() => {
         setSelectedEdgeIds(new Set());
       }, []);
-  const onEdgeClick = useCallback(
-      (event: React.MouseEvent, edge: Edge) => {
-        event.stopPropagation();
-        setSelectedEdgeIds(new Set([edge.id])); // Deselect others, just this one
-      },
-      []
-    );
   const onNodeClick = useCallback(() => {
       setSelectedEdgeIds(new Set());
     }, []);
