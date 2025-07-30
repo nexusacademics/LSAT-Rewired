@@ -20,6 +20,7 @@ import ReactFlow, {
 } from 'reactflow';
 import { ArrowLeft, Plus, Trash2, Save, RotateCcw, Info } from 'lucide-react';
 import 'reactflow/dist/style.css';
+import HighlightableEdge from './HighlightableEdge';
 
 // Types matching your original structure
 interface DiagramNode {
@@ -62,7 +63,9 @@ interface TestSession {
 const ConclusionSubjectNode = ({ id, data, selected }: NodeProps) => {
   const [content, setContent] = useState(data.content || '');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-
+  const edgeTypes = {
+    highlightable: HighlightableEdge,
+  };
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setContent(e.target.value);
     data.onContentChange?.(id, e.target.value);
@@ -492,13 +495,33 @@ const CircuitBuilderFlow = () => {
       style: {
         stroke: '#64748b',
         strokeWidth: 2,
+         type: 'highlightable',
       },
     };
     setEdges((eds) => addEdge(newEdge, eds));
   },
   [setEdges]
 );
-
+//Edge Style Change
+  const onEdgeStyleChange = useCallback(
+  (id: string, newStyle: 'solid' | 'dashed') => {
+    setEdges((eds) =>
+      eds.map((e) =>
+        e.id === id
+          ? {
+              ...e,
+              data: { ...e.data, style: newStyle },
+              style: {
+                ...e.style,
+                strokeDasharray: newStyle === 'dashed' ? '6 4' : 'none',
+              },
+            }
+          : e
+      )
+    );
+  },
+  [setEdges]
+);
 
   // Calculate analysis score
   const calculateAnalysisScore = useCallback(() => {
@@ -679,6 +702,7 @@ const CircuitBuilderFlow = () => {
           <ReactFlow
             nodes={nodes}
             edges={edges}
+            edgeTypes={edgeTypes}
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
             onConnect={onConnect}
