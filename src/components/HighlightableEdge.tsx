@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BaseEdge, EdgeLabelRenderer, EdgeProps, getBezierPath } from 'reactflow';
+import { BaseEdge, EdgeLabelRenderer, EdgeProps, getBezierPath, getSmoothStepPath } from 'reactflow';
 
 const HighlightableEdge = ({ id, sourceX, sourceY, targetX, targetY, selected, data, style }: EdgeProps) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -24,8 +24,8 @@ const HighlightableEdge = ({ id, sourceX, sourceY, targetX, targetY, selected, d
   const adjustedTargetX = targetX - unitX * HANDLE_RADIUS;
   const adjustedTargetY = targetY - unitY * HANDLE_RADIUS;
   
-  // Generate the Bezier path with the adjusted target coordinates
-  const [edgePath] = getBezierPath({ 
+  // Generate the path with the adjusted target coordinates
+  const [edgePath] = getSmoothStepPath({ 
     sourceX, 
     sourceY, 
     targetX: adjustedTargetX, 
