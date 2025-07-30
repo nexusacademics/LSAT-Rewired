@@ -58,7 +58,10 @@ interface TestSession {
     }
   };
 }
-
+ const edgeTypes = {
+    highlightable: HighlightableEdge,
+  };
+  
 // Custom Node Components
 const ConclusionSubjectNode = ({ id, data, selected }: NodeProps) => {
   const [content, setContent] = useState(data.content || '');
