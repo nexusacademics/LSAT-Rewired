@@ -13,6 +13,9 @@ interface PassagePanelProps {
   // New props for formatting
   selectedTool: string | null;
   onClearPassageFormatting: React.MutableRefObject<(() => void) | null>;
+  // New props for text size and line spacing
+  textSize: 'small' | 'medium' | 'large';
+  lineSpacing: 'normal' | 'relaxed' | 'loose';
 }
 
 export const PassagePanel: React.FC<PassagePanelProps> = ({
@@ -22,9 +25,31 @@ export const PassagePanel: React.FC<PassagePanelProps> = ({
   selectedAnswerIndex,
   isCircuitBuilderOpen,
   selectedTool,
-  onClearPassageFormatting
+  onClearPassageFormatting,
+  textSize,
+  lineSpacing
 }) => {
   const passageRef = useRef<HTMLDivElement>(null);
+
+  // Get text size classes
+  const getTextSizeClass = () => {
+    switch (textSize) {
+      case 'small': return 'text-sm';
+      case 'medium': return 'text-base';
+      case 'large': return 'text-lg';
+      default: return 'text-base';
+    }
+  };
+
+  // Get line spacing classes
+  const getLineSpacingClass = () => {
+    switch (lineSpacing) {
+      case 'normal': return 'leading-relaxed';
+      case 'relaxed': return 'leading-loose';
+      case 'loose': return 'leading-8';
+      default: return 'leading-relaxed';
+    }
+  };
 
  const removeFormatting = () => {
   const selection = window.getSelection();
@@ -112,7 +137,7 @@ export const PassagePanel: React.FC<PassagePanelProps> = ({
   passageRef.current?.normalize();
 };
 
-// Utility: finds a text node in the DOM that matches by content and isn’t already processed
+// Utility: finds a text node in the DOM that matches by content and isn't already processed
 const findMatchingTextNodeInDOM = (root: HTMLElement, text: string): Text | null => {
   const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
   let node: Node | null;
@@ -260,7 +285,7 @@ const findMatchingTextNodeInDOM = (root: HTMLElement, text: string): Text | null
         <div className="prose max-w-none">
           <div 
             ref={passageRef}
-            className={`text-slate-700 leading-relaxed ${selectedTool ? 'select-text cursor-text' : ''}`}
+            className={`text-slate-700 ${getTextSizeClass()} ${getLineSpacingClass()} ${selectedTool ? 'select-text cursor-text' : ''}`}
             onMouseUp={handleMouseUp}
             style={{ userSelect: selectedTool ? 'text' : 'auto' }}
           >
