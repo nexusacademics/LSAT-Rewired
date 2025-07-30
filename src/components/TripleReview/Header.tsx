@@ -14,7 +14,8 @@ import {
   Palette,
   Type,
   AlignLeft,
-  RotateCcw
+  RotateCcw,
+  Eraser
 } from 'lucide-react';
 import { TestSession, ProcessedQuestion } from '../../App';
 
@@ -126,6 +127,12 @@ export const Header: React.FC<HeaderProps> = ({
       label: 'Red Highlight', 
       color: '#ff6b6b',
       bgColor: 'hover:bg-red-100'
+    },
+    { 
+      id: 'eraser', 
+      icon: Eraser, 
+      label: 'Eraser - Remove Formatting',
+      bgColor: 'hover:bg-orange-100'
     },
     { 
       id: 'text-size', 
@@ -325,7 +332,9 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
           
           <div className="text-sm text-slate-500">
-            {selectedTool ? (
+            {selectedTool === 'eraser' ? (
+              <span>Select formatted text to remove highlighting or underlining</span>
+            ) : selectedTool ? (
               <span>Select text in the passage to apply formatting</span>
             ) : (
               <span>Choose a formatting tool, then select text in the passage</span>
