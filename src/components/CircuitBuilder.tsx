@@ -743,6 +743,7 @@ const CircuitBuilderFlow = () => {
             onEdgeClick={onEdgeClick}
             onNodeClick={onNodeClick}
             fitView
+            defaultViewport={{ x: 0, y: 0, zoom: 0.75 }}
            >
             <Background color="#e2e8f0" gap={20} />
             <Controls position="top-left"
