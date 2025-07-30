@@ -149,7 +149,14 @@ const ConcentricFlagIndicator: React.FC<{ flags: QuestionFlags; isAnswered: bool
 export const QuestionTracker: React.FC<QuestionTrackerProps> = ({
   session,
   questionsInCurrentSection,
-  onQuestionJump
+  onQuestionJump,
+  onExitSession,
+  onEndSection,
+  onPreviousQuestion,
+  onNextQuestion,
+  onSubmitSection,
+  isLastQuestionOfSection,
+  isLastSection
 }) => {
   return (
     <div className="bg-white shadow-lg border-t border-slate-200 p-2 overflow-x-auto">
