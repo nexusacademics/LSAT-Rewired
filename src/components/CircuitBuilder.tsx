@@ -725,42 +725,6 @@ const CircuitBuilderFlow = () => {
                 </div>
               </Panel>
             )}
-     {/* SVG Markers for custom edges */}
- <svg style={{ height: 0, width: 0 }}>
-    <defs>
-      {/* Unselected arrow marker */}
-      <marker
-        id="arrow-unselected"
-        markerWidth="12"
-        markerHeight="12"
-        viewBox="0 0 12 12"
-        refX="10"
-        refY="6"
-        orient="auto"
-      >
-        <path
-          d="M2,2 L10,6 L2,10 L4,6 z"
-          fill="#64748b"
-        />
-      </marker>
-      
-      {/* Selected arrow marker */}
-      <marker
-        id="arrow-selected"
-        markerWidth="12"
-        markerHeight="12"
-        viewBox="0 0 12 12"
-        refX="10"
-        refY="6"
-        orient="auto"
-      >
-        <path
-          d="M2,2 L10,6 L2,10 L4,6 z"
-          fill="#facc15"
-        />
-      </marker>
-    </defs>
-  </svg>
           </ReactFlow>
         </div>
       </div>
