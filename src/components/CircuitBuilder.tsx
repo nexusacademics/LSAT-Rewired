@@ -643,7 +643,7 @@ const CircuitBuilderFlow = () => {
               });
           
               const newNode: Node = {
-                id: node-${Date.now()},
+                id: `node-${Date.now()}`,
                 type,
                 position,
                 data: {
