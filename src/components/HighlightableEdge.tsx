@@ -5,7 +5,24 @@ const HighlightableEdge = ({ id, sourceX, sourceY, targetX, targetY, selected, d
   const [isHovered, setIsHovered] = useState(false);
   const isDashed = data?.style === 'dashed';
 
-  const [edgePath] = getBezierPath({ sourceX, sourceY, targetX, targetY });
+  // How far back from the target handle the arrow tip should be placed
+  const HANDLE_RADIUS = 10; // adjust if your handles are larger or smaller
+
+  // Compute vector from source to target
+  const dx = targetX - sourceX;
+  const dy = targetY - sourceY;
+  const length = Math.sqrt(dx * dx + dy * dy);
+
+  // Calculate unit vector (avoid division by zero)
+  const unitX = length === 0 ? 0 : dx / length;
+  const unitY = length === 0 ? 0 : dy / length;
+
+  // Adjust target point to be just before the handle edge
+  const adjustedTargetX = targetX - unitX * HANDLE_RADIUS;
+  const adjustedTargetY = targetY - unitY * HANDLE_RADIUS;
+
+  // Generate the Bezier path with the adjusted target coordinates
+  const [edgePath] = getBezierPath({ sourceX, sourceY, targetX: adjustedTargetX, targetY: adjustedTargetY });
 
   const toggleStyle = () => {
     if (data?.onStyleChange) {
