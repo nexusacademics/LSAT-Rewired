@@ -41,6 +41,25 @@ export const PassagePanel: React.FC<PassagePanelProps> = ({
       return; // Don't apply formatting outside passage
     }
 
+    // Check if the selection contains already formatted text
+    const commonAncestor = range.commonAncestorContainer;
+    let hasExistingFormatting = false;
+    
+    // Check if we're selecting within or across formatted elements
+    if (commonAncestor.nodeType === Node.ELEMENT_NODE) {
+      const element = commonAncestor as Element;
+      const formattedElements = element.querySelectorAll('.formatted-text');
+      hasExistingFormatting = formattedElements.length > 0;
+    } else if (commonAncestor.parentElement?.classList.contains('formatted-text')) {
+      hasExistingFormatting = true;
+    }
+
+    // If there's existing formatting, don't apply new formatting
+    if (hasExistingFormatting) {
+      selection.removeAllRanges();
+      return;
+    }
+
     // Don't format if we're selecting across different elements
     try {
       const span = document.createElement('span');
@@ -51,13 +70,13 @@ export const PassagePanel: React.FC<PassagePanelProps> = ({
         span.style.borderRadius = '3px';
         span.style.boxDecorationBreak = 'clone';
       } else if (type === 'underline') {
-        span.style.borderBottom = `6px solid ${color}`;
+        span.style.borderBottom = `4px solid #000000`; // Always black for underline
         span.style.paddingBottom = '1px';
       }
       
       span.className = `formatted-text ${type}`;
       span.setAttribute('data-format-type', type);
-      span.setAttribute('data-color', color);
+      span.setAttribute('data-color', type === 'underline' ? '#000000' : color);
       
       // Try to wrap the selection
       range.surroundContents(span);
@@ -73,13 +92,13 @@ export const PassagePanel: React.FC<PassagePanelProps> = ({
           span.style.borderRadius = '3px';
           span.style.boxDecorationBreak = 'clone';
         } else if (type === 'underline') {
-          span.style.borderBottom = `2px solid ${color}`;
+          span.style.borderBottom = `4px solid #000000`; // Always black for underline
           span.style.paddingBottom = '1px';
         }
         
         span.className = `formatted-text ${type}`;
         span.setAttribute('data-format-type', type);
-        span.setAttribute('data-color', color);
+        span.setAttribute('data-color', type === 'underline' ? '#000000' : color);
         
         const contents = range.extractContents();
         span.appendChild(contents);
@@ -97,7 +116,7 @@ export const PassagePanel: React.FC<PassagePanelProps> = ({
     // Small delay to ensure selection is complete
     setTimeout(() => {
       if (selectedTool === 'underline') {
-        applyFormatting('underline', '#ff0000');
+        applyFormatting('underline', '#000000'); // Black underline
       } else if (selectedTool.startsWith('highlight-')) {
         const colors = {
           'highlight-yellow': '#ffff00',
