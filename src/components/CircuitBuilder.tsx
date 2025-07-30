@@ -725,25 +725,7 @@ const CircuitBuilderFlow = () => {
                 </div>
               </Panel>
             )}
-            <svg style={{ height: 0 }}>
-              <defs>
-                <marker
-                  id="reactflow__arrowclosed"
-                  markerWidth="10"
-                  markerHeight="10"
-                  viewBox="0 0 20 20"
-                  refX="10"
-                  refY="10"
-                  orient="auto"
-                  markerUnits="strokeWidth"
-                >
-                  <path d="M0,0 L20,10 L0,20 L6,10 L0,0" fill="#222" />
-                </marker>
-              </defs>
-            </svg>
-          </ReactFlow>
-        </div>
-      </div>
+           
 
       {/* Instructions Modal */}
       {showInstructions && (
