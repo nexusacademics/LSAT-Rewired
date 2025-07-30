@@ -20,7 +20,6 @@ import ReactFlow, {
 } from 'reactflow';
 import { ArrowLeft, Plus, Trash2, Save, RotateCcw, Info } from 'lucide-react';
 import 'reactflow/dist/style.css';
-import HighlightableEdge from './HighlightableEdge';
 
 // Types matching your original structure
 interface DiagramNode {
@@ -58,15 +57,12 @@ interface TestSession {
     }
   };
 }
- const edgeTypes = {
-    highlightable: HighlightableEdge,
-  };
-  
+
 // Custom Node Components
 const ConclusionSubjectNode = ({ id, data, selected }: NodeProps) => {
   const [content, setContent] = useState(data.content || '');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
- 
+
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setContent(e.target.value);
     data.onContentChange?.(id, e.target.value);
@@ -78,9 +74,9 @@ const ConclusionSubjectNode = ({ id, data, selected }: NodeProps) => {
   };
 
   return (
-    <div className={`px-4 py-3 shadow-md rounded-lg bg-purple-50 border-2 ${
+    <div className={px-4 py-3 shadow-md rounded-lg bg-purple-50 border-2 ${
       selected ? 'border-purple-500' : 'border-purple-200'
-    } min-w-[120px] min-h-[70px] relative`} 
+    } min-w-[120px] min-h-[70px] relative} 
        style={
     selected
       ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
@@ -119,9 +115,9 @@ const ConclusionPredicateNode = ({ id, data, selected }: NodeProps) => {
   };
 
   return (
-    <div className={`px-4 py-3 shadow-md rounded-lg bg-purple-200 border-2 ${
+    <div className={px-4 py-3 shadow-md rounded-lg bg-purple-200 border-2 ${
       selected ? 'border-purple-600' : 'border-purple-400'
-    } min-w-[120px] min-h-[70px] relative`} 
+    } min-w-[120px] min-h-[70px] relative} 
        style={
     selected
       ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
@@ -160,9 +156,9 @@ const MinorPremiseNode = ({ id, data, selected }: NodeProps) => {
   };
 
   return (
-    <div className={`px-4 py-3 shadow-md rounded-lg bg-gray-50 border-2 ${
+    <div className={px-4 py-3 shadow-md rounded-lg bg-gray-50 border-2 ${
       selected ? 'border-gray-600' : 'border-black'
-    } min-w-[120px] min-h-[70px] relative`} 
+    } min-w-[120px] min-h-[70px] relative} 
        style={
     selected
       ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
@@ -200,9 +196,9 @@ const MajorPremiseNode = ({ id, data, selected }: NodeProps) => {
   };
 
   return (
-    <div className={`px-4 py-3 shadow-md rounded-lg bg-blue-100 border-2 ${
+    <div className={px-4 py-3 shadow-md rounded-lg bg-blue-100 border-2 ${
       selected ? 'border-blue-600' : 'border-blue-300'
-    } min-w-[120px] min-h-[70px] relative`} 
+    } min-w-[120px] min-h-[70px] relative} 
        style={
     selected
       ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
@@ -240,9 +236,9 @@ const BackingPremiseNode = ({ id, data, selected }: NodeProps) => {
   };
 
   return (
-    <div className={`px-4 py-3 shadow-md rounded-lg bg-gray-50 border-2 ${
+    <div className={px-4 py-3 shadow-md rounded-lg bg-gray-50 border-2 ${
       selected ? 'border-gray-600' : 'border-gray-300'
-    } min-w-[120px] min-h-[70px] relative`} 
+    } min-w-[120px] min-h-[70px] relative} 
        style={
     selected
       ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
@@ -293,9 +289,9 @@ const AssumptionNode = ({ id, data, selected }: NodeProps) => {
   };
 
   return (
-    <div className={`px-4 py-3 shadow-md rounded-lg bg-red-100 border-2 ${
+    <div className={px-4 py-3 shadow-md rounded-lg bg-red-100 border-2 ${
       selected ? 'border-red-600' : 'border-red-300'
-    } min-w-[300px] min-h-[120px] relative`} 
+    } min-w-[300px] min-h-[120px] relative} 
        style={
     selected
       ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
@@ -357,9 +353,9 @@ const CounterclaimNode = ({ id, data, selected }: NodeProps) => {
   };
 
   return (
-    <div className={`px-4 py-3 shadow-md rounded-lg bg-gray-100 border-2 ${
+    <div className={px-4 py-3 shadow-md rounded-lg bg-gray-100 border-2 ${
       selected ? 'border-red-600' : 'border-red-300'
-    } min-w-[120px] min-h-[70px] relative`} 
+    } min-w-[120px] min-h-[70px] relative} 
        style={
     selected
       ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
@@ -397,9 +393,9 @@ const CorrectAnswerNode = ({ id, data, selected }: NodeProps) => {
   };
 
   return (
-    <div className={`px-4 py-3 shadow-md rounded-lg bg-green-200 border-2 ${
+    <div className={px-4 py-3 shadow-md rounded-lg bg-green-200 border-2 ${
       selected ? 'border-green-600' : 'border-green-400'
-    } min-w-[120px] min-h-[70px] relative`} 
+    } min-w-[120px] min-h-[70px] relative} 
        style={
     selected
       ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
@@ -443,24 +439,7 @@ const CircuitBuilderFlow = () => {
   const [analysisScore, setAnalysisScore] = useState(0);
   const [showInstructions, setShowInstructions] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
-  //New Stuff//
-  const handleStyleChange = (edgeId: string, newStyle: 'solid' | 'dashed') => {
-              setEdges((eds) =>
-                eds.map((edge) =>
-                  edge.id === edgeId
-                    ? {
-                        ...edge,
-                        data: {
-                          ...(edge.data || {}),
-                          style: newStyle,
-                          onStyleChange: handleStyleChange,
-                        },
-                      }
-                    : edge
-                )
-              );
-            };
-  //End of New Stuff//
+  
   const { project } = useReactFlow();
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
 
@@ -486,46 +465,18 @@ const CircuitBuilderFlow = () => {
   }, [setNodes]);
 
   // Handle edge connections
- const onConnect = useCallback(
-  (params: Connection) => {
-    const newEdge: Edge = {
-      ...params,
-      id: `edge-${params.source}-${params.target}`,
-      data: { style: 'solid' },
-      type: 'highlightable',
-      markerEnd: {
-        type: MarkerType.ArrowClosed,
-      },
-      style: {
-        stroke: '#64748b',
-        strokeWidth: 2,
-       
-      },
-    };
-    setEdges((eds) => addEdge(newEdge, eds));
-  },
-  [setEdges]
-);
-//Edge Style Change
-  const onEdgeStyleChange = useCallback(
-  (id: string, newStyle: 'solid' | 'dashed') => {
-    setEdges((eds) =>
-      eds.map((e) =>
-        e.id === id
-          ? {
-              ...e,
-              data: { ...e.data, style: newStyle },
-              style: {
-                ...e.style,
-                strokeDasharray: newStyle === 'dashed' ? '6 4' : 'none',
-              },
-            }
-          : e
-      )
-    );
-  },
-  [setEdges]
-);
+  const onConnect = useCallback(
+    (params: Connection) => {
+      const edge: Edge = {
+        ...params,
+        id: edge-${params.source}-${params.target},
+        markerEnd: { type: MarkerType.ArrowClosed },
+        style: { stroke: '#64748b', strokeWidth: 2 },
+      };
+      setEdges(eds => addEdge(edge, eds));
+    },
+    [setEdges]
+  );
 
   // Calculate analysis score
   const calculateAnalysisScore = useCallback(() => {
@@ -645,7 +596,7 @@ const CircuitBuilderFlow = () => {
                     event.dataTransfer.setData('application/reactflow', type);
                     event.dataTransfer.effectAllowed = 'move';
                   }}
-                 className={`group w-full p-2 text-left border-2 rounded-lg cursor-move select-none transition-colors ${color}`}
+                 className={group w-full p-2 text-left border-2 rounded-lg cursor-move select-none transition-colors ${color}}
 
                 >
                   <div className="text-sm font-medium">{label}</div>
@@ -692,7 +643,7 @@ const CircuitBuilderFlow = () => {
               });
           
               const newNode: Node = {
-                id: `node-${Date.now()}`,
+                id: node-${Date.now()},
                 type,
                 position,
                 data: {
@@ -706,7 +657,6 @@ const CircuitBuilderFlow = () => {
           <ReactFlow
             nodes={nodes}
             edges={edges}
-            edgeTypes={edgeTypes}
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
             onConnect={onConnect}
@@ -717,6 +667,8 @@ const CircuitBuilderFlow = () => {
             <Background color="#e2e8f0" gap={20} />
             <Controls position="top-left"
               />
+           
+            
             {nodes.length === 0 && (
               <Panel position="center">
                 <div className="text-center text-slate-400 bg-white p-8 rounded-lg shadow-sm border border-slate-200">
