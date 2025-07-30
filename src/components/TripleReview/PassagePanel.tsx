@@ -26,7 +26,7 @@ export const PassagePanel: React.FC<PassagePanelProps> = ({
 }) => {
   const passageRef = useRef<HTMLDivElement>(null);
 
-  const removeFormatting = () => {
+ const removeFormatting = () => {
   const selection = window.getSelection();
   if (!selection || selection.rangeCount === 0) return;
 
@@ -38,86 +38,94 @@ export const PassagePanel: React.FC<PassagePanelProps> = ({
     return;
   }
 
-  // Workaround: use document fragment to hold modified content
-  const fragment = document.createDocumentFragment();
+  const unwrapSpan = (textNode: Text, start: number, end: number) => {
+    const parent = textNode.parentElement;
+    if (!parent || !parent.classList.contains('formatted-text')) return;
 
-  const startContainer = range.startContainer;
-  const endContainer = range.endContainer;
+    const fullText = textNode.nodeValue || '';
+    const before = fullText.slice(0, start);
+    const selected = fullText.slice(start, end);
+    const after = fullText.slice(end);
 
-  const isTextNode = (node: Node) => node.nodeType === Node.TEXT_NODE;
-
-  const processTextNode = (node: Text, start: number, end: number) => {
-    const parent = node.parentElement;
-    const isFormatted = parent?.classList.contains('formatted-text');
-
-    const originalText = node.nodeValue || '';
-    const beforeText = originalText.slice(0, start);
-    const selectedText = originalText.slice(start, end);
-    const afterText = originalText.slice(end);
-
-    const parts: Node[] = [];
-
-    if (beforeText) {
-      const beforeNode = document.createTextNode(beforeText);
-      parts.push(isFormatted ? wrapInSpan(beforeNode, parent!) : beforeNode);
-    }
-
-    if (selectedText) {
-      parts.push(document.createTextNode(selectedText)); // unwrapped!
-    }
-
-    if (afterText) {
-      const afterNode = document.createTextNode(afterText);
-      parts.push(isFormatted ? wrapInSpan(afterNode, parent!) : afterNode);
-    }
-
-    return parts;
-  };
-
-  const wrapInSpan = (node: Text, originalSpan: HTMLElement) => {
-    const newSpan = document.createElement('span');
-    newSpan.className = originalSpan.className;
-    newSpan.setAttribute('data-format-type', originalSpan.getAttribute('data-format-type') || '');
-    newSpan.setAttribute('data-color', originalSpan.getAttribute('data-color') || '');
-    newSpan.appendChild(node);
-    return newSpan;
-  };
-
-  if (startContainer === endContainer && isTextNode(startContainer)) {
-    // Selection within a single text node
-    const pieces = processTextNode(startContainer as Text, range.startOffset, range.endOffset);
-    const parent = (startContainer as Text).parentNode!;
-    pieces.forEach(node => parent.insertBefore(node, startContainer));
-    parent.removeChild(startContainer);
-  } else {
-    // More complex multi-node selection
-    const extracted = range.extractContents();
-
-   const walker = document.createTreeWalker(extracted, NodeFilter.SHOW_TEXT);
-let node: Node | null;
-
-while ((node = walker.nextNode())) {
-  const parent = node.parentElement;
-  if (parent?.classList.contains('formatted-text')) {
     const grandParent = parent.parentNode;
-    if (grandParent) {
-      const unwrapped = document.createTextNode(node.textContent || '');
-      grandParent.insertBefore(unwrapped, parent);
-      parent.removeChild(node);
-      if (!parent.hasChildNodes()) {
-        parent.remove(); // remove empty span
+    if (!grandParent) return;
+
+    // Create and insert the 3 parts
+    if (before) {
+      const beforeNode = document.createTextNode(before);
+      const beforeSpan = parent.cloneNode(false) as HTMLElement;
+      beforeSpan.textContent = before;
+      grandParent.insertBefore(beforeSpan, parent);
+    }
+
+    if (selected) {
+      const unwrappedNode = document.createTextNode(selected);
+      grandParent.insertBefore(unwrappedNode, parent);
+    }
+
+    if (after) {
+      const afterNode = document.createTextNode(after);
+      const afterSpan = parent.cloneNode(false) as HTMLElement;
+      afterSpan.textContent = after;
+      grandParent.insertBefore(afterSpan, parent);
+    }
+
+    // Remove original span
+    parent.remove();
+  };
+
+  // Case 1: single text node
+  if (
+    range.startContainer === range.endContainer &&
+    range.startContainer.nodeType === Node.TEXT_NODE
+  ) {
+    unwrapSpan(range.startContainer as Text, range.startOffset, range.endOffset);
+  } else {
+    // Case 2: multi-node
+    const selectedContents = range.cloneContents();
+    const walker = document.createTreeWalker(selectedContents, NodeFilter.SHOW_TEXT);
+    let node: Node | null;
+    const textNodes: Text[] = [];
+
+    while ((node = walker.nextNode())) {
+      if (node.nodeType === Node.TEXT_NODE) {
+        textNodes.push(node as Text);
       }
     }
-  }
-}
 
+    // We need to map those text nodes back to the live DOM
+    for (const node of textNodes) {
+      const original = findMatchingTextNodeInDOM(passageElement, node.nodeValue || '');
+      if (!original) continue;
 
-    range.insertNode(extracted);
+      const isStart = node === textNodes[0];
+      const isEnd = node === textNodes[textNodes.length - 1];
+
+      const start = isStart ? range.startOffset : 0;
+      const end = isEnd ? range.endOffset : (original.nodeValue || '').length;
+
+      unwrapSpan(original, start, end);
+    }
   }
 
   selection.removeAllRanges();
   passageRef.current?.normalize();
 };
+
+// Utility: finds a text node in the DOM that matches by content and isn’t already processed
+const findMatchingTextNodeInDOM = (root: HTMLElement, text: string): Text | null => {
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  let node: Node | null;
+
+  while ((node = walker.nextNode())) {
+    if (node.nodeType === Node.TEXT_NODE && node.nodeValue === text) {
+      return node as Text;
+    }
+  }
+
+  return null;
+};
+
 
   const applyFormatting = (type: string, color: string) => {
     const selection = window.getSelection();
