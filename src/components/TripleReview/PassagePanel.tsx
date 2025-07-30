@@ -41,41 +41,59 @@ export const PassagePanel: React.FC<PassagePanelProps> = ({
       return;
     }
 
-    // Find all formatted elements within the selection
-    const commonAncestor = range.commonAncestorContainer;
-    let formattedElements: Element[] = [];
-
-    if (commonAncestor.nodeType === Node.ELEMENT_NODE) {
-      // If selecting across multiple elements
-      const element = commonAncestor as Element;
-      formattedElements = Array.from(element.querySelectorAll('.formatted-text'));
+    // Create a temporary container to process the selection
+    const tempDiv = document.createElement('div');
+    let rangeContents;
+    
+    try {
+      rangeContents = range.cloneContents();
+      tempDiv.appendChild(rangeContents);
       
-      // Also check if the common ancestor itself is formatted
-      if (element.classList.contains('formatted-text')) {
-        formattedElements.push(element);
+      // Find all formatted elements in the cloned content
+      const formattedElements = tempDiv.querySelectorAll('.formatted-text');
+      
+      // Remove formatting classes and styles from cloned elements
+      formattedElements.forEach(element => {
+        element.removeAttribute('class');
+        element.removeAttribute('data-format-type');
+        element.removeAttribute('data-color');
+        element.removeAttribute('style');
+      });
+      
+      // Replace the original selection with the unformatted version
+      range.deleteContents();
+      
+      // Insert the cleaned content
+      while (tempDiv.firstChild) {
+        range.insertNode(tempDiv.firstChild);
       }
-    } else {
-      // If selecting within a single text node, check parent elements
-      let parent = commonAncestor.parentElement;
-      while (parent && passageElement.contains(parent)) {
-        if (parent.classList.contains('formatted-text')) {
-          formattedElements.push(parent);
-          break; // Only remove the immediate formatted parent
+      
+    } catch (e) {
+      // Fallback: find and remove formatted parent elements that contain the selection
+      let currentNode = range.commonAncestorContainer;
+      
+      // If we're in a text node, check its parent
+      if (currentNode.nodeType === Node.TEXT_NODE) {
+        currentNode = currentNode.parentElement;
+      }
+      
+      // Check if we're inside a formatted element
+      while (currentNode && passageElement.contains(currentNode as Node)) {
+        if ((currentNode as Element).classList?.contains('formatted-text')) {
+          const formattedElement = currentNode as Element;
+          const parent = formattedElement.parentNode;
+          if (parent) {
+            // Move all children out of the formatted element
+            while (formattedElement.firstChild) {
+              parent.insertBefore(formattedElement.firstChild, formattedElement);
+            }
+            parent.removeChild(formattedElement);
+          }
+          break;
         }
-        parent = parent.parentElement;
+        currentNode = (currentNode as Element).parentElement;
       }
     }
-
-    // Remove formatting from found elements
-    formattedElements.forEach(element => {
-      const parent = element.parentNode;
-      if (parent) {
-        while (element.firstChild) {
-          parent.insertBefore(element.firstChild, element);
-        }
-        parent.removeChild(element);
-      }
-    });
 
     // Normalize the text content
     if (passageRef.current) {
