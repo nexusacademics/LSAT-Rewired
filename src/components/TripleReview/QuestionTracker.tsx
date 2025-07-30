@@ -1,4 +1,5 @@
-import React from 'react';
+import React  { useState } from 'react';
+import { TestSession, ProcessedQuestion } from '../../App';
 
 // Enhanced flag system to track multiple phases
 interface QuestionFlags {
