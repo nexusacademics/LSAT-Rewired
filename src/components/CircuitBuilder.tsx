@@ -596,7 +596,7 @@ const CircuitBuilderFlow = () => {
                     event.dataTransfer.setData('application/reactflow', type);
                     event.dataTransfer.effectAllowed = 'move';
                   }}
-                 className={group w-full p-2 text-left border-2 rounded-lg cursor-move select-none transition-colors ${color}}
+                 className={`group w-full p-2 text-left border-2 rounded-lg cursor-move select-none transition-colors ${color}`}
 
                 >
                   <div className="text-sm font-medium">{label}</div>
