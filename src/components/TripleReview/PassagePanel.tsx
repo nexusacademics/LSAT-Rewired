@@ -51,7 +51,7 @@ export const PassagePanel: React.FC<PassagePanelProps> = ({
         span.style.borderRadius = '3px';
         span.style.boxDecorationBreak = 'clone';
       } else if (type === 'underline') {
-        span.style.borderBottom = `2px solid ${color}`;
+        span.style.borderBottom = `6px solid ${color}`;
         span.style.paddingBottom = '1px';
       }
       
