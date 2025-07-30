@@ -74,9 +74,9 @@ const ConclusionSubjectNode = ({ id, data, selected }: NodeProps) => {
   };
 
   return (
-    <div className={px-4 py-3 shadow-md rounded-lg bg-purple-50 border-2 ${
+    <div className={`px-4 py-3 shadow-md rounded-lg bg-purple-50 border-2 ${
       selected ? 'border-purple-500' : 'border-purple-200'
-    } min-w-[120px] min-h-[70px] relative} 
+    } min-w-[120px] min-h-[70px] relative`} 
        style={
     selected
       ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
