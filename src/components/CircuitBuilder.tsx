@@ -479,8 +479,8 @@ const nodeTypes = {
 
 // Main Circuit Builder Component
 const CircuitBuilderFlow = () => {
-  const [nodes, setNodes, onNodesChange] = useNodesState([]);
-  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const [nodes, setNodesState, onNodesChange] = useNodesState([]);
+  const [edges, setEdgesState, onEdgesChange] = useEdgesState([]);
   const [selectedNodeType, setSelectedNodeType] = useState<DiagramNode['type']>('conclusion-subject');
   const [analysisScore, setAnalysisScore] = useState(0);
   const [showInstructions, setShowInstructions] = useState(false);
