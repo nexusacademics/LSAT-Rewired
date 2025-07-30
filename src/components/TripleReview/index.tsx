@@ -346,6 +346,8 @@ const handleLineSpacingChange = (spacing: 'normal' | 'relaxed' | 'loose') => {
               // Add formatting props
               selectedTool={selectedTool}
               onClearPassageFormatting={clearPassageFormattingRef}
+              textSize={textSize}
+              lineSpacing={lineSpacing}
             />
 
             {session.phase !== 'timed' && (
