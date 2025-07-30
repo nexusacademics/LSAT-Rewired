@@ -308,6 +308,32 @@ const QuestionTrackerDemo: React.FC = () => {
             </div>
           </div>
         </div>
+         <div className="flex space-x-1">
+              <button
+                onClick={onPreviousQuestion}
+                disabled={session.currentQuestionIndex === 0}
+                className="px-4 py-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Previous
+              </button>
+              {isLastQuestionOfSection ? (
+                <button
+                 onClick={() => onSubmitSection(false)}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center"
+                >
+                  {isLastSection ? 'Finish Test' : (session.selectedSectionId ? 'Finish Section' : 'Next Section')}
+                  <ChevronRight className="h-4 w-4 ml-1" />
+                </button>
+              ) : (
+                <button
+                  onClick={onNextQuestion}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center"
+                >
+                  Next
+                  <ChevronRight className="h-4 w-4 ml-1" />
+                </button>
+              )}
+            </div>
       </div>
     </div>
   );
