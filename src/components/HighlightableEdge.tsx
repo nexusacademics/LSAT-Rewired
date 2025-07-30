@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BaseEdge, EdgeLabelRenderer, EdgeProps, getBezierPath, MarkerType } from 'reactflow';
+import { BaseEdge, EdgeLabelRenderer, EdgeProps, getBezierPath } from 'reactflow';
 
 const HighlightableEdge = ({ id, sourceX, sourceY, targetX, targetY, selected, data, style }: EdgeProps) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -36,16 +36,15 @@ const HighlightableEdge = ({ id, sourceX, sourceY, targetX, targetY, selected, d
   };
   
   const edgeColor = selected ? '#facc15' : '#64748b';
+  // Create unique marker IDs for selected and unselected states
+  const markerId = selected ? 'arrow-selected' : 'arrow-unselected';
   
   return (
     <>
       <BaseEdge
         id={id}
         path={edgePath}
-        markerEnd={{
-          type: MarkerType.ArrowClosed,
-          color: edgeColor,
-        }}
+        markerEnd={`url(#${markerId})`}
         style={{
           stroke: edgeColor,
           strokeWidth: selected ? 3 : 2,
