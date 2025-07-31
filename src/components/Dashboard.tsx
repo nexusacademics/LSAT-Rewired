@@ -288,13 +288,13 @@ const Dashboard: React.FC<DashboardProps> = ({
                   <div className={`p-2 rounded-lg ${theme === 'dark' ? 'bg-gray-700 shadow-inner' : 'bg-gray-100'}`}>
                     <Search className="h-6 w-6 text-blue-500" />
                   </div>
-                   <div>
+                </div>
+                <div>
                      <input
                         type="string"
                         value={searchTerm}
                       />
                    </div>
-                </div>
               </Card>
             </Card>
             </div>
