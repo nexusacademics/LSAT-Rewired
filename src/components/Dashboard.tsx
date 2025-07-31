@@ -6,8 +6,6 @@ import TimeModeSelectionModal from './TimeModeSelectionModal';
 //import search functions
 import { parseSearchQuery } from '../utils/parseSearchQuery';
 import { supabase } from '../lib/supabase';
-import { useState } from 'react';
-import { supabase } from '../lib/supabase';
 
 // Import your new design system components
 import { useTheme } from '../contexts/ThemeContext';
