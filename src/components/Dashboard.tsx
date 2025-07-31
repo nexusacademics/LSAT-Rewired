@@ -269,44 +269,58 @@ const [searchTerm, setSearchTerm] = useState<string>('');
               </Card>
             </Card>
             
-           <Card padding="default" hover>
-                <CardHeader className="pb-3">
-                  <CardTitle icon={<Search className="h-5 w-5 text-yellow-500" />}>
-                    Item Search
-                  </CardTitle>
-                </CardHeader>
-                <Card variant="accent" padding="sm">
-                  <div className="flex items-center justify-between mb-4">
-                    <div>
-                      <h3 className={`text-lg font-bold mb-1 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                        Find a question from an official LSAC PrepTest 
-                      </h3>
-                      <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                        Use Keywords in the textbox below
-                      </p>
-                    </div>
-                    <div className={`p-2 rounded-lg ${theme === 'dark' ? 'bg-gray-700 shadow-inner' : 'bg-gray-100'}`}>
-                      <Search className="h-6 w-6 text-blue-500" />
-                    </div>
-                  </div>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      placeholder="Enter keywords to search PrepTest questions..."
-                      className={`w-full px-4 py-3 pr-10 rounded-lg border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                        theme === 'dark' 
-                          ? 'bg-gray-800 border-gray-600 text-white placeholder-gray-400 hover:border-gray-500' 
-                          : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500 hover:border-gray-400'
-                      }`}
-                    />
-                    <Search className={`absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 pointer-events-none ${
-                      theme === 'dark' ? 'text-gray-400' : 'text-gray-400'
-                    }`} />
-                  </div>
-                </Card>
-              </Card>
+         <Card padding="default" hover>
+            <CardHeader className="pb-3">
+              <CardTitle icon={<Search className="h-5 w-5 text-yellow-500" />}>
+                Item Search
+              </CardTitle>
+            </CardHeader>
+            <Card variant="accent" padding="sm">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h3 className={`text-lg font-bold mb-1 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                    Find a question from an official LSAC PrepTest 
+                  </h3>
+                  <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                    Use Keywords in the textbox below
+                  </p>
+                </div>
+                <div className={`p-2 rounded-lg ${theme === 'dark' ? 'bg-gray-700 shadow-inner' : 'bg-gray-100'}`}>
+                  <Search className="h-6 w-6 text-blue-500" />
+                </div>
+              </div>
+              <div className="relative">
+                <input
+                  type="text"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                  placeholder="Enter keywords to search PrepTest questions..."
+                  className={`w-full px-4 py-3 pr-12 rounded-lg border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                    theme === 'dark' 
+                      ? 'bg-gray-800 border-gray-600 text-white placeholder-gray-400 hover:border-gray-500' 
+                      : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500 hover:border-gray-400'
+                  }`}
+                />
+                <button
+                  onClick={handleSearch}
+                  disabled={!searchTerm?.trim()}
+                  className={`absolute right-2 top-1/2 transform -translate-y-1/2 p-1.5 rounded-md transition-all duration-200 ${
+                    searchTerm?.trim()
+                      ? theme === 'dark'
+                        ? 'text-blue-400 hover:text-blue-300 hover:bg-gray-700 active:bg-gray-600'
+                        : 'text-blue-500 hover:text-blue-600 hover:bg-gray-100 active:bg-gray-200'
+                      : theme === 'dark'
+                        ? 'text-gray-600 cursor-not-allowed'
+                        : 'text-gray-400 cursor-not-allowed'
+                  }`}
+                  aria-label="Search PrepTest questions"
+                >
+                  <Search className="h-5 w-5" />
+                </button>
+              </div>
+            </Card>
+          </Card>
             </div>
           {/* Right Column - Now takes 1 column and combines Performance + Leaderboard */}
           <div className="space-y-4">
