@@ -68,6 +68,7 @@ const handleSelect = (question: ProcessedQuestion) => {
     });
   
     setSearchResults(results);
+    setSearchModalOpen(true);
   };
 
   
