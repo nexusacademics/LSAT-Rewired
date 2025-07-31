@@ -288,6 +288,24 @@ const Dashboard: React.FC<DashboardProps> = ({
                   <div className={`p-2 rounded-lg ${theme === 'dark' ? 'bg-gray-700 shadow-inner' : 'bg-gray-100'}`}>
                     <Search className="h-6 w-6 text-blue-500" />
                   </div>
+                   <div className="flex items-center space-x-2">
+                 <input
+                    type="number"
+                    value={customMinutes}
+                    onFocus={(e) => {
+                      e.target.select();
+                      setSelectedTimeMode('custom');
+                    }}
+                    onChange={(e) => {
+                      setCustomMinutes(e.target.value);
+                      setCustomError(false); // Clear error as user edits
+                    }}
+                    className={`w-20 px-2 py-1 border rounded text-sm ${
+                      customError ? 'border-red-500' : 'border-slate-300'
+                    }`}
+                    min="1"
+                    max="180"
+                  />
                 </div>
               </Card>
             </Card>
