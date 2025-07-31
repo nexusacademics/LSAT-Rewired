@@ -324,9 +324,6 @@ const Dashboard: React.FC<DashboardProps> = ({
                       "PrepTest 140, section 2, question 9"<br/>"152.4.16"<br/>"Han Purple"<br/>"Reading Comp Passage about mirrors"
                     </p>
                   </div>
-                  <div className={`p-2 rounded-lg ${theme === 'dark' ? 'bg-gray-700 shadow-inner' : 'bg-gray-100'}`}>
-                    <Search className="h-6 w-6 text-blue-500" />
-                  </div>
                 </div>
                 <div className="relative">
                   <input
