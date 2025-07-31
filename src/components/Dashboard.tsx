@@ -316,8 +316,7 @@ const Dashboard: React.FC<DashboardProps> = ({
                 </div>
               </CardContent>
             </Card>
-          </div>
-          <div className="space-y-2">
+        
             {/* Archived Drills */}
             <DrillSection
                 title="Active Drills"
