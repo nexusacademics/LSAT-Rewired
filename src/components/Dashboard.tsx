@@ -7,6 +7,7 @@ import TimeModeSelectionModal from './TimeModeSelectionModal';
 import { parseSearchQuery } from '../utils/parseSearchQuery';
 import { supabase } from '../lib/supabase';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import SearchResultsModal from './SearchResultsModal';
 
 // Import your new design system components
 import { useTheme } from '../contexts/ThemeContext';
