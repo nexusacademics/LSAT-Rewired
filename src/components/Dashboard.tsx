@@ -38,7 +38,7 @@ const Dashboard: React.FC<DashboardProps> = ({
   const [searchResults, setSearchResults] = useState([]);
 
   const handleSearch = async () => {
-   if (!searchTerm.trim()) return;
+  if (!searchTerm.trim()) return;
 
   const parsed = await parseSearchQuery(searchTerm);
   console.log("Parsed query:", parsed);
@@ -74,13 +74,10 @@ const Dashboard: React.FC<DashboardProps> = ({
     setSearchResults([]);
     return;
   }
-  {searchResults.length === 0 && searchTerm && (
-  <p className="text-sm text-gray-500 mt-4">
-    No results found for <span className="font-medium">"{searchTerm}"</span>
-  </p>
-)}
-  setSearchResults(data);
+
+  setSearchResults(data || []);
 };
+
   
   // Filter user sessions into categories (keeping your existing logic)
   const activeSessions = userSessions.filter(session => !session.endTime);
