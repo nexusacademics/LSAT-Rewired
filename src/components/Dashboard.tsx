@@ -1,5 +1,5 @@
 import React, { icons, useState } from 'react';
-import { Drill, BookOpen, Play, TrendingUp, Calendar, Upload, Download, Users, Brain, Target, Archive, ChevronRight, Zap, Award, Activity } from 'lucide-react';
+import { Search, Drill, BookOpen, Play, TrendingUp, Calendar, Upload, Download, Users, Brain, Target, Archive, ChevronRight, Zap, Award, Activity } from 'lucide-react';
 import { User, TestSession, ProcessedPrepTest } from '../App';
 import TimeModeSelectionModal from './TimeModeSelectionModal';
 
@@ -271,7 +271,7 @@ const Dashboard: React.FC<DashboardProps> = ({
 //replace
                 >
                   <Play className="h-4 w-4 mr-2" />
-                 Question Search
+                 State New Stim Drill
                 </Button>
               </Card>
             </Card>
@@ -279,14 +279,14 @@ const Dashboard: React.FC<DashboardProps> = ({
                 <div className="flex items-center justify-between mb-4">
                   <div>
                     <h3 className={`text-lg font-bold mb-1 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                      Stim Drill
+                      Item Search
                     </h3>
                     <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                      Practice Logical Reasoning Stimulus Analysis.
+                      Find an item from an official LSAC Prep Test using keywords
                     </p>
                   </div>
                   <div className={`p-2 rounded-lg ${theme === 'dark' ? 'bg-gray-700 shadow-inner' : 'bg-gray-100'}`}>
-                    <Drill className="h-6 w-6 text-blue-500" />
+                    <Search className="h-6 w-6 text-blue-500" />
                   </div>
                 </div>
                 
