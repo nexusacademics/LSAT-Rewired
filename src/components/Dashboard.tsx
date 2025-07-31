@@ -266,7 +266,9 @@ const Dashboard: React.FC<DashboardProps> = ({
                 <Button 
                   size="default" 
                   className="w-full"
+//replace
                   onClick={handleStartNewSessionClick}
+//replace
                 >
                   <Play className="h-4 w-4 mr-2" />
                   Start New Drill Session
