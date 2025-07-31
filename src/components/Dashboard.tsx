@@ -6,6 +6,7 @@ import TimeModeSelectionModal from './TimeModeSelectionModal';
 //import search functions
 import { parseSearchQuery } from '../utils/parseSearchQuery';
 import { supabase } from '../lib/supabase';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 // Import your new design system components
 import { useTheme } from '../contexts/ThemeContext';
@@ -34,6 +35,8 @@ const Dashboard: React.FC<DashboardProps> = ({
   const { theme } = useTheme();
  
   //item search
+  const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY || '');
+  const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
 
