@@ -283,7 +283,7 @@ const Dashboard: React.FC<DashboardProps> = ({
                 </Button>
               </Card>
             </Card>
-
+<div className="space-y-2">
             {/* Active Drills */}
            <DrillSection
                 title="Active Drills"
@@ -316,7 +316,8 @@ const Dashboard: React.FC<DashboardProps> = ({
                 </div>
               </CardContent>
             </Card>
-
+          </div>
+          <div className="space-y-2">
             {/* Archived Drills */}
             <DrillSection
                 title="Active Drills"
@@ -350,7 +351,7 @@ const Dashboard: React.FC<DashboardProps> = ({
               </CardContent>
             </Card>
           </div>
-          
+        </div>
           {/* Right Column - Item Search */}
           <div className="space-y-4">
             <Card padding="default" hover>
