@@ -316,7 +316,7 @@ const Dashboard: React.FC<DashboardProps> = ({
                 <div className="flex items-center justify-between mb-4">
                   <div>
                     <h3 className={`text-lg font-bold mb-1 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                      Find a question from an official LSAC PrepTest 
+                      Find a question or Passage from an official LSAC PrepTest 
                     </h3>
                     <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
                       Use Keywords in the textbox below, for example:
