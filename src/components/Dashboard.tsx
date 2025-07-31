@@ -163,7 +163,7 @@ const Dashboard: React.FC<DashboardProps> = ({
             {/* Start New Session - Compressed */}
             <Card padding="default" hover>
               <CardHeader className="pb-3">
-                <CardTitle icon={<Zap className="h-5 w-5 text-yellow-500" />}>
+                <CardTitle icon={<Drill className="h-5 w-5 text-yellow-500" />}>
                   Start Your Next Session
                 </CardTitle>
               </CardHeader>
