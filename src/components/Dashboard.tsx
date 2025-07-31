@@ -69,7 +69,7 @@ const Dashboard: React.FC<DashboardProps> = ({
       <div className="w-full pt-20 px-4 pb-4">
         <div className="max-w-[1600px] mx-auto space-y-4">
         
-        {/* Welcome Header - Compressed */}
+        {/* Welcome Header with Study Streak */}
         <Card padding="default" gradient={theme === 'light'}>
           <div className={`${theme === 'dark' ? 'bg-gradient-to-r from-blue-600/20 via-purple-600/20 to-teal-600/20 p-6 -m-6 rounded-2xl' : ''}`}>
             <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between">
@@ -85,12 +85,39 @@ const Dashboard: React.FC<DashboardProps> = ({
                   Ready to continue your LSAT mastery journey?
                 </p>
                 
-                {user.lawhubCredentials?.verified && (
-                  <Badge variant="success" className="inline-flex items-center">
-                    <Brain className="h-4 w-4 mr-2" />
-                    LawHub Connected: {user.lawhubCredentials.username}
-                  </Badge>
-                )}
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                  {user.lawhubCredentials?.verified && (
+                    <Badge variant="success" className="inline-flex items-center">
+                      <Brain className="h-4 w-4 mr-2" />
+                      LawHub Connected: {user.lawhubCredentials.username}
+                    </Badge>
+                  )}
+                  
+                  {/* Study Streak */}
+                  <div className="flex items-center space-x-3">
+                    <Calendar className="h-5 w-5 text-orange-500" />
+                    <div className="flex items-center space-x-2">
+                      <span className={`text-2xl font-bold ${
+                        theme === 'dark' 
+                          ? 'text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-400' 
+                          : 'text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-red-500'
+                      }`}>7</span>
+                      <div>
+                        <div className={`text-sm font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>Day Streak 🔥</div>
+                        <div className="flex space-x-1">
+                          {[...Array(7)].map((_, i) => (
+                            <div 
+                              key={i} 
+                              className={`h-2 w-2 rounded-full bg-gradient-to-br from-orange-500 to-red-500 shadow-sm ${
+                                theme === 'dark' ? 'border border-orange-400/30' : ''
+                              }`}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
               
               <div className="flex items-center space-x-6">
@@ -129,7 +156,7 @@ const Dashboard: React.FC<DashboardProps> = ({
           </div>
         </Card>
 
-        <div className="grid lg:grid-cols-4 gap-4">
+        <div className="grid lg:grid-cols-3 gap-4">
           {/* Test Selection - Now takes 2 columns */}
           <div className="lg:col-span-2 space-y-4">
             
@@ -213,7 +240,7 @@ const Dashboard: React.FC<DashboardProps> = ({
             </div>
           </div>
 
-          {/* Middle Column- Now takes 1 column */}
+          {/* Right Column - Now takes 1 column and combines Performance + Leaderboard */}
           <div className="space-y-4">
             
             {/* Performance Overview - Compressed */}
@@ -251,41 +278,7 @@ const Dashboard: React.FC<DashboardProps> = ({
               </CardContent>
             </Card>
 
-            {/* Study Streak - Compressed */}
-            <Card padding="sm">
-              <CardHeader className="pb-2">
-                <CardTitle icon={<Calendar className="h-4 w-4 text-orange-500" />}>
-                  Study Streak
-                </CardTitle>
-              </CardHeader>
-              
-              <CardContent>
-                <div className="text-center">
-                  <div className={`text-3xl font-bold mb-2 ${
-                    theme === 'dark' 
-                      ? 'text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-400' 
-                      : 'text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-red-500'
-                  }`}>7</div>
-                  <div className={`text-xs mb-4 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Days in a row 🔥</div>
-                  
-                  <div className="grid grid-cols-7 gap-1">
-                    {[...Array(7)].map((_, i) => (
-                      <div 
-                        key={i} 
-                        className={`h-6 w-6 rounded-lg bg-gradient-to-br from-orange-500 to-red-500 shadow-sm transform hover:scale-110 transition-transform ${
-                          theme === 'dark' ? 'border border-orange-400/30' : ''
-                        }`}
-                      />
-                    ))}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-      
-        {/* Right Column- Now takes 1 column */}
-          <div className="space-y-4">
-                      {/* Leaderboard Preview - Compressed */}
+            {/* Leaderboard Preview - Compressed */}
             <Card padding="sm">
               <CardHeader className="pb-2">
                 <div className="flex items-center justify-between">
