@@ -1,5 +1,5 @@
 import React, { icons, useState } from 'react';
-import { BookOpen, Play, TrendingUp, Calendar, Upload, Download, Users, Brain, Target, Archive, ChevronRight, Zap, Award, Activity } from 'lucide-react';
+import { Drill, BookOpen, Play, TrendingUp, Calendar, Upload, Download, Users, Brain, Target, Archive, ChevronRight, Zap, Award, Activity } from 'lucide-react';
 import { User, TestSession, ProcessedPrepTest } from '../App';
 import TimeModeSelectionModal from './TimeModeSelectionModal';
 
@@ -259,7 +259,7 @@ const Dashboard: React.FC<DashboardProps> = ({
                     </p>
                   </div>
                   <div className={`p-2 rounded-lg ${theme === 'dark' ? 'bg-gray-700 shadow-inner' : 'bg-gray-100'}`}>
-                    <Lightbulb className="h-6 w-6 text-blue-500" />
+                    <Drill className="h-6 w-6 text-blue-500" />
                   </div>
                 </div>
                 
