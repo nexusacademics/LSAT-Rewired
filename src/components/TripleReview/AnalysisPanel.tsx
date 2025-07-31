@@ -171,7 +171,7 @@ export const AnalysisPanel = ({
       {/* Header */}
       <div className="bg-white rounded-2xl shadow-sm border border-slate-200 flex-shrink-0">
         <div className="p-4 border-b border-slate-100">
-          <h3 className="text-sm font-semibold text-slate-900">
+          <h3 className="text-md font-semibold text-slate-900">
             {isBlindReview ? 'Analysis Template' : 'Answer Explanations'}
           </h3>
         </div>
