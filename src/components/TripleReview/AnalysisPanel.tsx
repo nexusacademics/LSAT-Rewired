@@ -193,7 +193,7 @@ export const AnalysisPanel = ({
                 minHeight: `${MIN_HEIGHT + LABEL_HEIGHT}px`
               }}
             >
-              <label className="block text-xs font-medium text-slate-700 mb-1 flex-shrink-0">
+              <label className="block text-sm font-medium text-slate-700 mb-1 flex-shrink-0">
                 {labelMap[key]}
               </label>
               <textarea
