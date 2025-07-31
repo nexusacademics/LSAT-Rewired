@@ -582,5 +582,58 @@ const SessionSection: React.FC<SessionSectionProps> = ({
     </Card>
   );
 };
+interface DrillSectionProps {
+  title: string;
+  icon: React.ReactNode;
+  count: number;
+  emptyMessage: string;
+  emptyIcon: string;
+  theme: 'light' | 'dark';
+}
 
+const DrillSection: React.FC<DrillSectionProps> = ({
+  title,
+  icon,
+  count,
+  emptyMessage,
+  emptyIcon,
+  theme
+}) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  return (
+    <Card padding="sm" hover>
+      <Button
+        variant={count > 0 ? 'accent' : 'ghost'}
+        className="w-full flex items-center justify-between p-3 mb-0"
+        onClick={() => setIsExpanded(!isExpanded)}
+      >
+        <div className="flex items-center space-x-2">
+          {icon}
+          <span className="font-medium">{title}</span>
+          <Badge variant="secondary" className="text-xs">
+            {count}
+          </Badge>
+        </div>
+        <ChevronRight
+          className={`h-4 w-4 transition-transform duration-200 ${
+            isExpanded ? 'rotate-90' : ''
+          }`}
+        />
+      </Button>
+
+      {isExpanded && (
+        <div className="mt-3 space-y-2 animate-in slide-in-from-top-2 duration-200">
+          {/* Replace with actual drill list logic when available */}
+          <div className="text-center py-4">
+            <div className="text-2xl mb-2">{emptyIcon}</div>
+            <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+              {emptyMessage}
+            </p>
+          </div>
+        </div>
+      )}
+    </Card>
+  );
+};
 export default Dashboard;
