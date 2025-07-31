@@ -199,7 +199,7 @@ export const SectionTransition: React.FC<SectionTransitionProps> = ({
 
   return (
     <div 
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-40" 
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-30" 
       onClick={(e) => {
         if (!showingCountdown) {
           onCancel();
