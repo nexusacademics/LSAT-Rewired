@@ -609,7 +609,7 @@ const DrillSection: React.FC<DrillSectionProps> = ({
       </Button>
 
       {isExpanded && (
-        <div className="mt-3 space-y-2 animate-in slide-in-from-top-2 duration-200">
+        <div className="mt-3 animate-in slide-in-from-top-2 duration-200">
           {/* Replace with actual drill list logic when available */}
           <div className="text-center py-4">
             <div className="text-2xl mb-2">{emptyIcon}</div>
