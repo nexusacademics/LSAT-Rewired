@@ -306,6 +306,7 @@ const Dashboard: React.FC<DashboardProps> = ({
                     min="1"
                     max="180"
                   />
+                   </div>
                 </div>
               </Card>
             </Card>
