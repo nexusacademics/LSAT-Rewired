@@ -38,48 +38,26 @@ const Dashboard: React.FC<DashboardProps> = ({
   const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY || '');
   const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
   const [searchTerm, setSearchTerm] = useState('');
-  const [searchResults, setSearchResults] = useState([]);
+  const [searchResults, setSearchResults] = useState<ProcessedQuestion[]>([]);
 
-  const handleSearch = async () => {
-  if (!searchTerm.trim()) return;
+ const { allProcessedTests } = useTestData();
 
-  const parsed = await parseSearchQuery(model, searchTerm);
-  console.log("Parsed query:", parsed);
-
-  let query = supabase.from('questions').select('*');
-
-  if (parsed.preptest) {
-    query = query.eq('preptest', parsed.preptest);
-  }
-
-  if (parsed.section) {
-    query = query.eq('section', parsed.section);
-  }
-
-  if (parsed.question) {
-    query = query.eq('question', parsed.question);
-  }
-
-  if (parsed.passage_title) {
-    query = query.ilike('passage_title', `%${parsed.passage_title}%`);
-  }
-
-  if (parsed.keywords && Array.isArray(parsed.keywords)) {
-    for (const kw of parsed.keywords) {
-      query = query.ilike('content', `%${kw}%`);
-    }
-  }
-
-  const { data, error } = await query.limit(10);
-
-  if (error) {
-    console.error("Supabase query error:", error);
-    setSearchResults([]);
-    return;
-  }
-
-  setSearchResults(data || []);
-};
+  const handleSearch = () => {
+    const results: ProcessedQuestion[] = [];
+  
+    Object.values(allProcessedTests).forEach((test) => {
+      test.sections.forEach((section) => {
+        section.questions.forEach((question) => {
+          const combinedText = `${question.passage ?? ''} ${question.question}`.toLowerCase();
+          if (combinedText.includes(searchTerm.toLowerCase())) {
+            results.push(question);
+          }
+        });
+      });
+    });
+  
+    setSearchResults(results);
+  };
 
   
   // Filter user sessions into categories (keeping your existing logic)
