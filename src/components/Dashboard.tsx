@@ -134,38 +134,67 @@ const Dashboard: React.FC<DashboardProps> = ({
           <div className="lg:col-span-2 space-y-4">
             
             {/* Start New Session - Compressed */}
-            <Card padding="default" hover>
-              <CardHeader className="pb-3">
-                <CardTitle icon={<Zap className="h-5 w-5 text-yellow-500" />}>
-                  Start Your Next Session
-                </CardTitle>
-              </CardHeader>
+           <Card padding="default" hover>
+      <CardHeader className="pb-3">
+        <CardTitle icon={<Zap className="h-5 w-5 text-yellow-500" />}>
+          Start Your Next Session
+        </CardTitle>
+      </CardHeader>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* PrepTest Session Option */}
+        <Card variant="accent" padding="sm">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h3 className={`text-lg font-bold mb-1 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                Begin a New PrepTest Session
+              </h3>
+              <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                Select a PrepTest and configure your session.
+              </p>
+            </div>
+            <div className={`p-2 rounded-lg ${theme === 'dark' ? 'bg-gray-700 shadow-inner' : 'bg-gray-100'}`}>
+              <BookOpen className="h-6 w-6 text-blue-500" />
+            </div>
+          </div>
+          
+          <Button 
+            size="default" 
+            className="w-full"
+            onClick={handleStartNewSessionClick}
+          >
+            <Play className="h-4 w-4 mr-2" />
+            Start New Test Session
+          </Button>
+        </Card>
 
-              <Card variant="accent" padding="sm">
-                <div className="flex items-center justify-between mb-4">
-                  <div>
-                    <h3 className={`text-lg font-bold mb-1 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                      Begin a New PrepTest Session
-                    </h3>
-                    <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                      Select a PrepTest and configure your session.
-                    </p>
-                  </div>
-                  <div className={`p-2 rounded-lg ${theme === 'dark' ? 'bg-gray-700 shadow-inner' : 'bg-gray-100'}`}>
-                    <BookOpen className="h-6 w-6 text-blue-500" />
-                  </div>
-                </div>
-                
-                <Button 
-                  size="default" 
-                  className="w-full"
-                  onClick={handleStartNewSessionClick}
-                >
-                  <Play className="h-4 w-4 mr-2" />
-                  Start New Test Session
-                </Button>
-              </Card>
-            </Card>
+        {/* Drill Option */}
+        <Card variant="accent" padding="sm">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h3 className={`text-lg font-bold mb-1 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                Begin a Drill
+              </h3>
+              <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                Practice specific question types and skills.
+              </p>
+            </div>
+            <div className={`p-2 rounded-lg ${theme === 'dark' ? 'bg-gray-700 shadow-inner' : 'bg-gray-100'}`}>
+              <Target className="h-6 w-6 text-green-500" />
+            </div>
+          </div>
+          
+          <Button 
+            size="default" 
+            className="w-full"
+            onClick={handleStartDrillClick}
+          >
+            <Target className="h-4 w-4 mr-2" />
+            Start Drill Session
+          </Button>
+        </Card>
+      </div>
+    </Card>
 
             {/* Session Management - Collapsible Sections */}
             <div className="space-y-2">
