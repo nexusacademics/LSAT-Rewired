@@ -285,38 +285,23 @@ const Dashboard: React.FC<DashboardProps> = ({
             </Card>
 
             {/* Active Drills */}
-            <Card padding="sm" hover>
-              <CardHeader className="pb-2">
-                <CardTitle icon={<Activity className="h-4 w-4 text-orange-500" />}>
-                  Active Drills
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center py-3">
-                  <div className="text-xl mb-2">🎯</div>
-                  <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
-                    No active drills. Start a new drill above!
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Archived Drills */}
-            <Card padding="sm" hover>
-              <CardHeader className="pb-2">
-                <CardTitle icon={<Archive className="h-4 w-4 text-gray-500" />}>
-                  Archived Drills
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center py-3">
-                  <div className="text-xl mb-2">📦</div>
-                  <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
-                    No archived drills yet.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+           <DrillSection
+                title="Active Drills"
+                icon={<Activity className="h-4 w-4 text-orange-500" />}
+                count={0} // Replace with actual active drill count if available
+                emptyMessage="No active drills. Start a new drill above!"
+                emptyIcon="🎯"
+                theme={theme}
+              />
+              
+              <DrillSection
+                title="Archived Drills"
+                icon={<Archive className="h-4 w-4 text-gray-500" />}
+                count={0} // Replace with actual archived drill count if available
+                emptyMessage="No archived drills yet."
+                emptyIcon="📦"
+                theme={theme}
+              />
           </div>
           
           {/* Right Column - Item Search */}
