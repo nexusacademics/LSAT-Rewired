@@ -40,7 +40,18 @@ const Dashboard: React.FC<DashboardProps> = ({
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState<ProcessedQuestion[]>([]);
 
+const [searchModalOpen, setSearchModalOpen] = useState(false);
+const [searchResults, setSearchResults] = useState<ProcessedQuestion[]>([]);
 
+const handleSelect = (question: ProcessedQuestion) => {
+  setSearchModalOpen(false);
+  // navigate or trigger TripleReview for this question
+  setCurrentSession({
+    preptest: question.preptest,
+    section: question.section,
+    questionIndex: question.index, // if you store index
+  });
+};
 
   const handleSearch = () => {
     const results: ProcessedQuestion[] = [];
@@ -651,5 +662,10 @@ const DrillSection: React.FC<DrillSectionProps> = ({
     </Card>
   );
 };
-
+<SearchResultsModal
+  isOpen={searchModalOpen}
+  onClose={() => setSearchModalOpen(false)}
+  results={searchResults}
+  onSelect={handleSelect}
+/>
 export default Dashboard;
