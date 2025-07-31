@@ -253,7 +253,7 @@ const handleLineSpacingChange = (spacing: 'normal' | 'loose' | 'relaxed') => {
   }
 
   return (
-    <div className="fixed inset-0 flex flex-col bg-slate-50 z-30">
+    <div className="fixed inset-0 flex flex-col bg-slate-50 z-40">
       <Header
         session={session}
         currentQuestionData={currentQuestionData}
