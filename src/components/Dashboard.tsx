@@ -41,7 +41,6 @@ const Dashboard: React.FC<DashboardProps> = ({
   const [searchResults, setSearchResults] = useState<ProcessedQuestion[]>([]);
 
 const [searchModalOpen, setSearchModalOpen] = useState(false);
-const [searchResults, setSearchResults] = useState<ProcessedQuestion[]>([]);
 
 const handleSelect = (question: ProcessedQuestion) => {
   setSearchModalOpen(false);
