@@ -83,7 +83,7 @@ const Dashboard: React.FC<DashboardProps> = ({
 
   return (
     <div className={`min-h-screen w-full transition-all duration-500 ${backgroundClasses}`}>
-      <div className="w-full pt-15 px-4 pb-4">
+      <div className="w-full pt-20 px-4 pb-4">
         <div className="max-w-[1600px] mx-auto space-y-4">
         
         {/* Welcome Header with Study Streak */}
