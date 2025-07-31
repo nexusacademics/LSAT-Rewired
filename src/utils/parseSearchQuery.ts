@@ -1,5 +1,4 @@
-// parseSearchQuery.ts
-export async function parseSearchQuery(model: any, rawInput: string) {
+xport async function parseSearchQuery(model: GenerativeModel, rawInput: string) {
   const prompt = `
 You are an AI that extracts structured search parameters from natural language LSAT queries.
 
@@ -14,12 +13,13 @@ Respond ONLY with a compact JSON object. Example:
 {"preptest": 89, "section": 2, "question": 14}
 `;
 
+  const result = await model.generateContent(prompt);
+  const text = result.response.candidates?.[0]?.content?.parts?.[0]?.text || '';
+
   try {
-    const result = await model.generateContent(prompt);
-    const text = result.response.text();
     return JSON.parse(text);
   } catch (e) {
-    console.error("Failed to parse Gemini output", e);
+    console.error("Failed to parse Gemini output", text);
     return {};
   }
 }
