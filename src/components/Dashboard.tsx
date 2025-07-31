@@ -283,25 +283,9 @@ const Dashboard: React.FC<DashboardProps> = ({
                 </Button>
               </Card>
             </Card>
-<div className="space-y-2">
+
             {/* Active Drills */}
-           <DrillSection
-                title="Active Drills"
-                icon={<Activity className="h-4 w-4 text-orange-500" />}
-                count={0} // Replace with actual active drill count if available
-                emptyMessage="No active drills. Start a new drill above!"
-                emptyIcon="🎯"
-                theme={theme}
-              />
-              
-              <DrillSection
-                title="Archived Drills"
-                icon={<Archive className="h-4 w-4 text-gray-500" />}
-                count={0} // Replace with actual archived drill count if available
-                emptyMessage="No archived drills yet."
-                emptyIcon="📦"
-                theme={theme}
-              />
+            <Card padding="sm" hover>
               <CardHeader className="pb-2">
                 <CardTitle icon={<Activity className="h-4 w-4 text-orange-500" />}>
                   Active Drills
@@ -316,25 +300,9 @@ const Dashboard: React.FC<DashboardProps> = ({
                 </div>
               </CardContent>
             </Card>
-        
+
             {/* Archived Drills */}
-            <DrillSection
-                title="Active Drills"
-                icon={<Activity className="h-4 w-4 text-orange-500" />}
-                count={0} // Replace with actual active drill count if available
-                emptyMessage="No active drills. Start a new drill above!"
-                emptyIcon="🎯"
-                theme={theme}
-              />
-              
-              <DrillSection
-                title="Archived Drills"
-                icon={<Archive className="h-4 w-4 text-gray-500" />}
-                count={0} // Replace with actual archived drill count if available
-                emptyMessage="No archived drills yet."
-                emptyIcon="📦"
-                theme={theme}
-              />
+            <Card padding="sm" hover>
               <CardHeader className="pb-2">
                 <CardTitle icon={<Archive className="h-4 w-4 text-gray-500" />}>
                   Archived Drills
@@ -350,7 +318,7 @@ const Dashboard: React.FC<DashboardProps> = ({
               </CardContent>
             </Card>
           </div>
-        
+          
           {/* Right Column - Item Search */}
           <div className="space-y-4">
             <Card padding="default" hover>
@@ -668,4 +636,5 @@ const DrillSection: React.FC<DrillSectionProps> = ({
     </Card>
   );
 };
+
 export default Dashboard;
