@@ -43,7 +43,7 @@ const Dashboard: React.FC<DashboardProps> = ({
   const handleSearch = async () => {
   if (!searchTerm.trim()) return;
 
-  const parsed = await parseSearchQuery(searchTerm);
+  const parsed = await parseSearchQuery(model, searchTerm);
   console.log("Parsed query:", parsed);
 
   let query = supabase.from('questions').select('*');
