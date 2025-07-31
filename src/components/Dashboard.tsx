@@ -3,7 +3,7 @@ import { Search, Drill, BookOpen, Play, TrendingUp, Calendar, Upload, Download, 
 import { User, TestSession, ProcessedPrepTest } from '../App';
 import TimeModeSelectionModal from './TimeModeSelectionModal';
 import { parseSearchQuery } from '../utils/parseSearchQuery';
-
+import { supabase } from '../lib/supabase';
 // Import your new design system components
 import { useTheme } from '../contexts/ThemeContext';
 import Button from '../components/ui/Button';
