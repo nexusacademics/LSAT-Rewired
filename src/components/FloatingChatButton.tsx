@@ -52,7 +52,7 @@ const toggleChat = () => {
       {/* Floating Chat Button */}
       <button
         onClick={toggleChat}
-        className={`fixed bottom-32 left-5 p-4 rounded-full shadow-lg transition-all duration-300 ease-in-out z-30
+        className={`fixed bottom-32 left-5 p-4 rounded-full shadow-lg transition-all duration-300 ease-in-out z-35
           ${isOpen ? 'bg-purple-700' : 'bg-purple-600 hover:bg-purple-700'}
        ` }
         title="Toggle AI Assistant"
