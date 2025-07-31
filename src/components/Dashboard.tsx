@@ -285,7 +285,23 @@ const Dashboard: React.FC<DashboardProps> = ({
             </Card>
 
             {/* Active Drills */}
-            <Card padding="sm" hover>
+           <DrillSection
+                title="Active Drills"
+                icon={<Activity className="h-4 w-4 text-orange-500" />}
+                count={0} // Replace with actual active drill count if available
+                emptyMessage="No active drills. Start a new drill above!"
+                emptyIcon="🎯"
+                theme={theme}
+              />
+              
+              <DrillSection
+                title="Archived Drills"
+                icon={<Archive className="h-4 w-4 text-gray-500" />}
+                count={0} // Replace with actual archived drill count if available
+                emptyMessage="No archived drills yet."
+                emptyIcon="📦"
+                theme={theme}
+              />
               <CardHeader className="pb-2">
                 <CardTitle icon={<Activity className="h-4 w-4 text-orange-500" />}>
                   Active Drills
@@ -302,7 +318,23 @@ const Dashboard: React.FC<DashboardProps> = ({
             </Card>
 
             {/* Archived Drills */}
-            <Card padding="sm" hover>
+            <DrillSection
+                title="Active Drills"
+                icon={<Activity className="h-4 w-4 text-orange-500" />}
+                count={0} // Replace with actual active drill count if available
+                emptyMessage="No active drills. Start a new drill above!"
+                emptyIcon="🎯"
+                theme={theme}
+              />
+              
+              <DrillSection
+                title="Archived Drills"
+                icon={<Archive className="h-4 w-4 text-gray-500" />}
+                count={0} // Replace with actual archived drill count if available
+                emptyMessage="No archived drills yet."
+                emptyIcon="📦"
+                theme={theme}
+              />
               <CardHeader className="pb-2">
                 <CardTitle icon={<Archive className="h-4 w-4 text-gray-500" />}>
                   Archived Drills
