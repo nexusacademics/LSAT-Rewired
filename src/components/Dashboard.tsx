@@ -293,9 +293,7 @@ const Dashboard: React.FC<DashboardProps> = ({
                 emptyIcon="🎯"
                 theme={theme}
               />
-             </div>
-             <div className="space-y-2"> 
-              <DrillSection
+            <DrillSection
                 title="Archived Drills"
                 icon={<Archive className="h-4 w-4 text-gray-500" />}
                 count={0} // Replace with actual archived drill count if available
