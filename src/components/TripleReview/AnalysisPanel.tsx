@@ -197,7 +197,7 @@ export const AnalysisPanel = ({
                 {labelMap[key]}
               </label>
               <textarea
-                className={`w-full border border-slate-300 rounded-lg p-2 text-xs ${focusRingColor} resize-none overflow-auto`}
+                className={`w-full border border-slate-300 rounded-lg p-2 text-sm ${focusRingColor} resize-none overflow-auto`}
                 placeholder={placeholderMap[key]}
                 defaultValue={internalNotes[key]}
                 onChange={(e) => {
