@@ -319,7 +319,7 @@ const Dashboard: React.FC<DashboardProps> = ({
                       Find a question from an official LSAC PrepTest 
                     </h3>
                     <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                      Use Keywords in the textbox below
+                      Use Keywords in the textbox below, e.g. "Han Purple", "PrepTest 140, section 2, question 9", or "152.4.9"
                     </p>
                   </div>
                   <div className={`p-2 rounded-lg ${theme === 'dark' ? 'bg-gray-700 shadow-inner' : 'bg-gray-100'}`}>
@@ -332,7 +332,7 @@ const Dashboard: React.FC<DashboardProps> = ({
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                    placeholder="Enter keywords to search PrepTest questions..."
+                    placeholder="Enter search terms here..."
                     className={`w-full px-4 py-3 pr-12 rounded-lg border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
                       theme === 'dark' 
                         ? 'bg-gray-800 border-gray-600 text-white placeholder-gray-400 hover:border-gray-500' 
