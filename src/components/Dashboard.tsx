@@ -269,7 +269,7 @@ const Dashboard: React.FC<DashboardProps> = ({
                   onClick={handleStartNewSessionClick}
                 >
                   <Play className="h-4 w-4 mr-2" />
-                  Start New Test Session
+                  Start New Drill Session
                 </Button>
               </Card>
             </Card>
