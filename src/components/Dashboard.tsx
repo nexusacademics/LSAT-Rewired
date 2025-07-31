@@ -411,6 +411,15 @@ const handleSelect = (question: ProcessedQuestion) => {
           allProcessedTests={allProcessedTests}
         />
         </div>
+      <div>
+                   //Search Results Modal
+              <SearchResultsModal
+            isOpen={searchModalOpen}
+            onClose={() => setSearchModalOpen(false)}
+            results={searchResults}
+            onSelect={handleSelect}
+          />
+      </div>
       </div>
   
   );
@@ -664,13 +673,7 @@ const DrillSection: React.FC<DrillSectionProps> = ({
 
   
   );
-   //Search Results Modal
-    <SearchResultsModal
-  isOpen={searchModalOpen}
-  onClose={() => setSearchModalOpen(false)}
-  results={searchResults}
-  onSelect={handleSelect}
-/>
+
 };
 
 export default Dashboard;
