@@ -225,10 +225,7 @@ export const AnalysisPanel = ({
         </div>
       </div>
       
-      {/* Debug info */}
-      <div className="text-xs text-gray-500 p-2">
-        Debug: {JSON.stringify(internalNotes)}
-      </div>
+     
     </div>
   );
 };
