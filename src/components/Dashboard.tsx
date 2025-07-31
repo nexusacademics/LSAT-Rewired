@@ -351,6 +351,7 @@ const Dashboard: React.FC<DashboardProps> = ({
             </Card>
           </div>
         </div>
+      </div>
           {/* Right Column - Item Search */}
           <div className="space-y-4">
             <Card padding="default" hover>
