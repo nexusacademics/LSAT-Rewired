@@ -259,7 +259,7 @@ const Dashboard: React.FC<DashboardProps> = ({
                     </p>
                   </div>
                   <div className={`p-2 rounded-lg ${theme === 'dark' ? 'bg-gray-700 shadow-inner' : 'bg-gray-100'}`}>
-                    <Rocket className="h-6 w-6 text-blue-500" />
+                    <Lightbulb className="h-6 w-6 text-blue-500" />
                   </div>
                 </div>
                 
