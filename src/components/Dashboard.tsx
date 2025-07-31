@@ -28,7 +28,7 @@ const Dashboard: React.FC<DashboardProps> = ({
 }) => {
   const [isTimeModeModalOpen, setIsTimeModeModal] = useState(false);
   const { theme } = useTheme();
-  
+   const [searchTerm] = useState<string>();
   // Filter user sessions into categories (keeping your existing logic)
   const activeSessions = userSessions.filter(session => !session.endTime);
   const readyForBlindReviewSessions = userSessions.filter(session => 
@@ -290,21 +290,8 @@ const Dashboard: React.FC<DashboardProps> = ({
                   </div>
                    <div>
                      <input
-                        type="number"
-                        value={customMinutes}
-                        onFocus={(e) => {
-                          e.target.select();
-                          setSelectedTimeMode('custom');
-                        }}
-                        onChange={(e) => {
-                          setCustomMinutes(e.target.value);
-                          setCustomError(false); // Clear error as user edits
-                        }}
-                        className={`w-20 px-2 py-1 border rounded text-sm ${
-                          customError ? 'border-red-500' : 'border-slate-300'
-                        }`}
-                        min="1"
-                        max="180"
+                        type="string"
+                        value={searchTerm}
                       />
                    </div>
                 </div>
