@@ -157,7 +157,6 @@ const Dashboard: React.FC<DashboardProps> = ({
         </Card>
 
         <div className="grid lg:grid-cols-3 gap-4">
-          {/* Test Selection - Now takes 2 columns */}
           <div className="lg:col-span-1 space-y-4">
             
             {/* Start New Session - Compressed */}
@@ -271,11 +270,12 @@ const Dashboard: React.FC<DashboardProps> = ({
 //replace
                 >
                   <Play className="h-4 w-4 mr-2" />
-                 State New Stim Drill
+                 Start New Stim Drill
                 </Button>
               </Card>
             </Card>
-             <Card variant="accent" padding="sm">
+            <Card padding="default" hover>
+              <Card variant="accent" padding="sm">
                 <div className="flex items-center justify-between mb-4">
                   <div>
                     <h3 className={`text-lg font-bold mb-1 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
@@ -289,10 +289,8 @@ const Dashboard: React.FC<DashboardProps> = ({
                     <Search className="h-6 w-6 text-blue-500" />
                   </div>
                 </div>
-                
-              
               </Card>
-           
+            </Card>
             </div>
           {/* Right Column - Now takes 1 column and combines Performance + Leaderboard */}
           <div className="space-y-4">
