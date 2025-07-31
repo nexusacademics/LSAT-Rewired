@@ -283,6 +283,40 @@ const Dashboard: React.FC<DashboardProps> = ({
                 </Button>
               </Card>
             </Card>
+
+            {/* Active Drills */}
+            <Card padding="sm" hover>
+              <CardHeader className="pb-2">
+                <CardTitle icon={<Activity className="h-4 w-4 text-orange-500" />}>
+                  Active Drills
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center py-3">
+                  <div className="text-xl mb-2">🎯</div>
+                  <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+                    No active drills. Start a new drill above!
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Archived Drills */}
+            <Card padding="sm" hover>
+              <CardHeader className="pb-2">
+                <CardTitle icon={<Archive className="h-4 w-4 text-gray-500" />}>
+                  Archived Drills
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center py-3">
+                  <div className="text-xl mb-2">📦</div>
+                  <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+                    No archived drills yet.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
           </div>
           
           {/* Right Column - Item Search */}
