@@ -53,10 +53,10 @@ export const QuestionPanel: React.FC<QuestionPanelProps> = ({
                   <Eye className="h-8 w-8 text-blue-600" />
                 </div>
               </div>
-              <h4 className="text-lg font-semibold text-slate-900 mb-3">
+              <h4 className="text-xl font-semibold text-slate-900 mb-3">
                 Stimulus Analysis First
               </h4>
-              <p className="text-slate-600 mb-6 text-sm leading-relaxed">
+              <p className="text-slate-600 mb-6 text-md leading-relaxed">
                 We suggest completing your stimulus analysis before looking at the answer choices. 
                 This helps you form your own understanding first.
               </p>
