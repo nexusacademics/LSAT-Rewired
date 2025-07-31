@@ -285,7 +285,7 @@ const Dashboard: React.FC<DashboardProps> = ({
             </Card>
 
             {/* Active Drills */}
-           <DrillSection
+           <div className="space-y-2"><DrillSection
                 title="Active Drills"
                 icon={<Activity className="h-4 w-4 text-orange-500" />}
                 count={0} // Replace with actual active drill count if available
@@ -293,7 +293,8 @@ const Dashboard: React.FC<DashboardProps> = ({
                 emptyIcon="🎯"
                 theme={theme}
               />
-              
+             </div>
+             <div className="space-y-2"> 
               <DrillSection
                 title="Archived Drills"
                 icon={<Archive className="h-4 w-4 text-gray-500" />}
@@ -303,6 +304,7 @@ const Dashboard: React.FC<DashboardProps> = ({
                 theme={theme}
               />
           </div>
+             </div>
           
           {/* Right Column - Item Search */}
           <div className="space-y-4">
