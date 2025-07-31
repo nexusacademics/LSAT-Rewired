@@ -15,6 +15,7 @@ import { PauseReviewPopup } from './PauseReviewPopup';
 import { useTimer } from '../../hooks/useTimer';
 import { useQuestionNavigation } from '../../hooks/useQuestionNavigation';
 import { useAnswerSelection } from '../../hooks/useAnswerSelection';
+import { usePortal } from '../../hooks/usePortal';
 
 interface TripleReviewProps {
   session: TestSession;
@@ -29,6 +30,7 @@ const TripleReview: React.FC<TripleReviewProps> = ({
   onExitSession,
   processedPrepTest
 }) => {
+  const Portal = usePortal('modal-root');
   const [isTimerRunning, setIsTimerRunning] = useState(session.phase === 'timed');
   const [showSectionTransition, setShowSectionTransition] = useState(false);
   const [showCircuitBuilder, setShowCircuitBuilder] = useState(false);
@@ -36,7 +38,7 @@ const TripleReview: React.FC<TripleReviewProps> = ({
     session.phase === 'strategy-review' && !session.completedPhases.includes('strategy-review')
   );
   const [isSectionTransitionTriggeredByTimer, setIsSectionTransitionTriggeredByTimer] = useState(false);
-
+  
   // Add pause popup state
   const [showPausePopup, setShowPausePopup] = useState(false);
   const [pauseReviewType, setPauseReviewType] = useState<'Blind Review' | 'Strategy Review'>('Blind Review');
@@ -394,7 +396,36 @@ const handleLineSpacingChange = (spacing: 'normal' | 'loose' | 'relaxed') => {
           analysisQualityScore={lastSavedScore}
         />
       )}
+      {/* Portal the modal outside the container */}
+      {showSectionTransition && (
+        <Portal>
+          <SectionTransition
+            session={session}
+            isLastSection={isLastSection}
+            onCancel={() => {
+              setShowSectionTransition(false);
+              setIsSectionTransitionTriggeredByTimer(false);
+            }}
+            onConfirm={handleConfirmSectionSubmit}
+            triggeredByTimer={isSectionTransitionTriggeredByTimer}
+            isTimedSession={session.phase === 'timed'}
+            isCompleteTest={!session.selectedSectionId}
+          />
+        </Portal>
+      )}
 
+      {/* Also portal the pause popup */}
+      {showPausePopup && (
+        <Portal>
+          <PauseReviewPopup
+            isOpen={showPausePopup}
+            reviewType={pauseReviewType}
+            onReturnToDashboard={handleReturnToDashboard}
+            onContinueReviewing={handleContinueReviewing}
+            onClose={() => setShowPausePopup(false)}
+          />
+        </Portal>
+      )}
       {/* Add the pause popup */}
       <PauseReviewPopup
         isOpen={showPausePopup}
