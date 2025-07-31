@@ -241,6 +241,84 @@ const Dashboard: React.FC<DashboardProps> = ({
           </div>
            {/* Center Column - Empty*/}
           <div className="lg:col-span-1 space-y-4">
+              <Card padding="default" hover>
+              <CardHeader className="pb-3">
+                <CardTitle icon={<Zap className="h-5 w-5 text-yellow-500" />}>
+                  Start Your Next Session
+                </CardTitle>
+              </CardHeader>
+
+              <Card variant="accent" padding="sm">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <h3 className={`text-lg font-bold mb-1 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                      Begin a New PrepTest Session
+                    </h3>
+                    <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                      Select a PrepTest and configure your session.
+                    </p>
+                  </div>
+                  <div className={`p-2 rounded-lg ${theme === 'dark' ? 'bg-gray-700 shadow-inner' : 'bg-gray-100'}`}>
+                    <BookOpen className="h-6 w-6 text-blue-500" />
+                  </div>
+                </div>
+                
+                <Button 
+                  size="default" 
+                  className="w-full"
+                  onClick={handleStartNewSessionClick}
+                >
+                  <Play className="h-4 w-4 mr-2" />
+                  Start New Test Session
+                </Button>
+              </Card>
+            </Card>
+
+            {/* Session Management - Collapsible Sections */}
+            <div className="space-y-2">
+              {/* Active Sessions */}
+              <SessionSection
+                title="Active Sessions"
+                icon={<Activity className="h-4 w-4 text-orange-500" />}
+                count={activeSessions.length}
+                sessions={activeSessions}
+                emptyMessage="No active sessions. Start a new PrepTest above!"
+                emptyIcon="🎯"
+                theme={theme}
+                onResumeSession={onResumeTestSession}
+                formatSessionDisplayName={formatSessionDisplayName}
+                type="active"
+              />
+
+              {/* Ready for Review Sessions */}
+              <SessionSection
+                title="Ready for Review"
+                icon={<Target className="h-4 w-4 text-teal-500" />}
+                count={readyForBlindReviewSessions.length + readyForStrategyReviewSessions.length}
+                sessions={[...readyForBlindReviewSessions, ...readyForStrategyReviewSessions]}
+                emptyMessage="No sessions ready for review."
+                emptyIcon="📝"
+                theme={theme}
+                onResumeSession={onResumeTestSession}
+                formatSessionDisplayName={formatSessionDisplayName}
+                type="review"
+              />
+
+              {/* Archived Sessions */}
+              <SessionSection
+                title="Archived Sessions"
+                icon={<Archive className="h-4 w-4 text-gray-500" />}
+                count={archivedSessions.length}
+                sessions={archivedSessions}
+                emptyMessage="No archived sessions."
+                emptyIcon="📦"
+                theme={theme}
+                onResumeSession={() => {}}
+                formatSessionDisplayName={formatSessionDisplayName}
+                type="archived"
+              />
+            </div>
+          </div>
             </div>
           {/* Right Column - Now takes 1 column and combines Performance + Leaderboard */}
           <div className="space-y-4">
