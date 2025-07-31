@@ -292,7 +292,7 @@ const Dashboard: React.FC<DashboardProps> = ({
                 
               
               </Card>
-            </Card>
+           
             </div>
           {/* Right Column - Now takes 1 column and combines Performance + Leaderboard */}
           <div className="space-y-4">
