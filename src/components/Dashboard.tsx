@@ -74,7 +74,11 @@ const Dashboard: React.FC<DashboardProps> = ({
     setSearchResults([]);
     return;
   }
-
+  {searchResults.length === 0 && searchTerm && (
+  <p className="text-sm text-gray-500 mt-4">
+    No results found for <span className="font-medium">"{searchTerm}"</span>
+  </p>
+)}
   setSearchResults(data);
 };
   
