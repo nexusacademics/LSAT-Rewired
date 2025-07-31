@@ -28,7 +28,7 @@ const Dashboard: React.FC<DashboardProps> = ({
 }) => {
   const [isTimeModeModalOpen, setIsTimeModeModal] = useState(false);
   const { theme } = useTheme();
-   const [searchTerm] = useState<string>();
+const [searchTerm, setSearchTerm] = useState<string>('');
   // Filter user sessions into categories (keeping your existing logic)
   const activeSessions = userSessions.filter(session => !session.endTime);
   const readyForBlindReviewSessions = userSessions.filter(session => 
