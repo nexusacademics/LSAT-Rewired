@@ -40,7 +40,7 @@ const Dashboard: React.FC<DashboardProps> = ({
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState<ProcessedQuestion[]>([]);
 
- const { allProcessedTests } = useTestData();
+
 
   const handleSearch = () => {
     const results: ProcessedQuestion[] = [];
