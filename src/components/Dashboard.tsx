@@ -28,7 +28,24 @@ const Dashboard: React.FC<DashboardProps> = ({
 }) => {
   const [isTimeModeModalOpen, setIsTimeModeModal] = useState(false);
   const { theme } = useTheme();
-const [searchTerm, setSearchTerm] = useState<string>('');
+ 
+  //item search
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const handleSearch = async () => {
+  if (!searchTerm?.trim()) return;
+  
+  // Your Supabase search logic here
+  try {
+    // Example: const { data, error } = await supabase
+    //   .from('prep_test_questions')
+    //   .select('*')
+    //   .ilike('content', `%${searchTerm}%`)
+    
+    console.log('Searching for:', searchTerm);
+  } catch (error) {
+    console.error('Search error:', error);
+  }
+};
   // Filter user sessions into categories (keeping your existing logic)
   const activeSessions = userSessions.filter(session => !session.endTime);
   const readyForBlindReviewSessions = userSessions.filter(session => 
