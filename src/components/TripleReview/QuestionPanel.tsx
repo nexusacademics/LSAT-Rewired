@@ -46,7 +46,7 @@ export const QuestionPanel: React.FC<QuestionPanelProps> = ({
         
         {/* Overlay for Blind Review */}
         {session.phase === 'blind-review' && !showAnswerChoices && (
-          <div className="absolute inset-0 bg-white/95 backdrop-blur-sm rounded-2xl flex flex-col items-center justify-center z-10">
+          <div className="absolute inset-0 bg-white/50 backdrop-blur-sm rounded-2xl flex flex-col items-center justify-center z-10">
             <div className="text-center p-8 max-w-sm">
               <div className="mb-4">
                 <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
