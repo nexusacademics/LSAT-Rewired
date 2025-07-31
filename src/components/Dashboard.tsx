@@ -249,7 +249,7 @@ const Dashboard: React.FC<DashboardProps> = ({
               />
             </div>
           </div>
-           {/* Center Column - Empty*/}
+           {/* Center Column - Drill Section */}
           <div className="lg:col-span-1 space-y-4">
             <Card padding="default" hover>
               <CardHeader className="pb-3">
@@ -276,165 +276,68 @@ const Dashboard: React.FC<DashboardProps> = ({
                 <Button 
                   size="default" 
                   className="w-full"
-//replace
                   onClick={handleStartNewSessionClick}
-//replace
                 >
                   <Play className="h-4 w-4 mr-2" />
                  Start New Stim Drill
                 </Button>
               </Card>
             </Card>
-            
-         <Card padding="default" hover>
-            <CardHeader className="pb-3">
-              <CardTitle icon={<Search className="h-5 w-5 text-yellow-500" />}>
-                Item Search
-              </CardTitle>
-            </CardHeader>
-            <Card variant="accent" padding="sm">
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <h3 className={`text-lg font-bold mb-1 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                    Find a question from an official LSAC PrepTest 
-                  </h3>
-                  <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                    Use Keywords in the textbox below
-                  </p>
-                </div>
-                <div className={`p-2 rounded-lg ${theme === 'dark' ? 'bg-gray-700 shadow-inner' : 'bg-gray-100'}`}>
-                  <Search className="h-6 w-6 text-blue-500" />
-                </div>
-              </div>
-              <div className="relative">
-                <input
-                  type="text"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                  placeholder="Enter keywords to search PrepTest questions..."
-                  className={`w-full px-4 py-3 pr-12 rounded-lg border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                    theme === 'dark' 
-                      ? 'bg-gray-800 border-gray-600 text-white placeholder-gray-400 hover:border-gray-500' 
-                      : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500 hover:border-gray-400'
-                  }`}
-                />
-                <button
-                  onClick={handleSearch}
-                  disabled={!searchTerm?.trim()}
-                  className={`absolute right-2 top-1/2 transform -translate-y-1/2 p-1.5 rounded-md transition-all duration-200 ${
-                    searchTerm?.trim()
-                      ? theme === 'dark'
-                        ? 'text-blue-400 hover:text-blue-300 hover:bg-gray-700 active:bg-gray-600'
-                        : 'text-blue-500 hover:text-blue-600 hover:bg-gray-100 active:bg-gray-200'
-                      : theme === 'dark'
-                        ? 'text-gray-600 cursor-not-allowed'
-                        : 'text-gray-400 cursor-not-allowed'
-                  }`}
-                  aria-label="Search PrepTest questions"
-                >
-                  <Search className="h-5 w-5" />
-                </button>
-              </div>
-            </Card>
-          </Card>
-            </div>
-          {/* Right Column - Now takes 1 column and combines Performance + Leaderboard */}
+          </div>
+          
+          {/* Right Column - Item Search */}
           <div className="space-y-4">
-            
-            {/* Performance Overview - Compressed */}
-            <Card padding="sm">
-              <CardHeader className="pb-2">
-                <CardTitle icon={<TrendingUp className="h-4 w-4 text-green-500" />}>
-                  Performance Overview
+            <Card padding="default" hover>
+              <CardHeader className="pb-3">
+                <CardTitle icon={<Search className="h-5 w-5 text-yellow-500" />}>
+                  Item Search
                 </CardTitle>
               </CardHeader>
-              
-              <CardContent className="space-y-4">
-                <div>
-                  <div className="flex justify-between items-center mb-2">
-                    <span className={`text-xs font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>Circuit Quality</span>
-                    <span className={`text-sm font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>85%</span>
+              <Card variant="accent" padding="sm">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <h3 className={`text-lg font-bold mb-1 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                      Find a question from an official LSAC PrepTest 
+                    </h3>
+                    <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                      Use Keywords in the textbox below
+                    </p>
                   </div>
-                  <ProgressBar value={85} variant="success" />
-                </div>
-                
-                <div>
-                  <div className="flex justify-between items-center mb-2">
-                    <span className={`text-xs font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>Analysis Depth</span>
-                    <span className={`text-sm font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>92%</span>
+                  <div className={`p-2 rounded-lg ${theme === 'dark' ? 'bg-gray-700 shadow-inner' : 'bg-gray-100'}`}>
+                    <Search className="h-6 w-6 text-blue-500" />
                   </div>
-                  <ProgressBar value={92} variant="primary" />
                 </div>
-                
-                <div>
-                  <div className="flex justify-between items-center mb-2">
-                    <span className={`text-xs font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>Consistency</span>
-                    <span className={`text-sm font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>78%</span>
-                  </div>
-                  <ProgressBar value={78} variant="warning" />
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                    placeholder="Enter keywords to search PrepTest questions..."
+                    className={`w-full px-4 py-3 pr-12 rounded-lg border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                      theme === 'dark' 
+                        ? 'bg-gray-800 border-gray-600 text-white placeholder-gray-400 hover:border-gray-500' 
+                        : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500 hover:border-gray-400'
+                    }`}
+                  />
+                  <button
+                    onClick={handleSearch}
+                    disabled={!searchTerm?.trim()}
+                    className={`absolute right-2 top-1/2 transform -translate-y-1/2 p-1.5 rounded-md transition-all duration-200 ${
+                      searchTerm?.trim()
+                        ? theme === 'dark'
+                          ? 'text-blue-400 hover:text-blue-300 hover:bg-gray-700 active:bg-gray-600'
+                          : 'text-blue-500 hover:text-blue-600 hover:bg-gray-100 active:bg-gray-200'
+                        : theme === 'dark'
+                          ? 'text-gray-600 cursor-not-allowed'
+                          : 'text-gray-400 cursor-not-allowed'
+                    }`}
+                    aria-label="Search PrepTest questions"
+                  >
+                    <Search className="h-5 w-5" />
+                  </button>
                 </div>
-              </CardContent>
-            </Card>
-
-            {/* Leaderboard Preview - Compressed */}
-            <Card padding="sm">
-              <CardHeader className="pb-2">
-                <div className="flex items-center justify-between">
-                  <CardTitle icon={<Award className="h-4 w-4 text-yellow-500" />}>
-                    Circuit Masters
-                  </CardTitle>
-                  <Users className={`h-4 w-4 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-400'}`} />
-                </div>
-              </CardHeader>
-              
-              <CardContent className="space-y-2">
-                <div className={`flex items-center justify-between p-3 rounded-xl border ${
-                  theme === 'dark' ? 'bg-gray-750 border-yellow-600/30' : 'bg-yellow-50 border-yellow-200'
-                }`}>
-                  <div className="flex items-center">
-                    <div className="w-6 h-6 bg-gradient-to-br from-yellow-400 to-yellow-500 text-gray-900 text-xs font-bold rounded-full flex items-center justify-center mr-2 shadow-lg">1</div>
-                    <span className={`font-bold text-sm ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Sarah Chen</span>
-                  </div>
-                  <span className={`text-xs font-semibold ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>847</span>
-                </div>
-                
-                <div className={`flex items-center justify-between p-3 rounded-xl border ${
-                  theme === 'dark' ? 'bg-gray-750 border-gray-600' : 'bg-gray-50 border-gray-200'
-                }`}>
-                  <div className="flex items-center">
-                    <div className="w-6 h-6 bg-gradient-to-br from-gray-400 to-gray-500 text-white text-xs font-bold rounded-full flex items-center justify-center mr-2 shadow-lg">2</div>
-                    <span className={`font-bold text-sm ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Marcus Johnson</span>
-                  </div>
-                  <span className={`text-xs font-semibold ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>792</span>
-                </div>
-                
-                <div className={`flex items-center justify-between p-3 rounded-xl border ${
-                  theme === 'dark' ? 'bg-gray-750 border-orange-600/30' : 'bg-orange-50 border-orange-200'
-                }`}>
-                  <div className="flex items-center">
-                    <div className="w-6 h-6 bg-gradient-to-br from-orange-400 to-orange-500 text-gray-900 text-xs font-bold rounded-full flex items-center justify-center mr-2 shadow-lg">3</div>
-                    <span className={`font-bold text-sm ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Emily Rodriguez</span>
-                  </div>
-                  <span className={`text-xs font-semibold ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>738</span>
-                </div>
-                
-                <div className={`flex items-center justify-between p-3 rounded-xl border-2 ${
-                  theme === 'dark' ? 'bg-gray-750 border-blue-500/50' : 'bg-blue-50 border-blue-300'
-                }`}>
-                  <div className="flex items-center">
-                    <div className="w-6 h-6 bg-gradient-to-br from-blue-500 to-purple-500 text-white text-xs font-bold rounded-full flex items-center justify-center mr-2 shadow-lg">{user.stats.rank}</div>
-                    <span className={`font-bold text-sm ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`}>You</span>
-                  </div>
-                  <span className={`text-xs font-semibold ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>{user.stats.circuitsCreated}</span>
-                </div>
-              </CardContent>
-              
-              <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
-                <Button variant="ghost" size="sm" className="w-full text-xs">
-                  View Full Leaderboard
-                </Button>
-              </div>
+              </Card>
             </Card>
           </div>
         </div>
