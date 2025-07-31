@@ -224,8 +224,6 @@ export const AnalysisPanel = ({
           ))}
         </div>
       </div>
-      
-     
     </div>
   );
 };
