@@ -321,7 +321,7 @@ const Dashboard: React.FC<DashboardProps> = ({
                     <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
                       Use Keywords in the textbox below, for example:
                       <br/> <br/>
-                      "PrepTest 140, section 2, question 9"<br/>"152.4.16"<br/><br/>or<br/><br/>"Han Purple"<br/>"Reading Comp Passage about mirrors"
+                      "PrepTest 140, section 2, question 9"<br/>"152.4.16"<br/>"Han Purple"<br/>"Reading Comp Passage about mirrors"
                     </p>
                   </div>
                   <div className={`p-2 rounded-lg ${theme === 'dark' ? 'bg-gray-700 shadow-inner' : 'bg-gray-100'}`}>
