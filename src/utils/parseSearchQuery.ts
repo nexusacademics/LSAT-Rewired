@@ -15,7 +15,7 @@ Respond ONLY with a compact JSON object. Example:
 {"preptest": 89, "section": 2, "question": 14}
 `;
 
-  const result = await gemini.generate({ prompt });
+  const result = await GoogleGenerativeAI.generate({ prompt });
   try {
     return JSON.parse(result.text);
   } catch (e) {
