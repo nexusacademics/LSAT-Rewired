@@ -243,7 +243,7 @@ const Dashboard: React.FC<DashboardProps> = ({
           <div className="lg:col-span-1 space-y-4">
             <Card padding="default" hover>
               <CardHeader className="pb-3">
-                <CardTitle icon={<Zap className="h-5 w-5 text-yellow-500" />}>
+                <CardTitle icon={<Brain className="h-5 w-5 text-yellow-500" />}>
                   Start Your Next Drill
                 </CardTitle>
               </CardHeader>
