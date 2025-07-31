@@ -1,6 +1,6 @@
 // components/TripleReview/QuestionPanel.tsx
-import React from 'react';
-import { Eye, EyeOff,  ChevronRight } from 'lucide-react';
+import React, { useState } from 'react';
+import { Eye, EyeOff, ChevronRight } from 'lucide-react';
 import { TestSession, ProcessedQuestion } from '../../App';
 
 interface QuestionPanelProps {
@@ -20,6 +20,15 @@ export const QuestionPanel: React.FC<QuestionPanelProps> = ({
   onAnswerSelection,
   onToggleGreyOut
 }) => {
+  const [showAnswerChoices, setShowAnswerChoices] = useState(false);
+
+  // Reset overlay when question changes during blind review
+  React.useEffect(() => {
+    if (session.phase === 'blind-review') {
+      setShowAnswerChoices(false);
+    }
+  }, [currentQuestionData.id, session.phase]);
+
   return (
     <div className="lg:col-span-1 space-y-6 h-full overflow-y-auto">
       {/* Question Stem */}
@@ -32,8 +41,36 @@ export const QuestionPanel: React.FC<QuestionPanelProps> = ({
       </div>
 
       {/* Answer Choices */}
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 relative">
         <h3 className="text-lg font-semibold text-slate-900 mb-4">Answer Choices</h3>
+        
+        {/* Overlay for Blind Review */}
+        {session.phase === 'blind-review' && !showAnswerChoices && (
+          <div className="absolute inset-0 bg-white/95 backdrop-blur-sm rounded-2xl flex flex-col items-center justify-center z-10">
+            <div className="text-center p-8 max-w-sm">
+              <div className="mb-4">
+                <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Eye className="h-8 w-8 text-blue-600" />
+                </div>
+              </div>
+              <h4 className="text-lg font-semibold text-slate-900 mb-3">
+                Stimulus Analysis First
+              </h4>
+              <p className="text-slate-600 mb-6 text-sm leading-relaxed">
+                We suggest completing your stimulus analysis before looking at the answer choices. 
+                This helps you form your own understanding first.
+              </p>
+              <button
+                onClick={() => setShowAnswerChoices(true)}
+                className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+              >
+                Reveal Answer Choices
+                <ChevronRight className="ml-2 h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        )}
+
         <div className="space-y-3">
           {currentQuestionData.options.map((option, index) => {
             const isGreyedOut = greyedOutOptions[currentQuestionData.id]?.includes(index);
