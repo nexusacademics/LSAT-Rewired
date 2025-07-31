@@ -158,7 +158,6 @@ const Dashboard: React.FC<DashboardProps> = ({
 
         <div className="grid lg:grid-cols-3 gap-4">
           <div className="lg:col-span-1 space-y-4">
-            
             {/* Start New Session - Compressed */}
             <Card padding="default" hover>
               <CardHeader className="pb-3">
@@ -166,7 +165,6 @@ const Dashboard: React.FC<DashboardProps> = ({
                   Start Your Next Session
                 </CardTitle>
               </CardHeader>
-
               <Card variant="accent" padding="sm">
                 <div className="flex items-center justify-between mb-4">
                   <div>
@@ -181,7 +179,6 @@ const Dashboard: React.FC<DashboardProps> = ({
                     <BookOpen className="h-6 w-6 text-blue-500" />
                   </div>
                 </div>
-                
                 <Button 
                   size="default" 
                   className="w-full"
@@ -192,7 +189,6 @@ const Dashboard: React.FC<DashboardProps> = ({
                 </Button>
               </Card>
             </Card>
-
             {/* Session Management - Collapsible Sections */}
             <div className="space-y-2">
               {/* Active Sessions */}
@@ -208,7 +204,6 @@ const Dashboard: React.FC<DashboardProps> = ({
                 formatSessionDisplayName={formatSessionDisplayName}
                 type="active"
               />
-
               {/* Ready for Review Sessions */}
               <SessionSection
                 title="Ready for Review"
@@ -222,7 +217,6 @@ const Dashboard: React.FC<DashboardProps> = ({
                 formatSessionDisplayName={formatSessionDisplayName}
                 type="review"
               />
-
               {/* Archived Sessions */}
               <SessionSection
                 title="Archived Sessions"
@@ -246,7 +240,7 @@ const Dashboard: React.FC<DashboardProps> = ({
                   Start Your Next Drill
                 </CardTitle>
               </CardHeader>
-
+              
               <Card variant="accent" padding="sm">
                 <div className="flex items-center justify-between mb-4">
                   <div>
@@ -274,15 +268,21 @@ const Dashboard: React.FC<DashboardProps> = ({
                 </Button>
               </Card>
             </Card>
+            
             <Card padding="default" hover>
+              <CardHeader className="pb-3">
+                <CardTitle icon={<Search className="h-5 w-5 text-yellow-500" />}>
+                  Item Search
+                </CardTitle>
+              </CardHeader>
               <Card variant="accent" padding="sm">
                 <div className="flex items-center justify-between mb-4">
                   <div>
                     <h3 className={`text-lg font-bold mb-1 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                      Item Search
+                      Find a question from an official LSAC PrepTest 
                     </h3>
                     <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                      Find an item from an official LSAC Prep Test using keywords
+                      Use Keywords in the textbox below
                     </p>
                   </div>
                   <div className={`p-2 rounded-lg ${theme === 'dark' ? 'bg-gray-700 shadow-inner' : 'bg-gray-100'}`}>
