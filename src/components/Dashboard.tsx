@@ -661,11 +661,12 @@ const DrillSection: React.FC<DrillSectionProps> = ({
       )}
     </Card>
   );
-};
-<SearchResultsModal
+  <SearchResultsModal
   isOpen={searchModalOpen}
   onClose={() => setSearchModalOpen(false)}
   results={searchResults}
   onSelect={handleSelect}
 />
+};
+
 export default Dashboard;
