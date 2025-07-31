@@ -252,14 +252,14 @@ const Dashboard: React.FC<DashboardProps> = ({
                 <div className="flex items-center justify-between mb-4">
                   <div>
                     <h3 className={`text-lg font-bold mb-1 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                      Begin a New PrepTest Session
+                      Stim Drill
                     </h3>
                     <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                      Select a PrepTest and configure your session.
+                      Practice Logical Reasoning Stimulus Analysis.
                     </p>
                   </div>
                   <div className={`p-2 rounded-lg ${theme === 'dark' ? 'bg-gray-700 shadow-inner' : 'bg-gray-100'}`}>
-                    <BookOpen className="h-6 w-6 text-blue-500" />
+                    <Power className="h-6 w-6 text-blue-500" />
                   </div>
                 </div>
                 
