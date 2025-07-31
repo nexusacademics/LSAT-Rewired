@@ -14,15 +14,12 @@ Respond ONLY with a compact JSON object. Example:
 {"preptest": 89, "section": 2, "question": 14}
 `;
 
-  const chat = model.startChat();
-
-  const result = await chat.sendMessage(prompt);
-  const resultText = result.response.text();
-
   try {
-    return JSON.parse(resultText);
+    const result = await model.generateContent(prompt);
+    const text = result.response.text();
+    return JSON.parse(text);
   } catch (e) {
-    console.error("Failed to parse Gemini output", resultText);
+    console.error("Failed to parse Gemini output", e);
     return {};
   }
 }
