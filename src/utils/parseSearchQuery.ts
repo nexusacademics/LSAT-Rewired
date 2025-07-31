@@ -1,3 +1,5 @@
+import { GoogleGenerativeAI } from '@google/generative-ai';
+
 export async function parseSearchQuery(rawInput: string) {
   const prompt = `
 You are an AI that extracts structured search parameters from natural language LSAT queries.
