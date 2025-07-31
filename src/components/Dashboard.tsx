@@ -271,8 +271,26 @@ const Dashboard: React.FC<DashboardProps> = ({
 //replace
                 >
                   <Play className="h-4 w-4 mr-2" />
-                  Start New Drill Session
+                 Question Search
                 </Button>
+              </Card>
+            </Card>
+             <Card variant="accent" padding="sm">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <h3 className={`text-lg font-bold mb-1 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                      Stim Drill
+                    </h3>
+                    <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                      Practice Logical Reasoning Stimulus Analysis.
+                    </p>
+                  </div>
+                  <div className={`p-2 rounded-lg ${theme === 'dark' ? 'bg-gray-700 shadow-inner' : 'bg-gray-100'}`}>
+                    <Drill className="h-6 w-6 text-blue-500" />
+                  </div>
+                </div>
+                
+              
               </Card>
             </Card>
             </div>
