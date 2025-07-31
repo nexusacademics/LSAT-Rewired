@@ -2,8 +2,13 @@ import React, { icons, useState } from 'react';
 import { Search, Drill, BookOpen, Play, TrendingUp, Calendar, Upload, Download, Users, Brain, Target, Archive, ChevronRight, Zap, Award, Activity } from 'lucide-react';
 import { User, TestSession, ProcessedPrepTest } from '../App';
 import TimeModeSelectionModal from './TimeModeSelectionModal';
+
+//import search functions
 import { parseSearchQuery } from '../utils/parseSearchQuery';
 import { supabase } from '../lib/supabase';
+import { useState } from 'react';
+import { supabase } from '../lib/supabase';
+
 // Import your new design system components
 import { useTheme } from '../contexts/ThemeContext';
 import Button from '../components/ui/Button';
@@ -31,22 +36,50 @@ const Dashboard: React.FC<DashboardProps> = ({
   const { theme } = useTheme();
  
   //item search
-  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+
   const handleSearch = async () => {
-  if (!searchTerm?.trim()) return;
-  
-  // Your Supabase search logic here
-  try {
-    // Example: const { data, error } = await supabase
-    //   .from('prep_test_questions')
-    //   .select('*')
-    //   .ilike('content', `%${searchTerm}%`)
-    
-    console.log('Searching for:', searchTerm);
-  } catch (error) {
-    console.error('Search error:', error);
+   if (!searchTerm.trim()) return;
+
+  const parsed = await parseSearchQuery(searchTerm);
+  console.log("Parsed query:", parsed);
+
+  let query = supabase.from('questions').select('*');
+
+  if (parsed.preptest) {
+    query = query.eq('preptest', parsed.preptest);
   }
+
+  if (parsed.section) {
+    query = query.eq('section', parsed.section);
+  }
+
+  if (parsed.question) {
+    query = query.eq('question', parsed.question);
+  }
+
+  if (parsed.passage_title) {
+    query = query.ilike('passage_title', `%${parsed.passage_title}%`);
+  }
+
+  if (parsed.keywords && Array.isArray(parsed.keywords)) {
+    for (const kw of parsed.keywords) {
+      query = query.ilike('content', `%${kw}%`);
+    }
+  }
+
+  const { data, error } = await query.limit(10);
+
+  if (error) {
+    console.error("Supabase query error:", error);
+    setSearchResults([]);
+    return;
+  }
+
+  setSearchResults(data);
 };
+  
   // Filter user sessions into categories (keeping your existing logic)
   const activeSessions = userSessions.filter(session => !session.endTime);
   const readyForBlindReviewSessions = userSessions.filter(session => 
