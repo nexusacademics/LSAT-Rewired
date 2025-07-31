@@ -2,6 +2,7 @@ import React, { icons, useState } from 'react';
 import { Search, Drill, BookOpen, Play, TrendingUp, Calendar, Upload, Download, Users, Brain, Target, Archive, ChevronRight, Zap, Award, Activity } from 'lucide-react';
 import { User, TestSession, ProcessedPrepTest } from '../App';
 import TimeModeSelectionModal from './TimeModeSelectionModal';
+import { parseSearchQuery } from '../utils/parseSearchQuery';
 
 // Import your new design system components
 import { useTheme } from '../contexts/ThemeContext';
