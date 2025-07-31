@@ -415,7 +415,13 @@ const handleSelect = (question: ProcessedQuestion) => {
   
   );
 };
-
+//Search Results Modal
+<SearchResultsModal
+  isOpen={searchModalOpen}
+  onClose={() => setSearchModalOpen(false)}
+  results={searchResults}
+  onSelect={handleSelect}
+/>
 // Collapsible Session Section Component
 interface SessionSectionProps {
   title: string;
@@ -662,12 +668,7 @@ const DrillSection: React.FC<DrillSectionProps> = ({
       )}
     </Card>
   );
-  <SearchResultsModal
-  isOpen={searchModalOpen}
-  onClose={() => setSearchModalOpen(false)}
-  results={searchResults}
-  onSelect={handleSelect}
-/>
+ 
 };
 
 export default Dashboard;
