@@ -1,4 +1,4 @@
-xport async function parseSearchQuery(model: GenerativeModel, rawInput: string) {
+export async function parseSearchQuery(model: GenerativeModel, rawInput: string) {
   const prompt = `
 You are an AI that extracts structured search parameters from natural language LSAT queries.
 
