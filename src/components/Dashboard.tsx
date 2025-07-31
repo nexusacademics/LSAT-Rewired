@@ -366,7 +366,13 @@ const Dashboard: React.FC<DashboardProps> = ({
                     type="text"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault(); // Important if inside a <form>
+                        console.log("Enter key pressed");
+                        handleSearch();
+                      }
+                    }}
                     placeholder="Enter search terms here..."
                     className={`w-full px-4 py-3 pr-12 rounded-lg border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
                       theme === 'dark' 
