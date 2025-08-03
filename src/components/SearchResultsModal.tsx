@@ -76,21 +76,37 @@ const SearchResultsModal = ({ isOpen, onClose, results, onSelect }: Props) => {
             // Search Results List View
             <>
               <Dialog.Title className="text-xl font-bold mb-4">Search Results</Dialog.Title>
+              
+              {/* Debug info for the entire results array */}
+              <div className="text-xs text-red-500 mb-4 p-2 bg-red-50 rounded">
+                Debug: results.length={results.length}, 
+                resultsType={Array.isArray(results) ? 'array' : typeof results},
+                firstResult={results[0] ? JSON.stringify(results[0]).slice(0, 100) + '...' : 'none'}
+              </div>
+              
               {results.length === 0 ? (
                 <p className="text-gray-500">No matches found.</p>
               ) : (
                 <ul className="space-y-3">
                   {results.map((result, i) => {
+                    console.log(`Processing result ${i}:`, result);
+                    
                     // Handle both old format (ProcessedQuestion[]) and new format (SearchResult[])
                     const question = result.question || result;
                     const matchContext = result.matchContext || '';
                     const matchedText = result.matchedText || '';
                     const matchType = result.matchType || 'content';
                     
-                    // If no question object found, skip this item
-                    if (!question || !question.preptest) {
-                      console.log('Skipping invalid result:', result);
-                      return null;
+                    console.log(`Question for result ${i}:`, question);
+                    
+                    // More lenient validation - just check if we have some kind of object
+                    if (!question || typeof question !== 'object') {
+                      console.log('Skipping invalid result - not an object:', result);
+                      return (
+                        <li key={i} className="border p-2 bg-red-50 text-red-600 text-sm">
+                          Invalid result #{i}: {typeof result} - {JSON.stringify(result).slice(0, 100)}
+                        </li>
+                      );
                     }
                     
                     return (
@@ -102,7 +118,7 @@ const SearchResultsModal = ({ isOpen, onClose, results, onSelect }: Props) => {
                         {/* Question Header */}
                         <div className="flex items-center justify-between mb-2">
                           <p className="text-sm font-medium text-slate-600">
-                            PrepTest {question.preptest}, Section {question.section}, Q{question.question}
+                            PrepTest {question.preptest || 'N/A'}, Section {question.section || 'N/A'}, Q{question.question || 'N/A'}
                           </p>
                           {result.matchType && (
                             <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">
