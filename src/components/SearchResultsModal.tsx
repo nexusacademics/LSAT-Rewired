@@ -3,10 +3,17 @@ import React, { useState } from 'react';
 import { Dialog } from '@headlessui/react';
 import { ProcessedQuestion } from '../types/user';
 
+interface SearchResult {
+  question: ProcessedQuestion;
+  matchedText: string;
+  matchContext: string;
+  matchType: 'passage' | 'question_stem' | 'answer_choice' | 'explanation';
+}
+
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  results: ProcessedQuestion[];
+  results: SearchResult[];
   onSelect: (question: ProcessedQuestion) => void;
 }
 
@@ -22,8 +29,45 @@ const SearchResultsModal = ({ isOpen, onClose, results, onSelect }: Props) => {
     onClose();
   };
 
+  const handleQuestionClick = (result: SearchResult) => {
+    setSelectedQuestion(result.question);
+  };
+
+  const getMatchTypeLabel = (type: string) => {
+    switch (type) {
+      case 'passage': return 'Passage';
+      case 'question_stem': return 'Question';
+      case 'answer_choice': return 'Answer Choice';
+      case 'explanation': return 'Explanation';
+      default: return 'Content';
+    }
+  };
+
+  const highlightMatchedText = (text: string, matchedText: string) => {
+    if (!matchedText) return text;
+    
+    const regex = new RegExp(`(${matchedText.replace(/[.*+?^${}()|[\]\\]/g, '\\const SearchResultsModal = ({ isOpen, onClose, results, onSelect }: Props) => {
+  const [selectedQuestion, setSelectedQuestion] = useState<ProcessedQuestion | null>(null);
+  
+  const handleBackToResults = () => {
+    setSelectedQuestion(null);
+  };
+
+  const handleClose = () => {
+    setSelectedQuestion(null);
+    onClose();
+  };
+
   const handleQuestionClick = (question: ProcessedQuestion) => {
     setSelectedQuestion(question);
+  };')})`, 'gi');
+    const parts = text.split(regex);
+    
+    return parts.map((part, index) => 
+      regex.test(part) ? (
+        <mark key={index} className="bg-yellow-200 px-1 rounded">{part}</mark>
+      ) : part
+    );
   };
 
   const renderAnswerChoices = (choices: string[]) => {
@@ -48,20 +92,35 @@ const SearchResultsModal = ({ isOpen, onClose, results, onSelect }: Props) => {
               {results.length === 0 ? (
                 <p className="text-gray-500">No matches found.</p>
               ) : (
-                <ul className="space-y-2">
-                  {results.map((q, i) => (
+                <ul className="space-y-3">
+                  {results.map((result, i) => (
                     <li 
                       key={i} 
-                      className="border p-3 rounded cursor-pointer hover:bg-slate-100 transition-colors" 
-                      onClick={() => handleQuestionClick(q)}
+                      className="border p-4 rounded-lg cursor-pointer hover:bg-slate-50 transition-colors" 
+                      onClick={() => handleQuestionClick(result)}
                     >
-                      <p className="text-sm text-slate-500 mb-1">
-                        PrepTest {q.preptest}, Section {q.section}, Q{q.question}
-                      </p>
-                      <p className="font-medium text-gray-800">
-                        {q.question_stem?.slice(0, 150) || q.question?.slice(0, 150)}
-                        {((q.question_stem?.length || q.question?.length || 0) > 150) && '...'}
-                      </p>
+                      {/* Question Header */}
+                      <div className="flex items-center justify-between mb-2">
+                        <p className="text-sm font-medium text-slate-600">
+                          PrepTest {result.question.preptest}, Section {result.question.section}, Q{result.question.question}
+                        </p>
+                        <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">
+                          Match in {getMatchTypeLabel(result.matchType)}
+                        </span>
+                      </div>
+                      
+                      {/* Match Context */}
+                      <div className="mb-3">
+                        <p className="text-sm text-gray-700 leading-relaxed">
+                          {highlightMatchedText(result.matchContext, result.matchedText)}
+                        </p>
+                      </div>
+                      
+                      {/* Question Preview */}
+                      <div className="text-xs text-gray-500 border-t pt-2">
+                        <strong>Question:</strong> {(result.question.question_stem || result.question.question || '').slice(0, 100)}
+                        {((result.question.question_stem?.length || result.question.question?.length || 0) > 100) && '...'}
+                      </div>
                     </li>
                   ))}
                 </ul>
