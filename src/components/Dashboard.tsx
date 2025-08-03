@@ -390,7 +390,7 @@ const handleSelect = (question: ProcessedQuestion) => {
               </Card>
               {searchResults.length > 0 && (
 
-            </Card>
+           
           </div>
         </div>
        </div>
