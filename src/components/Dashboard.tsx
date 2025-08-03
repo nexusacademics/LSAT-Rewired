@@ -391,7 +391,7 @@ const handleSelect = (question: ProcessedQuestion) => {
               {searchResults.length > 0 && (
 
            
-          </div>
+         
         </div>
        </div>
         {/* Time Mode Selection Modal */}
