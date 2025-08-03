@@ -1,6 +1,6 @@
 // components/SearchResultsModal.tsx
-import React from 'react';
-import { Dialog } from '@headlessui/react'; // or use your own modal
+import React, { useState } from 'react';
+import { Dialog } from '@headlessui/react';
 import { ProcessedQuestion } from '../types/user';
 
 interface Props {
@@ -10,27 +10,133 @@ interface Props {
   onSelect: (question: ProcessedQuestion) => void;
 }
 
-const SearchResultsModal = ({ isOpen, onClose, results, onSelect }: Props) => (
-  <Dialog open={isOpen} onClose={onClose} className="relative z-50">
-    <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
-    <div className="fixed inset-0 flex items-center justify-center p-4">
-      <Dialog.Panel className="bg-white rounded-xl p-6 w-full max-w-2xl shadow-xl space-y-4 overflow-y-auto max-h-[80vh]">
-        <Dialog.Title className="text-xl font-bold">Search Results</Dialog.Title>
-        {results.length === 0 ? (
-          <p className="text-gray-500">No matches found.</p>
-        ) : (
-          <ul className="space-y-2">
-            {results.map((q, i) => (
-              <li key={i} className="border p-3 rounded cursor-pointer hover:bg-slate-100" onClick={() => onSelect(q)}>
-                <p className="text-sm text-slate-500">PrepTest {q.preptest}, Section {q.section}, Q{q.question}</p>
-                <p className="font-medium">{q.question.slice(0, 150)}{q.question.length > 150 && '...'}</p>
-              </li>
-            ))}
-          </ul>
-        )}
-      </Dialog.Panel>
-    </div>
-  </Dialog>
-);
+const SearchResultsModal = ({ isOpen, onClose, results, onSelect }: Props) => {
+  const [selectedQuestion, setSelectedQuestion] = useState<ProcessedQuestion | null>(null);
+  
+  const handleBackToResults = () => {
+    setSelectedQuestion(null);
+  };
+
+  const handleClose = () => {
+    setSelectedQuestion(null);
+    onClose();
+  };
+
+  const handleQuestionClick = (question: ProcessedQuestion) => {
+    setSelectedQuestion(question);
+  };
+
+  const renderAnswerChoices = (choices: string[]) => {
+    const labels = ['A', 'B', 'C', 'D', 'E'];
+    return choices.map((choice, index) => (
+      <div key={index} className="flex items-start gap-2 mb-2">
+        <span className="font-medium text-sm mt-0.5 min-w-[20px]">({labels[index]})</span>
+        <span className="text-sm">{choice}</span>
+      </div>
+    ));
+  };
+
+  return (
+    <Dialog open={isOpen} onClose={handleClose} className="relative z-50">
+      <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
+      <div className="fixed inset-0 flex items-center justify-center p-4">
+        <Dialog.Panel className="bg-white rounded-xl p-6 w-full max-w-4xl shadow-xl overflow-y-auto max-h-[90vh]">
+          {!selectedQuestion ? (
+            // Search Results List View
+            <>
+              <Dialog.Title className="text-xl font-bold mb-4">Search Results</Dialog.Title>
+              {results.length === 0 ? (
+                <p className="text-gray-500">No matches found.</p>
+              ) : (
+                <ul className="space-y-2">
+                  {results.map((q, i) => (
+                    <li 
+                      key={i} 
+                      className="border p-3 rounded cursor-pointer hover:bg-slate-100 transition-colors" 
+                      onClick={() => handleQuestionClick(q)}
+                    >
+                      <p className="text-sm text-slate-500 mb-1">
+                        PrepTest {q.preptest}, Section {q.section}, Q{q.question}
+                      </p>
+                      <p className="font-medium text-gray-800">
+                        {q.question_stem?.slice(0, 150) || q.question?.slice(0, 150)}
+                        {((q.question_stem?.length || q.question?.length || 0) > 150) && '...'}
+                      </p>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </>
+          ) : (
+            // Question Detail View
+            <>
+              <div className="flex items-center justify-between mb-4">
+                <button
+                  onClick={handleBackToResults}
+                  className="text-blue-600 hover:text-blue-800 font-medium text-sm flex items-center gap-1"
+                >
+                  ← Back to Results
+                </button>
+                <button
+                  onClick={() => onSelect(selectedQuestion)}
+                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                >
+                  Select Question
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                {/* Header */}
+                <div className="bg-gray-50 p-3 rounded-lg">
+                  <h3 className="font-bold text-lg">
+                    PrepTest {selectedQuestion.preptest}, Section {selectedQuestion.section}, Question {selectedQuestion.question}
+                  </h3>
+                </div>
+
+                {/* Passage/Stimulus */}
+                {selectedQuestion.passage && (
+                  <div className="border-l-4 border-blue-200 pl-4">
+                    <h4 className="font-semibold text-gray-700 mb-2">Passage:</h4>
+                    <div className="text-sm leading-relaxed whitespace-pre-wrap bg-gray-50 p-3 rounded">
+                      {selectedQuestion.passage}
+                    </div>
+                  </div>
+                )}
+
+                {/* Question Stem */}
+                <div>
+                  <h4 className="font-semibold text-gray-700 mb-2">Question:</h4>
+                  <div className="text-sm leading-relaxed bg-blue-50 p-3 rounded">
+                    {selectedQuestion.question_stem || selectedQuestion.question}
+                  </div>
+                </div>
+
+                {/* Answer Choices */}
+                {selectedQuestion.answer_choices && selectedQuestion.answer_choices.length > 0 && (
+                  <div>
+                    <h4 className="font-semibold text-gray-700 mb-2">Answer Choices:</h4>
+                    <div className="bg-gray-50 p-3 rounded">
+                      {renderAnswerChoices(selectedQuestion.answer_choices)}
+                    </div>
+                  </div>
+                )}
+
+                {/* Correct Answer (if available) */}
+                {selectedQuestion.correct_answer && (
+                  <div>
+                    <h4 className="font-semibold text-gray-700 mb-2">Correct Answer:</h4>
+                    <div className="bg-green-50 p-2 rounded text-sm font-medium text-green-800">
+                      {selectedQuestion.correct_answer}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </>
+          )}
+        </Dialog.Panel>
+      </div>
+    </Dialog>
+  );
+};
 
 export default SearchResultsModal;
