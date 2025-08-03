@@ -13,7 +13,7 @@ interface SearchResult {
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  results: SearchResult[];
+  results: ProcessedQuestion[]; // Back to the original simple format
   onSelect: (question: ProcessedQuestion) => void;
 }
 
@@ -29,9 +29,9 @@ const SearchResultsModal = ({ isOpen, onClose, results, onSelect }: Props) => {
     onClose();
   };
 
-  const handleQuestionClick = (result: SearchResult | any) => {
-    const question = result.question || result;
-    setSelectedQuestion(question);
+  const handleQuestionClick = (result: any) => {
+    // Since results are direct question objects
+    setSelectedQuestion(result);
   };
 
   const getMatchTypeLabel = (type: string) => {
@@ -77,41 +77,19 @@ const SearchResultsModal = ({ isOpen, onClose, results, onSelect }: Props) => {
             <>
               <Dialog.Title className="text-xl font-bold mb-4">Search Results</Dialog.Title>
               
-              {/* Debug info for the entire results array */}
-              <div className="text-xs text-red-500 mb-4 p-2 bg-red-50 rounded">
-                Debug: results.length={results.length}, 
-                resultsType={Array.isArray(results) ? 'array' : typeof results},
-                firstResult={results[0] ? JSON.stringify(results[0]).slice(0, 100) + '...' : 'none'}
-              </div>
+              <Dialog.Title className="text-xl font-bold mb-4">Search Results</Dialog.Title>
               
               {results.length === 0 ? (
                 <p className="text-gray-500">No matches found.</p>
               ) : (
                 <ul className="space-y-3">
                   {results.map((result, i) => {
-                    console.log(`Processing result ${i}:`, result);
-                    
-                    // Handle both old format (ProcessedQuestion[]) and new format (SearchResult[])
-                    const question = result.question || result;
-                    const matchContext = result.matchContext || '';
-                    const matchedText = result.matchedText || '';
-                    const matchType = result.matchType || 'content';
-                    
-                    console.log(`Question for result ${i}:`, question);
-                    
-                    // More lenient validation - just check if we have some kind of object
-                    if (!question || typeof question !== 'object') {
-                      console.log('Skipping invalid result - not an object:', result);
-                      return (
-                        <li key={i} className="border p-2 bg-red-50 text-red-600 text-sm">
-                          Invalid result #{i}: {typeof result} - {JSON.stringify(result).slice(0, 100)}
-                        </li>
-                      );
-                    }
+                    // Since results are direct question objects, not SearchResult wrappers
+                    const question = result;
                     
                     return (
                       <li 
-                        key={i} 
+                        key={question.id || i} 
                         className="border p-4 rounded-lg cursor-pointer hover:bg-slate-50 transition-colors" 
                         onClick={() => handleQuestionClick(result)}
                       >
@@ -120,40 +98,41 @@ const SearchResultsModal = ({ isOpen, onClose, results, onSelect }: Props) => {
                           <p className="text-sm font-medium text-slate-600">
                             PrepTest {question.preptest || 'N/A'}, Section {question.section || 'N/A'}, Q{question.question || 'N/A'}
                           </p>
-                          {result.matchType && (
-                            <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">
-                              Match in {getMatchTypeLabel(matchType)}
-                            </span>
-                          )}
+                          <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
+                            Question #{i + 1}
+                          </span>
                         </div>
                         
-                        {/* Match Context or Question Text */}
-                        <div className="mb-3">
-                          {matchContext ? (
-                            <p className="text-sm text-gray-700 leading-relaxed">
-                              {highlightMatchedText(matchContext, matchedText)}
-                            </p>
-                          ) : (
+                        {/* Question Content Preview */}
+                        <div className="space-y-2">
+                          {/* Passage Preview */}
+                          {question.passage && (
                             <div>
-                              <p className="text-sm text-gray-700 leading-relaxed">
-                                <strong>Question:</strong> {(question.question_stem || question.question || 'No question text available').slice(0, 200)}
-                                {((question.question_stem?.length || question.question?.length || 0) > 200) && '...'}
+                              <p className="text-xs font-medium text-gray-600 mb-1">Passage:</p>
+                              <p className="text-sm text-gray-700 leading-relaxed bg-blue-50 p-2 rounded">
+                                {question.passage.slice(0, 200)}
+                                {question.passage.length > 200 && '...'}
                               </p>
-                              {question.passage && (
-                                <p className="text-xs text-gray-500 mt-2">
-                                  <strong>Has passage</strong> - {question.passage.slice(0, 100)}...
-                                </p>
-                              )}
                             </div>
                           )}
-                        </div>
-                        
-                        {/* Debug info - remove this once working */}
-                        <div className="text-xs text-red-500 mt-2 opacity-50">
-                          Debug: matchContext={matchContext ? 'exists' : 'missing'}, 
-                          matchType={matchType}, 
-                          hasQuestion={question ? 'true' : 'false'},
-                          questionKeys={question ? Object.keys(question).join(',') : 'none'}
+                          
+                          {/* Question Stem Preview */}
+                          {(question.question_stem || question.question) && (
+                            <div>
+                              <p className="text-xs font-medium text-gray-600 mb-1">Question:</p>
+                              <p className="text-sm text-gray-700 leading-relaxed">
+                                {(question.question_stem || question.question).slice(0, 150)}
+                                {((question.question_stem?.length || question.question?.length || 0) > 150) && '...'}
+                              </p>
+                            </div>
+                          )}
+                          
+                          {/* Answer Choices Indicator */}
+                          {question.answer_choices && question.answer_choices.length > 0 && (
+                            <p className="text-xs text-gray-500">
+                              {question.answer_choices.length} answer choices available
+                            </p>
+                          )}
                         </div>
                       </li>
                     );
