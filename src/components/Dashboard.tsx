@@ -17,21 +17,6 @@ import Badge from '../components/ui/Badge';
 import ProgressBar from '../components/ui/ProgressBar';
 import ThemeToggle from '../components/ui/ThemeToggle';
 
-// Enhanced question interface for search results with metadata
-interface EnhancedQuestion {
-  id: string;
-  passage: string;
-  question: string;
-  options: string[];
-  correctAnswer: string;
-  type: string;
-  // Metadata from joined tables
-  test_name?: string;           // from tests.name
-  section_type?: string;        // from sections.section_type
-  section_order?: number;       // from sections.section_order
-  question_order?: number;      // from questions.question_order
-}
-
 interface DashboardProps {
   user: User;
   userSessions: TestSession[];
@@ -54,79 +39,39 @@ const Dashboard: React.FC<DashboardProps> = ({
   const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY || '');
   const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
   const [searchTerm, setSearchTerm] = useState('');
-  const [searchResults, setSearchResults] = useState<EnhancedQuestion[]>([]);
-  const [searchModalOpen, setSearchModalOpen] = useState(false);
+  const [searchResults, setSearchResults] = useState<ProcessedQuestion[]>([]);
 
-  const handleSelect = (question: EnhancedQuestion) => {
-    setSearchModalOpen(false);
-    // Navigate or trigger TripleReview for this question
-    console.log('Selected question:', question);
-    
-    // If you need to find the question in allProcessedTests for navigation:
-    // const foundTest = Object.values(allProcessedTests).find(test => 
-    //   test.name === question.test_name
-    // );
-    // if (foundTest) {
-    //   const foundSection = foundTest.sections[question.section_order - 1];
-    //   const foundQuestionIndex = question.question_order - 1;
-    //   // Navigate to this question
-    // }
+const [searchModalOpen, setSearchModalOpen] = useState(false);
+
+const handleSelect = (question: ProcessedQuestion) => {
+  setSearchModalOpen(false);
+  // navigate or trigger TripleReview for this question
+  setCurrentSession({
+    preptest: question.preptest,
+    section: question.section,
+    questionIndex: question.index, // if you store index
+  });
+};
+
+  const handleSearch = () => {
+    const results: ProcessedQuestion[] = [];
+  
+    Object.values(allProcessedTests).forEach((test) => {
+      test.sections.forEach((section) => {
+        section.questions.forEach((question) => {
+          const combinedText = `${question.passage ?? ''} ${question.question}`.toLowerCase();
+          if (combinedText.includes(searchTerm.toLowerCase())) {
+            results.push(question);
+          }
+        });
+      });
+    });
+  
+    setSearchResults(results);
+    setSearchModalOpen(true);
   };
 
-  const handleSearch = async () => {
-    if (!searchTerm.trim()) return;
-    
-    try {
-      // Query with joins to get all metadata
-      const { data: results, error } = await supabase
-        .from('questions')
-        .select(`
-          id,
-          passage,
-          question,
-          options,
-          correctAnswer,
-          type,
-          sections!inner(
-            section_type,
-            section_order,
-            tests!inner(
-              name
-            )
-          ),
-          questions_table!inner(
-            question_order
-          )
-        `)
-        .or(`passage.ilike.%${searchTerm}%,question.ilike.%${searchTerm}%`)
-        .limit(50); // Limit results for performance
-
-      if (error) {
-        console.error('Search error:', error);
-        return;
-      }
-
-      // Transform the results to match EnhancedQuestion interface
-      const enhancedResults: EnhancedQuestion[] = results?.map(result => ({
-        id: result.id,
-        passage: result.passage,
-        question: result.question,
-        options: result.options,
-        correctAnswer: result.correctAnswer,
-        type: result.type,
-        test_name: result.sections?.tests?.name,
-        section_type: result.sections?.section_type,
-        section_order: result.sections?.section_order,
-        question_order: result.questions_table?.question_order
-      })) || [];
-
-      setSearchResults(enhancedResults);
-      setSearchModalOpen(true);
-    } catch (error) {
-      console.error('Search failed:', error);
-    }
-  };
-
+  
   // Filter user sessions into categories (keeping your existing logic)
   const activeSessions = userSessions.filter(session => !session.endTime);
   const readyForBlindReviewSessions = userSessions.filter(session => 
@@ -457,13 +402,13 @@ const Dashboard: React.FC<DashboardProps> = ({
         />
         </div>
       <div>
-        {/* Search Results Modal */}
-        <SearchResultsModal
-          isOpen={searchModalOpen}
-          onClose={() => setSearchModalOpen(false)}
-          results={searchResults}
-          onSelect={handleSelect}
-        />
+                   //Search Results Modal
+              <SearchResultsModal
+            isOpen={searchModalOpen}
+            onClose={() => setSearchModalOpen(false)}
+            results={searchResults}
+            onSelect={handleSelect}
+          />
       </div>
       </div>
   
@@ -715,7 +660,10 @@ const DrillSection: React.FC<DrillSectionProps> = ({
         </div>
       )}
     </Card>
+
+  
   );
+
 };
 
 export default Dashboard;
