@@ -103,6 +103,11 @@ const SearchResultsModal = ({ isOpen, onClose, results, onSelect }: Props) => {
                           </span>
                         </div>
                         
+                        {/* Temporary debug - remove once we identify the correct property names */}
+                        <div className="text-xs text-red-500 mb-2 p-1 bg-red-50 rounded">
+                          Available properties: {Object.keys(question).join(', ')}
+                        </div>
+                        
                         {/* Question Content Preview */}
                         <div className="space-y-2">
                           {/* Passage Preview */}
