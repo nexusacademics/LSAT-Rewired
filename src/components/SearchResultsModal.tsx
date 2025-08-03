@@ -46,21 +46,7 @@ const SearchResultsModal = ({ isOpen, onClose, results, onSelect }: Props) => {
   const highlightMatchedText = (text: string, matchedText: string) => {
     if (!matchedText) return text;
     
-    const regex = new RegExp(`(${matchedText.replace(/[.*+?^${}()|[\]\\]/g, '\\const SearchResultsModal = ({ isOpen, onClose, results, onSelect }: Props) => {
-  const [selectedQuestion, setSelectedQuestion] = useState<ProcessedQuestion | null>(null);
-  
-  const handleBackToResults = () => {
-    setSelectedQuestion(null);
-  };
-
-  const handleClose = () => {
-    setSelectedQuestion(null);
-    onClose();
-  };
-
-  const handleQuestionClick = (question: ProcessedQuestion) => {
-    setSelectedQuestion(question);
-  };')})`, 'gi');
+    const regex = new RegExp(`(${matchedText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
     const parts = text.split(regex);
     
     return parts.map((part, index) => 
