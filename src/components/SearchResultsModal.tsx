@@ -96,16 +96,11 @@ const SearchResultsModal = ({ isOpen, onClose, results, onSelect }: Props) => {
                         {/* Question Header */}
                         <div className="flex items-center justify-between mb-2">
                           <p className="text-sm font-medium text-slate-600">
-                            PrepTest {question.prepTest || question.prep_test || 'N/A'}, Section {question.section_number || question.sectionNumber || 'N/A'}, Q{question.question_number || question.questionNumber || 'N/A'}
+                            Question #{i + 1} {question.type && `(${question.type})`}
                           </p>
                           <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
-                            Question #{i + 1}
+                            ID: {question.id.slice(0, 8)}...
                           </span>
-                        </div>
-                        
-                        {/* Temporary debug - remove once we identify the correct property names */}
-                        <div className="text-xs text-red-500 mb-2 p-1 bg-red-50 rounded">
-                          Available properties: {Object.keys(question).join(', ')}
                         </div>
                         
                         {/* Question Content Preview */}
@@ -121,21 +116,22 @@ const SearchResultsModal = ({ isOpen, onClose, results, onSelect }: Props) => {
                             </div>
                           )}
                           
-                          {/* Question Stem Preview */}
-                          {(question.question_stem || question.question) && (
+                          {/* Question Preview */}
+                          {question.question && (
                             <div>
                               <p className="text-xs font-medium text-gray-600 mb-1">Question:</p>
                               <p className="text-sm text-gray-700 leading-relaxed">
-                                {(question.question_stem || question.question).slice(0, 150)}
-                                {((question.question_stem?.length || question.question?.length || 0) > 150) && '...'}
+                                {question.question.slice(0, 150)}
+                                {question.question.length > 150 && '...'}
                               </p>
                             </div>
                           )}
                           
-                          {/* Answer Choices Indicator */}
-                          {question.answer_choices && question.answer_choices.length > 0 && (
+                          {/* Answer Options Indicator */}
+                          {question.options && question.options.length > 0 && (
                             <p className="text-xs text-gray-500">
-                              {question.answer_choices.length} answer choices available
+                              {question.options.length} answer options available
+                              {question.correctAnswer && ` • Correct: ${question.correctAnswer}`}
                             </p>
                           )}
                         </div>
@@ -167,8 +163,9 @@ const SearchResultsModal = ({ isOpen, onClose, results, onSelect }: Props) => {
                 {/* Header */}
                 <div className="bg-gray-50 p-3 rounded-lg">
                   <h3 className="font-bold text-lg">
-                    PrepTest {selectedQuestion.preptest}, Section {selectedQuestion.section}, Question {selectedQuestion.question}
+                    Question Details {selectedQuestion.type && `(${selectedQuestion.type})`}
                   </h3>
+                  <p className="text-sm text-gray-600">ID: {selectedQuestion.id}</p>
                 </div>
 
                 {/* Passage/Stimulus */}
@@ -185,26 +182,26 @@ const SearchResultsModal = ({ isOpen, onClose, results, onSelect }: Props) => {
                 <div>
                   <h4 className="font-semibold text-gray-700 mb-2">Question:</h4>
                   <div className="text-sm leading-relaxed bg-blue-50 p-3 rounded">
-                    {selectedQuestion.question_stem || selectedQuestion.question}
+                    {selectedQuestion.question}
                   </div>
                 </div>
 
                 {/* Answer Choices */}
-                {selectedQuestion.answer_choices && selectedQuestion.answer_choices.length > 0 && (
+                {selectedQuestion.options && selectedQuestion.options.length > 0 && (
                   <div>
-                    <h4 className="font-semibold text-gray-700 mb-2">Answer Choices:</h4>
+                    <h4 className="font-semibold text-gray-700 mb-2">Answer Options:</h4>
                     <div className="bg-gray-50 p-3 rounded">
-                      {renderAnswerChoices(selectedQuestion.answer_choices)}
+                      {renderAnswerChoices(selectedQuestion.options)}
                     </div>
                   </div>
                 )}
 
-                {/* Correct Answer (if available) */}
-                {selectedQuestion.correct_answer && (
+                {/* Correct Answer */}
+                {selectedQuestion.correctAnswer && (
                   <div>
                     <h4 className="font-semibold text-gray-700 mb-2">Correct Answer:</h4>
                     <div className="bg-green-50 p-2 rounded text-sm font-medium text-green-800">
-                      {selectedQuestion.correct_answer}
+                      {selectedQuestion.correctAnswer}
                     </div>
                   </div>
                 )}
