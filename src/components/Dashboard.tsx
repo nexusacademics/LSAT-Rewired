@@ -388,17 +388,7 @@ const handleSelect = (question: ProcessedQuestion) => {
                   </button>
                 </div>
               </Card>
-              {searchResults.length > 0 && (
-                  <div className="mt-4 space-y-2">
-                    {searchResults.map((q, i) => (
-                      <div key={i} className="p-4 rounded border shadow">
-                        <div className="text-sm text-gray-500">Question {i + 1}</div>
-                        <div className="font-semibold">{q.question}</div>
-                        {q.passage && <div className="mt-2 text-sm text-gray-700 italic">{q.passage}</div>}
-                      </div>
-                    ))}
-                  </div>
-                )}
+             
             </Card>
           </div>
         </div>
