@@ -1,24 +1,31 @@
 // components/SearchResultsModal.tsx
 import React, { useState } from 'react';
 import { Dialog } from '@headlessui/react';
-import { ProcessedQuestion } from '../types/user';
 
-interface SearchResult {
-  question: ProcessedQuestion;
-  matchedText: string;
-  matchContext: string;
-  matchType: 'passage' | 'question_stem' | 'answer_choice' | 'explanation';
+// Enhanced question type with metadata from joined tables
+interface EnhancedQuestion {
+  id: string;
+  passage: string;
+  question: string;
+  options: string[];
+  correctAnswer: string;
+  type: string;
+  // Metadata from joined tables
+  test_name?: string;           // from tests.name
+  section_type?: string;        // from sections.section_type
+  section_order?: number;       // from sections.section_order
+  question_order?: number;      // from questions.question_order
 }
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  results: ProcessedQuestion[]; // Back to the original simple format
-  onSelect: (question: ProcessedQuestion) => void;
+  results: EnhancedQuestion[];
+  onSelect: (question: EnhancedQuestion) => void;
 }
 
 const SearchResultsModal = ({ isOpen, onClose, results, onSelect }: Props) => {
-  const [selectedQuestion, setSelectedQuestion] = useState<ProcessedQuestion | null>(null);
+  const [selectedQuestion, setSelectedQuestion] = useState<EnhancedQuestion | null>(null);
   
   const handleBackToResults = () => {
     setSelectedQuestion(null);
@@ -29,8 +36,7 @@ const SearchResultsModal = ({ isOpen, onClose, results, onSelect }: Props) => {
     onClose();
   };
 
-  const handleQuestionClick = (result: any) => {
-    // Since results are direct question objects
+  const handleQuestionClick = (result: EnhancedQuestion) => {
     setSelectedQuestion(result);
   };
 
@@ -96,10 +102,12 @@ const SearchResultsModal = ({ isOpen, onClose, results, onSelect }: Props) => {
                         {/* Question Header */}
                         <div className="flex items-center justify-between mb-2">
                           <p className="text-sm font-medium text-slate-600">
-                            Question #{i + 1} {question.type && `(${question.type})`}
+                            {question.test_name ? `PrepTest ${question.test_name}` : 'Unknown Test'}, 
+                            {question.section_type && question.section_order ? ` Section ${question.section_order} (${question.section_type})` : ' Unknown Section'}, 
+                            {question.question_order ? ` Q${question.question_order}` : ' Q?'}
                           </p>
                           <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
-                            ID: {question.id.slice(0, 8)}...
+                            {question.type || 'Question'}
                           </span>
                         </div>
                         
@@ -163,9 +171,14 @@ const SearchResultsModal = ({ isOpen, onClose, results, onSelect }: Props) => {
                 {/* Header */}
                 <div className="bg-gray-50 p-3 rounded-lg">
                   <h3 className="font-bold text-lg">
-                    Question Details {selectedQuestion.type && `(${selectedQuestion.type})`}
+                    {selectedQuestion.test_name ? `PrepTest ${selectedQuestion.test_name}` : 'Unknown Test'}, 
+                    {selectedQuestion.section_type && selectedQuestion.section_order ? ` Section ${selectedQuestion.section_order} (${selectedQuestion.section_type})` : ' Unknown Section'}, 
+                    {selectedQuestion.question_order ? ` Question ${selectedQuestion.question_order}` : ' Question ?'}
                   </h3>
-                  <p className="text-sm text-gray-600">ID: {selectedQuestion.id}</p>
+                  <p className="text-sm text-gray-600">
+                    {selectedQuestion.type && `Type: ${selectedQuestion.type} • `}
+                    ID: {selectedQuestion.id}
+                  </p>
                 </div>
 
                 {/* Passage/Stimulus */}
