@@ -96,7 +96,7 @@ const SearchResultsModal = ({ isOpen, onClose, results, onSelect }: Props) => {
                         {/* Question Header */}
                         <div className="flex items-center justify-between mb-2">
                           <p className="text-sm font-medium text-slate-600">
-                            PrepTest {question.preptest || 'N/A'}, Section {question.section || 'N/A'}, Q{question.question || 'N/A'}
+                            PrepTest {question.prepTest || question.prep_test || 'N/A'}, Section {question.section_number || question.sectionNumber || 'N/A'}, Q{question.question_number || question.questionNumber || 'N/A'}
                           </p>
                           <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
                             Question #{i + 1}
