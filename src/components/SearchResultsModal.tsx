@@ -87,6 +87,12 @@ const SearchResultsModal = ({ isOpen, onClose, results, onSelect }: Props) => {
                     const matchedText = result.matchedText || '';
                     const matchType = result.matchType || 'content';
                     
+                    // If no question object found, skip this item
+                    if (!question || !question.preptest) {
+                      console.log('Skipping invalid result:', result);
+                      return null;
+                    }
+                    
                     return (
                       <li 
                         key={i} 
@@ -105,33 +111,33 @@ const SearchResultsModal = ({ isOpen, onClose, results, onSelect }: Props) => {
                           )}
                         </div>
                         
-                        {/* Match Context or Fallback */}
+                        {/* Match Context or Question Text */}
                         <div className="mb-3">
                           {matchContext ? (
                             <p className="text-sm text-gray-700 leading-relaxed">
                               {highlightMatchedText(matchContext, matchedText)}
                             </p>
                           ) : (
-                            <p className="text-sm text-gray-700 leading-relaxed">
-                              {(question.question_stem || question.question || '').slice(0, 200)}
-                              {((question.question_stem?.length || question.question?.length || 0) > 200) && '...'}
-                            </p>
+                            <div>
+                              <p className="text-sm text-gray-700 leading-relaxed">
+                                <strong>Question:</strong> {(question.question_stem || question.question || 'No question text available').slice(0, 200)}
+                                {((question.question_stem?.length || question.question?.length || 0) > 200) && '...'}
+                              </p>
+                              {question.passage && (
+                                <p className="text-xs text-gray-500 mt-2">
+                                  <strong>Has passage</strong> - {question.passage.slice(0, 100)}...
+                                </p>
+                              )}
+                            </div>
                           )}
                         </div>
-                        
-                        {/* Question Preview (only if we showed context above) */}
-                        {matchContext && (
-                          <div className="text-xs text-gray-500 border-t pt-2">
-                            <strong>Question:</strong> {(question.question_stem || question.question || '').slice(0, 100)}
-                            {((question.question_stem?.length || question.question?.length || 0) > 100) && '...'}
-                          </div>
-                        )}
                         
                         {/* Debug info - remove this once working */}
                         <div className="text-xs text-red-500 mt-2 opacity-50">
                           Debug: matchContext={matchContext ? 'exists' : 'missing'}, 
                           matchType={matchType}, 
-                          hasQuestion={!!question}
+                          hasQuestion={question ? 'true' : 'false'},
+                          questionKeys={question ? Object.keys(question).join(',') : 'none'}
                         </div>
                       </li>
                     );
