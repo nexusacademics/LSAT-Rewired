@@ -393,7 +393,7 @@ const handleSelect = (question: ProcessedQuestion) => {
            
          
         </div>
-       </div>
+   
         {/* Time Mode Selection Modal */}
         <TimeModeSelectionModal
           isOpen={isTimeModeModalOpen}
