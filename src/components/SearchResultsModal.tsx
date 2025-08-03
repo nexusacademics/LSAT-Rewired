@@ -29,8 +29,9 @@ const SearchResultsModal = ({ isOpen, onClose, results, onSelect }: Props) => {
     onClose();
   };
 
-  const handleQuestionClick = (result: SearchResult) => {
-    setSelectedQuestion(result.question);
+  const handleQuestionClick = (result: SearchResult | any) => {
+    const question = result.question || result;
+    setSelectedQuestion(question);
   };
 
   const getMatchTypeLabel = (type: string) => {
@@ -79,36 +80,62 @@ const SearchResultsModal = ({ isOpen, onClose, results, onSelect }: Props) => {
                 <p className="text-gray-500">No matches found.</p>
               ) : (
                 <ul className="space-y-3">
-                  {results.map((result, i) => (
-                    <li 
-                      key={i} 
-                      className="border p-4 rounded-lg cursor-pointer hover:bg-slate-50 transition-colors" 
-                      onClick={() => handleQuestionClick(result)}
-                    >
-                      {/* Question Header */}
-                      <div className="flex items-center justify-between mb-2">
-                        <p className="text-sm font-medium text-slate-600">
-                          PrepTest {result.question.preptest}, Section {result.question.section}, Q{result.question.question}
-                        </p>
-                        <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">
-                          Match in {getMatchTypeLabel(result.matchType)}
-                        </span>
-                      </div>
-                      
-                      {/* Match Context */}
-                      <div className="mb-3">
-                        <p className="text-sm text-gray-700 leading-relaxed">
-                          {highlightMatchedText(result.matchContext, result.matchedText)}
-                        </p>
-                      </div>
-                      
-                      {/* Question Preview */}
-                      <div className="text-xs text-gray-500 border-t pt-2">
-                        <strong>Question:</strong> {(result.question.question_stem || result.question.question || '').slice(0, 100)}
-                        {((result.question.question_stem?.length || result.question.question?.length || 0) > 100) && '...'}
-                      </div>
-                    </li>
-                  ))}
+                  {results.map((result, i) => {
+                    // Handle both old format (ProcessedQuestion[]) and new format (SearchResult[])
+                    const question = result.question || result;
+                    const matchContext = result.matchContext || '';
+                    const matchedText = result.matchedText || '';
+                    const matchType = result.matchType || 'content';
+                    
+                    return (
+                      <li 
+                        key={i} 
+                        className="border p-4 rounded-lg cursor-pointer hover:bg-slate-50 transition-colors" 
+                        onClick={() => handleQuestionClick(result)}
+                      >
+                        {/* Question Header */}
+                        <div className="flex items-center justify-between mb-2">
+                          <p className="text-sm font-medium text-slate-600">
+                            PrepTest {question.preptest}, Section {question.section}, Q{question.question}
+                          </p>
+                          {result.matchType && (
+                            <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">
+                              Match in {getMatchTypeLabel(matchType)}
+                            </span>
+                          )}
+                        </div>
+                        
+                        {/* Match Context or Fallback */}
+                        <div className="mb-3">
+                          {matchContext ? (
+                            <p className="text-sm text-gray-700 leading-relaxed">
+                              {highlightMatchedText(matchContext, matchedText)}
+                            </p>
+                          ) : (
+                            <p className="text-sm text-gray-700 leading-relaxed">
+                              {(question.question_stem || question.question || '').slice(0, 200)}
+                              {((question.question_stem?.length || question.question?.length || 0) > 200) && '...'}
+                            </p>
+                          )}
+                        </div>
+                        
+                        {/* Question Preview (only if we showed context above) */}
+                        {matchContext && (
+                          <div className="text-xs text-gray-500 border-t pt-2">
+                            <strong>Question:</strong> {(question.question_stem || question.question || '').slice(0, 100)}
+                            {((question.question_stem?.length || question.question?.length || 0) > 100) && '...'}
+                          </div>
+                        )}
+                        
+                        {/* Debug info - remove this once working */}
+                        <div className="text-xs text-red-500 mt-2 opacity-50">
+                          Debug: matchContext={matchContext ? 'exists' : 'missing'}, 
+                          matchType={matchType}, 
+                          hasQuestion={!!question}
+                        </div>
+                      </li>
+                    );
+                  })}
                 </ul>
               )}
             </>
