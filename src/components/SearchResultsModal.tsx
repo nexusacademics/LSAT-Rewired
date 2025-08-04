@@ -1,31 +1,15 @@
 // components/SearchResultsModal.tsx
 import React, { useState } from 'react';
 import { Dialog } from '@headlessui/react';
+import { ProcessedQuestion, SearchResultsModalProps } from '../types/dashboard.types';
 
-// Enhanced question type with metadata from joined tables
-interface EnhancedQuestion {
-  id: string;
-  passage: string;
-  question: string;
-  options: string[];
-  correctAnswer: string;
-  type: string;
-  // Metadata from joined tables
-  test_name?: string;           // from tests.name
-  section_type?: string;        // from sections.section_type
-  section_order?: number;       // from sections.section_order
-  question_order?: number;      // from questions.question_order
-}
-
-interface Props {
-  isOpen: boolean;
-  onClose: () => void;
-  results: EnhancedQuestion[];
-  onSelect: (question: EnhancedQuestion) => void;
-}
-
-const SearchResultsModal = ({ isOpen, onClose, results, onSelect }: Props) => {
-  const [selectedQuestion, setSelectedQuestion] = useState<EnhancedQuestion | null>(null);
+const SearchResultsModal: React.FC<SearchResultsModalProps> = ({ 
+  isOpen, 
+  onClose, 
+  results, 
+  onSelect 
+}) => {
+  const [selectedQuestion, setSelectedQuestion] = useState<ProcessedQuestion | null>(null);
   
   const handleBackToResults = () => {
     setSelectedQuestion(null);
@@ -36,31 +20,11 @@ const SearchResultsModal = ({ isOpen, onClose, results, onSelect }: Props) => {
     onClose();
   };
 
-  const handleQuestionClick = (result: EnhancedQuestion) => {
+  const handleQuestionClick = (result: ProcessedQuestion) => {
+    // Debug logging - remove this once you identify the correct field names
+    console.log('Question data:', result);
+    console.log('Available fields:', Object.keys(result));
     setSelectedQuestion(result);
-  };
-
-  const getMatchTypeLabel = (type: string) => {
-    switch (type) {
-      case 'passage': return 'Passage';
-      case 'question_stem': return 'Question';
-      case 'answer_choice': return 'Answer Choice';
-      case 'explanation': return 'Explanation';
-      default: return 'Content';
-    }
-  };
-
-  const highlightMatchedText = (text: string, matchedText: string) => {
-    if (!matchedText) return text;
-    
-    const regex = new RegExp(`(${matchedText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
-    const parts = text.split(regex);
-    
-    return parts.map((part, index) => 
-      regex.test(part) ? (
-        <mark key={index} className="bg-yellow-200 px-1 rounded">{part}</mark>
-      ) : part
-    );
   };
 
   const renderAnswerChoices = (choices: string[]) => {
@@ -71,6 +35,52 @@ const SearchResultsModal = ({ isOpen, onClose, results, onSelect }: Props) => {
         <span className="text-sm">{choice}</span>
       </div>
     ));
+  };
+
+  // Helper function to extract PrepTest number from full title
+  const extractPrepTestNumber = (testName: string | null | undefined) => {
+    if (!testName) return null;
+    
+    // Match patterns like "PrepTest 1", "PrepTest 85", etc.
+    const match = testName.match(/PrepTest\s+(\d+)/i);
+    return match ? match[1] : testName; // Return just the number, or original if no match
+  };
+
+  // Helper function to get test name - check multiple possible field names
+  const getTestName = (question: ProcessedQuestion) => {
+    return question.test_name || question.testName || question.test || question.preptest || null;
+  };
+
+  // Helper function to get section order - check multiple possible field names
+  const getSectionOrder = (question: ProcessedQuestion) => {
+    return question.section_order ?? question.sectionOrder ?? question.section ?? null;
+  };
+
+  // Helper function to get section type - check multiple possible field names
+  const getSectionType = (question: ProcessedQuestion) => {
+    return question.section_type || question.sectionType || question.type || null;
+  };
+
+  // Helper function to get question order - check multiple possible field names
+  const getQuestionOrder = (question: ProcessedQuestion) => {
+    return question.question_order ?? question.questionOrder ?? question.order ?? question.number ?? null;
+  };
+
+  // Helper function to format section information
+  const formatSectionInfo = (question: ProcessedQuestion) => {
+    const parts = [];
+    const sectionOrder = getSectionOrder(question);
+    const sectionType = getSectionType(question);
+    
+    if (sectionOrder !== null && sectionOrder !== undefined) {
+      parts.push(`Section ${sectionOrder}`);
+    }
+    
+    if (sectionType) {
+      parts.push(`(${sectionType})`);
+    }
+    
+    return parts.length > 0 ? ` ${parts.join(' ')}` : ' Section Info N/A';
   };
 
   return (
@@ -87,63 +97,50 @@ const SearchResultsModal = ({ isOpen, onClose, results, onSelect }: Props) => {
                 <p className="text-gray-500">No matches found.</p>
               ) : (
                 <ul className="space-y-3">
-                  {results.map((result, i) => {
-                    // Since results are direct question objects, not SearchResult wrappers
-                    const question = result;
-                    
-                    return (
-                      <li 
-                        key={question.id || i} 
-                        className="border p-4 rounded-lg cursor-pointer hover:bg-slate-50 transition-colors" 
-                        onClick={() => handleQuestionClick(result)}
-                      >
-                        {/* Question Header */}
-                        <div className="flex items-center justify-between mb-2">
-                          <p className="text-sm font-medium text-slate-600">
-                            {question.test_name ? `PrepTest ${question.test_name}` : 'Unknown Test'}, 
-                            {question.section_type && question.section_order ? ` Section ${question.section_order} (${question.section_type})` : ' Unknown Section'}, 
-                            {question.question_order ? ` Q${question.question_order}` : ' Q?'}
-                          </p>
-                          <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
-                            {question.type || 'Question'}
-                          </span>
-                        </div>
-                        
-                        {/* Question Content Preview */}
-                        <div className="space-y-2">
-                          {/* Passage Preview */}
-                          {question.passage && (
-                            <div>
-                              <p className="text-xs font-medium text-gray-600 mb-1">Passage:</p>
-                              <p className="text-sm text-gray-700 leading-relaxed bg-blue-50 p-2 rounded">
-                                {question.passage.slice(0, 200)}
-                                {question.passage.length > 200 && '...'}
-                              </p>
-                            </div>
-                          )}
-                          
-                          {/* Question Preview */}
-                          {question.question && (
-                            <div>
-                              <p className="text-xs font-medium text-gray-600 mb-1">Question:</p>
-                              <p className="text-sm text-gray-700 leading-relaxed">
-                                {question.question.slice(0, 150)}
-                                {question.question.length > 150 && '...'}
-                              </p>
-                            </div>
-                          )}
-                          
-                          {/* Answer Options Indicator */}
-                          {question.options && question.options.length > 0 && (
-                            <p className="text-xs text-gray-500">
-                              {question.options.length} answer options available
-                              {question.correctAnswer && ` • Correct: ${question.correctAnswer}`}
+                  {results.map((question, i) => (
+                    <li 
+                      key={question.id || i} 
+                      className="border p-4 rounded-lg cursor-pointer hover:bg-slate-50 transition-colors" 
+                      onClick={() => handleQuestionClick(question)}
+                    >
+                      {/* Question Header */}
+                      <div className="flex items-center justify-between mb-2">
+                        <p className="text-sm font-medium text-slate-600">
+                          {getTestName(question) ? `PrepTest ${extractPrepTestNumber(getTestName(question))}` : 'Unknown Test'}
+                          {formatSectionInfo(question)}, 
+                          {getQuestionOrder(question) !== null && getQuestionOrder(question) !== undefined ? ` Q${getQuestionOrder(question)}` : ' Q?'}
+                        </p>
+                        <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
+                          {question.type || 'Question'}
+                        </span>
+                      </div>
+                      
+                      {/* Question Content Preview */}
+                      <div className="space-y-2">
+                        {/* Passage Preview */}
+                        {question.passage && (
+                          <div>
+                            <p className="text-xs font-medium text-gray-600 mb-1">Passage:</p>
+                            <p className="text-sm text-gray-700 leading-relaxed bg-blue-50 p-2 rounded">
+                              {question.passage.slice(0, 200)}
+                              {question.passage.length > 200 && '...'}
                             </p>
-                          )}
-                        </div>
-                      </li>
-                    );
-                  })}
+                          </div>
+                        )}
+                        
+                        {/* Question Preview */}
+                        {question.question && (
+                          <div>
+                            <p className="text-xs font-medium text-gray-600 mb-1">Question:</p>
+                            <p className="text-sm text-gray-700 leading-relaxed">
+                              {question.question.slice(0, 150)}
+                              {question.question.length > 150 && '...'}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    </li>
+                  ))}
                 </ul>
               )}
             </>
@@ -169,9 +166,9 @@ const SearchResultsModal = ({ isOpen, onClose, results, onSelect }: Props) => {
                 {/* Header */}
                 <div className="bg-gray-50 p-3 rounded-lg">
                   <h3 className="font-bold text-lg">
-                    {selectedQuestion.test_name ? `PrepTest ${selectedQuestion.test_name}` : 'Unknown Test'}, 
-                    {selectedQuestion.section_type && selectedQuestion.section_order ? ` Section ${selectedQuestion.section_order} (${selectedQuestion.section_type})` : ' Unknown Section'}, 
-                    {selectedQuestion.question_order ? ` Question ${selectedQuestion.question_order}` : ' Question ?'}
+                    {selectedQuestion.test_name ? `PrepTest ${extractPrepTestNumber(selectedQuestion.test_name)}` : 'Unknown Test'}
+                    {formatSectionInfo(selectedQuestion)}, 
+                    {selectedQuestion.question_order !== null && selectedQuestion.question_order !== undefined ? ` Question ${selectedQuestion.question_order}` : ' Question ?'}
                   </h3>
                   <p className="text-sm text-gray-600">
                     {selectedQuestion.type && `Type: ${selectedQuestion.type} • `}
