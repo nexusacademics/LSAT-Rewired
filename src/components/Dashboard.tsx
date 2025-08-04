@@ -66,7 +66,10 @@ const handleSelect = (question: ProcessedQuestion) => {
         });
       });
     });
-  
+   // ADD THIS DEBUG LINE
+  console.log('Search results:', results);
+  console.log('First result structure:', results[0]);
+    
     setSearchResults(results);
     setSearchModalOpen(true);
   };
