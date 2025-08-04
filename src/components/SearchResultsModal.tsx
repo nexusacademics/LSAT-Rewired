@@ -34,96 +34,148 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
     ));
   };
 
-  // Helper function to extract PrepTest number from full title
+  // Helper function to extract PrepTest number from test name
   const extractPrepTestNumber = (testName: string | null | undefined) => {
     if (!testName) return null;
     
-    // Match patterns like "PrepTest 1", "PrepTest 85", etc.
-    const match = testName.match(/PrepTest\s+(\d+)/i);
-    return match ? match[1] : testName; // Return just the number, or original if no match
+    // Match patterns like "PrepTest 1", "PrepTest 85", "PT 1", etc.
+    const match = testName.match(/(?:PrepTest|PT)\s*(\d+)/i);
+    return match ? match[1] : null;
   };
 
-  // Helper function to parse section name (e.g., "LR140A-1" -> section 1, type LR)
-  const parseSectionName = (sectionName: string | null | undefined) => {
-    if (!sectionName) return { order: null, type: null };
-    
-    // Pattern for names like "LR140A-1", "RC140A-4", etc.
-    const match = sectionName.match(/^([A-Z]+)\d+[A-Z]*-(\d+)$/);
-    if (match) {
+  // Helper function to get test name/number from nested data or direct fields
+  const getTestInfo = (question: ProcessedQuestion) => {
+    // Check if test data is nested (from joins)
+    if (question.tests?.name) {
       return {
-        type: match[1], // e.g., "LR", "RC"
-        order: parseInt(match[2]) // e.g., 1, 4
+        name: question.tests.name,
+        number: extractPrepTestNumber(question.tests.name)
       };
     }
     
-    return { order: null, type: sectionName };
-  };
-
-  // Helper function to get test name - check multiple possible field names
-  const getTestName = (question: ProcessedQuestion) => {
-    // For Supabase data, we might need to look up test name by section_id
-    // For now, return null since test name isn't directly available
-    return question.test_name || question.testName || null;
-  };
-
-  // Helper function to get section info
-  const getSectionInfo = (question: ProcessedQuestion) => {
-    // Check if section info is directly attached
-    const sectionName = question.section_name || question.sectionName;
-    
-    if (sectionName) {
-      return parseSectionName(sectionName);
+    // Check if test data is at root level
+    if (question.test_name) {
+      return {
+        name: question.test_name,
+        number: extractPrepTestNumber(question.test_name)
+      };
     }
     
-    // For Supabase data, we have section_id but not section name/order
-    // We could potentially parse info from section_id if it follows a pattern
-    const sectionId = question.section_id;
-    if (sectionId) {
-      // If section_id follows a pattern, try to parse it
-      // Otherwise, just show the section_id
+    // Fallback to legacy field names
+    if (question.testName) {
       return {
-        order: question.section_order ?? question.sectionOrder ?? null,
-        type: question.section_type || question.sectionType || question.question_type || question.type || 'Unknown'
+        name: question.testName,
+        number: extractPrepTestNumber(question.testName)
       };
     }
     
     return {
-      order: null,
-      type: question.question_type || question.type || 'Unknown'
+      name: null,
+      number: null
     };
   };
 
-  // Helper function to get question order - check multiple possible field names
+  // Helper function to get section order from nested data or direct fields
+  const getSectionOrder = (question: ProcessedQuestion) => {
+    // Check if section data is nested (from joins)
+    if (question.sections?.section_order !== undefined) {
+      return question.sections.section_order;
+    }
+    
+    // Check direct field
+    if (question.section_order !== undefined) {
+      return question.section_order;
+    }
+    
+    // Legacy field names
+    if (question.sectionOrder !== undefined) {
+      return question.sectionOrder;
+    }
+    
+    return null;
+  };
+
+  // Helper function to get section type
+  const getSectionType = (question: ProcessedQuestion) => {
+    // Check if section data is nested
+    if (question.sections?.section_type) {
+      return question.sections.section_type;
+    }
+    
+    // Check direct fields
+    if (question.section_type) {
+      return question.section_type;
+    }
+    
+    if (question.sectionType) {
+      return question.sectionType;
+    }
+    
+    // Fallback to question type
+    return question.question_type || question.type || 'Unknown';
+  };
+
+  // Helper function to get question order
   const getQuestionOrder = (question: ProcessedQuestion) => {
-    return question.question_order ?? question.questionOrder ?? question.order ?? null;
+    // Direct field (should be the primary source)
+    if (question.question_order !== undefined) {
+      return question.question_order;
+    }
+    
+    // Legacy field names
+    if (question.questionOrder !== undefined) {
+      return question.questionOrder;
+    }
+    
+    if (question.order !== undefined) {
+      return question.order;
+    }
+    
+    return null;
   };
 
   // Helper function to get question text
   const getQuestionText = (question: ProcessedQuestion) => {
-    return question.question || question.question_stem || '';
+    return question.question_stem || question.question || '';
   };
 
   // Helper function to get correct answer
   const getCorrectAnswer = (question: ProcessedQuestion) => {
-    if (question.correctAnswer !== undefined) return question.correctAnswer;
     if (question.correct_answer_index !== undefined) return question.correct_answer_index;
+    if (question.correctAnswer !== undefined) return question.correctAnswer;
     return null;
   };
 
-  // Helper function to format section information
-  const formatSectionInfo = (question: ProcessedQuestion) => {
-    const sectionInfo = getSectionInfo(question);
+  // Helper function to format the complete question identifier
+  const formatQuestionInfo = (question: ProcessedQuestion) => {
+    const testInfo = getTestInfo(question);
+    const sectionOrder = getSectionOrder(question);
+    const questionOrder = getQuestionOrder(question);
+    
     const parts = [];
     
-    if (sectionInfo.order !== null && sectionInfo.order !== undefined) {
-      parts.push(`Section ${sectionInfo.order}`);
+    // Test number
+    if (testInfo.number) {
+      parts.push(`PrepTest ${testInfo.number}`);
+    } else {
+      parts.push('Unknown Test');
     }
     
-    if (sectionInfo.type) {
-      parts.push(`(${sectionInfo.type})`);
+    // Section number
+    if (sectionOrder !== null && sectionOrder !== undefined) {
+      parts.push(`Section ${sectionOrder}`);
+    } else {
+      parts.push('Section ?');
     }
     
-    return parts.length > 0 ? ` ${parts.join(' ')}` : ' Section Info N/A';
+    // Question number
+    if (questionOrder !== null && questionOrder !== undefined) {
+      parts.push(`Q${questionOrder}`);
+    } else {
+      parts.push('Q?');
+    }
+    
+    return parts.join(', ');
   };
 
   return (
@@ -149,12 +201,10 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
                       {/* Question Header */}
                       <div className="flex items-center justify-between mb-2">
                         <p className="text-sm font-medium text-slate-600">
-                          {getTestName(question) ? `PrepTest ${extractPrepTestNumber(getTestName(question))}` : 'Unknown Test'}
-                          {formatSectionInfo(question)}, 
-                          {getQuestionOrder(question) !== null && getQuestionOrder(question) !== undefined ? ` Q${getQuestionOrder(question)}` : ' Q?'}
+                          {formatQuestionInfo(question)}
                         </p>
                         <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
-                          {question.question_type || question.type || 'Question'}
+                          {getSectionType(question)}
                         </span>
                       </div>
                       
@@ -209,13 +259,10 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
                 {/* Header */}
                 <div className="bg-gray-50 p-3 rounded-lg">
                   <h3 className="font-bold text-lg">
-                    {getTestName(selectedQuestion) ? `PrepTest ${extractPrepTestNumber(getTestName(selectedQuestion))}` : 'Unknown Test'}
-                    {formatSectionInfo(selectedQuestion)}, 
-                    {getQuestionOrder(selectedQuestion) !== null && getQuestionOrder(selectedQuestion) !== undefined ? ` Question ${getQuestionOrder(selectedQuestion)}` : ' Question ?'}
+                    {formatQuestionInfo(selectedQuestion)}
                   </h3>
                   <p className="text-sm text-gray-600">
-                    {(selectedQuestion.question_type || selectedQuestion.type) && `Type: ${selectedQuestion.question_type || selectedQuestion.type} • `}
-                    ID: {selectedQuestion.id}
+                    Type: {getSectionType(selectedQuestion)} • ID: {selectedQuestion.id}
                   </p>
                 </div>
 
