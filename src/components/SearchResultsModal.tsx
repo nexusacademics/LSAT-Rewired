@@ -83,8 +83,6 @@ const SearchResultsModal = ({ isOpen, onClose, results, onSelect }: Props) => {
             <>
               <Dialog.Title className="text-xl font-bold mb-4">Search Results</Dialog.Title>
               
-              <Dialog.Title className="text-xl font-bold mb-4">Search Results</Dialog.Title>
-              
               {results.length === 0 ? (
                 <p className="text-gray-500">No matches found.</p>
               ) : (
