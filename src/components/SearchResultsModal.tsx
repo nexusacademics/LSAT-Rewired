@@ -43,17 +43,9 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
     return match ? match[1] : null;
   };
 
-  // Helper function to get test name/number from nested data or direct fields
+  // Helper function to get test name/number - use processed data fields
   const getTestInfo = (question: ProcessedQuestion) => {
-    // Check if test data is nested (from joins)
-    if (question.tests?.name) {
-      return {
-        name: question.tests.name,
-        number: extractPrepTestNumber(question.tests.name)
-      };
-    }
-    
-    // Check if test data is at root level
+    // Processed data has test_name field
     if (question.test_name) {
       return {
         name: question.test_name,
@@ -61,7 +53,7 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
       };
     }
     
-    // Fallback to legacy field names
+    // Fallback to other possible field names
     if (question.testName) {
       return {
         name: question.testName,
@@ -75,75 +67,32 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
     };
   };
 
-  // Helper function to get section order from nested data or direct fields
+  // Helper function to get section order - use processed data fields
   const getSectionOrder = (question: ProcessedQuestion) => {
-    // Check if section data is nested (from joins)
-    if (question.sections?.section_order !== undefined) {
-      return question.sections.section_order;
-    }
-    
-    // Check direct field
-    if (question.section_order !== undefined) {
-      return question.section_order;
-    }
-    
-    // Legacy field names
-    if (question.sectionOrder !== undefined) {
-      return question.sectionOrder;
-    }
-    
-    return null;
+    // Processed data has section_order field
+    return question.section_order ?? question.sectionOrder ?? null;
   };
 
-  // Helper function to get section type
+  // Helper function to get section type - use processed data fields
   const getSectionType = (question: ProcessedQuestion) => {
-    // Check if section data is nested
-    if (question.sections?.section_type) {
-      return question.sections.section_type;
-    }
-    
-    // Check direct fields
-    if (question.section_type) {
-      return question.section_type;
-    }
-    
-    if (question.sectionType) {
-      return question.sectionType;
-    }
-    
-    // Fallback to question type
-    return question.question_type || question.type || 'Unknown';
+    // Use the type field from processed data
+    return question.type || question.question_type || question.section_type || 'Unknown';
   };
 
-  // Helper function to get question order
+  // Helper function to get question order - use processed data fields
   const getQuestionOrder = (question: ProcessedQuestion) => {
-    // Direct field (should be the primary source)
-    if (question.question_order !== undefined) {
-      return question.question_order;
-    }
-    
-    // Legacy field names
-    if (question.questionOrder !== undefined) {
-      return question.questionOrder;
-    }
-    
-    if (question.order !== undefined) {
-      return question.order;
-    }
-    
-    return null;
+    // Processed data has question_order field
+    return question.question_order ?? question.questionOrder ?? question.order ?? null;
   };
 
-  // Helper function to get question text
+  // Helper function to get question text - use processed data fields
   const getQuestionText = (question: ProcessedQuestion) => {
-    return question.question_stem || question.question || '';
+    return question.question || question.question_stem || '';
   };
 
-  // Helper function to get correct answer
+  // Helper function to get correct answer - use processed data fields
   const getCorrectAnswer = (question: ProcessedQuestion) => {
-    if (question.correct_answer_index !== undefined) return question.correct_answer_index;
-    if (question.correctAnswer !== undefined) return question.correctAnswer;
-    return null;
+    return question.correctAnswer ?? question.correct_answer_index ?? null;
   };
 
   // Helper function to format the complete question identifier
