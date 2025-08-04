@@ -21,13 +21,6 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
   };
 
   const handleQuestionClick = (result: ProcessedQuestion) => {
-    // Debug logging to see the actual data structure
-    console.log('Question data:', result);
-    console.log('Available fields:', Object.keys(result));
-    console.log('test_name:', result.test_name);
-    console.log('section_name:', result.section_name);
-    console.log('section_order:', result.section_order);
-    console.log('question_order:', result.question_order);
     setSelectedQuestion(result);
   };
 
@@ -68,39 +61,53 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
 
   // Helper function to get test name - check multiple possible field names
   const getTestName = (question: ProcessedQuestion) => {
-    const testName = question.test_name || question.testName || question.test || question.preptest || 
-           question.testInfo?.name || question.test?.name || null;
-    console.log('getTestName result:', testName); // Debug log
-    return testName;
+    // For Supabase data, we might need to look up test name by section_id
+    // For now, return null since test name isn't directly available
+    return question.test_name || question.testName || null;
   };
 
   // Helper function to get section info
   const getSectionInfo = (question: ProcessedQuestion) => {
     // Check if section info is directly attached
-    const sectionName = question.section_name || question.sectionName || question.section || 
-                       question.sectionInfo?.name || question.section?.name;
-    
-    console.log('getSectionInfo - sectionName:', sectionName); // Debug log
-    console.log('getSectionInfo - section_order:', question.section_order); // Debug log
-    console.log('getSectionInfo - section_type:', question.section_type); // Debug log
+    const sectionName = question.section_name || question.sectionName;
     
     if (sectionName) {
       return parseSectionName(sectionName);
     }
     
-    // Fallback to individual fields
+    // For Supabase data, we have section_id but not section name/order
+    // We could potentially parse info from section_id if it follows a pattern
+    const sectionId = question.section_id;
+    if (sectionId) {
+      // If section_id follows a pattern, try to parse it
+      // Otherwise, just show the section_id
+      return {
+        order: question.section_order ?? question.sectionOrder ?? null,
+        type: question.section_type || question.sectionType || question.question_type || question.type || 'Unknown'
+      };
+    }
+    
     return {
-      order: question.section_order ?? question.sectionOrder ?? question.section_number ?? null,
-      type: question.section_type || question.sectionType || null
+      order: null,
+      type: question.question_type || question.type || 'Unknown'
     };
   };
 
   // Helper function to get question order - check multiple possible field names
   const getQuestionOrder = (question: ProcessedQuestion) => {
-    const questionOrder = question.question_order ?? question.questionOrder ?? question.order ?? 
-           question.number ?? question.question_number ?? null;
-    console.log('getQuestionOrder result:', questionOrder); // Debug log
-    return questionOrder;
+    return question.question_order ?? question.questionOrder ?? question.order ?? null;
+  };
+
+  // Helper function to get question text
+  const getQuestionText = (question: ProcessedQuestion) => {
+    return question.question || question.question_stem || '';
+  };
+
+  // Helper function to get correct answer
+  const getCorrectAnswer = (question: ProcessedQuestion) => {
+    if (question.correctAnswer !== undefined) return question.correctAnswer;
+    if (question.correct_answer_index !== undefined) return question.correct_answer_index;
+    return null;
   };
 
   // Helper function to format section information
@@ -147,7 +154,7 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
                           {getQuestionOrder(question) !== null && getQuestionOrder(question) !== undefined ? ` Q${getQuestionOrder(question)}` : ' Q?'}
                         </p>
                         <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
-                          {question.type || 'Question'}
+                          {question.question_type || question.type || 'Question'}
                         </span>
                       </div>
                       
@@ -165,12 +172,12 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
                         )}
                         
                         {/* Question Preview */}
-                        {question.question && (
+                        {getQuestionText(question) && (
                           <div>
                             <p className="text-xs font-medium text-gray-600 mb-1">Question:</p>
                             <p className="text-sm text-gray-700 leading-relaxed">
-                              {question.question.slice(0, 150)}
-                              {question.question.length > 150 && '...'}
+                              {getQuestionText(question).slice(0, 150)}
+                              {getQuestionText(question).length > 150 && '...'}
                             </p>
                           </div>
                         )}
@@ -207,7 +214,7 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
                     {getQuestionOrder(selectedQuestion) !== null && getQuestionOrder(selectedQuestion) !== undefined ? ` Question ${getQuestionOrder(selectedQuestion)}` : ' Question ?'}
                   </h3>
                   <p className="text-sm text-gray-600">
-                    {selectedQuestion.type && `Type: ${selectedQuestion.type} • `}
+                    {(selectedQuestion.question_type || selectedQuestion.type) && `Type: ${selectedQuestion.question_type || selectedQuestion.type} • `}
                     ID: {selectedQuestion.id}
                   </p>
                 </div>
@@ -226,7 +233,7 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
                 <div>
                   <h4 className="font-semibold text-gray-700 mb-2">Question:</h4>
                   <div className="text-sm leading-relaxed bg-blue-50 p-3 rounded">
-                    {selectedQuestion.question}
+                    {getQuestionText(selectedQuestion)}
                   </div>
                 </div>
 
@@ -241,11 +248,11 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
                 )}
 
                 {/* Correct Answer */}
-                {selectedQuestion.correctAnswer && (
+                {getCorrectAnswer(selectedQuestion) !== null && (
                   <div>
                     <h4 className="font-semibold text-gray-700 mb-2">Correct Answer:</h4>
                     <div className="bg-green-50 p-2 rounded text-sm font-medium text-green-800">
-                      {selectedQuestion.correctAnswer}
+                      {['A', 'B', 'C', 'D', 'E'][getCorrectAnswer(selectedQuestion)] || getCorrectAnswer(selectedQuestion)}
                     </div>
                   </div>
                 )}
