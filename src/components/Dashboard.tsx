@@ -1,7 +1,13 @@
-import React, { useState } from 'react';
-import { BookOpen, Play, TrendingUp, Calendar, Upload, Download, Users, Brain, Target, Archive, ChevronRight, Zap, Award, Activity } from 'lucide-react';
+import React, { icons, useState } from 'react';
+import { Search, Drill, BookOpen, Play, TrendingUp, Calendar, Upload, Download, Users, Brain, Target, Archive, ChevronRight, Zap, Award, Activity } from 'lucide-react';
 import { User, TestSession, ProcessedPrepTest } from '../App';
 import TimeModeSelectionModal from './TimeModeSelectionModal';
+
+//import search functions
+import { parseSearchQuery } from '../utils/parseSearchQuery';
+import { supabase } from '../lib/supabase';
+import { GoogleGenerativeAI } from '@google/generative-ai';
+import SearchResultsModal from './SearchResultsModal';
 
 // Import your new design system components
 import { useTheme } from '../contexts/ThemeContext';
@@ -28,6 +34,64 @@ const Dashboard: React.FC<DashboardProps> = ({
 }) => {
   const [isTimeModeModalOpen, setIsTimeModeModal] = useState(false);
   const { theme } = useTheme();
+ 
+  //item search
+  const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY || '');
+  const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchResults, setSearchResults] = useState<ProcessedQuestion[]>([]);
+
+const [searchModalOpen, setSearchModalOpen] = useState(false);
+
+const handleSelect = (question: ProcessedQuestion) => {
+  setSearchModalOpen(false);
+  // navigate or trigger TripleReview for this question
+  setCurrentSession({
+    preptest: question.preptest,
+    section: question.section,
+    questionIndex: question.index, // if you store index
+  });
+};
+
+  // Replace your handleSearch function with this enhanced version:
+
+const handleSearch = () => {
+  const results: ProcessedQuestion[] = [];
+
+  Object.values(allProcessedTests).forEach((test) => {
+    test.sections.forEach((section, sectionIndex) => {
+      section.questions.forEach((question, questionIndex) => {
+        const combinedText = `${question.passage ?? ''} ${question.question}`.toLowerCase();
+        if (combinedText.includes(searchTerm.toLowerCase())) {
+          // Enhance the question with metadata from the test/section context
+          const enhancedQuestion = {
+            ...question,
+            // Add the missing metadata
+            test_name: test.name,
+            test_id: test.id,
+            section_name: section.name,
+            section_id: section.id,
+            section_order: sectionIndex + 1,
+            question_order: questionIndex + 1,
+            // Determine section type from section name or ID
+            section_type: section.name?.startsWith('LR') ? 'LR' :
+                         section.name?.startsWith('RC') ? 'RC' :
+                         section.id?.startsWith('LR') ? 'LR' :
+                         section.id?.startsWith('RC') ? 'RC' : 'Unknown'
+          };
+          results.push(enhancedQuestion);
+        }
+      });
+    });
+  });
+
+  console.log('Enhanced search results:', results);
+  console.log('First enhanced result:', results[0]);
+
+  setSearchResults(results);
+  setSearchModalOpen(true);
+};
+
   
   // Filter user sessions into categories (keeping your existing logic)
   const activeSessions = userSessions.filter(session => !session.endTime);
@@ -66,10 +130,10 @@ const Dashboard: React.FC<DashboardProps> = ({
 
   return (
     <div className={`min-h-screen w-full transition-all duration-500 ${backgroundClasses}`}>
-      <div className="w-full pt-20 px-4 pb-4">
+      <div className="w-full pt-10 px-4 pb-4">
         <div className="max-w-[1600px] mx-auto space-y-4">
         
-        {/* Welcome Header - Compressed */}
+        {/* Welcome Header with Study Streak */}
         <Card padding="default" gradient={theme === 'light'}>
           <div className={`${theme === 'dark' ? 'bg-gradient-to-r from-blue-600/20 via-purple-600/20 to-teal-600/20 p-6 -m-6 rounded-2xl' : ''}`}>
             <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between">
@@ -85,12 +149,39 @@ const Dashboard: React.FC<DashboardProps> = ({
                   Ready to continue your LSAT mastery journey?
                 </p>
                 
-                {user.lawhubCredentials?.verified && (
-                  <Badge variant="success" className="inline-flex items-center">
-                    <Brain className="h-4 w-4 mr-2" />
-                    LawHub Connected: {user.lawhubCredentials.username}
-                  </Badge>
-                )}
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                  {user.lawhubCredentials?.verified && (
+                    <Badge variant="success" className="inline-flex items-center">
+                      <Brain className="h-4 w-4 mr-2" />
+                      LawHub Connected: {user.lawhubCredentials.username}
+                    </Badge>
+                  )}
+                  
+                  {/* Study Streak */}
+                  <div className="flex items-center space-x-3">
+                    <Calendar className="h-5 w-5 text-orange-500" />
+                    <div className="flex items-center space-x-2">
+                      <span className={`text-2xl font-bold ${
+                        theme === 'dark' 
+                          ? 'text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-400' 
+                          : 'text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-red-500'
+                      }`}>7</span>
+                      <div>
+                        <div className={`text-sm font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>Day Streak 🔥</div>
+                        <div className="flex space-x-1">
+                          {[...Array(7)].map((_, i) => (
+                            <div 
+                              key={i} 
+                              className={`h-2 w-2 rounded-full bg-gradient-to-br from-orange-500 to-red-500 shadow-sm ${
+                                theme === 'dark' ? 'border border-orange-400/30' : ''
+                              }`}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
               
               <div className="flex items-center space-x-6">
@@ -129,10 +220,8 @@ const Dashboard: React.FC<DashboardProps> = ({
           </div>
         </Card>
 
-        <div className="grid lg:grid-cols-4 gap-4">
-          {/* Test Selection - Now takes 2 columns */}
-          <div className="lg:col-span-2 space-y-4">
-            
+        <div className="grid lg:grid-cols-3 gap-4">
+          <div className="lg:col-span-1 space-y-4">
             {/* Start New Session - Compressed */}
             <Card padding="default" hover>
               <CardHeader className="pb-3">
@@ -140,22 +229,20 @@ const Dashboard: React.FC<DashboardProps> = ({
                   Start Your Next Session
                 </CardTitle>
               </CardHeader>
-
               <Card variant="accent" padding="sm">
                 <div className="flex items-center justify-between mb-4">
                   <div>
                     <h3 className={`text-lg font-bold mb-1 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                      Begin a New PrepTest Session
+                      Tests and Sections
                     </h3>
                     <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                      Select a PrepTest and configure your session.
+                      Select a an Official LSAC PrepTest and configure your session.
                     </p>
                   </div>
                   <div className={`p-2 rounded-lg ${theme === 'dark' ? 'bg-gray-700 shadow-inner' : 'bg-gray-100'}`}>
                     <BookOpen className="h-6 w-6 text-blue-500" />
                   </div>
                 </div>
-                
                 <Button 
                   size="default" 
                   className="w-full"
@@ -166,7 +253,6 @@ const Dashboard: React.FC<DashboardProps> = ({
                 </Button>
               </Card>
             </Card>
-
             {/* Session Management - Collapsible Sections */}
             <div className="space-y-2">
               {/* Active Sessions */}
@@ -182,7 +268,6 @@ const Dashboard: React.FC<DashboardProps> = ({
                 formatSessionDisplayName={formatSessionDisplayName}
                 type="active"
               />
-
               {/* Ready for Review Sessions */}
               <SessionSection
                 title="Ready for Review"
@@ -196,7 +281,6 @@ const Dashboard: React.FC<DashboardProps> = ({
                 formatSessionDisplayName={formatSessionDisplayName}
                 type="review"
               />
-
               {/* Archived Sessions */}
               <SessionSection
                 title="Archived Sessions"
@@ -212,137 +296,120 @@ const Dashboard: React.FC<DashboardProps> = ({
               />
             </div>
           </div>
-
-          {/* Middle Column- Now takes 1 column */}
-          <div className="space-y-4">
-            
-            {/* Performance Overview - Compressed */}
-            <Card padding="sm">
-              <CardHeader className="pb-2">
-                <CardTitle icon={<TrendingUp className="h-4 w-4 text-green-500" />}>
-                  Performance Overview
+           {/* Center Column - Drill Section */}
+          <div className="lg:col-span-1 space-y-4">
+            <Card padding="default" hover>
+              <CardHeader className="pb-3">
+                <CardTitle icon={<Brain className="h-5 w-5 text-yellow-500" />}>
+                  Start Your Next Drill
                 </CardTitle>
               </CardHeader>
               
-              <CardContent className="space-y-4">
-                <div>
-                  <div className="flex justify-between items-center mb-2">
-                    <span className={`text-xs font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>Circuit Quality</span>
-                    <span className={`text-sm font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>85%</span>
+              <Card variant="accent" padding="sm">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <h3 className={`text-lg font-bold mb-1 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                      Stim Drill
+                    </h3>
+                    <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                      Practice Logical Reasoning Stimulus Analysis.
+                    </p>
                   </div>
-                  <ProgressBar value={85} variant="success" />
+                  <div className={`p-2 rounded-lg ${theme === 'dark' ? 'bg-gray-700 shadow-inner' : 'bg-gray-100'}`}>
+                    <Drill className="h-6 w-6 text-blue-500" />
+                  </div>
                 </div>
                 
-                <div>
-                  <div className="flex justify-between items-center mb-2">
-                    <span className={`text-xs font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>Analysis Depth</span>
-                    <span className={`text-sm font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>92%</span>
-                  </div>
-                  <ProgressBar value={92} variant="primary" />
-                </div>
-                
-                <div>
-                  <div className="flex justify-between items-center mb-2">
-                    <span className={`text-xs font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>Consistency</span>
-                    <span className={`text-sm font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>78%</span>
-                  </div>
-                  <ProgressBar value={78} variant="warning" />
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Study Streak - Compressed */}
-            <Card padding="sm">
-              <CardHeader className="pb-2">
-                <CardTitle icon={<Calendar className="h-4 w-4 text-orange-500" />}>
-                  Study Streak
-                </CardTitle>
-              </CardHeader>
-              
-              <CardContent>
-                <div className="text-center">
-                  <div className={`text-3xl font-bold mb-2 ${
-                    theme === 'dark' 
-                      ? 'text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-400' 
-                      : 'text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-red-500'
-                  }`}>7</div>
-                  <div className={`text-xs mb-4 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Days in a row 🔥</div>
-                  
-                  <div className="grid grid-cols-7 gap-1">
-                    {[...Array(7)].map((_, i) => (
-                      <div 
-                        key={i} 
-                        className={`h-6 w-6 rounded-lg bg-gradient-to-br from-orange-500 to-red-500 shadow-sm transform hover:scale-110 transition-transform ${
-                          theme === 'dark' ? 'border border-orange-400/30' : ''
-                        }`}
-                      />
-                    ))}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-      
-        {/* Right Column- Now takes 1 column */}
-          <div className="space-y-4">
-                      {/* Leaderboard Preview - Compressed */}
-            <Card padding="sm">
-              <CardHeader className="pb-2">
-                <div className="flex items-center justify-between">
-                  <CardTitle icon={<Award className="h-4 w-4 text-yellow-500" />}>
-                    Circuit Masters
-                  </CardTitle>
-                  <Users className={`h-4 w-4 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-400'}`} />
-                </div>
-              </CardHeader>
-              
-              <CardContent className="space-y-2">
-                <div className={`flex items-center justify-between p-3 rounded-xl border ${
-                  theme === 'dark' ? 'bg-gray-750 border-yellow-600/30' : 'bg-yellow-50 border-yellow-200'
-                }`}>
-                  <div className="flex items-center">
-                    <div className="w-6 h-6 bg-gradient-to-br from-yellow-400 to-yellow-500 text-gray-900 text-xs font-bold rounded-full flex items-center justify-center mr-2 shadow-lg">1</div>
-                    <span className={`font-bold text-sm ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Sarah Chen</span>
-                  </div>
-                  <span className={`text-xs font-semibold ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>847</span>
-                </div>
-                
-                <div className={`flex items-center justify-between p-3 rounded-xl border ${
-                  theme === 'dark' ? 'bg-gray-750 border-gray-600' : 'bg-gray-50 border-gray-200'
-                }`}>
-                  <div className="flex items-center">
-                    <div className="w-6 h-6 bg-gradient-to-br from-gray-400 to-gray-500 text-white text-xs font-bold rounded-full flex items-center justify-center mr-2 shadow-lg">2</div>
-                    <span className={`font-bold text-sm ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Marcus Johnson</span>
-                  </div>
-                  <span className={`text-xs font-semibold ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>792</span>
-                </div>
-                
-                <div className={`flex items-center justify-between p-3 rounded-xl border ${
-                  theme === 'dark' ? 'bg-gray-750 border-orange-600/30' : 'bg-orange-50 border-orange-200'
-                }`}>
-                  <div className="flex items-center">
-                    <div className="w-6 h-6 bg-gradient-to-br from-orange-400 to-orange-500 text-gray-900 text-xs font-bold rounded-full flex items-center justify-center mr-2 shadow-lg">3</div>
-                    <span className={`font-bold text-sm ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Emily Rodriguez</span>
-                  </div>
-                  <span className={`text-xs font-semibold ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>738</span>
-                </div>
-                
-                <div className={`flex items-center justify-between p-3 rounded-xl border-2 ${
-                  theme === 'dark' ? 'bg-gray-750 border-blue-500/50' : 'bg-blue-50 border-blue-300'
-                }`}>
-                  <div className="flex items-center">
-                    <div className="w-6 h-6 bg-gradient-to-br from-blue-500 to-purple-500 text-white text-xs font-bold rounded-full flex items-center justify-center mr-2 shadow-lg">{user.stats.rank}</div>
-                    <span className={`font-bold text-sm ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`}>You</span>
-                  </div>
-                  <span className={`text-xs font-semibold ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>{user.stats.circuitsCreated}</span>
-                </div>
-              </CardContent>
-              
-              <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
-                <Button variant="ghost" size="sm" className="w-full text-xs">
-                  View Full Leaderboard
+                <Button 
+                  size="default" 
+                  className="w-full"
+                  onClick={handleStartNewSessionClick}
+                >
+                  <Play className="h-4 w-4 mr-2" />
+                 Start New Stim Drill
                 </Button>
-              </div>
+              </Card>
+            </Card>
+
+            {/* Active Drills */}
+           <div className="space-y-2"><DrillSection
+                title="Active Drills"
+                icon={<Activity className="h-4 w-4 text-orange-500" />}
+                count={0} // Replace with actual active drill count if available
+                emptyMessage="No active drills. Start a new drill above!"
+                emptyIcon="🎯"
+                theme={theme}
+              />
+            <DrillSection
+                title="Archived Drills"
+                icon={<Archive className="h-4 w-4 text-gray-500" />}
+                count={0} // Replace with actual archived drill count if available
+                emptyMessage="No archived drills yet."
+                emptyIcon="📦"
+                theme={theme}
+              />
+          </div>
+             </div>
+          
+          {/* Right Column - Item Search */}
+          <div className="space-y-4">
+            <Card padding="default" hover>
+              <CardHeader className="pb-3">
+                <CardTitle icon={<Search className="h-5 w-5 text-yellow-500" />}>
+                  Item Search
+                </CardTitle>
+              </CardHeader>
+              <Card variant="accent" padding="sm">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <h3 className={`text-lg font-bold mb-1 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                      Find a Question or Passage from an official LSAC PrepTest 
+                    </h3>
+                    <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                      Use Keywords in the textbox below, for example:
+                      <br/> <br/>
+                      "PrepTest 140, section 2, question 9"<br/>"152.4.16"<br/>"Han Purple"<br/>"Reading Comp Passage about mirrors"
+                    </p>
+                  </div>
+                </div>
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault(); // Important if inside a <form>
+                        console.log("Enter key pressed");
+                        handleSearch();
+                      }
+                    }}
+                    placeholder="Enter search terms here..."
+                    className={`w-full px-4 py-3 pr-12 rounded-lg border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                      theme === 'dark' 
+                        ? 'bg-gray-800 border-gray-600 text-white placeholder-gray-400 hover:border-gray-500' 
+                        : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500 hover:border-gray-400'
+                    }`}
+                  />
+                  <button
+                    onClick={handleSearch}
+                    disabled={!searchTerm?.trim()}
+                    className={`absolute right-2 top-1/2 transform -translate-y-1/2 p-1.5 rounded-md transition-all duration-200 ${
+                      searchTerm?.trim()
+                        ? theme === 'dark'
+                          ? 'text-blue-400 hover:text-blue-300 hover:bg-gray-700 active:bg-gray-600'
+                          : 'text-blue-500 hover:text-blue-600 hover:bg-gray-100 active:bg-gray-200'
+                        : theme === 'dark'
+                          ? 'text-gray-600 cursor-not-allowed'
+                          : 'text-gray-400 cursor-not-allowed'
+                    }`}
+                    aria-label="Search PrepTest questions"
+                  >
+                    <Search className="h-5 w-5" />
+                  </button>
+                </div>
+              </Card>
+             
             </Card>
           </div>
         </div>
@@ -355,6 +422,15 @@ const Dashboard: React.FC<DashboardProps> = ({
           allProcessedTests={allProcessedTests}
         />
         </div>
+      <div>
+                   //Search Results Modal
+              <SearchResultsModal
+            isOpen={searchModalOpen}
+            onClose={() => setSearchModalOpen(false)}
+            results={searchResults}
+            onSelect={handleSelect}
+          />
+      </div>
       </div>
   
   );
@@ -552,6 +628,63 @@ const SessionSection: React.FC<SessionSectionProps> = ({
       )}
     </Card>
   );
+};
+interface DrillSectionProps {
+  title: string;
+  icon: React.ReactNode;
+  count: number;
+  emptyMessage: string;
+  emptyIcon: string;
+  theme: 'light' | 'dark';
+}
+
+const DrillSection: React.FC<DrillSectionProps> = ({
+  title,
+  icon,
+  count,
+  emptyMessage,
+  emptyIcon,
+  theme
+}) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  return (
+    <Card padding="sm" hover>
+      <Button
+        variant={count > 0 ? 'accent' : 'ghost'}
+        className="w-full flex items-center justify-between p-3 mb-0"
+        onClick={() => setIsExpanded(!isExpanded)}
+      >
+        <div className="flex items-center space-x-2">
+          {icon}
+          <span className="font-medium">{title}</span>
+          <Badge variant="secondary" className="text-xs">
+            {count}
+          </Badge>
+        </div>
+        <ChevronRight
+          className={`h-4 w-4 transition-transform duration-200 ${
+            isExpanded ? 'rotate-90' : ''
+          }`}
+        />
+      </Button>
+
+      {isExpanded && (
+        <div className="mt-3 space-y-2 animate-in slide-in-from-top-2 duration-200">
+          {/* Replace with actual drill list logic when available */}
+          <div className="text-center py-4">
+            <div className="text-2xl mb-2">{emptyIcon}</div>
+            <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+              {emptyMessage}
+            </p>
+          </div>
+        </div>
+      )}
+    </Card>
+
+  
+  );
+
 };
 
 export default Dashboard;
