@@ -130,7 +130,9 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
                       {/* Question Header */}
                       <div className="flex items-center justify-between mb-2">
                         <p className="text-sm font-medium text-slate-600">
-                          Question ID: {question.id || 'Unknown'}
+                          {getTestName(question) ? `PrepTest ${extractPrepTestNumber(getTestName(question))}` : 'Unknown Test'}
+                          {formatSectionInfo(question)}, 
+                          {getQuestionOrder(question) !== null && getQuestionOrder(question) !== undefined ? ` Q${getQuestionOrder(question)}` : ' Q?'}
                         </p>
                         <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
                           {question.type || 'Question'}
@@ -188,7 +190,9 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
                 {/* Header */}
                 <div className="bg-gray-50 p-3 rounded-lg">
                   <h3 className="font-bold text-lg">
-                    Question Details
+                    {getTestName(selectedQuestion) ? `PrepTest ${extractPrepTestNumber(getTestName(selectedQuestion))}` : 'Unknown Test'}
+                    {formatSectionInfo(selectedQuestion)}, 
+                    {getQuestionOrder(selectedQuestion) !== null && getQuestionOrder(selectedQuestion) !== undefined ? ` Question ${getQuestionOrder(selectedQuestion)}` : ' Question ?'}
                   </h3>
                   <p className="text-sm text-gray-600">
                     {selectedQuestion.type && `Type: ${selectedQuestion.type} • `}
