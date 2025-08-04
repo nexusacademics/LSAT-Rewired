@@ -120,6 +120,13 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
               {results.length === 0 ? (
                 <p className="text-gray-500">No matches found.</p>
               ) : (
+                <>
+                  {/* Debug logging - remove this once we identify the data structure */}
+                  {console.log('First search result:', results[0])}
+                  {console.log('All available fields in first result:', Object.keys(results[0] || {}))}
+                </>
+              ) && (
+              ) && (
                 <ul className="space-y-3">
                   {results.map((question, i) => (
                     <li 
