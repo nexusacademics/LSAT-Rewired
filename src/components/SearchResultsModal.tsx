@@ -21,9 +21,13 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
   };
 
   const handleQuestionClick = (result: ProcessedQuestion) => {
-    // Debug logging - remove this once you identify the correct field names
+    // Debug logging to see the actual data structure
     console.log('Question data:', result);
     console.log('Available fields:', Object.keys(result));
+    console.log('test_name:', result.test_name);
+    console.log('section_name:', result.section_name);
+    console.log('section_order:', result.section_order);
+    console.log('question_order:', result.question_order);
     setSelectedQuestion(result);
   };
 
@@ -64,8 +68,10 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
 
   // Helper function to get test name - check multiple possible field names
   const getTestName = (question: ProcessedQuestion) => {
-    return question.test_name || question.testName || question.test || question.preptest || 
+    const testName = question.test_name || question.testName || question.test || question.preptest || 
            question.testInfo?.name || question.test?.name || null;
+    console.log('getTestName result:', testName); // Debug log
+    return testName;
   };
 
   // Helper function to get section info
@@ -73,6 +79,10 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
     // Check if section info is directly attached
     const sectionName = question.section_name || question.sectionName || question.section || 
                        question.sectionInfo?.name || question.section?.name;
+    
+    console.log('getSectionInfo - sectionName:', sectionName); // Debug log
+    console.log('getSectionInfo - section_order:', question.section_order); // Debug log
+    console.log('getSectionInfo - section_type:', question.section_type); // Debug log
     
     if (sectionName) {
       return parseSectionName(sectionName);
@@ -87,8 +97,10 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
 
   // Helper function to get question order - check multiple possible field names
   const getQuestionOrder = (question: ProcessedQuestion) => {
-    return question.question_order ?? question.questionOrder ?? question.order ?? 
+    const questionOrder = question.question_order ?? question.questionOrder ?? question.order ?? 
            question.number ?? question.question_number ?? null;
+    console.log('getQuestionOrder result:', questionOrder); // Debug log
+    return questionOrder;
   };
 
   // Helper function to format section information
