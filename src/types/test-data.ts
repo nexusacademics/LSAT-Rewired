@@ -25,6 +25,14 @@ export interface ProcessedQuestion {
   options: string[];
   correctAnswer: number;
   type: string;
+  // Add metadata fields
+  test_name?: string;
+  test_id?: string;
+  section_name?: string;
+  section_id?: string;
+  section_order?: number;
+  section_type?: string;
+  question_order?: number;
 }
 
 export interface ProcessedSection {
