@@ -120,58 +120,50 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
               {results.length === 0 ? (
                 <p className="text-gray-500">No matches found.</p>
               ) : (
-                <div>
-                  {/* Debug logging - remove this once we identify the data structure */}
-                  {console.log('First search result:', results[0])}
-                  {console.log('All available fields in first result:', Object.keys(results[0] || {}))}
-                  
-                  <ul className="space-y-3">
-                    {results.map((question, i) => (
-                      <li 
-                        key={question.id || i} 
-                        className="border p-4 rounded-lg cursor-pointer hover:bg-slate-50 transition-colors" 
-                        onClick={() => handleQuestionClick(question)}
-                      >
-                        {/* Question Header */}
-                        <div className="flex items-center justify-between mb-2">
-                          <p className="text-sm font-medium text-slate-600">
-                            {getTestName(question) ? `PrepTest ${extractPrepTestNumber(getTestName(question))}` : 'Unknown Test'}
-                            {formatSectionInfo(question)}, 
-                            {getQuestionOrder(question) !== null && getQuestionOrder(question) !== undefined ? ` Q${getQuestionOrder(question)}` : ' Q?'}
-                          </p>
-                          <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
-                            {question.type || 'Question'}
-                          </span>
-                        </div>
+                <ul className="space-y-3">
+                  {results.map((question, i) => (
+                    <li 
+                      key={question.id || i} 
+                      className="border p-4 rounded-lg cursor-pointer hover:bg-slate-50 transition-colors" 
+                      onClick={() => handleQuestionClick(question)}
+                    >
+                      {/* Question Header */}
+                      <div className="flex items-center justify-between mb-2">
+                        <p className="text-sm font-medium text-slate-600">
+                          Question ID: {question.id || 'Unknown'}
+                        </p>
+                        <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
+                          {question.type || 'Question'}
+                        </span>
+                      </div>
+                      
+                      {/* Question Content Preview */}
+                      <div className="space-y-2">
+                        {/* Passage Preview */}
+                        {question.passage && (
+                          <div>
+                            <p className="text-xs font-medium text-gray-600 mb-1">Passage:</p>
+                            <p className="text-sm text-gray-700 leading-relaxed bg-blue-50 p-2 rounded">
+                              {question.passage.slice(0, 200)}
+                              {question.passage.length > 200 && '...'}
+                            </p>
+                          </div>
+                        )}
                         
-                        {/* Question Content Preview */}
-                        <div className="space-y-2">
-                          {/* Passage Preview */}
-                          {question.passage && (
-                            <div>
-                              <p className="text-xs font-medium text-gray-600 mb-1">Passage:</p>
-                              <p className="text-sm text-gray-700 leading-relaxed bg-blue-50 p-2 rounded">
-                                {question.passage.slice(0, 200)}
-                                {question.passage.length > 200 && '...'}
-                              </p>
-                            </div>
-                          )}
-                          
-                          {/* Question Preview */}
-                          {question.question && (
-                            <div>
-                              <p className="text-xs font-medium text-gray-600 mb-1">Question:</p>
-                              <p className="text-sm text-gray-700 leading-relaxed">
-                                {question.question.slice(0, 150)}
-                                {question.question.length > 150 && '...'}
-                              </p>
-                            </div>
-                          )}
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                        {/* Question Preview */}
+                        {question.question && (
+                          <div>
+                            <p className="text-xs font-medium text-gray-600 mb-1">Question:</p>
+                            <p className="text-sm text-gray-700 leading-relaxed">
+                              {question.question.slice(0, 150)}
+                              {question.question.length > 150 && '...'}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
               )}
             </>
           ) : (
@@ -196,9 +188,7 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
                 {/* Header */}
                 <div className="bg-gray-50 p-3 rounded-lg">
                   <h3 className="font-bold text-lg">
-                    {getTestName(selectedQuestion) ? `PrepTest ${extractPrepTestNumber(getTestName(selectedQuestion))}` : 'Unknown Test'}
-                    {formatSectionInfo(selectedQuestion)}, 
-                    {getQuestionOrder(selectedQuestion) !== null && getQuestionOrder(selectedQuestion) !== undefined ? ` Question ${getQuestionOrder(selectedQuestion)}` : ' Question ?'}
+                    Question Details
                   </h3>
                   <p className="text-sm text-gray-600">
                     {selectedQuestion.type && `Type: ${selectedQuestion.type} • `}
