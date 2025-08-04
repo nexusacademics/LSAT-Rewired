@@ -10,18 +10,22 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
   onSelect 
 }) => {
   const [selectedQuestion, setSelectedQuestion] = useState<ProcessedQuestion | null>(null);
+  const [showCorrectAnswer, setShowCorrectAnswer] = useState(false);
   
   const handleBackToResults = () => {
     setSelectedQuestion(null);
+    setShowCorrectAnswer(false); // Reset when going back
   };
 
   const handleClose = () => {
     setSelectedQuestion(null);
+    setShowCorrectAnswer(false); // Reset when closing
     onClose();
   };
 
   const handleQuestionClick = (result: ProcessedQuestion) => {
     setSelectedQuestion(result);
+    setShowCorrectAnswer(false); // Reset when selecting new question
   };
 
   const renderAnswerChoices = (choices: string[]) => {
@@ -90,9 +94,11 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
     return question.question || question.question_stem || '';
   };
 
-  // Helper function to get correct answer - use processed data fields
-  const getCorrectAnswer = (question: ProcessedQuestion) => {
-    return question.correctAnswer ?? question.correct_answer_index ?? null;
+  // Helper function to get correct answer as letter
+  const getCorrectAnswerLetter = (question: ProcessedQuestion) => {
+    const answerIndex = question.correctAnswer ?? question.correct_answer_index ?? null;
+    if (answerIndex === null || answerIndex === undefined) return null;
+    return ['A', 'B', 'C', 'D', 'E'][answerIndex] || null;
   };
 
   // Helper function to format the complete question identifier
@@ -243,13 +249,32 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
                   </div>
                 )}
 
-                {/* Correct Answer */}
-                {getCorrectAnswer(selectedQuestion) !== null && (
+                {/* Correct Answer - Hidden by default */}
+                {getCorrectAnswerLetter(selectedQuestion) && (
                   <div>
-                    <h4 className="font-semibold text-gray-700 mb-2">Correct Answer:</h4>
-                    <div className="bg-green-50 p-2 rounded text-sm font-medium text-green-800">
-                      {['A', 'B', 'C', 'D', 'E'][getCorrectAnswer(selectedQuestion)] || getCorrectAnswer(selectedQuestion)}
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="font-semibold text-gray-700">Correct Answer:</h4>
+                      <button
+                        onClick={() => setShowCorrectAnswer(!showCorrectAnswer)}
+                        className={`px-3 py-1 rounded text-sm font-medium transition-colors ${
+                          showCorrectAnswer 
+                            ? 'bg-red-100 text-red-700 hover:bg-red-200' 
+                            : 'bg-green-100 text-green-700 hover:bg-green-200'
+                        }`}
+                      >
+                        {showCorrectAnswer ? 'Hide Answer' : 'Reveal Answer'}
+                      </button>
                     </div>
+                    {showCorrectAnswer && (
+                      <div className="bg-green-50 p-2 rounded text-sm font-medium text-green-800 border border-green-200">
+                        {getCorrectAnswerLetter(selectedQuestion)}
+                      </div>
+                    )}
+                    {!showCorrectAnswer && (
+                      <div className="bg-gray-100 p-2 rounded text-sm text-gray-500 border border-gray-200">
+                        Click "Reveal Answer" to see the correct answer
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
