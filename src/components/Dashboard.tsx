@@ -69,7 +69,10 @@ const handleSelect = (question: ProcessedQuestion) => {
    // ADD THIS DEBUG LINE
   console.log('Search results:', results);
   console.log('First result structure:', results[0]);
-    
+// ADD THESE DEBUG LINES
+  console.log('Search results:', results);
+  console.log('First result structure:', results[0]);
+  console.log('All keys in first result:', Object.keys(results[0]));
     setSearchResults(results);
     setSearchModalOpen(true);
   };
