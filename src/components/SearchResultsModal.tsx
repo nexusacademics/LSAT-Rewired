@@ -46,38 +46,62 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
     return match ? match[1] : testName; // Return just the number, or original if no match
   };
 
+  // Helper function to parse section name (e.g., "LR140A-1" -> section 1, type LR)
+  const parseSectionName = (sectionName: string | null | undefined) => {
+    if (!sectionName) return { order: null, type: null };
+    
+    // Pattern for names like "LR140A-1", "RC140A-4", etc.
+    const match = sectionName.match(/^([A-Z]+)\d+[A-Z]*-(\d+)$/);
+    if (match) {
+      return {
+        type: match[1], // e.g., "LR", "RC"
+        order: parseInt(match[2]) // e.g., 1, 4
+      };
+    }
+    
+    return { order: null, type: sectionName };
+  };
+
   // Helper function to get test name - check multiple possible field names
   const getTestName = (question: ProcessedQuestion) => {
-    return question.test_name || question.testName || question.test || question.preptest || null;
+    return question.test_name || question.testName || question.test || question.preptest || 
+           question.testInfo?.name || question.test?.name || null;
   };
 
-  // Helper function to get section order - check multiple possible field names
-  const getSectionOrder = (question: ProcessedQuestion) => {
-    return question.section_order ?? question.sectionOrder ?? question.section ?? null;
-  };
-
-  // Helper function to get section type - check multiple possible field names
-  const getSectionType = (question: ProcessedQuestion) => {
-    return question.section_type || question.sectionType || question.type || null;
+  // Helper function to get section info
+  const getSectionInfo = (question: ProcessedQuestion) => {
+    // Check if section info is directly attached
+    const sectionName = question.section_name || question.sectionName || question.section || 
+                       question.sectionInfo?.name || question.section?.name;
+    
+    if (sectionName) {
+      return parseSectionName(sectionName);
+    }
+    
+    // Fallback to individual fields
+    return {
+      order: question.section_order ?? question.sectionOrder ?? question.section_number ?? null,
+      type: question.section_type || question.sectionType || null
+    };
   };
 
   // Helper function to get question order - check multiple possible field names
   const getQuestionOrder = (question: ProcessedQuestion) => {
-    return question.question_order ?? question.questionOrder ?? question.order ?? question.number ?? null;
+    return question.question_order ?? question.questionOrder ?? question.order ?? 
+           question.number ?? question.question_number ?? null;
   };
 
   // Helper function to format section information
   const formatSectionInfo = (question: ProcessedQuestion) => {
+    const sectionInfo = getSectionInfo(question);
     const parts = [];
-    const sectionOrder = getSectionOrder(question);
-    const sectionType = getSectionType(question);
     
-    if (sectionOrder !== null && sectionOrder !== undefined) {
-      parts.push(`Section ${sectionOrder}`);
+    if (sectionInfo.order !== null && sectionInfo.order !== undefined) {
+      parts.push(`Section ${sectionInfo.order}`);
     }
     
-    if (sectionType) {
-      parts.push(`(${sectionType})`);
+    if (sectionInfo.type) {
+      parts.push(`(${sectionInfo.type})`);
     }
     
     return parts.length > 0 ? ` ${parts.join(' ')}` : ' Section Info N/A';
@@ -166,9 +190,9 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
                 {/* Header */}
                 <div className="bg-gray-50 p-3 rounded-lg">
                   <h3 className="font-bold text-lg">
-                    {selectedQuestion.test_name ? `PrepTest ${extractPrepTestNumber(selectedQuestion.test_name)}` : 'Unknown Test'}
+                    {getTestName(selectedQuestion) ? `PrepTest ${extractPrepTestNumber(getTestName(selectedQuestion))}` : 'Unknown Test'}
                     {formatSectionInfo(selectedQuestion)}, 
-                    {selectedQuestion.question_order !== null && selectedQuestion.question_order !== undefined ? ` Question ${selectedQuestion.question_order}` : ' Question ?'}
+                    {getQuestionOrder(selectedQuestion) !== null && getQuestionOrder(selectedQuestion) !== undefined ? ` Question ${getQuestionOrder(selectedQuestion)}` : ' Question ?'}
                   </h3>
                   <p className="text-sm text-gray-600">
                     {selectedQuestion.type && `Type: ${selectedQuestion.type} • `}
