@@ -429,7 +429,7 @@ const Dashboard: React.FC<DashboardProps> = ({
                     }`}
                   />
                   <button
-                      onClick={handleDirectSubmit}
+                      onClick={handleSearch}
                       disabled={
                         !directTest.trim() || !directSection.trim() || !directQuestion.trim()
                       }
