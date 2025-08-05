@@ -41,63 +41,63 @@ const Dashboard: React.FC<DashboardProps> = ({
   const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
   
   const [searchResults, setSearchResults] = useState<ProcessedQuestion[]>([]);
-const [searchTerm, setSearchTerm] = useState('');
-const [directTest, setDirectTest] = useState('');
-const [directSection, setDirectSection] = useState('');
-const [directQuestion, setDirectQuestion] = useState('');
-
-const [searchModalOpen, setSearchModalOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [directTest, setDirectTest] = useState('');
+  const [directSection, setDirectSection] = useState('');
+  const [directQuestion, setDirectQuestion] = useState('');
+  
+  const [searchModalOpen, setSearchModalOpen] = useState(false);
 
    // Dynamic background based on theme
   const backgroundClasses = theme === 'dark' 
     ? 'bg-gray-900' 
     : 'bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100';
   
-const handleSelect = (question: ProcessedQuestion) => {
-  setSearchModalOpen(false);
-  // navigate or trigger TripleReview for this question
-  setCurrentSession({
-    preptest: question.preptest,
-    section: question.section,
-    questionIndex: question.index, // if you store index
-  });
-};
+  const handleSelect = (question: ProcessedQuestion) => {
+    setSearchModalOpen(false);
+    // navigate or trigger TripleReview for this question
+    setCurrentSession({
+      preptest: question.preptest,
+      section: question.section,
+      questionIndex: question.index, // if you store index
+    });
+  };
 
 //handlesearch function
   
-const handleSearch = async () => {
-  if (directTest && directSection && directQuestion) {
-    const testNum = parseInt(directTest);
-    const sectionNum = parseInt(directSection);
-    const questionNum = parseInt(directQuestion);
-
-    if (!isNaN(testNum) && !isNaN(sectionNum) && !isNaN(questionNum)) {
-      console.log("Direct lookup:", testNum, sectionNum, questionNum);
-      await startMiniSession(testNum, sectionNum, questionNum);
-      return;
+  const handleSearch = async () => {
+    if (directTest && directSection && directQuestion) {
+      const testNum = parseInt(directTest);
+      const sectionNum = parseInt(directSection);
+      const questionNum = parseInt(directQuestion);
+  
+      if (!isNaN(testNum) && !isNaN(sectionNum) && !isNaN(questionNum)) {
+        console.log("Direct lookup:", testNum, sectionNum, questionNum);
+        await startMiniSession(testNum, sectionNum, questionNum);
+        return;
+      }
     }
-  }
-
-  if (searchTerm.trim()) {
-    const parsed = await parseSearchQuery(model, searchTerm);
-    console.log("Parsed search:", parsed);
-
-    if (parsed?.preptest && parsed?.section && parsed?.question) {
-      await startMiniSession(parsed.preptest, parsed.section, parsed.question);
-    } else {
-      console.warn("No exact match found in parsed query. Consider showing fallback results.");
-      // Optionally show keyword results here
+  
+    if (searchTerm.trim()) {
+      const parsed = await parseSearchQuery(model, searchTerm);
+      console.log("Parsed search:", parsed);
+  
+      if (parsed?.preptest && parsed?.section && parsed?.question) {
+        await startMiniSession(parsed.preptest, parsed.section, parsed.question);
+      } else {
+        console.warn("No exact match found in parsed query. Consider showing fallback results.");
+        // Optionally show keyword results here
+      }
     }
-  }
-};
 
-
-  console.log('Enhanced search results:', results);
-  console.log('First enhanced result:', results[0]);
-
-  setSearchResults(results);
-  setSearchModalOpen(true);
-};
+  
+  
+    console.log('Enhanced search results:', results);
+    console.log('First enhanced result:', results[0]);
+  
+    setSearchResults(results);
+    setSearchModalOpen(true);
+  };
 
   
   // Filter user sessions into categories (keeping your existing logic)
@@ -129,8 +129,6 @@ const handleSearch = async () => {
     onStartNewTestSession(testId, 'timed', timeMode, customTimeMinutes, selectedSectionId);
     setIsTimeModeModal(false);
   };
-
- 
 
   return (
     <div className={`min-h-screen w-full transition-all duration-500 ${backgroundClasses}`}>
