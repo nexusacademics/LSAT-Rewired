@@ -429,7 +429,7 @@ const handleSearch = () => {
                     <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
                       Use Keywords in the textbox below, for example:
                       <br/> <br/>
-                      "PrepTest 140, section 2, question 9"<br/>"152.4.16"<br/>"Han Purple"<br/>"Reading Comp Passage about mirrors"
+                     "Han Purple"<br/>"Reading Comp Passage about mirrors"
                     </p>
                   </div>
                 </div>
