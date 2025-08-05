@@ -62,13 +62,15 @@ const TripleReview: React.FC<TripleReviewProps> = ({
   const currentQuestionData = questionsInCurrentSection[session.currentQuestionIndex];
   const [textSize, setTextSize] = useState<'small' | 'medium' | 'large'>('medium');
   const [lineSpacing, setLineSpacing] = useState<'normal' | 'loose' | 'relaxed'>('loose');
+  
   const handleTextSizeChange = (size: 'small' | 'medium' | 'large') => {
-  setTextSize(size);
-};
+    setTextSize(size);
+  };
 
-const handleLineSpacingChange = (spacing: 'normal' | 'loose' | 'relaxed') => {
-  setLineSpacing(spacing);
-};
+  const handleLineSpacingChange = (spacing: 'normal' | 'loose' | 'relaxed') => {
+    setLineSpacing(spacing);
+  };
+  
   // Reset tooltip, success bubble, and formatting tool when question changes
   useEffect(() => {
     setHasDismissedTooltipForQuestion(false);
@@ -90,6 +92,15 @@ const handleLineSpacingChange = (spacing: 'normal' | 'loose' | 'relaxed') => {
   };
 
   const getInitialTime = () => {
+    // Check if we have a saved timer state for this section
+    const sectionTimerKey = `section-${session.currentSectionIndex}`;
+    const savedTimeRemaining = session.timerStates?.[sectionTimerKey];
+    
+    if (savedTimeRemaining !== undefined && session.phase === 'timed') {
+      return savedTimeRemaining;
+    }
+    
+    // Default time calculation
     const baseTime = 35 * 60;
     switch (session.timeMode) {
       case '1.5x': return Math.floor(baseTime * 1.5);
@@ -109,8 +120,26 @@ const handleLineSpacingChange = (spacing: 'normal' | 'loose' | 'relaxed') => {
     setShowSectionTransition(true);
   };
 
-  // Handle pause button clicks - show popup instead of immediately exiting
+  // Modified pause handler to save timer state
   const handlePauseReview = () => {
+    // Save current timer state if in timed mode
+    if (session.phase === 'timed') {
+      const sectionTimerKey = `section-${session.currentSectionIndex}`;
+      const updatedTimerStates = {
+        ...session.timerStates,
+        [sectionTimerKey]: timeRemaining
+      };
+      
+      const updatedSession = {
+        ...session,
+        timerStates: updatedTimerStates,
+        isPaused: true,
+        pausedAt: new Date()
+      };
+      
+      onUpdateSession(updatedSession);
+    }
+    
     const reviewType = session.phase === 'blind-review' ? 'Blind Review' : 'Strategy Review';
     setPauseReviewType(reviewType);
     setShowPausePopup(true);
@@ -124,7 +153,16 @@ const handleLineSpacingChange = (spacing: 'normal' | 'loose' | 'relaxed') => {
 
   const handleContinueReviewing = () => {
     setShowPausePopup(false);
-    // Simply close popup to continue reviewing
+    // Resume timer if it was running and we're in timed mode
+    if (session.phase === 'timed') {
+      const updatedSession = {
+        ...session,
+        isPaused: false,
+        pausedAt: undefined
+      };
+      onUpdateSession(updatedSession);
+      setIsTimerRunning(true);
+    }
   };
 
   const {
@@ -141,6 +179,26 @@ const handleLineSpacingChange = (spacing: 'normal' | 'loose' | 'relaxed') => {
     },
     phase: session.phase
   });
+
+  // Effect to save timer state periodically during timed sessions
+  useEffect(() => {
+    if (session.phase === 'timed' && isTimerRunning) {
+      const interval = setInterval(() => {
+        const sectionTimerKey = `section-${session.currentSectionIndex}`;
+        const updatedTimerStates = {
+          ...session.timerStates,
+          [sectionTimerKey]: timeRemaining
+        };
+        
+        onUpdateSession({
+          ...session,
+          timerStates: updatedTimerStates
+        });
+      }, 10000); // Save every 10 seconds
+      
+      return () => clearInterval(interval);
+    }
+  }, [session.phase, isTimerRunning, timeRemaining, session.currentSectionIndex]);
 
   const {
     mainContentRef,
@@ -194,6 +252,11 @@ const handleLineSpacingChange = (spacing: 'normal' | 'loose' | 'relaxed') => {
     let updatedSession = { ...session };
     if (session.phase === 'timed') {
       updatedSession.timedAnswers = { ...session.answeredQuestions };
+      // Clear the timer state for the completed section
+      const sectionTimerKey = `section-${session.currentSectionIndex}`;
+      const updatedTimerStates = { ...session.timerStates };
+      delete updatedTimerStates[sectionTimerKey];
+      updatedSession.timerStates = updatedTimerStates;
     } else if (session.phase === 'blind-review') {
       updatedSession.blindReviewAnswers = { ...session.answeredQuestions };
     }
