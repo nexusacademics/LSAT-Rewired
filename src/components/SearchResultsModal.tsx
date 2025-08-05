@@ -35,10 +35,10 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
     }, [isOpen, selectedQuestion]);
 
 
-  const handleBackToResults = () => {
-    setSelectedQuestionState(null);
-    setShowCorrectAnswer(false); // Reset when going back
-  };
+    const handleBackToResults = () => {
+      setSelectedQuestionState(null);
+      setScreen('results');
+    };
 
   const handleClose = () => {
     setSelectedQuestionState(null);
