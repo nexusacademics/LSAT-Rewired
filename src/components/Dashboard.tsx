@@ -122,56 +122,32 @@ setDirectSearchMode(true);  // optional local state flag
 const handleSearch = () => {
   const results: ProcessedQuestion[] = [];
 
-  const allQuestions: ProcessedQuestion[] = [];
-
   Object.values(allProcessedTests).forEach((test) => {
     test.sections.forEach((section, sectionIndex) => {
       section.questions.forEach((question, questionIndex) => {
-        const section_type =
-          section.name?.startsWith('LR') ? 'LR' :
-          section.name?.startsWith('RC') ? 'RC' :
-          section.name?.startsWith('LG') ? 'LG' : 'Unknown';
-
-        const enhancedQuestion: ProcessedQuestion = {
-          ...question,
-          test_name: test.name,
-          test_id: test.id,
-          section_name: section.name,
-          section_id: section.id,
-          section_order: sectionIndex + 1,
-          question_order: questionIndex + 1,
-          section_type,
-          // 👇 Optional: attach a searchable string to each object
-          fuseText: [
-            test.name,
-            section.name,
-            section_type,
-            question.passage ?? '',
-            question.question,
-            `Q${questionIndex + 1}`,
-            `Section ${sectionIndex + 1}`,
-          ].join(' ').toLowerCase()
-        };
-
-        allQuestions.push(enhancedQuestion);
+        const combinedText = `${question.passage ?? ''} ${question.question}`.toLowerCase();
+        if (combinedText.includes(searchTerm.toLowerCase())) {
+          // Enhance the question with metadata from the test/section context
+          const enhancedQuestion = {
+            ...question,
+            // Add the missing metadata
+            test_name: test.name,
+            test_id: test.id,
+            section_name: section.name,
+            section_id: section.id,
+            section_order: sectionIndex + 1,
+            question_order: questionIndex + 1,
+            // Determine section type from section name or ID
+            section_type: section.name?.startsWith('LR') ? 'LR' :
+                         section.name?.startsWith('RC') ? 'RC' :
+                         section.id?.startsWith('LR') ? 'LR' :
+                         section.id?.startsWith('RC') ? 'RC' : 'Unknown'
+          };
+          results.push(enhancedQuestion);
+        }
       });
     });
   });
-
-  console.log('🔍 Indexed total:', allQuestions.length);
-
-  const fuse = new Fuse(allQuestions, {
-    keys: ['fuseText'],
-    threshold: 0.4,
-  });
-
-  const fuseResults = fuse.search(searchTerm.toLowerCase());
-  const matchedQuestions = fuseResults.map(r => r.item);
-
-  results.push(...matchedQuestions);
-
-  console.log('✅ Final results:', results.length);
-  return results;
 
   setSearchResults(results);
   setSearchModalOpen(true);
