@@ -220,12 +220,7 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
   </button>
 </>
                 )}
-                <button
-                  onClick={() => onSelect(selectedQuestionState)}
-                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
-                >
-                  Select Question
-                </button>
+               
               </div>
 
               <div className="space-y-4">
