@@ -172,7 +172,6 @@ const handleSearch = () => {
 
   console.log('✅ Final results:', results.length);
   return results;
-};
 
   setSearchResults(results);
   setSearchModalOpen(true);
