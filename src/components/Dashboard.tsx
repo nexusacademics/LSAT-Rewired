@@ -62,7 +62,59 @@ const Dashboard: React.FC<DashboardProps> = ({
       questionIndex: question.index, // if you store index
     });
   };
+//Direct Search
+  const handleDirectSearch = () => {
+  if (directTest && directSection && directQuestion) {
+    const testIndex = parseInt(directTest) - 1;
+    const sectionIndex = parseInt(directSection) - 1;
+    const questionIndex = parseInt(directQuestion) - 1;
 
+    const selectedTest = allProcessedTests[testIndex];
+    const selectedSection = selectedTest?.sections[sectionIndex];
+    const selectedQuestion = selectedSection?.questions[questionIndex];
+
+    if (selectedTest && selectedSection && selectedQuestion) {
+      const enhancedQuestion = {
+        ...selectedQuestion,
+        test_name: selectedTest.name,
+        test_id: selectedTest.id,
+        section_name: selectedSection.name,
+        section_id: selectedSection.id,
+        section_order: sectionIndex + 1,
+        question_order: questionIndex + 1,
+        section_type: selectedSection.name?.startsWith('LR')
+          ? 'LR'
+          : selectedSection.name?.startsWith('RC')
+          ? 'RC'
+          : selectedSection.id?.startsWith('LR')
+          ? 'LR'
+          : selectedSection.id?.startsWith('RC')
+          ? 'RC'
+          : 'Unknown',
+      };
+
+      const newSession = {
+        mode: 'mini',
+        sectionType: enhancedQuestion.section_type ?? 'LR',
+        currentIndex: 0,
+        questions: [enhancedQuestion],
+        answers: [null],
+        notes: [{}],
+        blindReviewed: [false],
+        strategiesUsed: [false],
+      };
+
+      setSearchResults([]); // clear fuzzy results
+      setCurrentSession(newSession);
+      return;
+    }
+  }
+
+  // Optional: display error or toast if no match
+  console.warn('Direct input did not match any question.');
+};
+
+//Fuzzy Logic Search
 const handleSearch = () => {
   const results: ProcessedQuestion[] = [];
 
@@ -411,7 +463,7 @@ const handleSearch = () => {
                     }`}
                   />
                   <button
-                      onClick={handleSearch}
+                      onClick={handleDirectSearch}
                       disabled={
                         !directTest.trim() || !directSection.trim() || !directQuestion.trim()
                       }
