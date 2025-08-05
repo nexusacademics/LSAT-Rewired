@@ -122,27 +122,17 @@ setDirectSearchMode(true);  // optional local state flag
 const handleSearch = () => {
   const results: ProcessedQuestion[] = [];
 
-  // Step 1: Build search index
-  const allQuestions: any[] = [];
+  const allQuestions: ProcessedQuestion[] = [];
 
   Object.values(allProcessedTests).forEach((test) => {
     test.sections.forEach((section, sectionIndex) => {
       section.questions.forEach((question, questionIndex) => {
-        const section_type = section.name?.startsWith('LR') ? 'LR' :
-                             section.name?.startsWith('RC') ? 'RC' :
-                             section.name?.startsWith('LG') ? 'LG' : 'Unknown';
+        const section_type =
+          section.name?.startsWith('LR') ? 'LR' :
+          section.name?.startsWith('RC') ? 'RC' :
+          section.name?.startsWith('LG') ? 'LG' : 'Unknown';
 
-        const fullText = [
-          test.name,
-          section.name,
-          section_type,
-          question.passage ?? '',
-          question.question,
-          `Q${questionIndex + 1}`,
-          `Section ${sectionIndex + 1}`,
-        ].join(' ').toLowerCase();
-
-        allQuestions.push({
+        const enhancedQuestion: ProcessedQuestion = {
           ...question,
           test_name: test.name,
           test_id: test.id,
@@ -151,15 +141,25 @@ const handleSearch = () => {
           section_order: sectionIndex + 1,
           question_order: questionIndex + 1,
           section_type,
-          fuseText: fullText,
-        });
+          // 👇 Optional: attach a searchable string to each object
+          fuseText: [
+            test.name,
+            section.name,
+            section_type,
+            question.passage ?? '',
+            question.question,
+            `Q${questionIndex + 1}`,
+            `Section ${sectionIndex + 1}`,
+          ].join(' ').toLowerCase()
+        };
+
+        allQuestions.push(enhancedQuestion);
       });
     });
   });
 
-  console.log('🔎 Indexed questions:', allQuestions.length);
+  console.log('🔍 Indexed total:', allQuestions.length);
 
-  // Step 2: Fuzzy search using raw input (not just parsed keywords)
   const fuse = new Fuse(allQuestions, {
     keys: ['fuseText'],
     threshold: 0.4,
@@ -168,9 +168,10 @@ const handleSearch = () => {
   const fuseResults = fuse.search(searchTerm.toLowerCase());
   const matchedQuestions = fuseResults.map(r => r.item);
 
-  console.log('🎯 Fuzzy match count:', matchedQuestions.length);
-  // Final result
-  return matchedQuestions;
+  results.push(...matchedQuestions);
+
+  console.log('✅ Final results:', results.length);
+  return results;
 };
 
   setSearchResults(results);
