@@ -134,6 +134,10 @@ const handleSearch = () => {
           ${question.type ?? ''}
         `.toLowerCase();
 
+          // Add debug logs here - inside the scope where combinedText exists
+      console.log("Search term:", searchTerm.toLowerCase());
+      console.log("Combined text sample:", combinedText);
+        
         if (combinedText.includes(searchTerm.toLowerCase())) {
           const enhancedQuestion = {
             ...question,
@@ -152,8 +156,6 @@ const handleSearch = () => {
         }
       });
     });
-    console.log("Search term:", searchTerm.toLowerCase());
-console.log("Combined text sample:", combinedText);
   });
 
   setSearchResults(results);
