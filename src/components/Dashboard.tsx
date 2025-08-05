@@ -6,7 +6,7 @@ import { ProcessedQuestion, SearchResultsModalProps } from '../types/dashboard.t
 const SearchResultsModal: React.FC<SearchResultsModalProps> = ({ 
   isOpen, 
   onClose, 
-  results, 
+  results = [], 
   onSelect 
 }) => {
   const [selectedQuestion, setSelectedQuestion] = useState<ProcessedQuestion | null>(null);
@@ -145,15 +145,21 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
 
   // Get unique section types for filter dropdown
   const uniqueSectionTypes = useMemo(() => {
-    if (!results || !Array.isArray(results)) return [];
-    const types = new Set(results.map(q => getSectionType(q)));
-    return Array.from(types).sort();
+    if (!results || !Array.isArray(results) || results.length === 0) return [];
+    try {
+      const types = new Set(results.map(q => getSectionType(q)));
+      return Array.from(types).sort();
+    } catch (error) {
+      console.error('Error getting unique section types:', error);
+      return [];
+    }
   }, [results]);
 
   // Filter results based on search criteria
   const filteredResults = useMemo(() => {
-    if (!results || !Array.isArray(results)) return [];
-    return results.filter(question => {
+    if (!results || !Array.isArray(results) || results.length === 0) return [];
+    try {
+      return results.filter(question => {
       const testInfo = getTestInfo(question);
       const sectionOrder = getSectionOrder(question);
       const questionOrder = getQuestionOrder(question);
@@ -196,6 +202,10 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
       
       return true;
     });
+    } catch (error) {
+      console.error('Error filtering results:', error);
+      return [];
+    }
   }, [results, searchFilters]);
 
   return (
@@ -302,7 +312,7 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
               </div>
               
               {/* Results List */}
-              {!results || results.length === 0 ? (
+              {results.length === 0 ? (
                 <div className="text-center py-8">
                   <p className="text-gray-500 mb-2">No questions found.</p>
                 </div>
