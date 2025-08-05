@@ -440,7 +440,7 @@ const handleSearch = () => {
                     placeholder="PrepTest #"
                     value={directTest}
                     onChange={(e) => setDirectTest(e.target.value)}
-                    className={`w-full px-3 py-2 rounded-md border ${
+                    className={`w-full px-3 py-2 rounded-md no-spinner border ${
                       theme === 'dark'
                         ? 'bg-gray-800 border-gray-600 text-white placeholder-gray-400'
                         : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
@@ -451,7 +451,7 @@ const handleSearch = () => {
                     placeholder="Section #"
                     value={directSection}
                     onChange={(e) => setDirectSection(e.target.value)}
-                    className={`w-full px-3 py-2 rounded-md border ${
+                    className={`w-full px-3 py-2 rounded-md no-spinner border ${
                       theme === 'dark'
                         ? 'bg-gray-800 border-gray-600 text-white placeholder-gray-400'
                         : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
@@ -462,7 +462,7 @@ const handleSearch = () => {
                     placeholder="Question #"
                     value={directQuestion}
                     onChange={(e) => setDirectQuestion(e.target.value)}
-                    className={`w-full px-3 py-2 rounded-md border ${
+                    className={`w-full px-3 py-2 rounded-md no-spinner border ${
                       theme === 'dark'
                         ? 'bg-gray-800 border-gray-600 text-white placeholder-gray-400'
                         : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
