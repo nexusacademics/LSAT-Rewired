@@ -64,64 +64,44 @@ const Dashboard: React.FC<DashboardProps> = ({
   };
 //Direct Search
   const handleDirectSearch = () => {
-  if (directTest && directSection && directQuestion) {
-    const testIndex = parseInt(directTest) - 1;
-    const sectionIndex = parseInt(directSection) - 1;
-    const questionIndex = parseInt(directQuestion) - 1;
+  if (!directTest || !directSection || !directQuestion) return;
 
-    const selectedTest = allProcessedTests[testIndex];
-    const selectedSection = selectedTest?.sections[sectionIndex];
-    const selectedQuestion = selectedSection?.questions[questionIndex];
-
-    if (selectedTest && selectedSection && selectedQuestion) {
-      const enhancedQuestion = {
-        ...selectedQuestion,
-        test_name: selectedTest.name,
-        test_id: selectedTest.id,
-        section_name: selectedSection.name,
-        section_id: selectedSection.id,
-        section_order: sectionIndex + 1,
-        question_order: questionIndex + 1,
-        section_type: selectedSection.name?.startsWith('LR')
-          ? 'LR'
-          : selectedSection.name?.startsWith('RC')
-          ? 'RC'
-          : selectedSection.id?.startsWith('LR')
-          ? 'LR'
-          : selectedSection.id?.startsWith('RC')
-          ? 'RC'
-          : 'Unknown',
-      };
-
-      const newSession = {
-        mode: 'mini',
-        sectionType: enhancedQuestion.section_type ?? 'LR',
-        currentIndex: 0,
-        questions: [enhancedQuestion],
-        answers: [null],
-        notes: [{}],
-        blindReviewed: [false],
-        strategiesUsed: [false],
-      };
-
-    setSearchResults([
-  {
-    test_id: selectedTest.id,
-    test_name: selectedTest.name,
-    section_id: selectedSection.id,
-    section_name: selectedSection.name,
-    section_order: sectionIndex + 1,
-    question_order: questionIndex + 1,
-    question: selectedQuestion,
-  },
-]);
-setShowSearchModal(true);
-      return;
-    }
+  const selectedTest = allProcessedTests.find(
+    (test) => test.id.toString() === directTest.trim()
+  );
+  if (!selectedTest) {
+    alert("PrepTest not found.");
+    return;
   }
 
-  // Optional: display error or toast if no match
-  console.warn('Direct input did not match any question.');
+  const sectionIndex = parseInt(directSection.trim(), 10) - 1;
+  const questionIndex = parseInt(directQuestion.trim(), 10) - 1;
+
+  const selectedSection = selectedTest.sections[sectionIndex];
+  if (!selectedSection) {
+    alert("Section not found.");
+    return;
+  }
+
+  const selectedQuestion = selectedSection.questions[questionIndex];
+  if (!selectedQuestion) {
+    alert("Question not found.");
+    return;
+  }
+
+  // Populate modal with the single match
+  setSearchResults([
+    {
+      test_id: selectedTest.id,
+      test_name: selectedTest.name,
+      section_id: selectedSection.id,
+      section_name: selectedSection.name,
+      section_order: sectionIndex + 1,
+      question_order: questionIndex + 1,
+      question: selectedQuestion,
+    },
+  ]);
+  setShowSearchModal(true); // Trigger modal display
 };
 
 //Fuzzy Logic Search
