@@ -8,7 +8,7 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
   onClose, 
   results, 
   onSelect,
-  selectedQuestion = null,
+  initialSelectedQuestion = null,
   disableBackToResults = false, 
 
 }) => {
@@ -23,7 +23,7 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
       if (isOpen) {
         if (selectedQuestion) {
           // Direct search: go straight to question
-          setSelectedQuestionState(selectedQuestion);
+          setSelectedQuestionState(initialSelectedQuestion);
           setScreen('question');
         } else {
           // Regular search: show results
@@ -32,7 +32,7 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
         }
         setShowCorrectAnswer(false); // your existing logic
       }
-    }, [isOpen, selectedQuestion]);
+    }, [isOpen, initialSelectedQuestion]);
 
 
     const handleBackToResults = () => {
