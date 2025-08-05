@@ -9,6 +9,8 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
   results, 
   onSelect,
   selectedQuestion = null,
+  disableBackToResults = false, 
+
 }) => {
   const [selectedQuestionState, setSelectedQuestionState] = useState<ProcessedQuestion | null>(selectedQuestion);
   const [showCorrectAnswer, setShowCorrectAnswer] = useState(false);
@@ -202,12 +204,14 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
             // Question Detail View
             <>
               <div className="flex items-center justify-between mb-4">
-                <button
-                  onClick={handleBackToResults}
-                  className="text-blue-600 hover:text-blue-800 font-medium text-sm flex items-center gap-1"
-                >
-                  ← Back to Results
-                </button>
+               {!disableBackToResults && (
+                  <button
+                    onClick={handleBackToResults}
+                    className="text-blue-600 hover:text-blue-800 font-medium text-sm flex items-center gap-1"
+                  >
+                    ← Back to Results
+                  </button>
+                )}
                 <button
                   onClick={() => onSelect(selectedQuestionState)}
                   className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
