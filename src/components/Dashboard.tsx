@@ -125,23 +125,28 @@ const handleSearch = () => {
   Object.values(allProcessedTests).forEach((test) => {
     test.sections.forEach((section, sectionIndex) => {
       section.questions.forEach((question, questionIndex) => {
-        const combinedText = `${question.passage ?? ''} ${question.question}`.toLowerCase();
+        // Include metadata in search
+        const combinedText = `
+          ${test.name ?? ''}
+          ${section.name ?? ''}
+          ${question.passage ?? ''}
+          ${question.question ?? ''}
+          ${question.type ?? ''}
+        `.toLowerCase();
+
         if (combinedText.includes(searchTerm.toLowerCase())) {
-          // Enhance the question with metadata from the test/section context
           const enhancedQuestion = {
             ...question,
-            // Add the missing metadata
             test_name: test.name,
             test_id: test.id,
             section_name: section.name,
             section_id: section.id,
             section_order: sectionIndex + 1,
             question_order: questionIndex + 1,
-            // Determine section type from section name or ID
             section_type: section.name?.startsWith('LR') ? 'LR' :
-                         section.name?.startsWith('RC') ? 'RC' :
-                         section.id?.startsWith('LR') ? 'LR' :
-                         section.id?.startsWith('RC') ? 'RC' : 'Unknown'
+                          section.name?.startsWith('RC') ? 'RC' :
+                          section.id?.startsWith('LR') ? 'LR' :
+                          section.id?.startsWith('RC') ? 'RC' : 'Unknown'
           };
           results.push(enhancedQuestion);
         }
@@ -151,8 +156,6 @@ const handleSearch = () => {
 
   setSearchResults(results);
   setSearchModalOpen(true);
-
-
 };
   
   // Filter user sessions into categories (keeping your existing logic)
