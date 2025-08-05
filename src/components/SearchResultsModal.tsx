@@ -20,9 +20,20 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
   const [showCorrectAnswer, setShowCorrectAnswer] = useState(false);
 
   useEffect(() => {
-  setSelectedQuestionState(selectedQuestion);
-  setShowCorrectAnswer(false);
+  if (isOpen) {
+    if (selectedQuestion) {
+      // Direct search: go straight to question
+      setSelectedQuestionState(selectedQuestion);
+      setScreen('question');
+    } else {
+      // Regular search: show results
+      setSelectedQuestionState(null);
+      setScreen('results');
+    }
+    setShowCorrectAnswer(false); // your existing logic
+  }
 }, [isOpen, selectedQuestion]);
+
 
   const handleBackToResults = () => {
     setSelectedQuestionState(null);
