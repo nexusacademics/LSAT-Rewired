@@ -429,6 +429,8 @@ const Dashboard: React.FC<DashboardProps> = ({
                     </button>
                 </div>
 
+                console.log('States:', { directTest, directSection, directQuestion });
+
 {/* Keyword fallback input */}
 <div className="relative">
   <input
