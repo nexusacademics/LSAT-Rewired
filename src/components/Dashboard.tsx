@@ -122,37 +122,13 @@ setDirectSearchMode(true);  // optional local state flag
 const handleSearch = () => {
   const results: ProcessedQuestion[] = [];
 
+  const normalizedSearchTerm = searchTerm.toLowerCase().trim();
+  const searchWords = normalizedSearchTerm.split(/\s+/).filter(Boolean);
+
   Object.values(allProcessedTests).forEach((test) => {
     test.sections.forEach((section, sectionIndex) => {
       section.questions.forEach((question, questionIndex) => {
-        const stem = question.question ?? '';
-const combinedText = `
-  ${test.name ?? ''}
-  ${section.name ?? ''}
-  ${question.passage ?? ''}
-  ${stem}
-  ${question.type ?? ''}
-`.toLowerCase();
-
-const normalizedSearchTerm = searchTerm.toLowerCase().trim();
-const searchWords = normalizedSearchTerm.split(/\s+/).filter(Boolean);
-
-console.log('---');
-console.log('Test Name:', test.name);
-console.log('Section Name:', section.name);
-console.log('Question Stem:', stem);
-console.log('Passage snippet:', (question.passage ?? '').slice(0, 100)); // first 100 chars
-console.log('Question Type:', question.type);
-console.log('Combined Text snippet:', combinedText.slice(0, 200));
-console.log('Search words:', searchWords);
-
-const isMatch = searchWords.every(word => combinedText.includes(word));
-console.log('Is Match:', isMatch);
-
-if (isMatch) {
-  console.log('*** Match found! Question ID:', question.id);
-  // your push to results here
-}// Include metadata in search
+        // Include metadata in search
         const combinedText = `
           ${test.name ?? ''}
           ${section.name ?? ''}
@@ -161,11 +137,21 @@ if (isMatch) {
           ${question.type ?? ''}
         `.toLowerCase();
 
-          // Add debug logs here - inside the scope where combinedText exists
-      console.log("Search term:", searchTerm.toLowerCase());
-      console.log("Combined text sample:", combinedText);
-        
-        if (combinedText.includes(searchTerm.toLowerCase())) {
+        // Debug logs
+        console.log('---');
+        console.log('Test Name:', test.name);
+        console.log('Section Name:', section.name);
+        console.log('Question Stem:', question.question);
+        console.log('Passage snippet:', (question.passage ?? '').slice(0, 100));
+        console.log('Question Type:', question.type);
+        console.log('Combined Text snippet:', combinedText.slice(0, 200));
+        console.log('Search words:', searchWords);
+
+        const isMatch = searchWords.every(word => combinedText.includes(word));
+        console.log('Is Match:', isMatch);
+
+        if (isMatch) {
+          console.log('*** Match found! Question ID:', question.id);
           const enhancedQuestion = {
             ...question,
             test_name: test.name,
@@ -188,6 +174,7 @@ if (isMatch) {
   setSearchResults(results);
   setSearchModalOpen(true);
 };
+
   
   // Filter user sessions into categories (keeping your existing logic)
   const activeSessions = userSessions.filter(session => !session.endTime);
