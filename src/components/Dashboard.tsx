@@ -66,7 +66,7 @@ const Dashboard: React.FC<DashboardProps> = ({
   const handleDirectSearch = () => {
   if (!directTest || !directSection || !directQuestion) return;
 
-  const selectedTest = allProcessedTests.find(
+  const selectedTest = Object.values(allProcessedTests).find(
     (test) => test.id.toString() === directTest.trim()
   );
   if (!selectedTest) {
@@ -89,7 +89,6 @@ const Dashboard: React.FC<DashboardProps> = ({
     return;
   }
 
-  // Populate modal with the single match
   setSearchResults([
     {
       test_id: selectedTest.id,
@@ -101,8 +100,9 @@ const Dashboard: React.FC<DashboardProps> = ({
       question: selectedQuestion,
     },
   ]);
-  setShowSearchModal(true); // Trigger modal display
+  setSearchModalOpen(true);
 };
+
 
 //Fuzzy Logic Search
 const handleSearch = () => {
