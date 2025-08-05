@@ -145,12 +145,14 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
 
   // Get unique section types for filter dropdown
   const uniqueSectionTypes = useMemo(() => {
+    if (!results || !Array.isArray(results)) return [];
     const types = new Set(results.map(q => getSectionType(q)));
     return Array.from(types).sort();
   }, [results]);
 
   // Filter results based on search criteria
   const filteredResults = useMemo(() => {
+    if (!results || !Array.isArray(results)) return [];
     return results.filter(question => {
       const testInfo = getTestInfo(question);
       const sectionOrder = getSectionOrder(question);
