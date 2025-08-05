@@ -300,7 +300,6 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
                 )}
               </div>
             </>
-          ) : null
           )}
         </Dialog.Panel>
       </div>
