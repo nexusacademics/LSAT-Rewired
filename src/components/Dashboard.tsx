@@ -39,8 +39,12 @@ const Dashboard: React.FC<DashboardProps> = ({
   //item search
   const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY || '');
   const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
-  const [searchTerm, setSearchTerm] = useState('');
+  
   const [searchResults, setSearchResults] = useState<ProcessedQuestion[]>([]);
+const [searchTerm, setSearchTerm] = useState('');
+const [directTest, setDirectTest] = useState('');
+const [directSection, setDirectSection] = useState('');
+const [directQuestion, setDirectQuestion] = useState('');
 
 const [searchModalOpen, setSearchModalOpen] = useState(false);
 
