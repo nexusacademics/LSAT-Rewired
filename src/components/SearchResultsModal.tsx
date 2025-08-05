@@ -1,5 +1,5 @@
 // components/SearchResultsModal.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Dialog } from '@headlessui/react';
 import { ProcessedQuestion, SearchResultsModalProps } from '../types/dashboard.types';
 
