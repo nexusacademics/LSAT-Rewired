@@ -437,7 +437,7 @@ const handleSearch = () => {
                 <div className="grid grid-cols-3 gap-2 mb-4">
                   <input
                     type="number"
-                    placeholder="PrepTest #"
+                    placeholder="PT #"
                     value={directTest}
                     onChange={(e) => setDirectTest(e.target.value)}
                     className={`w-full px-3 py-2 rounded-md no-spinner border ${
@@ -448,7 +448,7 @@ const handleSearch = () => {
                   />
                   <input
                     type="number"
-                    placeholder="Section #"
+                    placeholder="S #"
                     value={directSection}
                     onChange={(e) => setDirectSection(e.target.value)}
                     className={`w-full px-3 py-2 rounded-md no-spinner border ${
@@ -459,7 +459,7 @@ const handleSearch = () => {
                   />
                   <input
                     type="number"
-                    placeholder="Question #"
+                    placeholder="Q #"
                     value={directQuestion}
                     onChange={(e) => setDirectQuestion(e.target.value)}
                     className={`w-full px-3 py-2 rounded-md no-spinner border ${
