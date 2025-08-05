@@ -500,6 +500,11 @@ const handleSearch = () => {
                       : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500 hover:border-gray-400'
                   }`}
                 />
+                  <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                      Or, use Keywords in the textbox below, for example:
+                      <br/> <br/>
+                     "Han Purple"<br/>"Reading Comp Passage about mirrors"
+                    </p>
                 <button
                   onClick={handleSearch}
                   disabled={
