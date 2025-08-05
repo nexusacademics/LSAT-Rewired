@@ -5,6 +5,7 @@ import TimeModeSelectionModal from './TimeModeSelectionModal';
 
 //import search functions
 import { parseSearchQuery } from '../utils/parseSearchQuery';
+
 import { supabase } from '../lib/supabase';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import SearchResultsModal from './SearchResultsModal';
@@ -38,23 +39,85 @@ const Dashboard: React.FC<DashboardProps> = ({
   //item search
   const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY || '');
   const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
-  const [searchTerm, setSearchTerm] = useState('');
+  
   const [searchResults, setSearchResults] = useState<ProcessedQuestion[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [directTest, setDirectTest] = useState('');
+  const [directSection, setDirectSection] = useState('');
+  const [directQuestion, setDirectQuestion] = useState('');
+  const [directSearchMode, setDirectSearchMode] = useState(false);
 
-const [searchModalOpen, setSearchModalOpen] = useState(false);
+  const [searchModalOpen, setSearchModalOpen] = useState(false);
+  const [modalSelectedQuestion, setModalSelectedQuestion] = useState<ProcessedQuestion | null>(null);
 
-const handleSelect = (question: ProcessedQuestion) => {
-  setSearchModalOpen(false);
-  // navigate or trigger TripleReview for this question
-  setCurrentSession({
-    preptest: question.preptest,
-    section: question.section,
-    questionIndex: question.index, // if you store index
+   // Dynamic background based on theme
+  const backgroundClasses = theme === 'dark' 
+    ? 'bg-gray-900' 
+    : 'bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100';
+  
+  const handleSelect = (question: ProcessedQuestion) => {
+    setSearchModalOpen(false);
+    // navigate or trigger TripleReview for this question
+    setCurrentSession({
+      preptest: question.preptest,
+      section: question.section,
+      questionIndex: question.index, // if you store index
+    });
+  };
+
+  
+  //Direct Search
+ const handleDirectSearch = () => {
+  if (!directTest || !directSection || !directQuestion) {
+    alert("Please fill all search fields.");
+    return;
+  }
+
+  // Assuming allProcessedTests is an object with test ids as keys
+  const testsArray = Object.values(allProcessedTests);
+
+  // Find the test by matching the number in the test name
+  const selectedTest = testsArray.find(test => {
+    const match = test.name?.match(/\d+/);
+    return match && match[0] === directTest.trim();
   });
+
+  if (!selectedTest) {
+    alert("PrepTest not found.");
+    return;
+  }
+
+  const sectionIndex = parseInt(directSection, 10) - 1;
+  const questionIndex = parseInt(directQuestion, 10) - 1;
+
+  const selectedSection = selectedTest.sections?.[sectionIndex];
+  if (!selectedSection) {
+    alert("Section not found.");
+    return;
+  }
+
+  const selectedQuestion = selectedSection.questions?.[questionIndex];
+  if (!selectedQuestion) {
+    alert("Question not found.");
+    return;
+  }
+
+  // Construct a question object with necessary fields for SearchResultsModal
+  const questionForModal: ProcessedQuestion = {
+    ...selectedQuestion,
+    test_name: selectedTest.name,
+    section_order: sectionIndex + 1,
+    question_order: questionIndex + 1,
+  };
+
+setModalSelectedQuestion(questionForModal);  // NEW: sets the question to show on modal open
+setSearchResults([questionForModal]);
+setSearchModalOpen(true);
+setDirectSearchMode(true);  // optional local state flag
 };
 
-  // Replace your handleSearch function with this enhanced version:
 
+//Fuzzy Logic Search
 const handleSearch = () => {
   const results: ProcessedQuestion[] = [];
 
@@ -90,8 +153,10 @@ const handleSearch = () => {
 
   setSearchResults(results);
   setSearchModalOpen(true);
-};
+  
+  console.log('disableBackToResults prop:', disableBackToResults);
 
+};
   
   // Filter user sessions into categories (keeping your existing logic)
   const activeSessions = userSessions.filter(session => !session.endTime);
@@ -123,10 +188,6 @@ const handleSearch = () => {
     setIsTimeModeModal(false);
   };
 
-  // Dynamic background based on theme
-  const backgroundClasses = theme === 'dark' 
-    ? 'bg-gray-900' 
-    : 'bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100';
 
   return (
     <div className={`min-h-screen w-full transition-all duration-500 ${backgroundClasses}`}>
@@ -366,48 +427,103 @@ const handleSearch = () => {
                       Find a Question or Passage from an official LSAC PrepTest 
                     </h3>
                     <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                      Use Keywords in the textbox below, for example:
-                      <br/> <br/>
-                      "PrepTest 140, section 2, question 9"<br/>"152.4.16"<br/>"Han Purple"<br/>"Reading Comp Passage about mirrors"
+                      Use the Preptest, Section, and Question numbers in the boxes below
                     </p>
                   </div>
                 </div>
-                <div className="relative">
+              {/* Direct search inputs */}
+                <div className="grid grid-cols-3 gap-2 mb-4">
                   <input
-                    type="text"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        e.preventDefault(); // Important if inside a <form>
-                        console.log("Enter key pressed");
-                        handleSearch();
-                      }
-                    }}
-                    placeholder="Enter search terms here..."
-                    className={`w-full px-4 py-3 pr-12 rounded-lg border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                      theme === 'dark' 
-                        ? 'bg-gray-800 border-gray-600 text-white placeholder-gray-400 hover:border-gray-500' 
-                        : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500 hover:border-gray-400'
+                    type="number"
+                    placeholder="PT #"
+                    value={directTest}
+                    onChange={(e) => setDirectTest(e.target.value)}
+                    className={`w-full px-3 py-2 rounded-md no-spinner border ${
+                      theme === 'dark'
+                        ? 'bg-gray-800 border-gray-600 text-white placeholder-gray-400'
+                        : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
                     }`}
                   />
-                  <button
-                    onClick={handleSearch}
-                    disabled={!searchTerm?.trim()}
-                    className={`absolute right-2 top-1/2 transform -translate-y-1/2 p-1.5 rounded-md transition-all duration-200 ${
-                      searchTerm?.trim()
-                        ? theme === 'dark'
-                          ? 'text-blue-400 hover:text-blue-300 hover:bg-gray-700 active:bg-gray-600'
-                          : 'text-blue-500 hover:text-blue-600 hover:bg-gray-100 active:bg-gray-200'
-                        : theme === 'dark'
-                          ? 'text-gray-600 cursor-not-allowed'
-                          : 'text-gray-400 cursor-not-allowed'
+                  <input
+                    type="number"
+                    placeholder="S #"
+                    value={directSection}
+                    onChange={(e) => setDirectSection(e.target.value)}
+                    className={`w-full px-3 py-2 rounded-md no-spinner border ${
+                      theme === 'dark'
+                        ? 'bg-gray-800 border-gray-600 text-white placeholder-gray-400'
+                        : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
                     }`}
-                    aria-label="Search PrepTest questions"
-                  >
-                    <Search className="h-5 w-5" />
-                  </button>
+                  />
+                  <input
+                    type="number"
+                    placeholder="Q #"
+                    value={directQuestion}
+                    onChange={(e) => setDirectQuestion(e.target.value)}
+                    className={`w-full px-3 py-2 rounded-md no-spinner border ${
+                      theme === 'dark'
+                        ? 'bg-gray-800 border-gray-600 text-white placeholder-gray-400'
+                        : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                    }`}
+                  />
+                  <Button
+                       size="default" 
+                       className="w-full"
+                       onClick={handleDirectSearch}
+                        disabled={
+                                !directTest.trim() || !directSection.trim() || !directQuestion.trim()
+                      } >
+                      Submit
+                    </Button>
                 </div>
+
+          
+
+              {/* Keyword fallback input */}
+              <div className="relative">
+                 <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                      Or, use Keywords in the textbox below, for example:
+                      <br/> <br/>
+                     "Han Purple"<br/>"Reading Comp Passage about mirrors"
+                    </p>
+                <br/>
+                <input
+                  type="text"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handleSearch();
+                    }
+                  }}
+                  placeholder="Enter keywords or phrase..."
+                  className={`w-full px-4 py-3 pr-12 rounded-lg border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                    theme === 'dark'
+                      ? 'bg-gray-800 border-gray-600 text-white placeholder-gray-400 hover:border-gray-500'
+                      : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500 hover:border-gray-400'
+                  }`}
+                />
+                 
+                <button
+                  onClick={handleSearch}
+                  disabled={
+                    !searchTerm?.trim() &&
+                    !directTest?.trim() &&
+                    !directSection?.trim() &&
+                    !directQuestion?.trim()
+                  }
+                  className={`absolute right-2 top-1/2 transform -translate-y-1/2 p-1.5 rounded-md transition-all duration-200 ${
+                    theme === 'dark'
+                      ? 'text-blue-400 hover:text-blue-300 hover:bg-gray-700 active:bg-gray-600'
+                      : 'text-blue-500 hover:text-blue-600 hover:bg-gray-100 active:bg-gray-200'
+                  }`}
+                  aria-label="Search"
+                >
+                  <Search className="h-5 w-5" />
+                </button>
+              </div>
+
               </Card>
              
             </Card>
@@ -423,13 +539,27 @@ const handleSearch = () => {
         />
         </div>
       <div>
-                   //Search Results Modal
-              <SearchResultsModal
+        {/*Search Results Modal */}
+        <SearchResultsModal
             isOpen={searchModalOpen}
-            onClose={() => setSearchModalOpen(false)}
+            onClose={() => {
+              setSearchModalOpen(false);
+              setModalSelectedQuestion(null);
+              setSearchResults([]);
+              setDirectSearchMode(false);
+            }}
             results={searchResults}
-            onSelect={handleSelect}
+            initialSelectedQuestion={modalSelectedQuestion}  // pass initialSelectedQuestion, NOT selectedQuestion
+            onSelect={(question) => {
+              setSearchModalOpen(false);
+              setModalSelectedQuestion(null);
+              setSearchResults([]);
+              handleSelect(question);
+            }}
+            disableBackToResults={directSearchMode}  // <-- pass this prop here
           />
+
+
       </div>
       </div>
   

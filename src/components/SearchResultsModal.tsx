@@ -1,5 +1,5 @@
 // components/SearchResultsModal.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Dialog } from '@headlessui/react';
 import { ProcessedQuestion, SearchResultsModalProps } from '../types/dashboard.types';
 
@@ -7,24 +7,47 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
   isOpen, 
   onClose, 
   results, 
-  onSelect 
+  onSelect,
+  initialSelectedQuestion = null,
+  disableBackToResults = false, 
+
 }) => {
-  const [selectedQuestion, setSelectedQuestion] = useState<ProcessedQuestion | null>(null);
+  type Screen = 'results' | 'question';
+
+  const [screen, setScreen] = useState<Screen>('results');
+  const [selectedQuestionState, setSelectedQuestionState] = useState<ProcessedQuestion | null>(null);
+
   const [showCorrectAnswer, setShowCorrectAnswer] = useState(false);
-  
-  const handleBackToResults = () => {
-    setSelectedQuestion(null);
-    setShowCorrectAnswer(false); // Reset when going back
-  };
+
+      useEffect(() => {
+      if (isOpen) {
+        if (initialSelectedQuestion) {
+          // Direct search: go straight to question
+          setSelectedQuestionState(initialSelectedQuestion);
+          setScreen('question');
+        } else {
+          // Regular search: show results
+          setSelectedQuestionState(null);
+          setScreen('results');
+        }
+        setShowCorrectAnswer(false); // your existing logic
+      }
+    }, [isOpen, initialSelectedQuestion]);
+
+
+    const handleBackToResults = () => {
+      setSelectedQuestionState(null);
+      setScreen('results');
+    };
 
   const handleClose = () => {
-    setSelectedQuestion(null);
+    setSelectedQuestionState(null);
     setShowCorrectAnswer(false); // Reset when closing
     onClose();
   };
 
   const handleQuestionClick = (result: ProcessedQuestion) => {
-    setSelectedQuestion(result);
+    setSelectedQuestionState(result);
     setShowCorrectAnswer(false); // Reset when selecting new question
   };
 
@@ -132,13 +155,13 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
     
     return parts.join(', ');
   };
-
+  
   return (
     <Dialog open={isOpen} onClose={handleClose} className="relative z-50">
       <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
       <div className="fixed inset-0 flex items-center justify-center p-4">
         <Dialog.Panel className="bg-white rounded-xl p-6 w-full max-w-4xl shadow-xl overflow-y-auto max-h-[90vh]">
-          {!selectedQuestion ? (
+          {screen === 'results' ? (
             // Search Results List View
             <>
               <Dialog.Title className="text-xl font-bold mb-4">Search Results</Dialog.Title>
@@ -194,39 +217,37 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
             </>
           ) : (
             // Question Detail View
-            <>
+            selectedQuestionState ? (<>
               <div className="flex items-center justify-between mb-4">
-                <button
-                  onClick={handleBackToResults}
-                  className="text-blue-600 hover:text-blue-800 font-medium text-sm flex items-center gap-1"
-                >
-                  ← Back to Results
-                </button>
-                <button
-                  onClick={() => onSelect(selectedQuestion)}
-                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
-                >
-                  Select Question
-                </button>
+               {!disableBackToResults && (
+                  <button
+                    onClick={handleBackToResults}
+                    className="text-blue-600 hover:text-blue-800 font-medium text-sm flex items-center gap-1"
+                  >
+                    ← Back to Results
+                  </button>
+
+                )}
+               
               </div>
 
               <div className="space-y-4">
                 {/* Header */}
                 <div className="bg-gray-50 p-3 rounded-lg">
                   <h3 className="font-bold text-lg">
-                    {formatQuestionInfo(selectedQuestion)}
+                    {formatQuestionInfo(selectedQuestionState)}
                   </h3>
                   <p className="text-sm text-gray-600">
-                    Type: {getSectionType(selectedQuestion)} • ID: {selectedQuestion.id}
+                    Type: {getSectionType(selectedQuestionState)} • ID: {selectedQuestionState.id}
                   </p>
                 </div>
 
                 {/* Passage/Stimulus */}
-                {selectedQuestion.passage && (
+                {selectedQuestionState.passage && (
                   <div className="border-l-4 border-blue-200 pl-4">
                     <h4 className="font-semibold text-gray-700 mb-2">Passage:</h4>
                     <div className="text-sm leading-relaxed whitespace-pre-wrap bg-gray-50 p-3 rounded">
-                      {selectedQuestion.passage}
+                      {selectedQuestionState.passage}
                     </div>
                   </div>
                 )}
@@ -235,22 +256,22 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
                 <div>
                   <h4 className="font-semibold text-gray-700 mb-2">Question:</h4>
                   <div className="text-sm leading-relaxed bg-blue-50 p-3 rounded">
-                    {getQuestionText(selectedQuestion)}
+                    {getQuestionText(selectedQuestionState)}
                   </div>
                 </div>
 
                 {/* Answer Choices */}
-                {selectedQuestion.options && selectedQuestion.options.length > 0 && (
+                {selectedQuestionState.options && selectedQuestionState.options.length > 0 && (
                   <div>
                     <h4 className="font-semibold text-gray-700 mb-2">Answer Options:</h4>
                     <div className="bg-gray-50 p-3 rounded">
-                      {renderAnswerChoices(selectedQuestion.options)}
+                      {renderAnswerChoices(selectedQuestionState.options)}
                     </div>
                   </div>
                 )}
 
                 {/* Correct Answer - Hidden by default */}
-                {getCorrectAnswerLetter(selectedQuestion) && (
+                {getCorrectAnswerLetter(selectedQuestionState) && (
                   <div>
                     <div className="flex items-center justify-between mb-2">
                       <h4 className="font-semibold text-gray-700">Correct Answer:</h4>
@@ -267,7 +288,7 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
                     </div>
                     {showCorrectAnswer && (
                       <div className="bg-green-50 p-2 rounded text-sm font-medium text-green-800 border border-green-200">
-                        {getCorrectAnswerLetter(selectedQuestion)}
+                        {getCorrectAnswerLetter(selectedQuestionState)}
                       </div>
                     )}
                     {!showCorrectAnswer && (
@@ -279,6 +300,7 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
                 )}
               </div>
             </>
+            ) : null
           )}
         </Dialog.Panel>
       </div>
