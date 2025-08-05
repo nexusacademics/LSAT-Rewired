@@ -56,35 +56,32 @@ const handleSelect = (question: ProcessedQuestion) => {
 
 //handlesearch function
   
-const handleSearch = () => {
-  const results: ProcessedQuestion[] = [];
+const handleSearch = async () => {
+  if (directTest && directSection && directQuestion) {
+    const testNum = parseInt(directTest);
+    const sectionNum = parseInt(directSection);
+    const questionNum = parseInt(directQuestion);
 
-  Object.values(allProcessedTests).forEach((test) => {
-    test.sections.forEach((section, sectionIndex) => {
-      section.questions.forEach((question, questionIndex) => {
-        const combinedText = `${question.passage ?? ''} ${question.question}`.toLowerCase();
-        if (combinedText.includes(searchTerm.toLowerCase())) {
-          // Enhance the question with metadata from the test/section context
-          const enhancedQuestion = {
-            ...question,
-            // Add the missing metadata
-            test_name: test.name,
-            test_id: test.id,
-            section_name: section.name,
-            section_id: section.id,
-            section_order: sectionIndex + 1,
-            question_order: questionIndex + 1,
-            // Determine section type from section name or ID
-            section_type: section.name?.startsWith('LR') ? 'LR' :
-                         section.name?.startsWith('RC') ? 'RC' :
-                         section.id?.startsWith('LR') ? 'LR' :
-                         section.id?.startsWith('RC') ? 'RC' : 'Unknown'
-          };
-          results.push(enhancedQuestion);
-        }
-      });
-    });
-  });
+    if (!isNaN(testNum) && !isNaN(sectionNum) && !isNaN(questionNum)) {
+      console.log("Direct lookup:", testNum, sectionNum, questionNum);
+      await startMiniSession(testNum, sectionNum, questionNum);
+      return;
+    }
+  }
+
+  if (searchTerm.trim()) {
+    const parsed = await parseSearchQuery(model, searchTerm);
+    console.log("Parsed search:", parsed);
+
+    if (parsed?.preptest && parsed?.section && parsed?.question) {
+      await startMiniSession(parsed.preptest, parsed.section, parsed.question);
+    } else {
+      console.warn("No exact match found in parsed query. Consider showing fallback results.");
+      // Optionally show keyword results here
+    }
+  }
+};
+
 
   console.log('Enhanced search results:', results);
   console.log('First enhanced result:', results[0]);
