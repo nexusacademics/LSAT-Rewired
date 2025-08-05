@@ -14,8 +14,8 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
 }) => {
   type Screen = 'results' | 'question';
 
-const [screen, setScreen] = useState<Screen>('results');
-const [selectedQuestionState, setSelectedQuestionState] = useState<ProcessedQuestion | null>(null);
+  const [screen, setScreen] = useState<Screen>('results');
+  const [selectedQuestionState, setSelectedQuestionState] = useState<ProcessedQuestion | null>(null);
 
   const [showCorrectAnswer, setShowCorrectAnswer] = useState(false);
 
