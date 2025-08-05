@@ -5,6 +5,7 @@ import TimeModeSelectionModal from './TimeModeSelectionModal';
 
 //import search functions
 import { parseSearchQuery } from '../utils/parseSearchQuery';
+import { parseNumericQuery } from '../utils/parseNumericQuery';
 import { supabase } from '../lib/supabase';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import SearchResultsModal from './SearchResultsModal';
@@ -53,8 +54,8 @@ const handleSelect = (question: ProcessedQuestion) => {
   });
 };
 
-  // Replace your handleSearch function with this enhanced version:
-
+//handlesearch function
+  
 const handleSearch = () => {
   const results: ProcessedQuestion[] = [];
 
