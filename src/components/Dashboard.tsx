@@ -65,84 +65,44 @@ const Dashboard: React.FC<DashboardProps> = ({
 
       //handlesearch function
         
-       const handleSearch = () => {
-        const results: ProcessedQuestion[] = [];
-      
-        const directTest = parseInt(directTestInput);
-        const directSection = parseInt(directSectionInput);
-        const directQuestion = parseInt(directQuestionInput);
-      
-        // Try direct search if all numeric boxes are filled
-        if (!isNaN(directTest) && !isNaN(directSection) && !isNaN(directQuestion)) {
-          const test = allProcessedTests.find(t =>
-            t.name.replace(/\D/g, '') === directTest.toString()
-          );
-      
-          if (test) {
-            const sectionIndex = directSection - 1;
-            const questionIndex = directQuestion - 1;
-      
-            const section = test.sections[sectionIndex];
-            if (section && section.questions[questionIndex]) {
-              const question = section.questions[questionIndex];
-      
-              const enhancedQuestion: ProcessedQuestion = {
-                ...question,
-                test_name: test.name,
-                test_id: test.id,
-                section_name: section.name,
-                section_id: section.id,
-                section_order: sectionIndex + 1,
-                question_order: questionIndex + 1,
-                section_type: section.name?.startsWith('LR') ? 'LR'
-                            : section.name?.startsWith('RC') ? 'RC'
-                            : section.id?.startsWith('LR') ? 'LR'
-                            : section.id?.startsWith('RC') ? 'RC'
-                            : 'Unknown'
-              };
-      
-              results.push(enhancedQuestion);
-            }
+       const handleSearch = async () => {
+  let results: ProcessedQuestion[] = [];
+
+  if (directTest && directSection && directQuestion) {
+    const testNum = parseInt(directTest);
+    const sectionNum = parseInt(directSection);
+    const questionNum = parseInt(directQuestion);
+
+    if (!isNaN(testNum) && !isNaN(sectionNum) && !isNaN(questionNum)) {
+      const test = allProcessedTests[testNum];
+      if (test) {
+        const section = test.sections[sectionNum - 1];
+        if (section) {
+          const question = section.questions.find(q => q.question_order === questionNum);
+          if (question) {
+            const enhancedQuestion = {
+              ...question,
+              test_name: test.name,
+              test_id: test.id,
+              section_name: section.name,
+              section_id: section.id,
+              section_order: sectionNum,
+              question_order: questionNum,
+              section_type: section.name?.startsWith('LR') ? 'LR' :
+                            section.name?.startsWith('RC') ? 'RC' :
+                            section.id?.startsWith('LR') ? 'LR' :
+                            section.id?.startsWith('RC') ? 'RC' : 'Unknown'
+            };
+            results.push(enhancedQuestion);
           }
         }
-      
-        // Fuzzy keyword fallback
-        if (results.length === 0 && searchQuery.trim() !== '') {
-          const query = searchQuery.toLowerCase();
-      
-          allProcessedTests.forEach(test => {
-            test.sections.forEach((section, sectionIndex) => {
-              section.questions.forEach((question, questionIndex) => {
-                const match = question.passage?.toLowerCase().includes(query) ||
-                              question.question?.toLowerCase().includes(query) ||
-                              question.options?.some(opt => opt.toLowerCase().includes(query));
-      
-                if (match) {
-                  const enhancedQuestion: ProcessedQuestion = {
-                    ...question,
-                    test_name: test.name,
-                    test_id: test.id,
-                    section_name: section.name,
-                    section_id: section.id,
-                    section_order: sectionIndex + 1,
-                    question_order: questionIndex + 1,
-                    section_type: section.name?.startsWith('LR') ? 'LR'
-                                : section.name?.startsWith('RC') ? 'RC'
-                                : section.id?.startsWith('LR') ? 'LR'
-                                : section.id?.startsWith('RC') ? 'RC'
-                                : 'Unknown'
-                  };
-      
-                  results.push(enhancedQuestion);
-                }
-              });
-            });
-          });
-        }
-      
-        setSearchResults(results);
-        setSearchModalOpen(true);
-      };
+      }
+    }
+  }
+
+  // ... rest of function
+};
+
 
   
   // Filter user sessions into categories (keeping your existing logic)
