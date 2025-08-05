@@ -113,7 +113,7 @@ const [modalSelectedQuestion, setModalSelectedQuestion] = useState<ProcessedQues
  setModalSelectedQuestion(questionForModal);  // NEW: sets the question to show on modal open
 setSearchResults([questionForModal]);
 setSearchModalOpen(true);
-
+setDirectSearchMode(true);  // optional local state flag
 };
 
 
@@ -153,7 +153,7 @@ const handleSearch = () => {
 
   setSearchResults(results);
   setSearchModalOpen(true);
-  setDirectSearchMode(true);  // optional local state flag
+  
   console.log('disableBackToResults prop:', disableBackToResults);
 
 };
