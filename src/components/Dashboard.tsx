@@ -394,41 +394,50 @@ const Dashboard: React.FC<DashboardProps> = ({
                   </div>
                 </div>
               {/* Direct search inputs */}
-<div className="grid grid-cols-3 gap-2 mb-4">
-  <input
-    type="number"
-    placeholder="PrepTest #"
-    value={directTest}
-    onChange={(e) => setDirectTest(e.target.value)}
-    className={`w-full px-3 py-2 rounded-md border ${
-      theme === 'dark'
-        ? 'bg-gray-800 border-gray-600 text-white placeholder-gray-400'
-        : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
-    }`}
-  />
-  <input
-    type="number"
-    placeholder="Section #"
-    value={directSection}
-    onChange={(e) => setDirectSection(e.target.value)}
-    className={`w-full px-3 py-2 rounded-md border ${
-      theme === 'dark'
-        ? 'bg-gray-800 border-gray-600 text-white placeholder-gray-400'
-        : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
-    }`}
-  />
-  <input
-    type="number"
-    placeholder="Question #"
-    value={directQuestion}
-    onChange={(e) => setDirectQuestion(e.target.value)}
-    className={`w-full px-3 py-2 rounded-md border ${
-      theme === 'dark'
-        ? 'bg-gray-800 border-gray-600 text-white placeholder-gray-400'
-        : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
-    }`}
-  />
-</div>
+                <div className="grid grid-cols-3 gap-2 mb-4">
+                  <input
+                    type="number"
+                    placeholder="PrepTest #"
+                    value={directTest}
+                    onChange={(e) => setDirectTest(e.target.value)}
+                    className={`w-full px-3 py-2 rounded-md border ${
+                      theme === 'dark'
+                        ? 'bg-gray-800 border-gray-600 text-white placeholder-gray-400'
+                        : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                    }`}
+                  />
+                  <input
+                    type="number"
+                    placeholder="Section #"
+                    value={directSection}
+                    onChange={(e) => setDirectSection(e.target.value)}
+                    className={`w-full px-3 py-2 rounded-md border ${
+                      theme === 'dark'
+                        ? 'bg-gray-800 border-gray-600 text-white placeholder-gray-400'
+                        : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                    }`}
+                  />
+                  <input
+                    type="number"
+                    placeholder="Question #"
+                    value={directQuestion}
+                    onChange={(e) => setDirectQuestion(e.target.value)}
+                    className={`w-full px-3 py-2 rounded-md border ${
+                      theme === 'dark'
+                        ? 'bg-gray-800 border-gray-600 text-white placeholder-gray-400'
+                        : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                    }`}
+                  />
+                  <button
+                      onClick={handleDirectSubmit}
+                      disabled={
+                        !directTest.trim() || !directSection.trim() || !directQuestion.trim()
+                      }
+                      className="px-4 py-2 bg-blue-600 text-white rounded disabled:bg-gray-400"
+                    >
+                      Submit
+                    </button>
+                </div>
 
 {/* Keyword fallback input */}
 <div className="relative">
