@@ -472,8 +472,8 @@ const handleSearch = () => {
                        size="default" 
                        className="w-full"
                        onClick={handleDirectSearch}
-                disabled={
-                        !directTest.trim() || !directSection.trim() || !directQuestion.trim()
+                        disabled={
+                                !directTest.trim() || !directSection.trim() || !directQuestion.trim()
                       } >
                       Submit
                     </button>
