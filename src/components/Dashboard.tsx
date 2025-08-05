@@ -214,7 +214,7 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
         <>
           <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
           <div className="fixed inset-0 flex items-center justify-center p-4">
-        <Dialog.Panel className="bg-white rounded-xl p-6 w-full max-w-5xl shadow-xl overflow-y-auto max-h-[90vh]">
+            <Dialog.Panel className="bg-white rounded-xl p-6 w-full max-w-5xl shadow-xl overflow-y-auto max-h-[90vh]">
           {!selectedQuestion ? (
             // Search Results List View
             <>
@@ -463,8 +463,10 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
               </div>
             </>
           )}
-        </Dialog.Panel>
-      </div>
+            </Dialog.Panel>
+          </div>
+        </>
+      )}
     </Dialog>
   );
 };
