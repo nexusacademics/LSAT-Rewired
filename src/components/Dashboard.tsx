@@ -152,6 +152,7 @@ const handleSearch = () => {
 
   setSearchResults(results);
   setSearchModalOpen(true);
+  setDirectSearchMode(true);  // optional local state flag
 };
   
   // Filter user sessions into categories (keeping your existing logic)
@@ -532,23 +533,25 @@ const handleSearch = () => {
       <div>
         {/*Search Results Modal */}
               <SearchResultsModal
-  isOpen={searchModalOpen}
-  onClose={() => {
-    setSearchModalOpen(false);
-    setModalSelectedQuestion(null);
-    setSearchResults([]);
-  }}
-  results={searchResults}
-  selectedQuestion={modalSelectedQuestion} // <--- Pass selected question here
-  onSelect={(question) => {
-    // Example: close modal & reset states
-    setSearchModalOpen(false);
-    setModalSelectedQuestion(null);
-    setSearchResults([]);
-    // Your existing onSelect handling here (e.g., open drill)
-    handleSelect(question);
-  }}
-/>
+                  isOpen={searchModalOpen}
+                  onClose={() => {
+                    setSearchModalOpen(false);
+                    setModalSelectedQuestion(null);
+                    setSearchResults([]);
+                    setDirectSearchMode(false);
+
+                  }}
+                  results={searchResults}
+                  selectedQuestion={modalSelectedQuestion} // <--- Pass selected question here
+                  onSelect={(question) => {
+                    // Example: close modal & reset states
+                    setSearchModalOpen(false);
+                    setModalSelectedQuestion(null);
+                    setSearchResults([]);
+                    // Your existing onSelect handling here (e.g., open drill)
+                    handleSelect(question);
+                  }}
+                />
 
       </div>
       </div>
