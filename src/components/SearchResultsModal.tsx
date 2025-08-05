@@ -1,5 +1,5 @@
 // components/SearchResultsModal.tsx
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Dialog } from '@headlessui/react';
 import { ProcessedQuestion, SearchResultsModalProps } from '../types/dashboard.types';
 
@@ -12,20 +12,39 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
   const [selectedQuestion, setSelectedQuestion] = useState<ProcessedQuestion | null>(null);
   const [showCorrectAnswer, setShowCorrectAnswer] = useState(false);
   
+  // Search state
+  const [searchFilters, setSearchFilters] = useState({
+    testNumber: '',
+    sectionNumber: '',
+    questionNumber: '',
+    sectionType: '',
+    textSearch: ''
+  });
+  
   const handleBackToResults = () => {
     setSelectedQuestion(null);
-    setShowCorrectAnswer(false); // Reset when going back
+    setShowCorrectAnswer(false);
   };
 
   const handleClose = () => {
     setSelectedQuestion(null);
-    setShowCorrectAnswer(false); // Reset when closing
+    setShowCorrectAnswer(false);
     onClose();
   };
 
   const handleQuestionClick = (result: ProcessedQuestion) => {
     setSelectedQuestion(result);
-    setShowCorrectAnswer(false); // Reset when selecting new question
+    setShowCorrectAnswer(false);
+  };
+
+  const clearFilters = () => {
+    setSearchFilters({
+      testNumber: '',
+      sectionNumber: '',
+      questionNumber: '',
+      sectionType: '',
+      textSearch: ''
+    });
   };
 
   const renderAnswerChoices = (choices: string[]) => {
@@ -42,14 +61,12 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
   const extractPrepTestNumber = (testName: string | null | undefined) => {
     if (!testName) return null;
     
-    // Match patterns like "PrepTest 1", "PrepTest 85", "PT 1", etc.
     const match = testName.match(/(?:PrepTest|PT)\s*(\d+)/i);
     return match ? match[1] : null;
   };
 
-  // Helper function to get test name/number - use processed data fields
+  // Helper function to get test name/number
   const getTestInfo = (question: ProcessedQuestion) => {
-    // Processed data has test_name field
     if (question.test_name) {
       return {
         name: question.test_name,
@@ -57,7 +74,6 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
       };
     }
     
-    // Fallback to other possible field names
     if (question.testName) {
       return {
         name: question.testName,
@@ -71,25 +87,22 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
     };
   };
 
-  // Helper function to get section order - use processed data fields
+  // Helper function to get section order
   const getSectionOrder = (question: ProcessedQuestion) => {
-    // Processed data has section_order field
     return question.section_order ?? question.sectionOrder ?? null;
   };
 
-  // Helper function to get section type - use processed data fields
+  // Helper function to get section type
   const getSectionType = (question: ProcessedQuestion) => {
-    // Use the type field from processed data
     return question.type || question.question_type || question.section_type || 'Unknown';
   };
 
-  // Helper function to get question order - use processed data fields
+  // Helper function to get question order
   const getQuestionOrder = (question: ProcessedQuestion) => {
-    // Processed data has question_order field
     return question.question_order ?? question.questionOrder ?? question.order ?? null;
   };
 
-  // Helper function to get question text - use processed data fields
+  // Helper function to get question text
   const getQuestionText = (question: ProcessedQuestion) => {
     return question.question || question.question_stem || '';
   };
@@ -109,21 +122,18 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
     
     const parts = [];
     
-    // Test number
     if (testInfo.number) {
       parts.push(`PrepTest ${testInfo.number}`);
     } else {
       parts.push('Unknown Test');
     }
     
-    // Section number
     if (sectionOrder !== null && sectionOrder !== undefined) {
       parts.push(`Section ${sectionOrder}`);
     } else {
       parts.push('Section ?');
     }
     
-    // Question number
     if (questionOrder !== null && questionOrder !== undefined) {
       parts.push(`Q${questionOrder}`);
     } else {
@@ -133,21 +143,176 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
     return parts.join(', ');
   };
 
+  // Get unique section types for filter dropdown
+  const uniqueSectionTypes = useMemo(() => {
+    const types = new Set(results.map(q => getSectionType(q)));
+    return Array.from(types).sort();
+  }, [results]);
+
+  // Filter results based on search criteria
+  const filteredResults = useMemo(() => {
+    return results.filter(question => {
+      const testInfo = getTestInfo(question);
+      const sectionOrder = getSectionOrder(question);
+      const questionOrder = getQuestionOrder(question);
+      const sectionType = getSectionType(question);
+      const questionText = getQuestionText(question);
+      
+      // Test number filter
+      if (searchFilters.testNumber && testInfo.number !== searchFilters.testNumber) {
+        return false;
+      }
+      
+      // Section number filter
+      if (searchFilters.sectionNumber && sectionOrder?.toString() !== searchFilters.sectionNumber) {
+        return false;
+      }
+      
+      // Question number filter
+      if (searchFilters.questionNumber && questionOrder?.toString() !== searchFilters.questionNumber) {
+        return false;
+      }
+      
+      // Section type filter
+      if (searchFilters.sectionType && sectionType !== searchFilters.sectionType) {
+        return false;
+      }
+      
+      // Text search filter
+      if (searchFilters.textSearch) {
+        const searchTerm = searchFilters.textSearch.toLowerCase();
+        const searchableText = [
+          questionText,
+          question.passage || '',
+          ...(question.options || [])
+        ].join(' ').toLowerCase();
+        
+        if (!searchableText.includes(searchTerm)) {
+          return false;
+        }
+      }
+      
+      return true;
+    });
+  }, [results, searchFilters]);
+
   return (
     <Dialog open={isOpen} onClose={handleClose} className="relative z-50">
       <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
       <div className="fixed inset-0 flex items-center justify-center p-4">
-        <Dialog.Panel className="bg-white rounded-xl p-6 w-full max-w-4xl shadow-xl overflow-y-auto max-h-[90vh]">
+        <Dialog.Panel className="bg-white rounded-xl p-6 w-full max-w-5xl shadow-xl overflow-y-auto max-h-[90vh]">
           {!selectedQuestion ? (
             // Search Results List View
             <>
-              <Dialog.Title className="text-xl font-bold mb-4">Search Results</Dialog.Title>
+              <Dialog.Title className="text-xl font-bold mb-6">Search Results</Dialog.Title>
               
-              {results.length === 0 ? (
-                <p className="text-gray-500">No matches found.</p>
+              {/* Search Filters */}
+              <div className="bg-gray-50 p-4 rounded-lg mb-6 space-y-4">
+                <h3 className="font-semibold text-gray-700 mb-3">Filter Results</h3>
+                
+                {/* First row of filters */}
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">
+                      Test Number
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g., 85"
+                      value={searchFilters.testNumber}
+                      onChange={(e) => setSearchFilters(prev => ({ ...prev, testNumber: e.target.value }))}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">
+                      Section Number
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g., 1"
+                      value={searchFilters.sectionNumber}
+                      onChange={(e) => setSearchFilters(prev => ({ ...prev, sectionNumber: e.target.value }))}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">
+                      Question Number
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g., 15"
+                      value={searchFilters.questionNumber}
+                      onChange={(e) => setSearchFilters(prev => ({ ...prev, questionNumber: e.target.value }))}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">
+                      Section Type
+                    </label>
+                    <select
+                      value={searchFilters.sectionType}
+                      onChange={(e) => setSearchFilters(prev => ({ ...prev, sectionType: e.target.value }))}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                      <option value="">All Types</option>
+                      {uniqueSectionTypes.map(type => (
+                        <option key={type} value={type}>{type}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+                
+                {/* Second row - Text search */}
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-3 items-end">
+                  <div className="md:col-span-3">
+                    <label className="block text-xs font-medium text-gray-600 mb-1">
+                      Search Text (question, passage, or answer choices)
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Enter keywords to search within questions..."
+                      value={searchFilters.textSearch}
+                      onChange={(e) => setSearchFilters(prev => ({ ...prev, textSearch: e.target.value }))}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+                  
+                  <div>
+                    <button
+                      onClick={clearFilters}
+                      className="w-full px-3 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors text-sm font-medium"
+                    >
+                      Clear Filters
+                    </button>
+                  </div>
+                </div>
+                
+                {/* Results count */}
+                <div className="text-sm text-gray-600">
+                  Showing {filteredResults.length} of {results.length} questions
+                </div>
+              </div>
+              
+              {/* Results List */}
+              {filteredResults.length === 0 ? (
+                <div className="text-center py-8">
+                  <p className="text-gray-500 mb-2">No questions match your search criteria.</p>
+                  <button
+                    onClick={clearFilters}
+                    className="text-blue-600 hover:text-blue-800 text-sm underline"
+                  >
+                    Clear all filters
+                  </button>
+                </div>
               ) : (
                 <ul className="space-y-3">
-                  {results.map((question, i) => (
+                  {filteredResults.map((question, i) => (
                     <li 
                       key={question.id || i} 
                       className="border p-4 rounded-lg cursor-pointer hover:bg-slate-50 transition-colors" 
@@ -193,7 +358,7 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
               )}
             </>
           ) : (
-            // Question Detail View
+            // Question Detail View (unchanged)
             <>
               <div className="flex items-center justify-between mb-4">
                 <button
