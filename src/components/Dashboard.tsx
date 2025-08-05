@@ -4,7 +4,7 @@ import { Dialog } from '@headlessui/react';
 import { ProcessedQuestion, SearchResultsModalProps } from '../types/dashboard.types';
 
 const SearchResultsModal: React.FC<SearchResultsModalProps> = ({ 
-  isOpen, 
+  isOpen = false, 
   onClose, 
   results = [], 
   onSelect 
