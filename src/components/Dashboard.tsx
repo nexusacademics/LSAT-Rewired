@@ -475,7 +475,6 @@ const handleSearch = () => {
                 disabled={
                         !directTest.trim() || !directSection.trim() || !directQuestion.trim()
                       } >
-                  <Play className="h-4 w-4 mr-2" />
                       Submit
                     </button>
                 </div>
