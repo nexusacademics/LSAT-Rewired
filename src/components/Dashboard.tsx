@@ -535,26 +535,25 @@ const handleSearch = () => {
         </div>
       <div>
         {/*Search Results Modal */}
-              <SearchResultsModal
-                  isOpen={searchModalOpen}
-                  onClose={() => {
-                    setSearchModalOpen(false);
-                    setModalSelectedQuestion(null);
-                    setSearchResults([]);
-                    setDirectSearchMode(false);
+        <SearchResultsModal
+  isOpen={searchModalOpen}
+  onClose={() => {
+    setSearchModalOpen(false);
+    setModalSelectedQuestion(null);
+    setSearchResults([]);
+    setDirectSearchMode(false);
+  }}
+  results={searchResults}
+  initialSelectedQuestion={modalSelectedQuestion}  // pass initialSelectedQuestion, NOT selectedQuestion
+  onSelect={(question) => {
+    setSearchModalOpen(false);
+    setModalSelectedQuestion(null);
+    setSearchResults([]);
+    handleSelect(question);
+  }}
+  disableBackToResults={directSearchMode}  // <-- pass this prop here
+/>
 
-                  }}
-                  results={searchResults}
-                  selectedQuestion={modalSelectedQuestion} // <--- Pass selected question here
-                  onSelect={(question) => {
-                    // Example: close modal & reset states
-                    setSearchModalOpen(false);
-                    setModalSelectedQuestion(null);
-                    setSearchResults([]);
-                    // Your existing onSelect handling here (e.g., open drill)
-                    handleSelect(question);
-                  }}
-                />
 
       </div>
       </div>
