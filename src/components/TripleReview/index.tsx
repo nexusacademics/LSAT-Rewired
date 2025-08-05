@@ -145,8 +145,57 @@ const TripleReview: React.FC<TripleReviewProps> = ({
     setShowPausePopup(true);
   };
 
+  // Add a new handler for immediate exit (bypass popup)
+  const handleImmediateExit = () => {
+    // Save current timer state if in timed mode before immediate exit
+    if (session.phase === 'timed') {
+      const sectionTimerKey = `section-${session.currentSectionIndex}`;
+      const updatedTimerStates = {
+        ...session.timerStates,
+        [sectionTimerKey]: timeRemaining
+      };
+      
+      const updatedSession = {
+        ...session,
+        timerStates: updatedTimerStates,
+        isPaused: true,
+        pausedAt: new Date()
+      };
+      
+      // Use a callback to ensure the session is updated before exiting
+      onUpdateSession(updatedSession);
+      
+      // Small delay to ensure state is saved
+      setTimeout(() => {
+        onExitSession();
+      }, 100);
+      return;
+    }
+    
+    onExitSession();
+  };
+
   // Handle popup actions
   const handleReturnToDashboard = () => {
+    // Ensure timer state is saved before exiting
+    if (session.phase === 'timed') {
+      const sectionTimerKey = `section-${session.currentSectionIndex}`;
+      const updatedTimerStates = {
+        ...session.timerStates,
+        [sectionTimerKey]: timeRemaining
+      };
+      
+      const updatedSession = {
+        ...session,
+        timerStates: updatedTimerStates,
+        isPaused: true,
+        pausedAt: new Date()
+      };
+      
+      // Save the session state before exiting
+      onUpdateSession(updatedSession);
+    }
+    
     setShowPausePopup(false);
     onExitSession(); // This will return to dashboard
   };
@@ -368,7 +417,7 @@ const TripleReview: React.FC<TripleReviewProps> = ({
         {session.phase === 'timed' && !isTimerRunning && !showSectionTransition && (
           <PausedOverlay
             onResume={() => setIsTimerRunning(true)}
-            onExit={onExitSession}
+            onExit={handleImmediateExit}
           />
         )}
 
