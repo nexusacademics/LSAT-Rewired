@@ -49,6 +49,7 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
   const handleQuestionClick = (result: ProcessedQuestion) => {
     setSelectedQuestionState(result);
     setShowCorrectAnswer(false); // Reset when selecting new question
+    setScreen('question');
   };
 
   const renderAnswerChoices = (choices: string[]) => {
