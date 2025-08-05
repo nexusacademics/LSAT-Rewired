@@ -488,6 +488,7 @@ const handleSearch = () => {
                       <br/> <br/>
                      "Han Purple"<br/>"Reading Comp Passage about mirrors"
                     </p>
+                <br/>
                 <input
                   type="text"
                   value={searchTerm}
