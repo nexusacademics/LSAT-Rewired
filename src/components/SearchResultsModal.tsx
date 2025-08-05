@@ -209,10 +209,7 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
             <>
               <div className="flex items-center justify-between mb-4">
                {!disableBackToResults && (
-                 <p className="text-xs text-red-500">
-                    disableBackToResults: {String(disableBackToResults)}
-                  </p>
-                    <button
+                  <button
                     onClick={handleBackToResults}
                     className="text-blue-600 hover:text-blue-800 font-medium text-sm flex items-center gap-1"
                   >
