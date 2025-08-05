@@ -66,38 +66,57 @@ const Dashboard: React.FC<DashboardProps> = ({
 //handlesearch function
   
   const handleSearch = async () => {
-    if (directTest && directSection && directQuestion) {
-      const testNum = parseInt(directTest);
-      const sectionNum = parseInt(directSection);
-      const questionNum = parseInt(directQuestion);
-  
-      if (!isNaN(testNum) && !isNaN(sectionNum) && !isNaN(questionNum)) {
-        console.log("Direct lookup:", testNum, sectionNum, questionNum);
-        await startMiniSession(testNum, sectionNum, questionNum);
-        return;
-      }
-    }
-  
-    if (searchTerm.trim()) {
-      const parsed = await parseSearchQuery(model, searchTerm);
-      console.log("Parsed search:", parsed);
-  
-      if (parsed?.preptest && parsed?.section && parsed?.question) {
-        await startMiniSession(parsed.preptest, parsed.section, parsed.question);
-      } else {
-        console.warn("No exact match found in parsed query. Consider showing fallback results.");
-        // Optionally show keyword results here
-      }
-    }
+  let results: ProcessedQuestion[] = [];
 
+  if (directTest && directSection && directQuestion) {
+    const testNum = parseInt(directTest);
+    const sectionNum = parseInt(directSection);
+    const questionNum = parseInt(directQuestion);
+
+    if (!isNaN(testNum) && !isNaN(sectionNum) && !isNaN(questionNum)) {
+      // Find matching question(s) from allProcessedTests or however you store data
+      const test = allProcessedTests[testNum];
+      if (test) {
+        const section = test.sections[sectionNum - 1]; // adjust if zero-indexed
+        if (section) {
+          const question = section.questions.find(q => q.index === questionNum - 1); // zero-based?
+          if (question) {
+            results.push(question);
+          }
+        }
+      }
+    }
+  } 
   
-  
-    console.log('Enhanced search results:', results);
-    console.log('First enhanced result:', results[0]);
-  
+  if (results.length === 0 && searchTerm.trim()) {
+    const parsed = await parseSearchQuery(model, searchTerm);
+    console.log("Parsed search:", parsed);
+
+    // Example fallback: find results based on parsed query or keywords
+    if (parsed?.preptest && parsed?.section && parsed?.question) {
+      const test = allProcessedTests[parsed.preptest];
+      if (test) {
+        const section = test.sections[parsed.section - 1];
+        if (section) {
+          const question = section.questions.find(q => q.index === parsed.question - 1);
+          if (question) {
+            results.push(question);
+          }
+        }
+      }
+    }
+    // else you can do a fuzzy keyword search across all questions here
+  }
+
+  if (results.length > 0) {
     setSearchResults(results);
     setSearchModalOpen(true);
-  };
+  } else {
+    // Optionally show a "no results" message or modal
+    setSearchResults([]);
+    setSearchModalOpen(true);
+  }
+};
 
   
   // Filter user sessions into categories (keeping your existing logic)
