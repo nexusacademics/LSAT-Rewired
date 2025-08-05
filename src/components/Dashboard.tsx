@@ -469,12 +469,13 @@ const handleSearch = () => {
                     }`}
                   />
                   <button
-                      onClick={handleDirectSearch}
-                      disabled={
+                       size="default" 
+                       className="w-full"
+                       onClick={handleDirectSearch}
+                disabled={
                         !directTest.trim() || !directSection.trim() || !directQuestion.trim()
-                      }
-                      className="px-4 py-2 bg-blue-600 text-white rounded disabled:bg-gray-400"
-                    >
+                      } >
+                  <Play className="h-4 w-4 mr-2" />
                       Submit
                     </button>
                 </div>
