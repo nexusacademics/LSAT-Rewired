@@ -165,7 +165,7 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
       <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
       <div className="fixed inset-0 flex items-center justify-center p-4">
         <Dialog.Panel className="bg-white rounded-xl p-6 w-full max-w-4xl shadow-xl overflow-y-auto max-h-[90vh]">
-          {!selectedQuestionState ? (
+          {screen === 'results' ? (
             // Search Results List View
             <>
               <Dialog.Title className="text-xl font-bold mb-4">Search Results</Dialog.Title>
