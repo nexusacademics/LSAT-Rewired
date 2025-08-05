@@ -110,7 +110,7 @@ const [modalSelectedQuestion, setModalSelectedQuestion] = useState<ProcessedQues
     question_order: questionIndex + 1,
   };
 
- setModalSelectedQuestion(questionForModal);  // NEW: sets the question to show on modal open
+setModalSelectedQuestion(questionForModal);  // NEW: sets the question to show on modal open
 setSearchResults([questionForModal]);
 setSearchModalOpen(true);
 setDirectSearchMode(true);  // optional local state flag
@@ -536,23 +536,23 @@ const handleSearch = () => {
       <div>
         {/*Search Results Modal */}
         <SearchResultsModal
-  isOpen={searchModalOpen}
-  onClose={() => {
-    setSearchModalOpen(false);
-    setModalSelectedQuestion(null);
-    setSearchResults([]);
-    setDirectSearchMode(false);
-  }}
-  results={searchResults}
-  initialSelectedQuestion={modalSelectedQuestion}  // pass initialSelectedQuestion, NOT selectedQuestion
-  onSelect={(question) => {
-    setSearchModalOpen(false);
-    setModalSelectedQuestion(null);
-    setSearchResults([]);
-    handleSelect(question);
-  }}
-  disableBackToResults={directSearchMode}  // <-- pass this prop here
-/>
+            isOpen={searchModalOpen}
+            onClose={() => {
+              setSearchModalOpen(false);
+              setModalSelectedQuestion(null);
+              setSearchResults([]);
+              setDirectSearchMode(false);
+            }}
+            results={searchResults}
+            initialSelectedQuestion={modalSelectedQuestion}  // pass initialSelectedQuestion, NOT selectedQuestion
+            onSelect={(question) => {
+              setSearchModalOpen(false);
+              setModalSelectedQuestion(null);
+              setSearchResults([]);
+              handleSelect(question);
+            }}
+            disableBackToResults={directSearchMode}  // <-- pass this prop here
+          />
 
 
       </div>
