@@ -5,6 +5,7 @@ import TimeModeSelectionModal from './TimeModeSelectionModal';
 
 //import search functions
 import { parseSearchQuery } from '../utils/parseSearchQuery';
+import Fuse from 'fuse.js';
 
 import { supabase } from '../lib/supabase';
 import { GoogleGenerativeAI } from '@google/generative-ai';
