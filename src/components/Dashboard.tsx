@@ -152,9 +152,10 @@ const handleSearch = () => {
         }
       });
     });
-  });
-console.log("Search term:", searchTerm.toLowerCase());
+    console.log("Search term:", searchTerm.toLowerCase());
 console.log("Combined text sample:", combinedText);
+  });
+
   setSearchResults(results);
   setSearchModalOpen(true);
 };
