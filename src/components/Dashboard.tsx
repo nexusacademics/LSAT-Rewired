@@ -65,57 +65,44 @@ const Dashboard: React.FC<DashboardProps> = ({
 
 //handlesearch function
   
-  const handleSearch = async () => {
+ const handleSearch = async () => {
   let results: ProcessedQuestion[] = [];
 
   if (directTest && directSection && directQuestion) {
-    const testNum = parseInt(directTest);
-    const sectionNum = parseInt(directSection);
-    const questionNum = parseInt(directQuestion);
+    const testKey = directTest.trim(); // adapt here if needed to match keys exactly
+    const sectionIndex = parseInt(directSection) - 1;
+    const questionIndex = parseInt(directQuestion) - 1;
 
-    if (!isNaN(testNum) && !isNaN(sectionNum) && !isNaN(questionNum)) {
-      // Find matching question(s) from allProcessedTests or however you store data
-      const test = allProcessedTests[testNum];
-      if (test) {
-        const section = test.sections[sectionNum - 1]; // adjust if zero-indexed
-        if (section) {
-          const question = section.questions.find(q => q.index === questionNum - 1); // zero-based?
-          if (question) {
-            results.push(question);
-          }
-        }
+    const test = allProcessedTests[testKey];
+    if (test && test.sections && test.sections[sectionIndex]) {
+      const section = test.sections[sectionIndex];
+      if (section.questions && section.questions[questionIndex]) {
+        const question = section.questions[questionIndex];
+
+        // Enhance with metadata (optional, for UI)
+        const enhancedQuestion = {
+          ...question,
+          test_name: test.name,
+          test_id: test.id,
+          section_name: section.name,
+          section_id: section.id,
+          section_order: sectionIndex + 1,
+          question_order: questionIndex + 1,
+          section_type: section.name?.startsWith('LR') ? 'LR' :
+                        section.name?.startsWith('RC') ? 'RC' :
+                        section.id?.startsWith('LR') ? 'LR' :
+                        section.id?.startsWith('RC') ? 'RC' : 'Unknown'
+        };
+
+        results.push(enhancedQuestion);
       }
     }
-  } 
-  
-  if (results.length === 0 && searchTerm.trim()) {
-    const parsed = await parseSearchQuery(model, searchTerm);
-    console.log("Parsed search:", parsed);
-
-    // Example fallback: find results based on parsed query or keywords
-    if (parsed?.preptest && parsed?.section && parsed?.question) {
-      const test = allProcessedTests[parsed.preptest];
-      if (test) {
-        const section = test.sections[parsed.section - 1];
-        if (section) {
-          const question = section.questions.find(q => q.index === parsed.question - 1);
-          if (question) {
-            results.push(question);
-          }
-        }
-      }
-    }
-    // else you can do a fuzzy keyword search across all questions here
   }
 
-  if (results.length > 0) {
-    setSearchResults(results);
-    setSearchModalOpen(true);
-  } else {
-    // Optionally show a "no results" message or modal
-    setSearchResults([]);
-    setSearchModalOpen(true);
-  }
+  // existing fuzzy search code if results empty...
+
+  setSearchResults(results);
+  setSearchModalOpen(true);
 };
 
   
