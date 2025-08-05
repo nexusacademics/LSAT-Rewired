@@ -155,10 +155,6 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
     
     return parts.join(', ');
   };
-
-
-  console.log('disableBackToResults in modal:', disableBackToResults);
-
   
   return (
     <Dialog open={isOpen} onClose={handleClose} className="relative z-50">
@@ -304,6 +300,7 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
                 )}
               </div>
             </>
+          ) : null
           )}
         </Dialog.Panel>
       </div>
