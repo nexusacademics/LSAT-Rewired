@@ -118,72 +118,72 @@ setDirectSearchMode(true);  // optional local state flag
 };
 
 
-//Fuzzy Logic Search
-const handleSearch = async () => {
-  const parsed = await parseSearchQuery(model, searchTerm);
-
-  const {
-    preptest,
-    section,
-    question,
-    passage_title,
-    keywords = [],
-  } = parsed;
-
-  // Clean the rest of the search term (for fuzzy match)
-  const queryKeywords = keywords.join(' ').toLowerCase();
-
-  const candidateQuestions: any[] = [];
-
-  // Step 1: Collect matching questions based on structured filters
-  Object.values(allProcessedTests).forEach((test) => {
-    if (preptest && Number(test.name.replace(/\D/g, '')) !== Number(preptest)) return;
-
-    test.sections.forEach((sectionData, sectionIndex) => {
-      if (section && sectionIndex + 1 !== Number(section)) return;
-
-      sectionData.questions.forEach((q, questionIndex) => {
-        if (question && questionIndex + 1 !== Number(question)) return;
-
-        const section_type = sectionData.name?.startsWith('LR') ? 'LR' :
-                             sectionData.name?.startsWith('RC') ? 'RC' :
-                             sectionData.id?.startsWith('LR') ? 'LR' :
-                             sectionData.id?.startsWith('RC') ? 'RC' : 'Unknown';
-
-        candidateQuestions.push({
-          ...q,
-          test_name: test.name,
-          test_id: test.id,
-          section_name: sectionData.name,
-          section_id: sectionData.id,
-          section_order: sectionIndex + 1,
-          question_order: questionIndex + 1,
-          section_type,
-          fuseText: `${q.passage ?? ''} ${q.question}`.toLowerCase()
-        });
-      });
-    });
-  });
-
-  // Step 2: Run fuzzy match if keywords exist
-  let results: ProcessedQuestion[];
-
-  if (queryKeywords.trim() !== '') {
-    const fuse = new Fuse(candidateQuestions, {
-      keys: ['fuseText'],
-      threshold: 0.4,
-    });
-
-    const fuseResults = fuse.search(queryKeywords);
-    results = fuseResults.map(r => r.item);
-  } else {
-    // No keywords → return all structurally filtered
-    results = candidateQuestions;
-  }
-
-  // You now have filtered + fuzzy-ranked results
-  // Update state/UI accordingly
-};
+            //Fuzzy Logic Search
+            const handleSearch = async () => {
+              const parsed = await parseSearchQuery(model, searchTerm);
+            
+              const {
+                preptest,
+                section,
+                question,
+                passage_title,
+                keywords = [],
+              } = parsed;
+            
+              // Clean the rest of the search term (for fuzzy match)
+              const queryKeywords = keywords.join(' ').toLowerCase();
+            
+              const candidateQuestions: any[] = [];
+            
+              // Step 1: Collect matching questions based on structured filters
+              Object.values(allProcessedTests).forEach((test) => {
+                if (preptest && Number(test.name.replace(/\D/g, '')) !== Number(preptest)) return;
+            
+                test.sections.forEach((sectionData, sectionIndex) => {
+                  if (section && sectionIndex + 1 !== Number(section)) return;
+            
+                  sectionData.questions.forEach((q, questionIndex) => {
+                    if (question && questionIndex + 1 !== Number(question)) return;
+            
+                    const section_type = sectionData.name?.startsWith('LR') ? 'LR' :
+                                         sectionData.name?.startsWith('RC') ? 'RC' :
+                                         sectionData.id?.startsWith('LR') ? 'LR' :
+                                         sectionData.id?.startsWith('RC') ? 'RC' : 'Unknown';
+            
+                    candidateQuestions.push({
+                      ...q,
+                      test_name: test.name,
+                      test_id: test.id,
+                      section_name: sectionData.name,
+                      section_id: sectionData.id,
+                      section_order: sectionIndex + 1,
+                      question_order: questionIndex + 1,
+                      section_type,
+                      fuseText: `${q.passage ?? ''} ${q.question}`.toLowerCase()
+                    });
+                  });
+                });
+              });
+            
+              // Step 2: Run fuzzy match if keywords exist
+              let results: ProcessedQuestion[];
+            
+              if (queryKeywords.trim() !== '') {
+                const fuse = new Fuse(candidateQuestions, {
+                  keys: ['fuseText'],
+                  threshold: 0.4,
+                });
+            
+                const fuseResults = fuse.search(queryKeywords);
+                results = fuseResults.map(r => r.item);
+              } else {
+                // No keywords → return all structurally filtered
+                results = candidateQuestions;
+              }
+            
+              // You now have filtered + fuzzy-ranked results
+              // Update state/UI accordingly
+            };
   
   // Filter user sessions into categories (keeping your existing logic)
   const activeSessions = userSessions.filter(session => !session.endTime);
