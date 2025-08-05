@@ -5,7 +5,7 @@ import TimeModeSelectionModal from './TimeModeSelectionModal';
 
 //import search functions
 import { parseSearchQuery } from '../utils/parseSearchQuery';
-import { parseNumericQuery } from '../utils/parseNumericQuery';
+
 import { supabase } from '../lib/supabase';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import SearchResultsModal from './SearchResultsModal';
@@ -373,42 +373,81 @@ const handleSearch = () => {
                     </p>
                   </div>
                 </div>
-                <div className="relative">
-                  <input
-                    type="text"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        e.preventDefault(); // Important if inside a <form>
-                        console.log("Enter key pressed");
-                        handleSearch();
-                      }
-                    }}
-                    placeholder="Enter search terms here..."
-                    className={`w-full px-4 py-3 pr-12 rounded-lg border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                      theme === 'dark' 
-                        ? 'bg-gray-800 border-gray-600 text-white placeholder-gray-400 hover:border-gray-500' 
-                        : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500 hover:border-gray-400'
-                    }`}
-                  />
-                  <button
-                    onClick={handleSearch}
-                    disabled={!searchTerm?.trim()}
-                    className={`absolute right-2 top-1/2 transform -translate-y-1/2 p-1.5 rounded-md transition-all duration-200 ${
-                      searchTerm?.trim()
-                        ? theme === 'dark'
-                          ? 'text-blue-400 hover:text-blue-300 hover:bg-gray-700 active:bg-gray-600'
-                          : 'text-blue-500 hover:text-blue-600 hover:bg-gray-100 active:bg-gray-200'
-                        : theme === 'dark'
-                          ? 'text-gray-600 cursor-not-allowed'
-                          : 'text-gray-400 cursor-not-allowed'
-                    }`}
-                    aria-label="Search PrepTest questions"
-                  >
-                    <Search className="h-5 w-5" />
-                  </button>
-                </div>
+              {/* Direct search inputs */}
+<div className="grid grid-cols-3 gap-2 mb-4">
+  <input
+    type="number"
+    placeholder="PrepTest #"
+    value={directTest}
+    onChange={(e) => setDirectTest(e.target.value)}
+    className={`w-full px-3 py-2 rounded-md border ${
+      theme === 'dark'
+        ? 'bg-gray-800 border-gray-600 text-white placeholder-gray-400'
+        : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+    }`}
+  />
+  <input
+    type="number"
+    placeholder="Section #"
+    value={directSection}
+    onChange={(e) => setDirectSection(e.target.value)}
+    className={`w-full px-3 py-2 rounded-md border ${
+      theme === 'dark'
+        ? 'bg-gray-800 border-gray-600 text-white placeholder-gray-400'
+        : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+    }`}
+  />
+  <input
+    type="number"
+    placeholder="Question #"
+    value={directQuestion}
+    onChange={(e) => setDirectQuestion(e.target.value)}
+    className={`w-full px-3 py-2 rounded-md border ${
+      theme === 'dark'
+        ? 'bg-gray-800 border-gray-600 text-white placeholder-gray-400'
+        : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+    }`}
+  />
+</div>
+
+{/* Keyword fallback input */}
+<div className="relative">
+  <input
+    type="text"
+    value={searchTerm}
+    onChange={(e) => setSearchTerm(e.target.value)}
+    onKeyDown={(e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        handleSearch();
+      }
+    }}
+    placeholder="Enter keywords or phrase..."
+    className={`w-full px-4 py-3 pr-12 rounded-lg border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+      theme === 'dark'
+        ? 'bg-gray-800 border-gray-600 text-white placeholder-gray-400 hover:border-gray-500'
+        : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500 hover:border-gray-400'
+    }`}
+  />
+  <button
+    onClick={handleSearch}
+    disabled={
+      !searchTerm?.trim() &&
+      !directTest?.trim() &&
+      !directSection?.trim() &&
+      !directQuestion?.trim()
+    }
+    className={`absolute right-2 top-1/2 transform -translate-y-1/2 p-1.5 rounded-md transition-all duration-200 ${
+      theme === 'dark'
+        ? 'text-blue-400 hover:text-blue-300 hover:bg-gray-700 active:bg-gray-600'
+        : 'text-blue-500 hover:text-blue-600 hover:bg-gray-100 active:bg-gray-200'
+    }`}
+    aria-label="Search"
+  >
+    <Search className="h-5 w-5" />
+  </button>
+</div>
+
               </Card>
              
             </Card>
