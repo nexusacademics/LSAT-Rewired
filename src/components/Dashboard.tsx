@@ -81,18 +81,19 @@ const Dashboard: React.FC<DashboardProps> = ({
 
         // Enhance with metadata (optional, for UI)
         const enhancedQuestion = {
-          ...question,
-          test_name: test.name,
-          test_id: test.id,
-          section_name: section.name,
-          section_id: section.id,
-          section_order: sectionIndex + 1,
-          question_order: questionIndex + 1,
-          section_type: section.name?.startsWith('LR') ? 'LR' :
-                        section.name?.startsWith('RC') ? 'RC' :
-                        section.id?.startsWith('LR') ? 'LR' :
-                        section.id?.startsWith('RC') ? 'RC' : 'Unknown'
-        };
+            ...question,
+            test_name: test.name,
+            test_id: test.id,
+            section_name: section.name,
+            section_id: section.id,
+            section_order: sectionIndex + 1,
+            question_order: questionIndex + 1,
+            section_type: section.name?.startsWith('LR') ? 'LR' :
+                          section.name?.startsWith('RC') ? 'RC' :
+                          section.id?.startsWith('LR') ? 'LR' :
+                          section.id?.startsWith('RC') ? 'RC' : 'Unknown'
+          };
+
 
         results.push(enhancedQuestion);
       }
