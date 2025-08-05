@@ -21,7 +21,7 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
 
       useEffect(() => {
       if (isOpen) {
-        if (selectedQuestion) {
+        if (initialSelectedQuestion) {
           // Direct search: go straight to question
           setSelectedQuestionState(initialSelectedQuestion);
           setScreen('question');
