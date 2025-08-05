@@ -44,6 +44,10 @@ export interface TestSession {
   selectedSectionId?: string;
   completedSectionIds: string[];
   completedPhases: ('timed' | 'blind-review' | 'strategy-review')[];
+    // Timer state persistence
+  timerStates?: { [sectionKey: string]: number };
+  isPaused?: boolean;
+  pausedAt?: Date;
 }
 
 export interface Circuit {
