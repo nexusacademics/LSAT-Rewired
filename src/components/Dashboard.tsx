@@ -47,6 +47,7 @@ const Dashboard: React.FC<DashboardProps> = ({
   const [directQuestion, setDirectQuestion] = useState('');
   
   const [searchModalOpen, setSearchModalOpen] = useState(false);
+const [modalSelectedQuestion, setModalSelectedQuestion] = useState<ProcessedQuestion | null>(null);
 
    // Dynamic background based on theme
   const backgroundClasses = theme === 'dark' 
@@ -108,8 +109,10 @@ const Dashboard: React.FC<DashboardProps> = ({
     question_order: questionIndex + 1,
   };
 
-  setSearchResults([questionForModal]); // Pass an array of questions
-  setSearchModalOpen(true);
+ setModalSelectedQuestion(questionForModal);  // NEW: sets the question to show on modal open
+setSearchResults([questionForModal]);
+setSearchModalOpen(true);
+
 };
 
 
