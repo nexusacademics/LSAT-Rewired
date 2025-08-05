@@ -62,44 +62,53 @@ const Dashboard: React.FC<DashboardProps> = ({
       questionIndex: question.index, // if you store index
     });
   };
-//Direct Search
-  const handleDirectSearch = () => {
-  if (!directTest || !directSection || !directQuestion) return;
 
-  const selectedTest = Object.values(allProcessedTests).find(
-    (test) => test.id.toString() === directTest.trim()
-  );
+  
+  //Direct Search
+ const handleDirectSearch = () => {
+  if (!directTest || !directSection || !directQuestion) {
+    alert("Please fill all search fields.");
+    return;
+  }
+
+  // Assuming allProcessedTests is an object with test ids as keys
+  const testsArray = Object.values(allProcessedTests);
+
+  // Find the test by matching the number in the test name
+  const selectedTest = testsArray.find(test => {
+    const match = test.name?.match(/\d+/);
+    return match && match[0] === directTest.trim();
+  });
+
   if (!selectedTest) {
     alert("PrepTest not found.");
     return;
   }
 
-  const sectionIndex = parseInt(directSection.trim(), 10) - 1;
-  const questionIndex = parseInt(directQuestion.trim(), 10) - 1;
+  const sectionIndex = parseInt(directSection, 10) - 1;
+  const questionIndex = parseInt(directQuestion, 10) - 1;
 
-  const selectedSection = selectedTest.sections[sectionIndex];
+  const selectedSection = selectedTest.sections?.[sectionIndex];
   if (!selectedSection) {
     alert("Section not found.");
     return;
   }
 
-  const selectedQuestion = selectedSection.questions[questionIndex];
+  const selectedQuestion = selectedSection.questions?.[questionIndex];
   if (!selectedQuestion) {
     alert("Question not found.");
     return;
   }
 
-  setSearchResults([
-    {
-      test_id: selectedTest.id,
-      test_name: selectedTest.name,
-      section_id: selectedSection.id,
-      section_name: selectedSection.name,
-      section_order: sectionIndex + 1,
-      question_order: questionIndex + 1,
-      question: selectedQuestion,
-    },
-  ]);
+  // Construct a question object with necessary fields for SearchResultsModal
+  const questionForModal: ProcessedQuestion = {
+    ...selectedQuestion,
+    test_name: selectedTest.name,
+    section_order: sectionIndex + 1,
+    question_order: questionIndex + 1,
+  };
+
+  setSearchResults([questionForModal]); // Pass an array of questions
   setSearchModalOpen(true);
 };
 
