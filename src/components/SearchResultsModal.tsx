@@ -8,15 +8,15 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
   onClose, 
   results, 
   onSelect,
-   initialSelectedQuestion = null,
+  selectedQuestion = null,
 }) => {
-  const [selectedQuestion, setSelectedQuestion] = useState<ProcessedQuestion | null>(initialSelectedQuestion);
+  const [selectedQuestion, setSelectedQuestion] = useState<ProcessedQuestion | null>(selectedQuestion);
   const [showCorrectAnswer, setShowCorrectAnswer] = useState(false);
 
   useEffect(() => {
-  setSelectedQuestion(initialSelectedQuestion);
+  setSelectedQuestion(selectedQuestion);
   setShowCorrectAnswer(false);
-}, [isOpen, initialSelectedQuestion]);
+}, [isOpen, selectedQuestion]);
 
   const handleBackToResults = () => {
     setSelectedQuestion(null);
