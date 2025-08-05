@@ -468,7 +468,7 @@ const handleSearch = () => {
                         : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
                     }`}
                   />
-                  <button
+                  <Button
                        size="default" 
                        className="w-full"
                        onClick={handleDirectSearch}
@@ -476,7 +476,7 @@ const handleSearch = () => {
                                 !directTest.trim() || !directSection.trim() || !directQuestion.trim()
                       } >
                       Submit
-                    </button>
+                    </Button>
                 </div>
 
           
