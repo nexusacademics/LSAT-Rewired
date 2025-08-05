@@ -217,7 +217,7 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
             </>
           ) : (
             // Question Detail View
-            <>
+            selectedQuestionState ? (<>
               <div className="flex items-center justify-between mb-4">
                {!disableBackToResults && (
                   <button
@@ -300,6 +300,7 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
                 )}
               </div>
             </>
+            ) : null
           )}
         </Dialog.Panel>
       </div>
