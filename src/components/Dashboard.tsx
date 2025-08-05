@@ -48,7 +48,7 @@ const Dashboard: React.FC<DashboardProps> = ({
   const [directSearchMode, setDirectSearchMode] = useState(false);
 
   const [searchModalOpen, setSearchModalOpen] = useState(false);
-const [modalSelectedQuestion, setModalSelectedQuestion] = useState<ProcessedQuestion | null>(null);
+  const [modalSelectedQuestion, setModalSelectedQuestion] = useState<ProcessedQuestion | null>(null);
 
    // Dynamic background based on theme
   const backgroundClasses = theme === 'dark' 
