@@ -45,7 +45,8 @@ const Dashboard: React.FC<DashboardProps> = ({
   const [directTest, setDirectTest] = useState('');
   const [directSection, setDirectSection] = useState('');
   const [directQuestion, setDirectQuestion] = useState('');
-  
+  const [directSearchMode, setDirectSearchMode] = useState(false);
+
   const [searchModalOpen, setSearchModalOpen] = useState(false);
 const [modalSelectedQuestion, setModalSelectedQuestion] = useState<ProcessedQuestion | null>(null);
 
