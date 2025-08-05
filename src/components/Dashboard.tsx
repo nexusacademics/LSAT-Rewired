@@ -104,8 +104,18 @@ const Dashboard: React.FC<DashboardProps> = ({
         strategiesUsed: [false],
       };
 
-     setSearchResults(results);
-  setSearchModalOpen(true);
+    setSearchResults([
+  {
+    test_id: selectedTest.id,
+    test_name: selectedTest.name,
+    section_id: selectedSection.id,
+    section_name: selectedSection.name,
+    section_order: sectionIndex + 1,
+    question_order: questionIndex + 1,
+    question: selectedQuestion,
+  },
+]);
+setShowSearchModal(true);
       return;
     }
   }
