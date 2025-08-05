@@ -14,11 +14,18 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
 }) => {
   const [selectedQuestionState, setSelectedQuestionState] = useState<ProcessedQuestion | null>(selectedQuestion);
   const [showCorrectAnswer, setShowCorrectAnswer] = useState(false);
+  const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
-  setSelectedQuestionState(selectedQuestion);
-  setShowCorrectAnswer(false);
+  if (isOpen) {
+    setSelectedQuestionState(selectedQuestion);
+    setShowCorrectAnswer(false);
+    setInitialized(true);
+  } else {
+    setInitialized(false); // Reset when modal closes
+  }
 }, [isOpen, selectedQuestion]);
+
 
   const handleBackToResults = () => {
     setSelectedQuestionState(null);
@@ -45,7 +52,7 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
       </div>
     ));
   };
-
+  
   // Helper function to extract PrepTest number from test name
   const extractPrepTestNumber = (testName: string | null | undefined) => {
     if (!testName) return null;
