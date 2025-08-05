@@ -427,9 +427,7 @@ const handleSearch = () => {
                       Find a Question or Passage from an official LSAC PrepTest 
                     </h3>
                     <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                      Use Keywords in the textbox below, for example:
-                      <br/> <br/>
-                     "Han Purple"<br/>"Reading Comp Passage about mirrors"
+                      Use the Preptest, Section, and Question numbers in the boxes below
                     </p>
                   </div>
                 </div>
