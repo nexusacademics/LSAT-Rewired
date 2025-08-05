@@ -136,6 +136,10 @@ const Dashboard: React.FC<DashboardProps> = ({
     setIsTimeModeModal(false);
   };
 
+//console log for test keys
+  console.log('Available test keys:', Object.keys(allProcessedTests));
+
+  
   return (
     <div className={`min-h-screen w-full transition-all duration-500 ${backgroundClasses}`}>
       <div className="w-full pt-10 px-4 pb-4">
