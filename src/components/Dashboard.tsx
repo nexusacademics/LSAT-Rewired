@@ -104,8 +104,8 @@ const Dashboard: React.FC<DashboardProps> = ({
         strategiesUsed: [false],
       };
 
-      setSearchResults([]); // clear fuzzy results
-      setCurrentSession(newSession);
+     setSearchResults(results);
+  setSearchModalOpen(true);
       return;
     }
   }
