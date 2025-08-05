@@ -302,7 +302,11 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
               </div>
               
               {/* Results List */}
-              {filteredResults.length === 0 ? (
+              {!results || results.length === 0 ? (
+                <div className="text-center py-8">
+                  <p className="text-gray-500 mb-2">No questions found.</p>
+                </div>
+              ) : filteredResults.length === 0 ? (
                 <div className="text-center py-8">
                   <p className="text-gray-500 mb-2">No questions match your search criteria.</p>
                   <button
