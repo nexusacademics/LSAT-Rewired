@@ -7,11 +7,17 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
   isOpen, 
   onClose, 
   results, 
-  onSelect 
+  onSelect,
+   initialSelectedQuestion = null,
 }) => {
-  const [selectedQuestion, setSelectedQuestion] = useState<ProcessedQuestion | null>(null);
+  const [selectedQuestion, setSelectedQuestion] = useState<ProcessedQuestion | null>(initialSelectedQuestion);
   const [showCorrectAnswer, setShowCorrectAnswer] = useState(false);
-  
+
+  useEffect(() => {
+  setSelectedQuestion(initialSelectedQuestion);
+  setShowCorrectAnswer(false);
+}, [isOpen, initialSelectedQuestion]);
+
   const handleBackToResults = () => {
     setSelectedQuestion(null);
     setShowCorrectAnswer(false); // Reset when going back
