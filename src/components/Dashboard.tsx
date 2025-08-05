@@ -119,76 +119,59 @@ setDirectSearchMode(true);  // optional local state flag
 
 
 //Fuzzy Logic Search
-const handleSearch = async () => {
-  // 1️⃣ Parse the user’s raw search
-  const parsed = await parseSearchQuery(model, searchTerm);
-  console.log('🔍 parseSearchQuery →', parsed);
+const handleSearch = () => {
+  const results: ProcessedQuestion[] = [];
 
-  const {
-    preptest,
-    section,
-    question,
-    passage_title,
-    keywords = [],
-  } = parsed;
+  // Step 1: Build search index
+  const allQuestions: any[] = [];
 
-  // build the keywords string for Fuse
-  const queryKeywords = keywords.join(' ').toLowerCase();
-
-  const candidateQuestions: any[] = [];
-
-  // 2️⃣ Filter by preptest / section / question
   Object.values(allProcessedTests).forEach((test) => {
-    if (preptest && Number(test.name.replace(/\D/g, '')) !== Number(preptest)) {
-      return;
-    }
+    test.sections.forEach((section, sectionIndex) => {
+      section.questions.forEach((question, questionIndex) => {
+        const section_type = section.name?.startsWith('LR') ? 'LR' :
+                             section.name?.startsWith('RC') ? 'RC' :
+                             section.name?.startsWith('LG') ? 'LG' : 'Unknown';
 
-    test.sections.forEach((sec, secIdx) => {
-      if (section && secIdx + 1 !== Number(section)) {
-        return;
-      }
+        const fullText = [
+          test.name,
+          section.name,
+          section_type,
+          question.passage ?? '',
+          question.question,
+          `Q${questionIndex + 1}`,
+          `Section ${sectionIndex + 1}`,
+        ].join(' ').toLowerCase();
 
-      sec.questions.forEach((q, qIdx) => {
-        if (question && qIdx + 1 !== Number(question)) {
-          return;
-        }
-
-        candidateQuestions.push({
-          ...q,
-          test_name:   test.name,
-          test_id:     test.id,
-          section_name:sec.name,
-          section_id:   sec.id,
-          section_order:secIdx + 1,
-          question_order:qIdx + 1,
-          section_type:
-            sec.name?.startsWith('LR') ? 'LR' :
-            sec.name?.startsWith('RC') ? 'RC' : 'Unknown',
-          fuseText: `${q.passage ?? ''} ${q.question}`.toLowerCase()
+        allQuestions.push({
+          ...question,
+          test_name: test.name,
+          test_id: test.id,
+          section_name: section.name,
+          section_id: section.id,
+          section_order: sectionIndex + 1,
+          question_order: questionIndex + 1,
+          section_type,
+          fuseText: fullText,
         });
       });
     });
   });
 
-  console.log('📋 candidateQuestions.length →', candidateQuestions.length);
+  console.log('🔎 Indexed questions:', allQuestions.length);
 
-  // 3️⃣ If they provided keywords, fuzzy‐search them, otherwise return everything
-  let results: ProcessedQuestion[] = [];
+  // Step 2: Fuzzy search using raw input (not just parsed keywords)
+  const fuse = new Fuse(allQuestions, {
+    keys: ['fuseText'],
+    threshold: 0.4,
+  });
 
-  if (queryKeywords.trim()) {
-    const fuse = new Fuse(candidateQuestions, {
-      keys: ['fuseText'],
-      threshold: 0.4,      // loosen to e.g. 0.6 if you want more hits
-      includeScore: true,  // optional: see scores in the console
-    });
-    const fuseResults = fuse.search(queryKeywords);
-    console.log('🎯 fuseResults →', fuseResults.map(r => ({ id: r.item.id, score: r.score })));
-    results = fuseResults.map(r => r.item);
-  } else {
-    results = candidateQuestions as ProcessedQuestion[];
-  }
+  const fuseResults = fuse.search(searchTerm.toLowerCase());
+  const matchedQuestions = fuseResults.map(r => r.item);
 
-  console.log('✅ final results →', results.length);
+  console.log('🎯 Fuzzy match count:', matchedQuestions.length);
+  // Final result
+  return matchedQuestions;
+};
 
   setSearchResults(results);
   setSearchModalOpen(true);
