@@ -48,6 +48,11 @@ const [directQuestion, setDirectQuestion] = useState('');
 
 const [searchModalOpen, setSearchModalOpen] = useState(false);
 
+   // Dynamic background based on theme
+  const backgroundClasses = theme === 'dark' 
+    ? 'bg-gray-900' 
+    : 'bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100';
+  
 const handleSelect = (question: ProcessedQuestion) => {
   setSearchModalOpen(false);
   // navigate or trigger TripleReview for this question
@@ -125,10 +130,7 @@ const handleSearch = async () => {
     setIsTimeModeModal(false);
   };
 
-  // Dynamic background based on theme
-  const backgroundClasses = theme === 'dark' 
-    ? 'bg-gray-900' 
-    : 'bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100';
+ 
 
   return (
     <div className={`min-h-screen w-full transition-all duration-500 ${backgroundClasses}`}>
