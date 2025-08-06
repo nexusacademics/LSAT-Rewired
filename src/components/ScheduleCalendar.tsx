@@ -1,45 +1,31 @@
-// components/ScheduleCalendar.tsx
-import React from 'react';
+// ScheduleCalendar.tsx
+import React, { useState } from 'react';
+import FullCalendar from '@fullcalendar/react';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import timeGridPlugin from '@fullcalendar/timegrid';
+import interactionPlugin from '@fullcalendar/interaction';
 
-interface ScheduleItem {
-  weekStart: string;
-  topics: string[];
-  estimatedHours: number;
-}
+import '@fullcalendar/common/main.css';
+import '@fullcalendar/daygrid/main.css';
+import '@fullcalendar/timegrid/main.css';
 
-interface ScheduleCalendarProps {
-  schedule: ScheduleItem[];
-  setSchedule: (schedule: ScheduleItem[]) => void;
-}
-
-const ScheduleCalendar: React.FC<ScheduleCalendarProps> = ({ schedule }) => {
-  if (schedule.length === 0) {
-    return (
-      <div className="mt-8 text-slate-500 text-center">
-        No schedule yet. Click "Generate New Schedule" to get started!
-      </div>
-    );
-  }
+export default function ScheduleCalendar({ events }) {
+  const [currentView, setCurrentView] = useState('dayGridWeek');
 
   return (
-    <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
-      {schedule.map((week, idx) => (
-        <div key={idx} className="bg-white dark:bg-slate-700 p-4 rounded-xl shadow border">
-          <h3 className="font-semibold text-indigo-600 dark:text-indigo-300 mb-2">
-            Week of {week.weekStart}
-          </h3>
-          <ul className="list-disc list-inside text-slate-700 dark:text-slate-200">
-            {week.topics.map((topic, tIdx) => (
-              <li key={tIdx}>{topic}</li>
-            ))}
-          </ul>
-          <p className="mt-2 text-sm text-slate-500">
-            ⏱ {week.estimatedHours} hours
-          </p>
-        </div>
-      ))}
+    <div>
+      {/* View toggle buttons */}
+      <FullCalendar
+        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+        initialView={currentView}
+        headerToolbar={{
+          left: 'prev,next today',
+          center: 'title',
+          right: ''
+        }}
+        events={events}
+        height="auto"
+      />
     </div>
   );
-};
-
-export default ScheduleCalendar;
+}
