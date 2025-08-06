@@ -578,15 +578,7 @@ const handleSearch = () => {
 
 
       </div>
-      {/* Error Message for Direct Search */}
-          <div>
-          {errorMessage && (
-        <ErrorModal 
-          message={errorMessage} 
-          onClose={() => setErrorMessage("")} 
-        />
-      )}
-            </div>
+     
       </div>
   
   );
