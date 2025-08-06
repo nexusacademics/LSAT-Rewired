@@ -1,6 +1,11 @@
 import React from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 
+const [testDate, setTestDate] = useState('');
+const [startDate, setStartDate] = useState('');
+const [weeklyHours, setWeeklyHours] = useState('');
+
+
 export default function StudyScheduleBuilder() {
   const { theme } = useTheme();
   
