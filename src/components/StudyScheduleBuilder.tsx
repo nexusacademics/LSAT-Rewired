@@ -1,19 +1,10 @@
-// components/StudyScheduleBuilder.tsx
+/ StudyScheduleBuilder.tsx
 import React, { useState } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import ScheduleCalendar from './ScheduleCalendar';
 import GenerateScheduleModal from './GenerateScheduleModal';
-import FullCalendar from '@fullcalendar/react';
-import dayGridPlugin from '@fullcalendar/daygrid';
-import timeGridPlugin from '@fullcalendar/timegrid';
-import interactionPlugin from '@fullcalendar/interaction'; // for click/drag
 
-import '@fullcalendar/common/main.css';
-import '@fullcalendar/daygrid/main.css';
-import '@fullcalendar/timegrid/main.css';
-
-
-export default function ScheduleCalendar({ events }) {
+export default function StudyScheduleBuilder() {
   const [currentView, setCurrentView] = useState('dayGridWeek');
 
   return (
