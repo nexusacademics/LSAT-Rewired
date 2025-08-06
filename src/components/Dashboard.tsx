@@ -843,5 +843,31 @@ const DrillSection: React.FC<DrillSectionProps> = ({
   );
 
 };
+// Simple Error Modal Component
+interface ErrorModalProps {
+  message: string;
+  onClose: () => void;
+}
 
+const ErrorModal: React.FC<ErrorModalProps> = ({ message, onClose }) => {
+  const { theme } = useTheme();
+  
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className={`max-w-md w-full mx-4 p-6 rounded-lg shadow-lg ${
+        theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-white text-gray-900'
+      }`}>
+        <h3 className="text-lg font-semibold mb-4">Search Error</h3>
+        <p className="mb-6">{message}</p>
+        <Button 
+          variant="primary" 
+          onClick={onClose}
+          className="w-full"
+        >
+          OK
+        </Button>
+      </div>
+    </div>
+  );
+};
 export default Dashboard;
