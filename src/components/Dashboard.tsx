@@ -487,10 +487,12 @@ const handleSearch = () => {
                   <Button
                        size="default" 
                        className="w-full"
+                    
                        onClick={handleDirectSearch}
                         disabled={
                                 !directTest.trim() || !directSection.trim() || !directQuestion.trim()
                       } >
+                      <Search className="h-5 w-5" />
                       Submit
                     </Button>
                 </div>
@@ -538,7 +540,7 @@ const handleSearch = () => {
                   }`}
                   aria-label="Search"
                 >
-                  <Search className="h-5 w-5" />
+                  
                 </button>
               </div>
 
