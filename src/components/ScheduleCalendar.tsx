@@ -5,10 +5,11 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 
-import '@fullcalendar/common/index.css';
-import '@fullcalendar/daygrid/index.css';
-import '@fullcalendar/timegrid/index.css';
-import '@fullcalendar/interaction/index.css';  // if you need interaction styles
+import '@fullcalendar/core/styles/main.css';
+import '@fullcalendar/daygrid/styles/main.css';
+import '@fullcalendar/timegrid/styles/main.css';
+
+import '@fullcalendar/interaction/styles/main.css';    // if you need interaction styles
 
 
 export default function ScheduleCalendar({ events }) {
