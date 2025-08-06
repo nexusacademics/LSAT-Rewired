@@ -66,13 +66,12 @@ const Dashboard: React.FC<DashboardProps> = ({
     });
   };
 
+
+const [errorMessage, setErrorMessage] = useState("");
   
   //Direct Search
  const handleDirectSearch = () => {
-  if (!directTest || !directSection || !directQuestion) {
-    alert("Please fill all search fields.");
-    return;
-  }
+
 
   // Assuming allProcessedTests is an object with test ids as keys
   const testsArray = Object.values(allProcessedTests);
@@ -83,24 +82,24 @@ const Dashboard: React.FC<DashboardProps> = ({
     return match && match[0] === directTest.trim();
   });
 
-  if (!selectedTest) {
-    alert("PrepTest not found.");
-    return;
-  }
+ if (!selectedTest) {
+  setErrorMessage("PrepTest not found. Please check the test number and try again.");
+  return;
+}
 
   const sectionIndex = parseInt(directSection, 10) - 1;
   const questionIndex = parseInt(directQuestion, 10) - 1;
 
   const selectedSection = selectedTest.sections?.[sectionIndex];
   if (!selectedSection) {
-    alert("Section not found.");
+     setErrorMessage("Section number not found. Please check the section number and try again.");
     return;
   }
 
   const selectedQuestion = selectedSection.questions?.[questionIndex];
   if (!selectedQuestion) {
-    alert("Question not found.");
-    return;
+    setErrorMessage("Question number not found. Please check the question number and try again.");
+  return;
   }
 
   // Construct a question object with necessary fields for SearchResultsModal
@@ -539,7 +538,6 @@ const handleSearch = () => {
                   }`}
                   aria-label="Search"
                 >
-                  
                 </button>
               </div>
 
@@ -707,6 +705,15 @@ const SessionSection: React.FC<SessionSectionProps> = ({
       );
     }
 
+    //Error Message for Direct Search
+    
+    {errorMessage && (
+  <ErrorModal 
+    message={errorMessage} 
+    onClose={() => setErrorMessage("")} 
+  />
+)}
+    
     // Archived sessions
     return (
       <Card 
