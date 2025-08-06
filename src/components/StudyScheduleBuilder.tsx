@@ -3,6 +3,11 @@ import React, { useState } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import ScheduleCalendar from './ScheduleCalendar';
 import GenerateScheduleModal from './GenerateScheduleModal';
+import FullCalendar from '@fullcalendar/react';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import '@fullcalendar/common/main.css';
+import '@fullcalendar/daygrid/main.css';
+
 
 export default function StudyScheduleBuilder() {
   const { theme } = useTheme();
