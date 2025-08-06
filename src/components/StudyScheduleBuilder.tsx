@@ -13,6 +13,8 @@ import interactionPlugin from '@fullcalendar/interaction';
 import '@fullcalendar/common/index.css';
 import '@fullcalendar/daygrid/index.css';
 import '@fullcalendar/timegrid/index.css';
+import '@fullcalendar/interaction/index.css';  // if you need interaction styles
+
 
 export default function StudyScheduleBuilder() {
   const [currentView, setCurrentView] = useState('dayGridWeek');
