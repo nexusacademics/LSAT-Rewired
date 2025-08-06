@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import ScheduleCalendar from './ScheduleCalendar';
 import GenerateScheduleModal from './GenerateScheduleModal';
+
+
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
