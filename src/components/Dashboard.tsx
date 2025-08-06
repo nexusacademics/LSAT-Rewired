@@ -487,12 +487,11 @@ const handleSearch = () => {
                   <Button
                        size="default" 
                        className="w-full"
-                    
                        onClick={handleDirectSearch}
                         disabled={
                                 !directTest.trim() || !directSection.trim() || !directQuestion.trim()
                       } >
-                      <Search className="h-5 w-5" />
+                      <Search className="h-4 w-4 mr-2" />
                       Submit
                     </Button>
                 </div>
