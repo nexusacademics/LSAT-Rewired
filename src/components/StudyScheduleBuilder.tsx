@@ -6,7 +6,9 @@ import GenerateScheduleModal from './GenerateScheduleModal';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import '@fullcalendar/common/main.css';
-import '@fullcalendar/daygrid/main.css';
+import '@fullcalendar/core/index.css';
+import '@fullcalendar/daygrid/index.css';
+
 
 
 export default function StudyScheduleBuilder() {
