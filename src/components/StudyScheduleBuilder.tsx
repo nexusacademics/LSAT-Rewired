@@ -54,6 +54,8 @@ export default function StudyScheduleBuilder() {
               <input
                 type="date"
                 id="testDate"
+                 value={testDate}
+  onChange={(e) => setTestDate(e.target.value)}
                 className={`w-full rounded-xl border px-4 py-3 text-lg transition-all duration-200 focus:outline-none focus:ring-4 focus:scale-[1.02] ${inputClasses}`}
               />
             </div>
@@ -65,6 +67,8 @@ export default function StudyScheduleBuilder() {
               <input
                 type="date"
                 id="startDate"
+                 value={startDate}
+  onChange={(e) => setStartDate(e.target.value)}
                 className={`w-full rounded-xl border px-4 py-3 text-lg transition-all duration-200 focus:outline-none focus:ring-4 focus:scale-[1.02] ${inputClasses}`}
               />
             </div>
@@ -76,6 +80,8 @@ export default function StudyScheduleBuilder() {
               <input
                 type="number"
                 id="weeklyHours"
+                 value={weeklyHours}
+  onChange={(e) => setWeeklyHours(e.target.value)}
                 min={1}
                 placeholder="e.g., 15"
                 className={`w-full rounded-xl border px-4 py-3 text-lg transition-all duration-200 focus:outline-none focus:ring-4 focus:scale-[1.02] ${inputClasses}`}
