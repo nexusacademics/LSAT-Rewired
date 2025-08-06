@@ -1,4 +1,4 @@
-/ StudyScheduleBuilder.tsx
+// StudyScheduleBuilder.tsx
 import React, { useState } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import ScheduleCalendar from './ScheduleCalendar';
