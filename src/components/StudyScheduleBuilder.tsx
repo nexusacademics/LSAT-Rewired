@@ -2,14 +2,13 @@ import React, { useState } from 'react';
 
 import { useTheme } from '../contexts/ThemeContext';
 
-const [testDate, setTestDate] = useState('');
-const [startDate, setStartDate] = useState('');
-const [weeklyHours, setWeeklyHours] = useState('');
-
 
 export default function StudyScheduleBuilder() {
   const { theme } = useTheme();
 
+  const [testDate, setTestDate] = useState('');
+const [startDate, setStartDate] = useState('');
+const [weeklyHours, setWeeklyHours] = useState('');
   // --- Async function to call Gemini API ---
   async function generateSchedule() {
     const prompt = `Create a weekly study schedule for a student preparing for a test on ${testDate}, starting on ${startDate}, with ${weeklyHours} hours available per week. Output should include day-by-day entries with topic and duration. Format the result as a JSON array of {title, start, end, description}.`;
