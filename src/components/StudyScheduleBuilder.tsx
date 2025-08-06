@@ -5,7 +5,7 @@ import ScheduleCalendar from './ScheduleCalendar';
 import GenerateScheduleModal from './GenerateScheduleModal';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
-import '@fullcalendar/daygrid/main.css';
+
 
 
 
