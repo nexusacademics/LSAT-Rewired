@@ -11,6 +11,8 @@ export default function ScheduleCalendar({ events }) {
   const [currentView, setCurrentView] = useState('dayGridWeek');
 
   return (
+      <div className={`min-h-screen p-6 ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}>
+      <div className="max-w-7xl mx-auto space-y-8">
     <div>
       {/* View toggle buttons */}
       <FullCalendar
@@ -25,5 +27,7 @@ export default function ScheduleCalendar({ events }) {
         height="auto"
       />
     </div>
+      </div>
+      </div>
   );
 }
