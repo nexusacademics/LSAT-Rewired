@@ -8,48 +8,35 @@ export default function StudyScheduleBuilder() {
   const { theme } = useTheme();
 
   const [testDate, setTestDate] = useState('');
-const [startDate, setStartDate] = useState('');
-const [weeklyHours, setWeeklyHours] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [weeklyHours, setWeeklyHours] = useState('');
   // --- Async function to call Gemini API ---
- async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: "Method not allowed" });
-  }
+  async function generateSchedule() {
+    const prompt = `Create a weekly study schedule for a student preparing for a test on ${testDate}, starting on ${startDate}, with ${weeklyHours} hours available per week. Output as a JSON array of {title, start, end, description}.`;
 
-  try {
-    const { prompt } = req.body;
-
-    if (!prompt) {
-      return res.status(400).json({ error: "Missing prompt" });
-    }
-
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
-
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const text = response.text();
-
-    // Try to parse JSON if it's a clean array/object
-    let schedule;
     try {
-      schedule = JSON.parse(text);
-    } catch (err) {
-      // Try to extract JSON inside markdown or code block
-      const match = text.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
-      if (match) {
-        schedule = JSON.parse(match[1]);
-      } else {
-        return res.status(500).json({ error: "Unable to parse Gemini response as JSON", raw: text });
-      }
-    }
+      const response = await fetch('/api/gemini-schedule', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt }),
+      });
 
-    return res.status(200).json({ schedule });
-  } catch (error) {
-    console.error("Gemini error:", error);
-    return res.status(500).json({ error: "Internal Server Error" });
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log('Schedule received:', data);
+
+      if (data.schedule) {
+        setSchedule(data.schedule);
+      } else {
+        console.error('No schedule found in response', data);
+      }
+    } catch (error) {
+      console.error('Error generating schedule:', error);
+    }
   }
-}
   
   // Background and container styling
   const backgroundClasses = theme === 'dark' 
