@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 
 import { useTheme } from '../contexts/ThemeContext';
 
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 export default function StudyScheduleBuilder() {
   const { theme } = useTheme();
