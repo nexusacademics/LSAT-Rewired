@@ -578,6 +578,15 @@ const handleSearch = () => {
 
 
       </div>
+      {/* Error Message for Direct Search */}
+          <div>
+          {errorMessage && (
+        <ErrorModal 
+          message={errorMessage} 
+          onClose={() => setErrorMessage("")} 
+        />
+      )}
+            </div>
       </div>
   
   );
@@ -704,15 +713,6 @@ const SessionSection: React.FC<SessionSectionProps> = ({
         </Card>
       );
     }
-
-    //Error Message for Direct Search
-    
-    {errorMessage && (
-  <ErrorModal 
-    message={errorMessage} 
-    onClose={() => setErrorMessage("")} 
-  />
-)}
     
     // Archived sessions
     return (
