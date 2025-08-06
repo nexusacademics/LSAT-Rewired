@@ -10,31 +10,37 @@ export default function StudyScheduleBuilder() {
   const [testDate, setTestDate] = useState('');
   const [startDate, setStartDate] = useState('');
   const [weeklyHours, setWeeklyHours] = useState('');
-  // --- Async function to call Gemini API ---
+  const [schedule, setSchedule] = useState(null);
+
   async function generateSchedule() {
-    const prompt = `Create a weekly study schedule for a student preparing for a test on ${testDate}, starting on ${startDate}, with ${weeklyHours} hours available per week. Output as a JSON array of {title, start, end, description}.`;
-
     try {
-      const response = await fetch('/api/gemini-schedule', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt }),
-      });
+      const prompt = `Create a weekly study schedule for a student preparing for a test on ${testDate}, starting on ${startDate}, with ${weeklyHours} hours available per week. Output as a JSON array of {title, start, end, description}.`;
 
-      if (!response.ok) {
-        throw new Error(`API error: ${response.status}`);
+      const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY || '');
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
+
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      const text = await response.text();
+
+      let parsedSchedule;
+      try {
+        parsedSchedule = JSON.parse(text);
+      } catch {
+        // Try extracting JSON inside code blocks
+        const match = text.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
+        if (match) {
+          parsedSchedule = JSON.parse(match[1]);
+        } else {
+          console.error("Could not parse schedule JSON:", text);
+          return;
+        }
       }
 
-      const data = await response.json();
-      console.log('Schedule received:', data);
-
-      if (data.schedule) {
-        setSchedule(data.schedule);
-      } else {
-        console.error('No schedule found in response', data);
-      }
+      setSchedule(parsedSchedule);
+      console.log("Generated schedule:", parsedSchedule);
     } catch (error) {
-      console.error('Error generating schedule:', error);
+      console.error("Error generating schedule:", error);
     }
   }
   
