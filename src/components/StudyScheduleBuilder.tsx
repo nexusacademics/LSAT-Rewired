@@ -104,8 +104,10 @@ const [weeklyHours, setWeeklyHours] = useState('');
           </div>
           
           <button
+             onclick={generateSchedule}
             className={`mt-8 w-full font-bold py-4 px-6 rounded-xl text-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] ${buttonClasses}`}
           >
+           
             ✨ Generate My Schedule
           </button>
           
