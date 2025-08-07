@@ -169,61 +169,21 @@ Skip weekends or include lighter study loads based on the intensity level.`;
       
       const result = await model.generateContent(prompt);
       const text = result.response.text();
-      
-      // Log the full response for debugging
-      console.log('AI Response:', text);
-      
       const jsonStart = text.indexOf('[');
       const jsonEnd = text.lastIndexOf(']') + 1;
       
       if (jsonStart === -1 || jsonEnd === 0) {
-        console.error('No JSON array found in response');
-        throw new Error('AI did not return a valid JSON array. Please try again.');
+        throw new Error('No valid JSON found in AI response');
       }
       
       const jsonString = text.substring(jsonStart, jsonEnd);
-      console.log('Extracted JSON:', jsonString);
+      const schedule = JSON.parse(jsonString);
       
-      let schedule;
-      try {
-        schedule = JSON.parse(jsonString);
-      } catch (parseError) {
-        console.error('JSON parsing failed:', parseError);
-        throw new Error('AI returned invalid JSON format. Please try again.');
-      }
-      
-      if (!Array.isArray(schedule) || schedule.length === 0) {
-        throw new Error('AI returned empty or invalid schedule. Please try again.');
-      }
-      
-      // Validate the schedule format
-      const isValidFormat = schedule.every(item => 
-        item.date && item.tasks && Array.isArray(item.tasks) && typeof item.estimatedHours === 'number'
-      );
-      
-      if (!isValidFormat) {
-        console.error('Invalid schedule format:', schedule);
-        throw new Error('AI returned schedule in unexpected format. Please try again.');
-      }
-      
-      console.log('Generated schedule:', schedule);
       onScheduleGenerated(schedule);
       onClose();
-    } catch (err: any) {
+    } catch (err) {
       console.error('Error generating schedule:', err);
-      
-      // More specific error messages
-      if (err.message?.includes('API key')) {
-        setError('Invalid API key. Please check your Gemini API configuration.');
-      } else if (err.message?.includes('quota') || err.message?.includes('limit')) {
-        setError('API quota exceeded. Please try again later.');
-      } else if (err.message?.includes('network') || err.name === 'NetworkError') {
-        setError('Network error. Please check your connection and try again.');
-      } else if (err.message?.includes('JSON') || err.message?.includes('format')) {
-        setError('AI response format error. Please try generating again.');
-      } else {
-        setError(`Failed to generate schedule: ${err.message || 'Unknown error occurred'}`);
-      }
+      setError('Failed to generate schedule. Please check your inputs and try again.');
     } finally {
       setLoading(false);
     }
