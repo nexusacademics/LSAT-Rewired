@@ -33,7 +33,7 @@ const MockCalendar = ({ events, view, onEventClick, onDateClick }) => {
   const weekDates = getWeekDates(currentDate);
 
   return (
-    <div className={`rounded-xl border overflow-hidden ${isDarkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-200'}`}>
+    <div className={`rounded-xl pt-10 border overflow-hidden ${isDarkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-200'}`}>
       {/* Calendar Header */}
       <div className={`flex items-center justify-between p-4 border-b ${isDarkMode ? 'border-slate-700 bg-slate-900' : 'border-gray-200 bg-gray-50'}`}>
         <div className="flex items-center space-x-4">
