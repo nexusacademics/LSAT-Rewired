@@ -258,18 +258,7 @@ const StudyScheduleBuilder = () => {
           </div>
           
           <div className="flex items-center space-x-4">
-            {/* Theme toggle */}
-            <button
-              onClick={toggleTheme}
-              className={`flex items-center space-x-2 px-4 py-2 border rounded-lg transition-colors ${
-                isDarkMode 
-                  ? 'bg-slate-800 border-slate-700 hover:bg-slate-700 text-slate-300'
-                  : 'bg-white border-gray-200 hover:bg-gray-50 text-slate-700'
-              }`}
-            >
-              {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-              <span className="hidden sm:inline">{isDarkMode ? 'Light' : 'Dark'}</span>
-            </button>
+           
             
             {/* Stats toggle */}
             <button
