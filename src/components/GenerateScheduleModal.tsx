@@ -126,7 +126,7 @@ const GenerateScheduleModal: React.FC<GenerateScheduleModalProps> = ({
       const intensityLevel = intensityPresets[studyIntensity as keyof typeof intensityPresets].label;
 
       // Real AI implementation - uncomment this section to use GoogleGenerativeAI:
-      /*
+      
       const { GoogleGenerativeAI } = await import('@google/generative-ai');
       const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY || '');
       const model = genAI.getGenerativeModel({ model: 'gemini-1.5-pro' });
@@ -164,9 +164,9 @@ Ensure topics are specific and actionable (e.g., "Logic Games - Sequencing Games
       const jsonEnd = text.lastIndexOf(']') + 1;
       const jsonString = text.substring(jsonStart, jsonEnd);
       const schedule = JSON.parse(jsonString);
-      */
+      
 
-      // Mock implementation for demo - replace with above when ready
+      /* Mock implementation for demo - replace with above when ready
       const schedule = await generateMockSchedule(selectedAreas, studyWeeks);
       
       onScheduleGenerated(schedule);
@@ -249,7 +249,9 @@ Ensure topics are specific and actionable (e.g., "Logic Games - Sequencing Games
   };
 
   if (!isOpen) return null;
+*/
 
+      
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
       <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
