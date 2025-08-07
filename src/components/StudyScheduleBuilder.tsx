@@ -545,12 +545,12 @@ const MockCalendar = ({ events, view, onEventClick, onDateClick }) => {
 
   return (
     <div className={`rounded-xl border overflow-hidden ${
-      isDarkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-200'
-    }`}>
+      isDarkMode ? 'bg-slate-900 border-slate-700' : 'bg-white border-gray-200'
+    }`} style={{ backgroundColor: isDarkMode ? '#0f172a' : '#ffffff' }}>
       {/* Calendar Header */}
       <div className={`flex items-center justify-between p-4 border-b ${
-        isDarkMode ? 'border-slate-700 bg-slate-900' : 'border-gray-200 bg-gray-50'
-      }`}>
+        isDarkMode ? 'border-slate-700' : 'border-gray-200'
+      }`} style={{ backgroundColor: isDarkMode ? '#1e293b' : '#f9fafb' }}>>
         <div className="flex items-center space-x-4">
           <button
             onClick={() => {
@@ -597,17 +597,17 @@ const MockCalendar = ({ events, view, onEventClick, onDateClick }) => {
       </div>
 
       {/* Week View */}
-      <div className={`grid grid-cols-7 ${isDarkMode ? 'divide-slate-700' : 'divide-gray-200'} divide-x`}>
+      <div className={`grid grid-cols-7 ${isDarkMode ? 'divide-slate-700' : 'divide-gray-200'} divide-x`} style={{ backgroundColor: isDarkMode ? '#0f172a' : '#ffffff' }}>
         {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, index) => (
           <div key={day} className="min-h-[120px]">
             <div className={`p-2 text-center font-medium text-sm border-b ${
               isDarkMode 
-                ? 'text-slate-300 border-slate-700 bg-slate-800'
-                : 'text-slate-600 border-gray-200 bg-gray-50'
-            }`}>
+                ? 'text-slate-300 border-slate-700' 
+                : 'text-slate-600 border-gray-200'
+            }`} style={{ backgroundColor: isDarkMode ? '#1e293b' : '#f9fafb' }}>
               {day} {weekDates[index]?.getDate()}
             </div>
-            <div className={`p-2 space-y-1 min-h-[88px] ${isDarkMode ? 'bg-slate-800' : 'bg-white'}`}>
+            <div className={`p-2 space-y-1 min-h-[88px]`} style={{ backgroundColor: isDarkMode ? '#0f172a' : '#ffffff' }}>
               {getEventsForDate(weekDates[index]).map((event, eventIndex) => (
                 <div
                   key={eventIndex}
