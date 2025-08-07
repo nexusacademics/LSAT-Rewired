@@ -200,7 +200,7 @@ const GenerateScheduleModal: React.FC<GenerateScheduleModalProps> = ({
       };
 
       // In a real implementation, you would use:
-      /*
+      
       const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY || '');
       const model = genAI.getGenerativeModel({ model: 'gemini-1.5-pro' });
       
@@ -237,10 +237,10 @@ Ensure topics are specific and actionable (e.g., "Logic Games - Sequencing Games
       const jsonEnd = text.lastIndexOf(']') + 1;
       const jsonString = text.substring(jsonStart, jsonEnd);
       const schedule = JSON.parse(jsonString);
-      */
+      
 
       // For demo, use mock generation
-      const schedule = await mockAIGeneration();
+     /* const schedule = await mockAIGeneration();
       
       onScheduleGenerated(schedule);
       onClose();
@@ -253,7 +253,7 @@ Ensure topics are specific and actionable (e.g., "Logic Games - Sequencing Games
   };
 
   if (!isOpen) return null;
-
+*/
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
       <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
