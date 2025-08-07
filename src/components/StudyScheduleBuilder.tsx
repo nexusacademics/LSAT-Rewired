@@ -247,7 +247,9 @@ const StudyScheduleBuilder = () => {
 
   return (
     <div className={`min-h-screen transition-colors duration-300 ${isDarkMode ? 'bg-slate-900' : 'bg-gray-50'}`}>
-  <div className="w-full pt-10 px-4 pb-4">
+      <div className="w-full pt-10 px-4 pb-4">
+            <div className="max-w-[1600px] mx-auto space-y-6">
+
         {/* Header */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between space-y-4 lg:space-y-0">
           <div>
@@ -598,6 +600,7 @@ const StudyScheduleBuilder = () => {
           </div>
         )}
       </div>
+    </div>
     </div>
   );
 };
