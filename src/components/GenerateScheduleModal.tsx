@@ -125,14 +125,12 @@ const GenerateScheduleModal: React.FC<GenerateScheduleModalProps> = ({
       const studyWeeks = Math.floor((new Date(testDate).getTime() - new Date(startDate).getTime()) / (1000 * 60 * 60 * 24 * 7));
       const intensityLevel = intensityPresets[studyIntensity as keyof typeof intensityPresets].label;
 
-      // Real AI implementation - uncomment this section to use GoogleGenerativeAI:
-      
+      // Import and use GoogleGenerativeAI
       const { GoogleGenerativeAI } = await import('@google/generative-ai');
       const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY || '');
       const model = genAI.getGenerativeModel({ model: 'gemini-1.5-pro' });
       
-      const prompt = `
-You are an expert LSAT study planner. Create a comprehensive week-by-week study schedule with the following requirements:
+      const prompt = `You are an expert LSAT study planner. Create a comprehensive week-by-week study schedule with the following requirements:
 
 Study Period: ${startDate} to ${testDate} (${studyWeeks} weeks)
 Weekly Study Hours: ${weeklyHours}
@@ -155,19 +153,19 @@ Output ONLY a JSON array with objects in this exact format:
   }
 ]
 
-Ensure topics are specific and actionable (e.g., "Logic Games - Sequencing Games" not just "Logic Games").
-      `.trim();
+Ensure topics are specific and actionable (e.g., "Logic Games - Sequencing Games" not just "Logic Games").`;
       
       const result = await model.generateContent(prompt);
       const text = result.response.text();
       const jsonStart = text.indexOf('[');
       const jsonEnd = text.lastIndexOf(']') + 1;
+      
+      if (jsonStart === -1 || jsonEnd === 0) {
+        throw new Error('No valid JSON found in AI response');
+      }
+      
       const jsonString = text.substring(jsonStart, jsonEnd);
       const schedule = JSON.parse(jsonString);
-      
-
-      /* Mock implementation for demo - replace with above when ready
-      const schedule = await generateMockSchedule(selectedAreas, studyWeeks);
       
       onScheduleGenerated(schedule);
       onClose();
@@ -179,79 +177,8 @@ Ensure topics are specific and actionable (e.g., "Logic Games - Sequencing Games
     }
   };
 
-  const generateMockSchedule = async (selectedAreas: string[], studyWeeks: number) => {
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    // Generate a realistic schedule based on inputs
-    const schedule = [];
-    for (let i = 0; i < studyWeeks; i++) {
-      const weekStart = new Date(startDate);
-      weekStart.setDate(weekStart.getDate() + (i * 7));
-      
-      const isEarlyWeeks = i < studyWeeks * 0.4;
-      const isMidWeeks = i >= studyWeeks * 0.4 && i < studyWeeks * 0.8;
-      const isLateWeeks = i >= studyWeeks * 0.8;
-      
-      let topics = [];
-      
-      // Distribute topics based on selected focus areas and study phase
-      if (selectedAreas.includes('Logic Games (Analytical Reasoning)')) {
-        if (isEarlyWeeks) {
-          topics.push('Logic Games - Basic Setup and Diagrams');
-        } else if (isMidWeeks) {
-          topics.push('Logic Games - Advanced Inferences');
-        } else {
-          topics.push('Logic Games - Timed Practice');
-        }
-      }
-      
-      if (selectedAreas.includes('Logical Reasoning')) {
-        if (isEarlyWeeks) {
-          topics.push('Logical Reasoning - Assumptions and Strengthen');
-        } else if (isMidWeeks) {
-          topics.push('Logical Reasoning - Weaken and Flaw Questions');
-        } else {
-          topics.push('Logical Reasoning - Mixed Practice');
-        }
-      }
-      
-      if (selectedAreas.includes('Reading Comprehension')) {
-        if (isEarlyWeeks) {
-          topics.push('Reading Comprehension - Main Point and Structure');
-        } else if (isMidWeeks) {
-          topics.push('Reading Comprehension - Inference and Detail Questions');
-        } else {
-          topics.push('Reading Comprehension - Comparative Passages');
-        }
-      }
-      
-      if (selectedAreas.includes('Writing Sample') && i % 3 === 0) {
-        topics.push('Writing Sample - Practice and Review');
-      }
-      
-      // Add practice tests in later weeks
-      if (isLateWeeks && i % 2 === 0) {
-        topics = [`Full Practice Test #${Math.floor((i - studyWeeks * 0.8) / 2) + 1}`, 'Test Review and Analysis'];
-      }
-      
-      // Limit to 2 main topics per week to avoid overwhelm
-      topics = topics.slice(0, 2);
-      
-      schedule.push({
-        weekStart: weekStart.toISOString().split('T')[0],
-        topics: topics.length > 0 ? topics : ['LSAT Review and Practice'],
-        estimatedHours: parseInt(weeklyHours)
-      });
-    }
-    
-    return schedule;
-  };
-
   if (!isOpen) return null;
-*/
 
-      
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
       <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
