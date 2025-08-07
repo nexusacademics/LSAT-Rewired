@@ -659,23 +659,10 @@ const EnhancedGenerateScheduleModal = ({ isOpen, onClose, onScheduleGenerated })
   );
 };
 
-// Demo ThemeProvider for standalone use - replace with your actual ThemeProvider
-const DemoThemeProvider = ({ children }) => {
-  const [theme, setTheme] = useState('light');
-  const toggleTheme = () => setTheme(prev => prev === 'light' ? 'dark' : 'light');
-  
-  return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
-      {children}
-    </ThemeContext.Provider>
-  );
-};
 
-// Wrap the component with theme provider for demo
-const App = () => (
-  <DemoThemeProvider>
+import { useTheme } from '../../contexts/ThemeContext';
+
+
     <StudyScheduleBuilder />
-  </DemoThemeProvider>
-);
 
 export default App;
