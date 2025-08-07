@@ -10,11 +10,18 @@ const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useState('light');
   const toggleTheme = () => setTheme(prev => prev === 'light' ? 'dark' : 'light');
   
+  useEffect(() => {
+    // Apply theme class to document root
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [theme]);
+  
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
-      <div className={theme}>
-        {children}
-      </div>
+      {children}
     </ThemeContext.Provider>
   );
 };
@@ -590,17 +597,17 @@ const MockCalendar = ({ events, view, onEventClick, onDateClick }) => {
       </div>
 
       {/* Week View */}
-      <div className={`grid grid-cols-7 divide-x ${isDarkMode ? 'divide-slate-700' : 'divide-gray-200'}`}>
+      <div className={`grid grid-cols-7 ${isDarkMode ? 'divide-slate-700' : 'divide-gray-200'} divide-x`}>
         {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, index) => (
           <div key={day} className="min-h-[120px]">
             <div className={`p-2 text-center font-medium text-sm border-b ${
               isDarkMode 
-                ? 'text-slate-400 border-slate-700 bg-slate-800'
+                ? 'text-slate-300 border-slate-700 bg-slate-800'
                 : 'text-slate-600 border-gray-200 bg-gray-50'
             }`}>
               {day} {weekDates[index]?.getDate()}
             </div>
-            <div className={`p-2 space-y-1 ${isDarkMode ? 'bg-slate-800' : 'bg-white'}`}>
+            <div className={`p-2 space-y-1 min-h-[88px] ${isDarkMode ? 'bg-slate-800' : 'bg-white'}`}>
               {getEventsForDate(weekDates[index]).map((event, eventIndex) => (
                 <div
                   key={eventIndex}
@@ -608,15 +615,15 @@ const MockCalendar = ({ events, view, onEventClick, onDateClick }) => {
                   className={`p-2 rounded-md text-xs cursor-pointer transition-all hover:shadow-md ${
                     event.section === 'Fundamentals' 
                       ? isDarkMode 
-                        ? 'bg-blue-900/30 text-blue-200 hover:bg-blue-900/50' 
-                        : 'bg-blue-100 text-blue-800 hover:bg-blue-200'
+                        ? 'bg-blue-900/40 text-blue-200 hover:bg-blue-900/60 border border-blue-800' 
+                        : 'bg-blue-100 text-blue-800 hover:bg-blue-200 border border-blue-200'
                       : event.section === 'Practice' 
                       ? isDarkMode 
-                        ? 'bg-green-900/30 text-green-200 hover:bg-green-900/50'
-                        : 'bg-green-100 text-green-800 hover:bg-green-200'
+                        ? 'bg-green-900/40 text-green-200 hover:bg-green-900/60 border border-green-800'
+                        : 'bg-green-100 text-green-800 hover:bg-green-200 border border-green-200'
                       : isDarkMode 
-                        ? 'bg-orange-900/30 text-orange-200 hover:bg-orange-900/50'
-                        : 'bg-orange-100 text-orange-800 hover:bg-orange-200'
+                        ? 'bg-orange-900/40 text-orange-200 hover:bg-orange-900/60 border border-orange-800'
+                        : 'bg-orange-100 text-orange-800 hover:bg-orange-200 border border-orange-200'
                   }`}
                 >
                   <div className="font-medium truncate">{event.title}</div>
@@ -632,6 +639,14 @@ const MockCalendar = ({ events, view, onEventClick, onDateClick }) => {
                   </div>
                 </div>
               ))}
+              {/* Empty state for days with no events */}
+              {getEventsForDate(weekDates[index]).length === 0 && (
+                <div className={`p-2 text-xs text-center opacity-50 ${
+                  isDarkMode ? 'text-slate-500' : 'text-gray-400'
+                }`}>
+                  No sessions
+                </div>
+              )}
             </div>
           </div>
         ))}
@@ -743,7 +758,7 @@ const StudyScheduleBuilder = () => {
   };
 
   return (
-    <div className={`transition-colors duration-300 ${isDarkMode ? 'bg-slate-900' : 'bg-gray-50'}`}>
+    <div className={`min-h-screen transition-colors duration-300 ${isDarkMode ? 'dark:bg-slate-900 bg-slate-900' : 'bg-gray-50'}`}>
       <div className="w-full pt-10 px-4 pb-4">
         <div className="max-w-[1600px] mx-auto space-y-6">
 
