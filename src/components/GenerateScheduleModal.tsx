@@ -52,7 +52,7 @@ const GenerateScheduleModal: React.FC<GenerateScheduleModalProps> = ({
   // Real-time validation
   useEffect(() => {
     validateForm();
-  }, [testDate, startDate, weeklyHours, focusAreas]);
+  }, [testDate, startDate, weeklyHours]);
 
   const validateForm = () => {
     const errors: {[key: string]: string} = {};
@@ -81,12 +81,6 @@ const GenerateScheduleModal: React.FC<GenerateScheduleModalProps> = ({
       errors.weeklyHours = 'Weekly hours must be at least 1';
     } else if (hours > 40) {
       errors.weeklyHours = 'We recommend no more than 40 hours per week';
-    }
-
-    // Check if at least one focus area is selected
-    const hasSelectedAreas = Object.values(focusAreas).some(selected => selected);
-    if (!hasSelectedAreas) {
-      errors.focusAreas = 'Please select at least one focus area';
     }
     
     setValidationErrors(errors);
@@ -127,12 +121,6 @@ const GenerateScheduleModal: React.FC<GenerateScheduleModalProps> = ({
             default: return area;
           }
         });
-
-      // Ensure at least one focus area is selected
-      if (selectedAreas.length === 0) {
-        setError('Please select at least one focus area.');
-        return;
-      }
 
       const studyWeeks = Math.floor((new Date(testDate).getTime() - new Date(startDate).getTime()) / (1000 * 60 * 60 * 24 * 7));
       const totalDays = Math.floor((new Date(testDate).getTime() - new Date(startDate).getTime()) / (1000 * 60 * 60 * 24));
@@ -219,20 +207,7 @@ Skip weekends or include lighter study loads based on the intensity level.`;
       }
       
       console.log('Generated schedule:', schedule);
-      
-      // Transform schedule to match expected format if needed
-      const formattedSchedule = schedule.map(item => ({
-        date: item.date,
-        tasks: Array.isArray(item.tasks) ? item.tasks : [item.tasks].filter(Boolean),
-        topics: Array.isArray(item.tasks) ? item.tasks : [item.tasks].filter(Boolean), // Backward compatibility
-        estimatedHours: item.estimatedHours || 0,
-        weekStart: item.date, // Backward compatibility
-        section: item.section || 'Study',
-        difficulty: item.difficulty || 'Mixed'
-      }));
-      
-      console.log('Formatted schedule for parent:', formattedSchedule);
-      onScheduleGenerated(formattedSchedule);
+      onScheduleGenerated(schedule);
       onClose();
     } catch (err: any) {
       console.error('Error generating schedule:', err);
@@ -408,28 +383,6 @@ Skip weekends or include lighter study loads based on the intensity level.`;
                   { key: 'writing', label: 'Writing Sample', icon: BookOpen, desc: 'Essay preparation' }
                 ].map(area => (
                   <label key={area.key} className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50 dark:hover:bg-slate-700 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={focusAreas[area.key as keyof typeof focusAreas]}
-                      onChange={(e) => setFocusAreas(prev => ({ ...prev, [area.key]: e.target.checked }))}
-                      className="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500"
-                    />
-                    <area.icon className="w-5 h-5 text-slate-600 dark:text-slate-400" />
-                    <div>
-                      <div className="font-medium text-slate-800 dark:text-white">{area.label}</div>
-                      <div className="text-sm text-slate-600 dark:text-slate-400">{area.desc}</div>
-                    </div>
-                  </label>
-                ))}
-              </div>
-              
-              {validationErrors.focusAreas && (
-                <p className="mt-1 text-sm text-red-500 flex items-center">
-                  <AlertCircle className="w-4 h-4 mr-1" />
-                  {validationErrors.focusAreas}
-                </p>
-              )}
-            </div>border rounded-lg hover:bg-gray-50 dark:hover:bg-slate-700 cursor-pointer">
                     <input
                       type="checkbox"
                       checked={focusAreas[area.key as keyof typeof focusAreas]}
