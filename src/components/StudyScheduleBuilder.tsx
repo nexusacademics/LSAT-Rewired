@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, Clock, Target, TrendingUp, BookOpen, Scale, Brain, Plus, Filter, Download, Settings, Sun, Moon, BarChart3 } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
+import GenerateScheduleModal from './GenerateScheduleModal'; // adjust path as needed
 
 // Mock FullCalendar replacement for demo
 const MockCalendar = ({ events, view, onEventClick, onDateClick }) => {
@@ -500,7 +501,7 @@ const StudyScheduleBuilder = () => {
 
         {/* Enhanced Modal Import */}
         {isModalOpen && (
-          <EnhancedGenerateScheduleModal
+          <GenerateScheduleModal
             isOpen={isModalOpen}
             onClose={() => setIsModalOpen(false)}
             onScheduleGenerated={handleScheduleGenerated}
@@ -590,51 +591,6 @@ const StudyScheduleBuilder = () => {
         )}
       </div>
     </div>
-    </div>
-  );
-};
-
-// Import the enhanced modal component
-const EnhancedGenerateScheduleModal = ({ isOpen, onClose, onScheduleGenerated }) => {
-  const { theme } = useTheme();
-  const isDarkMode = theme === 'dark';
-  
-  // This would import the enhanced modal from the previous artifact
-  // For demo purposes, using a simplified version
-  if (!isOpen) return null;
-  
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className={`rounded-2xl shadow-2xl max-w-md w-full p-6 ${isDarkMode ? 'bg-slate-800' : 'bg-white'}`}>
-        <h3 className={`text-xl font-bold mb-4 ${isDarkMode ? 'text-white' : 'text-slate-800'}`}>Generate Schedule (Demo)</h3>
-        <p className={`mb-6 ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>This is a simplified demo. The full enhanced modal with all features is available in the previous artifact.</p>
-        <div className="flex justify-end space-x-3">
-          <button 
-            onClick={onClose} 
-            className={`px-4 py-2 ${isDarkMode ? 'text-slate-400 hover:text-slate-200' : 'text-slate-600 hover:text-slate-800'}`}
-          >
-            Cancel
-          </button>
-          <button
-            onClick={() => {
-              // Generate demo schedule
-              const demoSchedule = [
-                {
-                  weekStart: '2025-08-31',
-                  topics: ['Advanced Logic Games'],
-                  estimatedHours: 15,
-                  section: 'Practice',
-                  difficulty: 'Advanced'
-                }
-              ];
-              onScheduleGenerated(demoSchedule);
-            }}
-            className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
-          >
-            Generate Demo
-          </button>
-        </div>
-      </div>
     </div>
   );
 };
