@@ -204,10 +204,10 @@ const StudyScheduleBuilder = () => {
   const handleScheduleGenerated = (schedule) => {
     const transformedEvents = schedule.map((item, index) => ({
       id: String(Date.now() + index),
-      title: item.topics.join(' & '),
-      start: item.weekStart,
+      title: item.tasks.join(' & '),
+      start: item.date,
       section: item.section || 'Practice',
-      topics: item.topics,
+      topics: item.tasks,
       estimatedHours: item.estimatedHours,
       completedHours: 0,
       difficulty: item.difficulty || 'Intermediate',
