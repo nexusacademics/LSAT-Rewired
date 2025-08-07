@@ -109,7 +109,6 @@ const StudyScheduleBuilder = () => {
   const [currentView, setCurrentView] = useState('dayGridWeek');
   const [events, setEvents] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isDark, setIsDark] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [showStats, setShowStats] = useState(false);
   const [filter, setFilter] = useState('all');
@@ -217,28 +216,20 @@ const StudyScheduleBuilder = () => {
   };
 
   return (
-    <div className={`min-h-screen transition-colors ${isDark ? 'bg-slate-900' : 'bg-gray-50'}`}>
+    <div className="min-h-screen transition-colors duration-300 bg-gray-50 dark:bg-slate-900">
       <div className="max-w-7xl mx-auto p-6 space-y-6">
         {/* Header */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between space-y-4 lg:space-y-0">
           <div>
             <h1 className="text-3xl font-bold text-slate-800 dark:text-white">LSAT Study Planner</h1>
-            <p className="text-slate-600 dark:text-slate-400 mt-1">Track your progress and stay on schedule</p>
+            <p className="mt-1 text-slate-600 dark:text-slate-400">Track your progress and stay on schedule</p>
           </div>
           
           <div className="flex items-center space-x-4">
-            {/* Dark mode toggle */}
-            <button
-              onClick={() => setIsDark(!isDark)}
-              className="p-2 rounded-lg bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700"
-            >
-              {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-            </button>
-            
             {/* Stats toggle */}
             <button
               onClick={() => setShowStats(!showStats)}
-              className="flex items-center space-x-2 px-4 py-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-700"
+              className="flex items-center space-x-2 px-4 py-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-colors"
             >
               <BarChart3 className="w-4 h-4" />
               <span className="hidden sm:inline">Stats</span>
@@ -278,7 +269,7 @@ const StudyScheduleBuilder = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-slate-600 dark:text-slate-400">Hours Completed</p>
-                  <p className="text-2xl font-bold text-green-600">{stats.totalCompleted}<span className="text-sm text-slate-500">/{stats.totalPlanned}</span></p>
+                  <p className="text-2xl font-bold text-green-600">{stats.totalCompleted}<span className="text-sm text-slate-500 dark:text-slate-400">/{stats.totalPlanned}</span></p>
                 </div>
                 <Clock className="w-8 h-8 text-green-600" />
               </div>
@@ -288,7 +279,7 @@ const StudyScheduleBuilder = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-slate-600 dark:text-slate-400">Sessions Done</p>
-                  <p className="text-2xl font-bold text-blue-600">{stats.completedEvents}<span className="text-sm text-slate-500">/{stats.totalEvents}</span></p>
+                  <p className="text-2xl font-bold text-blue-600">{stats.completedEvents}<span className="text-sm text-slate-500 dark:text-slate-400">/{stats.totalEvents}</span></p>
                 </div>
                 <Target className="w-8 h-8 text-blue-600" />
               </div>
@@ -336,11 +327,11 @@ const StudyScheduleBuilder = () => {
           {/* Filters */}
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-2">
-              <Filter className="w-4 h-4 text-slate-500" />
+              <Filter className="w-4 h-4 text-slate-500 dark:text-slate-400" />
               <select
                 value={filter}
                 onChange={(e) => setFilter(e.target.value)}
-                className="px-3 py-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500"
+                className="px-3 py-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 text-slate-800 dark:text-slate-200"
               >
                 <option value="all">All Sessions</option>
                 <option value="completed">Completed</option>
@@ -352,10 +343,10 @@ const StudyScheduleBuilder = () => {
             </div>
 
             <div className="flex items-center space-x-2">
-              <button className="p-2 text-slate-500 hover:text-slate-700 dark:hover:text-slate-300">
+              <button className="p-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors">
                 <Download className="w-4 h-4" />
               </button>
-              <button className="p-2 text-slate-500 hover:text-slate-700 dark:hover:text-slate-300">
+              <button className="p-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors">
                 <Settings className="w-4 h-4" />
               </button>
             </div>
