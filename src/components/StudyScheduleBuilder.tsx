@@ -1,18 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, Clock, Target, TrendingUp, BookOpen, Scale, Brain, Plus, Filter, Download, Settings, Sun, Moon, BarChart3 } from 'lucide-react';
-
-// Mock ThemeContext for demo - replace with your actual ThemeContext import
-const ThemeContext = React.createContext();
-const useTheme = () => {
-  const context = React.useContext(ThemeContext);
-  if (!context) {
-    // Fallback theme hook for demo
-    const [theme, setTheme] = useState('light');
-    const toggleTheme = () => setTheme(prev => prev === 'light' ? 'dark' : 'light');
-    return { theme, toggleTheme };
-  }
-  return context;
-};
+import { useTheme } from '../../contexts/ThemeContext';
 
 // Mock FullCalendar replacement for demo
 const MockCalendar = ({ events, view, onEventClick, onDateClick }) => {
@@ -671,11 +659,5 @@ const DemoThemeProvider = ({ children }) => {
   );
 };
 
-// Wrap the component with theme provider for demo
-const App = () => (
-  <DemoThemeProvider>
-    <StudyScheduleBuilder />
-  </DemoThemeProvider>
-);
 
-export default App;
+export default StudyScheduleBuilder;
