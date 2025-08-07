@@ -247,7 +247,7 @@ const StudyScheduleBuilder = () => {
   };
 
   return (
-    <div className={`min-h-screen transition-colors duration-300 ${isDarkMode ? 'bg-slate-900' : 'bg-gray-50'}`}>
+    <div className={`transition-colors duration-300 ${isDarkMode ? 'bg-slate-900' : 'bg-gray-50'}`}>
       <div className="w-full pt-10 px-4 pb-4">
             <div className="max-w-[1600px] mx-auto space-y-6">
 
