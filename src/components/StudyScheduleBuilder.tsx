@@ -115,6 +115,28 @@ const StudyScheduleBuilder = () => {
   const [showStats, setShowStats] = useState(false);
   const [filter, setFilter] = useState('all');
 
+  // Detect if we're in dark mode by checking if dark class exists on document
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  
+  React.useEffect(() => {
+    const checkDarkMode = () => {
+      const isDark = document.documentElement.classList.contains('dark') || 
+                    window.matchMedia('(prefers-color-scheme: dark)').matches;
+      setIsDarkMode(isDark);
+    };
+    
+    checkDarkMode();
+    
+    // Watch for changes
+    const observer = new MutationObserver(checkDarkMode);
+    observer.observe(document.documentElement, { 
+      attributes: true, 
+      attributeFilter: ['class'] 
+    });
+    
+    return () => observer.disconnect();
+  }, []);
+
   // Sample events for demo
   useEffect(() => {
     const sampleEvents = [
@@ -361,16 +383,17 @@ const StudyScheduleBuilder = () => {
             events={filteredEvents}
             view={currentView}
             onEventClick={handleEventClick}
+            isDarkMode={isDarkMode}
           />
         ) : (
           /* List View */
-          <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 overflow-hidden">
-            <div className="p-6 border-b border-gray-200 dark:border-slate-700">
-              <h3 className="text-lg font-semibold text-slate-800 dark:text-white">Study Sessions</h3>
+          <div className={`rounded-xl border overflow-hidden ${isDarkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-200'}`}>
+            <div className={`p-6 border-b ${isDarkMode ? 'border-slate-700' : 'border-gray-200'}`}>
+              <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-white' : 'text-slate-800'}`}>Study Sessions</h3>
             </div>
-            <div className="divide-y divide-gray-200 dark:divide-slate-700">
+            <div className={`divide-y ${isDarkMode ? 'divide-slate-700' : 'divide-gray-200'}`}>
               {filteredEvents.map((event) => (
-                <div key={event.id} className="p-6 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors">
+                <div key={event.id} className={`p-6 transition-colors ${isDarkMode ? 'hover:bg-slate-700' : 'hover:bg-gray-50'}`}>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-4">
                       <div className={`w-4 h-4 rounded-full ${
@@ -378,16 +401,16 @@ const StudyScheduleBuilder = () => {
                         event.section === 'Practice' ? 'bg-green-500' : 'bg-orange-500'
                       }`}></div>
                       <div>
-                        <h4 className="font-medium text-slate-800 dark:text-white">{event.title}</h4>
-                        <div className="flex items-center space-x-4 mt-1 text-sm text-slate-600 dark:text-slate-400">
+                        <h4 className={`font-medium ${isDarkMode ? 'text-white' : 'text-slate-800'}`}>{event.title}</h4>
+                        <div className={`flex items-center space-x-4 mt-1 text-sm ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>
                           <span>{new Date(event.start).toLocaleDateString()}</span>
                           <span>{event.estimatedHours} hours</span>
                           <span className={`px-2 py-1 rounded-full text-xs ${
                             event.difficulty === 'Beginner' 
-                              ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200' :
-                            event.difficulty === 'Intermediate' 
-                              ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200' :
-                            'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200'
+                              ? isDarkMode ? 'bg-green-900/30 text-green-200' : 'bg-green-100 text-green-800'
+                              : event.difficulty === 'Intermediate' 
+                              ? isDarkMode ? 'bg-yellow-900/30 text-yellow-200' : 'bg-yellow-100 text-yellow-800'
+                              : isDarkMode ? 'bg-red-900/30 text-red-200' : 'bg-red-100 text-red-800'
                           }`}>
                             {event.difficulty}
                           </span>
@@ -397,13 +420,15 @@ const StudyScheduleBuilder = () => {
                     
                     <div className="flex items-center space-x-4">
                       <div className="text-right">
-                        <div className="text-sm font-medium text-slate-800 dark:text-white">
+                        <div className={`text-sm font-medium ${isDarkMode ? 'text-white' : 'text-slate-800'}`}>
                           {event.completedHours}/{event.estimatedHours}h
                         </div>
-                        <div className="w-24 bg-gray-200 dark:bg-slate-600 rounded-full h-2 mt-1">
+                        <div className={`w-24 rounded-full h-2 mt-1 ${isDarkMode ? 'bg-slate-600' : 'bg-gray-200'}`}>
                           <div 
                             className={`h-2 rounded-full transition-all ${
-                              event.completed ? 'bg-green-500 dark:bg-green-400' : 'bg-indigo-500 dark:bg-indigo-400'
+                              event.completed 
+                                ? isDarkMode ? 'bg-green-400' : 'bg-green-500'
+                                : isDarkMode ? 'bg-indigo-400' : 'bg-indigo-500'
                             }`}
                             style={{ width: `${Math.min((event.completedHours / event.estimatedHours) * 100, 100)}%` }}
                           ></div>
@@ -414,8 +439,12 @@ const StudyScheduleBuilder = () => {
                         onClick={() => handleEventClick(event)}
                         className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                           event.completed
-                            ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 hover:bg-green-200 dark:hover:bg-green-900/50'
-                            : 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-800 dark:text-indigo-200 hover:bg-indigo-200 dark:hover:bg-indigo-900/50'
+                            ? isDarkMode 
+                              ? 'bg-green-900/30 text-green-200 hover:bg-green-900/50'
+                              : 'bg-green-100 text-green-800 hover:bg-green-200'
+                            : isDarkMode 
+                              ? 'bg-indigo-900/30 text-indigo-200 hover:bg-indigo-900/50'
+                              : 'bg-indigo-100 text-indigo-800 hover:bg-indigo-200'
                         }`}
                       >
                         {event.completed ? 'Completed' : 'Mark Done'}
