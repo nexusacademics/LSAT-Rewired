@@ -17,7 +17,6 @@ const GenerateScheduleModal: React.FC<GenerateScheduleModalProps> = ({
   const [weeklyHours, setWeeklyHours] = useState('12');
   const [studyIntensity, setStudyIntensity] = useState('moderate');
   const [focusAreas, setFocusAreas] = useState({
-    logicGames: true,
     readingComp: true,
     logicalReasoning: true,
     writing: false
@@ -89,11 +88,13 @@ const GenerateScheduleModal: React.FC<GenerateScheduleModalProps> = ({
 
   const generatePreview = () => {
     const studyWeeks = Math.floor((new Date(testDate).getTime() - new Date(startDate).getTime()) / (1000 * 60 * 60 * 24 * 7));
+    const totalDays = Math.floor((new Date(testDate).getTime() - new Date(startDate).getTime()) / (1000 * 60 * 60 * 24));
     const totalHours = studyWeeks * parseInt(weeklyHours);
     const selectedAreas = Object.entries(focusAreas).filter(([_, selected]) => selected).map(([area, _]) => area);
     
     setPreview({
       studyWeeks,
+      totalDays,
       totalHours,
       weeklyHours: parseInt(weeklyHours),
       focusAreas: selectedAreas,
@@ -114,7 +115,6 @@ const GenerateScheduleModal: React.FC<GenerateScheduleModalProps> = ({
         .filter(([_, selected]) => selected)
         .map(([area, _]) => {
           switch (area) {
-            case 'logicGames': return 'Logic Games (Analytical Reasoning)';
             case 'readingComp': return 'Reading Comprehension';
             case 'logicalReasoning': return 'Logical Reasoning';
             case 'writing': return 'Writing Sample';
@@ -123,6 +123,8 @@ const GenerateScheduleModal: React.FC<GenerateScheduleModalProps> = ({
         });
 
       const studyWeeks = Math.floor((new Date(testDate).getTime() - new Date(startDate).getTime()) / (1000 * 60 * 60 * 24 * 7));
+      const totalDays = Math.floor((new Date(testDate).getTime() - new Date(startDate).getTime()) / (1000 * 60 * 60 * 24));
+      const dailyHours = Math.round((parseInt(weeklyHours) / 7) * 10) / 10; // Round to 1 decimal
       const intensityLevel = intensityPresets[studyIntensity as keyof typeof intensityPresets].label;
 
       // Import and use GoogleGenerativeAI
@@ -130,30 +132,40 @@ const GenerateScheduleModal: React.FC<GenerateScheduleModalProps> = ({
       const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY || '');
       const model = genAI.getGenerativeModel({ model: 'gemini-1.5-pro' });
       
-      const prompt = `You are an expert LSAT study planner. Create a comprehensive week-by-week study schedule with the following requirements:
+      const prompt = `You are an expert LSAT study planner. Create a comprehensive day-by-day study schedule with the following requirements:
 
-Study Period: ${startDate} to ${testDate} (${studyWeeks} weeks)
+Study Period: ${startDate} to ${testDate} (${totalDays} days)
+Daily Study Hours: ${dailyHours}
 Weekly Study Hours: ${weeklyHours}
 Study Intensity: ${intensityLevel}
 Focus Areas: ${selectedAreas.join(', ')}
 
-Create a progressive study plan that:
-1. Starts with fundamentals in early weeks
-2. Builds to intermediate practice in middle weeks  
+IMPORTANT: Logic Games are NO LONGER part of the LSAT as of August 2024. Focus only on the remaining sections.
+
+Create a progressive daily study plan that:
+1. Starts with fundamentals in early days
+2. Builds to intermediate practice in middle period
 3. Focuses on advanced practice and full tests in final weeks
 4. Distributes focus areas evenly across the timeline
-5. Includes practice tests in the final 25% of study period
+5. Includes full practice tests every 7-10 days in the final 25% of study period
+6. Includes rest days (study: 0 hours) every 7-10 days to prevent burnout
 
 Output ONLY a JSON array with objects in this exact format:
 [
   {
-    "weekStart": "2025-08-12",
-    "topics": ["Logic Games - Basic Diagrams", "Reading Comp - Main Point"],
-    "estimatedHours": ${weeklyHours}
+    "date": "2025-08-12",
+    "tasks": ["Reading Comp - Main Point Questions", "Logical Reasoning - Assumptions"],
+    "estimatedHours": ${dailyHours}
+  },
+  {
+    "date": "2025-08-13",
+    "tasks": ["Rest Day"],
+    "estimatedHours": 0
   }
 ]
 
-Ensure topics are specific and actionable (e.g., "Logic Games - Sequencing Games" not just "Logic Games").`;
+Ensure tasks are specific and actionable (e.g., "Logical Reasoning - Strengthen Questions" not just "Logical Reasoning").
+Skip weekends or include lighter study loads based on the intensity level.`;
       
       const result = await model.generateContent(prompt);
       const text = result.response.text();
@@ -326,7 +338,6 @@ Ensure topics are specific and actionable (e.g., "Logic Games - Sequencing Games
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {[
-                  { key: 'logicGames', label: 'Logic Games', icon: Scale, desc: 'Analytical reasoning' },
                   { key: 'readingComp', label: 'Reading Comprehension', icon: BookOpen, desc: 'Passage analysis' },
                   { key: 'logicalReasoning', label: 'Logical Reasoning', icon: Brain, desc: 'Argument evaluation' },
                   { key: 'writing', label: 'Writing Sample', icon: BookOpen, desc: 'Essay preparation' }
@@ -398,8 +409,8 @@ Ensure topics are specific and actionable (e.g., "Logic Games - Sequencing Games
               
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                 <div className="bg-indigo-50 dark:bg-indigo-900/20 p-4 rounded-lg text-center">
-                  <div className="text-2xl font-bold text-indigo-600">{preview.studyWeeks}</div>
-                  <div className="text-sm text-slate-600 dark:text-slate-400">Study Weeks</div>
+                  <div className="text-2xl font-bold text-indigo-600">{preview.totalDays}</div>
+                  <div className="text-sm text-slate-600 dark:text-slate-400">Study Days</div>
                 </div>
                 <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg text-center">
                   <div className="text-2xl font-bold text-green-600">{preview.totalHours}</div>
@@ -420,8 +431,9 @@ Ensure topics are specific and actionable (e.g., "Logic Games - Sequencing Games
                 <ul className="space-y-1 text-sm text-slate-600 dark:text-slate-400">
                   <li>• {preview.intensity} study approach</li>
                   <li>• Focus on: {preview.focusAreas.join(', ')}</li>
-                  <li>• Progressive difficulty from fundamentals to advanced practice</li>
-                  <li>• Includes practice tests and review sessions</li>
+                  <li>• Daily tasks with progressive difficulty</li>
+                  <li>• Includes practice tests and rest days</li>
+                  <li>• Note: Logic Games removed from LSAT as of August 2024</li>
                 </ul>
               </div>
             </div>
