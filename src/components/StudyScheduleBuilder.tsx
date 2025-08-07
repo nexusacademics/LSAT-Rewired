@@ -40,13 +40,13 @@ const MockCalendar = ({ events, view, onEventClick, onDateClick }) => {
               newDate.setDate(currentDate.getDate() - 7);
               setCurrentDate(newDate);
             }}
-            className="px-3 py-1 text-sm bg-white dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded hover:bg-gray-50 dark:hover:bg-slate-600"
+            className="px-3 py-1 text-sm bg-white dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded hover:bg-gray-50 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200"
           >
             ← Prev
           </button>
           <button
             onClick={() => setCurrentDate(new Date())}
-            className="px-3 py-1 text-sm bg-white dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded hover:bg-gray-50 dark:hover:bg-slate-600"
+            className="px-3 py-1 text-sm bg-white dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded hover:bg-gray-50 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200"
           >
             Today
           </button>
@@ -56,7 +56,7 @@ const MockCalendar = ({ events, view, onEventClick, onDateClick }) => {
               newDate.setDate(currentDate.getDate() + 7);
               setCurrentDate(newDate);
             }}
-            className="px-3 py-1 text-sm bg-white dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded hover:bg-gray-50 dark:hover:bg-slate-600"
+            className="px-3 py-1 text-sm bg-white dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded hover:bg-gray-50 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200"
           >
             Next →
           </button>
@@ -70,25 +70,27 @@ const MockCalendar = ({ events, view, onEventClick, onDateClick }) => {
       <div className="grid grid-cols-7 divide-x divide-gray-200 dark:divide-slate-700">
         {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, index) => (
           <div key={day} className="min-h-[120px]">
-            <div className="p-2 text-center font-medium text-sm text-slate-600 dark:text-slate-400 border-b border-gray-200 dark:border-slate-700">
+            <div className="p-2 text-center font-medium text-sm text-slate-600 dark:text-slate-400 border-b border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800">
               {day} {weekDates[index]?.getDate()}
             </div>
-            <div className="p-2 space-y-1">
+            <div className="p-2 space-y-1 bg-white dark:bg-slate-800">
               {getEventsForDate(weekDates[index]).map((event, eventIndex) => (
                 <div
                   key={eventIndex}
                   onClick={() => onEventClick?.(event)}
                   className={`p-2 rounded-md text-xs cursor-pointer transition-all hover:shadow-md ${
-                    event.section === 'Fundamentals' ? 'bg-blue-100 text-blue-800 hover:bg-blue-200' :
-                    event.section === 'Practice' ? 'bg-green-100 text-green-800 hover:bg-green-200' :
-                    'bg-orange-100 text-orange-800 hover:bg-orange-200'
+                    event.section === 'Fundamentals' 
+                      ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 hover:bg-blue-200 dark:hover:bg-blue-900/50' :
+                    event.section === 'Practice' 
+                      ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 hover:bg-green-200 dark:hover:bg-green-900/50' :
+                    'bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-200 hover:bg-orange-200 dark:hover:bg-orange-900/50'
                   }`}
                 >
                   <div className="font-medium truncate">{event.title}</div>
                   <div className="flex items-center justify-between mt-1">
                     <span className="text-xs opacity-75">{event.estimatedHours}h</span>
                     <div className="flex items-center space-x-1">
-                      {event.completed && <div className="w-2 h-2 bg-green-500 rounded-full"></div>}
+                      {event.completed && <div className="w-2 h-2 bg-green-500 dark:bg-green-400 rounded-full"></div>}
                       <div className={`w-2 h-2 rounded-full ${
                         event.difficulty === 'Beginner' ? 'bg-green-400' :
                         event.difficulty === 'Intermediate' ? 'bg-yellow-400' : 'bg-red-400'
@@ -381,9 +383,11 @@ const StudyScheduleBuilder = () => {
                           <span>{new Date(event.start).toLocaleDateString()}</span>
                           <span>{event.estimatedHours} hours</span>
                           <span className={`px-2 py-1 rounded-full text-xs ${
-                            event.difficulty === 'Beginner' ? 'bg-green-100 text-green-800' :
-                            event.difficulty === 'Intermediate' ? 'bg-yellow-100 text-yellow-800' :
-                            'bg-red-100 text-red-800'
+                            event.difficulty === 'Beginner' 
+                              ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200' :
+                            event.difficulty === 'Intermediate' 
+                              ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200' :
+                            'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200'
                           }`}>
                             {event.difficulty}
                           </span>
@@ -399,7 +403,7 @@ const StudyScheduleBuilder = () => {
                         <div className="w-24 bg-gray-200 dark:bg-slate-600 rounded-full h-2 mt-1">
                           <div 
                             className={`h-2 rounded-full transition-all ${
-                              event.completed ? 'bg-green-500' : 'bg-indigo-500'
+                              event.completed ? 'bg-green-500 dark:bg-green-400' : 'bg-indigo-500 dark:bg-indigo-400'
                             }`}
                             style={{ width: `${Math.min((event.completedHours / event.estimatedHours) * 100, 100)}%` }}
                           ></div>
@@ -410,8 +414,8 @@ const StudyScheduleBuilder = () => {
                         onClick={() => handleEventClick(event)}
                         className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                           event.completed
-                            ? 'bg-green-100 text-green-800 hover:bg-green-200'
-                            : 'bg-indigo-100 text-indigo-800 hover:bg-indigo-200'
+                            ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 hover:bg-green-200 dark:hover:bg-green-900/50'
+                            : 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-800 dark:text-indigo-200 hover:bg-indigo-200 dark:hover:bg-indigo-900/50'
                         }`}
                       >
                         {event.completed ? 'Completed' : 'Mark Done'}
