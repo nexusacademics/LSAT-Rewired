@@ -1,5 +1,7 @@
+// src/components/GenerateScheduleModal.tsx
 import React, { useState, useEffect } from 'react';
 import { X, Calendar, Clock, Target, Brain, BookOpen, Scale, AlertCircle, CheckCircle, Loader } from 'lucide-react';
+import { GoogleGenerativeAI } from '@google/generative-ai'; // Ensure this import is present
 
 interface GenerateScheduleModalProps {
   isOpen: boolean;
@@ -72,9 +74,7 @@ const GenerateScheduleModal: React.FC<GenerateScheduleModalProps> = ({
     
     if (studyWeeks < 4) {
       errors.dateRange = 'We recommend at least 4 weeks of study time';
-    } else if (studyWeeks > 24) {
-      errors.dateRange = 'Study period longer than 6 months - consider a more intensive schedule';
-    }
+    } 
     
     const hours = parseInt(weeklyHours);
     if (!weeklyHours || hours < 1) {
@@ -103,6 +103,12 @@ const GenerateScheduleModal: React.FC<GenerateScheduleModalProps> = ({
     setShowPreview(true);
   };
 
+  // Helper function to extract JSON from a markdown code block
+  const extractJsonFromMarkdown = (text: string): string | null => {
+    const match = text.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
+    return match ? match[1] : null;
+  };
+
   const generateSchedule = async () => {
     if (Object.keys(validationErrors).length > 0) return;
     
@@ -127,82 +133,225 @@ const GenerateScheduleModal: React.FC<GenerateScheduleModalProps> = ({
       const dailyHours = Math.round((parseInt(weeklyHours) / 7) * 10) / 10; // Round to 1 decimal
       const intensityLevel = intensityPresets[studyIntensity as keyof typeof intensityPresets].label;
 
-      // Import and use GoogleGenerativeAI
-      const { GoogleGenerativeAI } = await import('@google/generative-ai');
+      // Initialize Gemini AI
       const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY || '');
       const model = genAI.getGenerativeModel({ model: 'gemini-1.5-pro' });
       
-      const prompt = `You are an expert LSAT study planner. Create a comprehensive day-by-day study schedule with the following requirements:
+      const prompt = `# Enhanced LSAT Study Calendar Prompt for Gemini
 
-Study Period: ${startDate} to ${testDate} (${totalDays} days)
-Daily Study Hours: ${dailyHours}
-Weekly Study Hours: ${weeklyHours}
-Study Intensity: ${intensityLevel}
-Focus Areas: ${selectedAreas.join(', ')}
+You are an expert LSAT study planner specializing in a structured curriculum approach with integrated Triple Review methodology. Create a comprehensive day-by-day study schedule with the following requirements:
 
-IMPORTANT: Logic Games are NO LONGER part of the LSAT as of August 2024. Focus only on the remaining sections.
+## Basic Parameters:
+- Study Period: ${startDate} to ${testDate} (${totalDays} days)
+- Daily Study Hours: ${dailyHours}
+- Weekly Study Hours: ${weeklyHours}
+- Study Intensity: ${intensityLevel}
+- Focus Areas: ${selectedAreas.join(', ')}
 
-Create a progressive daily study plan that:
-1. Starts with fundamentals in early days
-2. Builds to intermediate practice in middle period
-3. Focuses on advanced practice and full tests in final weeks
-4. Distributes focus areas evenly across the timeline
-5. Includes full practice tests every 7-10 days in the final 25% of study period
-6. Includes rest days (study: 0 hours) every 7-10 days to prevent burnout
+**IMPORTANT: Logic Games are NO LONGER part of the LSAT as of August 2024. Focus only on Logical Reasoning and Reading Comprehension.**
 
-Output ONLY a JSON array with objects in this exact format:
+## Curriculum Structure:
+
+### Phase 1: LR Curriculum Foundation (Days 1-60)
+Complete these lessons in order, 2-3 days per lesson, 1-2 hours daily:
+
+**An Introduction to Logical Reasoning (2 lessons)**
+1. Circuit Logic - The Origin Story
+2. The Fundamentals of Argumentation
+
+**Deductive Logic (4 lessons)**
+3. Conditional Reasoning Explained
+4. Conditional Reasoning Flashcards
+5. Parts of an Argument
+6. The Grammar of Arguments
+
+**Circuits (5 lessons)**
+7. Deductive Circuits
+8. Assumptions and Flaws
+9. Using Circuits to Answer LR Questions
+10. Using Circuits: Deductive Structure Family
+11. Using Circuits: Deductive Flaw Family
+
+**Inductive Logic (2 lessons)**
+12. Inductive Reasoning
+13. The Bradford Hill Criteria
+
+**Inductive Circuits (3 lessons)**
+14. Causal Circuits
+15. Using Circuits: Inductive Structure Family
+16. Using Circuits: Inductive Flaw Family
+
+**Using Circuits to Answer Inference Questions (4 lessons)**
+17. The Principle of Charity
+18. Inferences - Must be True
+19. Most Strongly Supported
+20. Resolving Paradoxes
+
+### Phase 2: RC Curriculum (Begin after LR completion)
+Complete these lessons in order, ~7 days per lesson, 1-2 hours daily:
+
+21. Structure Is a Verb: How to Read Actively
+22. Headlining: Shrinking the Passage Without Losing the Plot
+23. The Macro Stimulus: Reading Comp as a Longform Argument
+24. Spot the Blueprint: Mapping Passages to Stimulus Types
+
+### Phase 3: Triple Review Integration (Begin after completing "Circuits" section)
+Integrate Triple Review cycles throughout remaining study period using PrepTests 101-130:
+
+**Triple Review Cycle (6 hours total per section):**
+- Day 1: Timed section (1 hour)
+- Day 2: Blind review (3 hours)
+- Day 3: Strategy planning (2 hours)
+
+**Section Rotation:** LR Section 1 → RC → LR Section 2, then move to next PrepTest
+
+**Available PrepTests for Triple Review:** 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139
+
+### Phase 4: Full-Length Practice Tests (Final portion of study period)
+**MANDATORY:** Students must complete a minimum of 5 full-length practice tests and up to 19 from PrepTests 140-158.
+
+**Full Practice Test Protocol:**
+- **Frequency:** Maximum 1 full practice test per week (in addition to ongoing Triple Review sections)
+- **Process:** 
+  - Day 1: Full timed test (3.5 hours including breaks)
+  - Day 2-3: Complete Blind Review (6+ hours total)
+  - Day 4: Strategy Review and analysis (3+ hours)
+- **Test Selection:** Use PrepTests 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158
+- **Priority Order:** Start with PT 140 and work sequentially upward
+- **Integration:** Schedule full practice tests to complement, not replace, ongoing curriculum and Triple Review work
+
+## Scheduling Rules:
+
+1. **Phase Integration:** 
+   - Start Triple Review after completing LR lesson 11 ("Using Circuits: Deductive Flaw Family")
+   - Once RC curriculum begins, include both RC curriculum work and Triple Review on non-rest days
+   - Prioritize completing Triple Review cycles (don't split 6-hour cycles across weeks)
+
+2. **Daily Structure:**
+   - Early Phase: LR curriculum only
+   - Middle Phase: LR curriculum + Triple Review cycles
+   - Later Phase: RC curriculum + Triple Review cycles
+   - Final Phase: RC curriculum + Triple Review + Full Practice Tests (max 1 per week)
+
+3. **Full Practice Test Requirements:**
+   - Schedule minimum 5 and maximum 19 full practice tests from PrepTests 140-158
+   - Never schedule more than 1 full practice test per week
+   - Allow 4-day cycles for full practice tests: Timed test → Blind Review (2 days) → Strategy Review
+   - Begin full practice tests in final 25-30% of study period
+   - Continue Triple Review sections alongside full practice tests
+
+4. **Rest Days:** Include rest days (0 hours) every 7-10 days to prevent burnout
+
+4. **Task Specificity:** Make each task specific and actionable with lesson names, PrepTest numbers, and section types
+
+Output Format:
+Output ONLY a pure JSON array with NO markdown formatting, code blocks, or explanatory text. Do NOT wrap the JSON in json or  tags. Start directly with [ and end with ]. EACH INDIVIDUAL TASK must be a separate object. Do NOT bundle multiple tasks in a single event.
+
 [
   {
     "date": "2025-08-12",
-    "tasks": ["Reading Comp - Main Point Questions", "Logical Reasoning - Assumptions"],
-    "estimatedHours": ${dailyHours}
+    "task": "LR Curriculum: Circuit Logic - The Origin Story (Day 1/3)",
+    "estimatedHours": 1.5
   },
   {
-    "date": "2025-08-13",
-    "tasks": ["Rest Day"],
+    "date": "2025-08-15",
+    "task": "LR Curriculum: Using Circuits - Deductive Structure Family (Day 2/3)",
+    "estimatedHours": 2
+  },
+  {
+    "date": "2025-08-15",
+    "task": "Triple Review: PT 101 LR Section 1 - Blind Review",
+    "estimatedHours": 3
+  },
+  {
+    "date": "2025-08-20",
+    "task": "RC Curriculum: Structure Is a Verb - How to Read Actively (Day 3/7)",
+    "estimatedHours": 2
+  },
+  {
+    "date": "2025-08-20",
+    "task": "Triple Review: PT 103 RC - Timed Section",
+    "estimatedHours": 1
+  },
+  {
+    "date": "2025-09-15",
+    "task": "Full Practice Test: PT 140 - Timed Full Test",
+    "estimatedHours": 4
+  },
+  {
+    "date": "2025-09-16",
+    "task": "Full Practice Test: PT 140 - Blind Review Day 1",
+    "estimatedHours": 3
+  },
+  {
+    "date": "2025-09-16",
+    "task": "RC Curriculum: Spot the Blueprint (Day 2/7)",
+    "estimatedHours": 2
+  },
+  {
+    "date": "2025-09-17",
+    "task": "Full Practice Test: PT 140 - Blind Review Day 2",
+    "estimatedHours": 3
+  },
+  {
+    "date": "2025-09-17",
+    "task": "Triple Review: PT 108 LR Section 2 - Strategy Planning",
+    "estimatedHours": 2
+  },
+  {
+    "date": "2025-09-18",
+    "task": "Full Practice Test: PT 140 - Strategy Review & Analysis",
+    "estimatedHours": 3
+  },
+  {
+    "date": "2025-08-21",
+    "task": "Rest Day",
     "estimatedHours": 0
   }
 ]
 
-Ensure tasks are specific and actionable (e.g., "Logical Reasoning - Strengthen Questions" not just "Logical Reasoning").
-Skip weekends or include lighter study loads based on the intensity level.
+CRITICAL: Each task must be its own separate JSON object with its own date, task description, and estimated hours. This allows each task to appear as an individual calendar event.
+OUTPUT REQUIREMENTS:
 
+NO markdown formatting
+NO code block wrappers
+NO explanatory text before or after the JSON
+Start immediately with [
+End with ]
 Ensure valid JSON syntax throughout
 
 CRITICAL OUTPUT REQUIREMENTS:
-The JSON output must not contain any comments (lines starting with \`//\` or \`/*\`).
 YOU MUST generate a complete schedule for ALL ${totalDays} days from ${startDate} to ${testDate}. Do not stop early.
 If the response becomes too long:
-1. Continue with abbreviated but complete entries
-2. Ensure the final entry has date: "${testDate}"
-3. Never truncate mid-schedule
 
-Return ONLY the JSON array, no other text.`;
+Break the curriculum lessons into shorter daily segments
+Reduce the detail in task descriptions but maintain specificity
+Use abbreviated PrepTest references (e.g., "PT140" instead of "PrepTest 140")
+Focus on essential information only
+
+Verification: The final entry in your JSON array must have the date at least one day before the ${testDate}.
+Ensure the schedule progresses logically through the curriculum while maintaining consistent Triple Review cycles and appropriate rest periods for the COMPLETE study period.`;
       
       const result = await model.generateContent(prompt);
       const text = result.response.text();
 
-      // Pre-process: Remove any lines that look like comments before parsing
-      const cleanedText = text.split('\n').filter(line => !line.trim().startsWith('//') && !line.trim().startsWith('/*')).join('\n');
-
       let schedule;
       try {
         // First attempt: parse as-is
-        schedule = JSON.parse(cleanedText);
+        schedule = JSON.parse(text);
       } catch (err1) {
         try {
           // Second attempt: extract JSON from markdown code block
-          const jsonStart = cleanedText.indexOf('[');
-          const jsonEnd = cleanedText.lastIndexOf(']') + 1;
-          
-          if (jsonStart === -1 || jsonEnd === 0) {
-            throw new Error('No valid JSON found in AI response');
+          const extracted = extractJsonFromMarkdown(text);
+          if (extracted) {
+            schedule = JSON.parse(extracted);
+          } else {
+            // If no markdown block found, re-throw the original error
+            throw err1;
           }
-          
-          const jsonString = cleanedText.substring(jsonStart, jsonEnd);
-          schedule = JSON.parse(jsonString);
         } catch (err2) {
-          throw new Error('Failed to parse AI response as JSON');
+          // If extraction or parsing of extracted content fails
+          throw new Error("Failed to parse AI response as JSON:\n" + text);
         }
       }
       
