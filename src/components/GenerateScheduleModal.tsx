@@ -245,23 +245,72 @@ Integrate Triple Review cycles throughout remaining study period using PrepTests
 4. **Task Specificity:** Make each task specific and actionable with lesson names, PrepTest numbers, and section types
 
 Output Format:
-Output ONLY a pure JSON array with NO markdown formatting, code blocks, or explanatory text. Do NOT wrap the JSON in json or tags. Start directly with [ and end with ]. EACH INDIVIDUAL TASK must be a separate object. Do NOT bundle multiple tasks under one date.
-The scheduler is expecting objects with these tags:
+Output ONLY a pure JSON array with NO markdown formatting, code blocks, or explanatory text. Do NOT wrap the JSON in json or  tags. Start directly with [ and end with ]. EACH INDIVIDUAL TASK must be a separate object. Do NOT bundle multiple tasks under one date.
 
-id: String(Date.now() + index),
-      title: item.task,
-      start: item.date,
-      section: item.section || 'Practice',
-      topics: [item.task],
-      estimatedHours: item.estimatedHours,
-      completedHours: 0,
-      difficulty: item.difficulty || 'Intermediate',
-      completed: false,
-      allDay: false
-
+[
+  {
+    "date": "2025-08-12",
+    "task": "LR Curriculum: Circuit Logic - The Origin Story (Day 1/3)",
+    "estimatedHours": 1.5
+  },
+  {
+    "date": "2025-08-15",
+    "task": "LR Curriculum: Using Circuits - Deductive Structure Family (Day 2/3)",
+    "estimatedHours": 2
+  },
+  {
+    "date": "2025-08-15",
+    "task": "Triple Review: PT 101 LR Section 1 - Blind Review",
+    "estimatedHours": 3
+  },
+  {
+    "date": "2025-08-20",
+    "task": "RC Curriculum: Structure Is a Verb - How to Read Actively (Day 3/7)",
+    "estimatedHours": 2
+  },
+  {
+    "date": "2025-08-20",
+    "task": "Triple Review: PT 103 RC - Timed Section",
+    "estimatedHours": 1
+  },
+  {
+    "date": "2025-09-15",
+    "task": "Full Practice Test: PT 140 - Timed Full Test",
+    "estimatedHours": 4
+  },
+  {
+    "date": "2025-09-16",
+    "task": "Full Practice Test: PT 140 - Blind Review Day 1",
+    "estimatedHours": 3
+  },
+  {
+    "date": "2025-09-16",
+    "task": "RC Curriculum: Spot the Blueprint (Day 2/7)",
+    "estimatedHours": 2
+  },
+  {
+    "date": "2025-09-17",
+    "task": "Full Practice Test: PT 140 - Blind Review Day 2",
+    "estimatedHours": 3
+  },
+  {
+    "date": "2025-09-17",
+    "task": "Triple Review: PT 108 LR Section 2 - Strategy Planning",
+    "estimatedHours": 2
+  },
+  {
+    "date": "2025-09-18",
+    "task": "Full Practice Test: PT 140 - Strategy Review & Analysis",
+    "estimatedHours": 3
+  },
+  {
+    "date": "2025-08-21",
+    "task": "Rest Day",
+    "estimatedHours": 0
+  }
+]
 
 CRITICAL: Each task must be its own separate JSON object with its own date, task description, and estimated hours. This allows each task to appear as an individual calendar event.
-
 OUTPUT REQUIREMENTS:
 
 NO markdown formatting
@@ -503,7 +552,7 @@ Ensure the schedule progresses logically through the curriculum while maintainin
               >
                 Cancel
               </button>
-              <div className="space-x-3">
+              <div className="flex flex-wrap items-center gap-3">
                 <button
                   onClick={generatePreview}
                   disabled={Object.keys(validationErrors).length > 0}
