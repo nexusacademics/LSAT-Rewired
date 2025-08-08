@@ -5,7 +5,7 @@ import GenerateScheduleModal from './GenerateScheduleModal'; // adjust path as n
 import { exportScheduleAsICS } from '../utils/exportCalendar';
 
 // Mock FullCalendar replacement for demo
-const MockCalendar = ({ events, view, onEventClick, onDateClick }) => {
+  const MockCalendar = ({ events, view, onEventClick, onDateClick }) => {
   const { theme } = useTheme();
   const isDarkMode = theme === 'dark';
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -34,6 +34,20 @@ const MockCalendar = ({ events, view, onEventClick, onDateClick }) => {
 
   const weekDates = getWeekDates(currentDate);
 
+  const handleDownloadICS = () => {
+  if (!filteredEvents.length) return alert('No events to download.');
+  const icsContent = generateICS(filteredEvents);
+  const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'lsat-study-schedule.ics';
+  a.click();
+
+  URL.revokeObjectURL(url);
+};
+  
   return (
     <div className={`rounded-xl border overflow-hidden ${isDarkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-200'}`}>
       {/* Calendar Header */}
