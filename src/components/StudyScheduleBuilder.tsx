@@ -212,7 +212,7 @@ const StudyScheduleBuilder = () => {
       completedHours: 0,
       difficulty: item.difficulty || 'Intermediate',
       completed: false,
-      allDay: true
+      allDay: false
     }));
     setEvents(transformedEvents);
     setIsModalOpen(false);
