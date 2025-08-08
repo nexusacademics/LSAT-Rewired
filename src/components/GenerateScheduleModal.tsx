@@ -108,6 +108,14 @@ const GenerateScheduleModal: React.FC<GenerateScheduleModalProps> = ({
     const match = text.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
     return match ? match[1] : null;
   };
+const cleanJsonResponse = (raw: string): string => {
+  // Remove common prefixes like "json", "json\n", etc.
+  const cleaned = raw.trim().replace(/^json\s*/i, '').trim();
+
+  // If wrapped in code block, extract just the JSON
+  const markdownMatch = cleaned.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
+  return markdownMatch ? markdownMatch[1].trim() : cleaned;
+};
 
   const generateSchedule = async () => {
     if (Object.keys(validationErrors).length > 0) return;
@@ -245,7 +253,7 @@ Integrate Triple Review cycles throughout remaining study period using PrepTests
 4. **Task Specificity:** Make each task specific and actionable with lesson names, PrepTest numbers, and section types
 
 Output Format:
-Output ONLY a pure JSON array with NO markdown formatting, code blocks, or explanatory text. Do NOT wrap the JSON in json or  tags. Start directly with [ and end with ]. EACH INDIVIDUAL TASK must be a separate object. Do NOT bundle multiple tasks in a single event.
+Output ONLY a pure JSON array with NO markdown formatting, code blocks, or explanatory text. Do NOT wrap the JSON in json or tags. Start directly with [ and end with ]. EACH INDIVIDUAL TASK must be a separate object. Do NOT bundle multiple tasks in a single event.
 
 [
   {
