@@ -343,25 +343,13 @@ Ensure the schedule progresses logically through the curriculum while maintainin
       const result = await model.generateContent(prompt);
       const text = result.response.text();
 
-      let schedule;
-      try {
-        // First attempt: parse as-is
-        schedule = JSON.parse(text);
-      } catch (err1) {
-        try {
-          // Second attempt: extract JSON from markdown code block
-          const extracted = extractJsonFromMarkdown(text);
-          if (extracted) {
-            schedule = JSON.parse(extracted);
-          } else {
-            // If no markdown block found, re-throw the original error
-            throw err1;
-          }
-        } catch (err2) {
-          // If extraction or parsing of extracted content fails
-          throw new Error("Failed to parse AI response as JSON:\n" + text);
-        }
-      }
+let schedule;
+try {
+  const cleanedText = cleanJsonResponse(text);
+  schedule = JSON.parse(cleanedText);
+} catch (err) {
+  throw new Error("Failed to parse AI response as JSON:\n" + text);
+}
       
       onScheduleGenerated(schedule);
       onClose();
