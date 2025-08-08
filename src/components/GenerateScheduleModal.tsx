@@ -139,40 +139,133 @@ const GenerateScheduleModal: React.FC<GenerateScheduleModalProps> = ({
       const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY || '');
       const model = genAI.getGenerativeModel({ model: 'gemini-1.5-pro' });
       
-      const prompt = `You are an expert LSAT study planner. Create a comprehensive day-by-day study schedule with the following requirements:
+      const prompt = # Enhanced LSAT Study Calendar Prompt for Gemini
 
-Study Period: ${startDate} to ${testDate} (${totalDays} days)
-Daily Study Hours: ${dailyHours}
-Weekly Study Hours: ${weeklyHours}
-Study Intensity: ${intensityLevel}
-Focus Areas: ${selectedAreas.join(', ')}
+You are an expert LSAT study planner specializing in a structured curriculum approach with integrated Triple Review methodology. Create a comprehensive day-by-day study schedule with the following requirements:
 
-IMPORTANT: Logic Games are NO LONGER part of the LSAT as of August 2024. Focus only on the remaining sections.
+## Basic Parameters:
+- Study Period: ${startDate} to ${testDate} (${totalDays} days)
+- Daily Study Hours: ${dailyHours}
+- Weekly Study Hours: ${weeklyHours}
+- Study Intensity: ${intensityLevel}
+- Focus Areas: ${selectedAreas.join(', ')}
 
-Create a progressive daily study plan that:
-1. Starts with fundamentals in early days
-2. Builds to intermediate practice in middle period
-3. Focuses on advanced practice and full tests in final weeks
-4. Distributes focus areas evenly across the timeline
-5. Includes full practice tests every 7-10 days in the final 25% of study period
-6. Includes rest days (study: 0 hours) every 7-10 days to prevent burnout
+**IMPORTANT: Logic Games are NO LONGER part of the LSAT as of August 2024. Focus only on Logical Reasoning and Reading Comprehension.**
 
+## Curriculum Structure:
+
+### Phase 1: LR Curriculum Foundation (Days 1-60)
+Complete these lessons in order, 2-3 days per lesson, 1-2 hours daily:
+
+**An Introduction to Logical Reasoning (2 lessons)**
+1. Circuit Logic - The Origin Story
+2. The Fundamentals of Argumentation
+
+**Deductive Logic (4 lessons)**
+3. Conditional Reasoning Explained
+4. Conditional Reasoning Flashcards
+5. Parts of an Argument
+6. The Grammar of Arguments
+
+**Circuits (5 lessons)**
+7. Deductive Circuits
+8. Assumptions and Flaws
+9. Using Circuits to Answer LR Questions
+10. Using Circuits: Deductive Structure Family
+11. Using Circuits: Deductive Flaw Family
+
+**Inductive Logic (2 lessons)**
+12. Inductive Reasoning
+13. The Bradford Hill Criteria
+
+**Inductive Circuits (3 lessons)**
+14. Causal Circuits
+15. Using Circuits: Inductive Structure Family
+16. Using Circuits: Inductive Flaw Family
+
+**Using Circuits to Answer Inference Questions (4 lessons)**
+17. The Principle of Charity
+18. Inferences - Must be True
+19. Most Strongly Supported
+20. Resolving Paradoxes
+
+### Phase 2: RC Curriculum (Begin after LR completion)
+Complete these lessons in order, ~7 days per lesson, 1-2 hours daily:
+
+21. Structure Is a Verb: How to Read Actively
+22. Headlining: Shrinking the Passage Without Losing the Plot
+23. The Macro Stimulus: Reading Comp as a Longform Argument
+24. Spot the Blueprint: Mapping Passages to Stimulus Types
+
+### Phase 3: Triple Review Integration (Begin after completing "Circuits" section)
+Integrate Triple Review cycles throughout remaining study period using PrepTests 101-130:
+
+**Triple Review Cycle (6 hours total per section):**
+- Day 1: Timed section (1 hour)
+- Day 2: Blind review (3 hours)
+- Day 3: Strategy planning (2 hours)
+
+**Section Rotation:** LR Section 1 → RC → LR Section 2, then move to next PrepTest
+
+**Available PrepTests:** 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130
+
+## Scheduling Rules:
+
+1. **Phase Integration:** 
+   - Start Triple Review after completing LR lesson 11 ("Using Circuits: Deductive Flaw Family")
+   - Once RC curriculum begins, include both RC curriculum work and Triple Review on non-rest days
+   - Prioritize completing Triple Review cycles (don't split 6-hour cycles across weeks)
+
+2. **Daily Structure:**
+   - Early Phase: LR curriculum only
+   - Middle Phase: LR curriculum + Triple Review cycles
+   - Later Phase: RC curriculum + Triple Review cycles
+   - Final Phase: Triple Review focus with curriculum review
+
+3. **Rest Days:** Include rest days (0 hours) every 7-10 days to prevent burnout
+
+4. **Task Specificity:** Make each task specific and actionable with lesson names, PrepTest numbers, and section types
+
+## Output Format:
 Output ONLY a JSON array with objects in this exact format:
+
+```json
 [
   {
     "date": "2025-08-12",
-    "tasks": ["Reading Comp - Main Point Questions", "Logical Reasoning - Assumptions"],
-    "estimatedHours": ${dailyHours}
+    "tasks": [
+      "LR Curriculum: Circuit Logic - The Origin Story (Day 1/3)",
+      "Total: LR Foundation Work"
+    ],
+    "estimatedHours": 2
   },
   {
-    "date": "2025-08-13",
+    "date": "2025-08-15",
+    "tasks": [
+      "LR Curriculum: Using Circuits - Deductive Structure Family (Day 2/3)",
+      "Triple Review: PT 101 LR Section 1 - Blind Review (3hrs)",
+      "Total: Curriculum + Triple Review"
+    ],
+    "estimatedHours": 5
+  },
+  {
+    "date": "2025-08-20",
+    "tasks": [
+      "RC Curriculum: Structure Is a Verb - How to Read Actively (Day 3/7)",
+      "Triple Review: PT 103 RC - Timed Section (1hr)",
+      "Total: RC Curriculum + Triple Review"
+    ],
+    "estimatedHours": 3
+  },
+  {
+    "date": "2025-08-21",
     "tasks": ["Rest Day"],
     "estimatedHours": 0
   }
 ]
+```
 
-Ensure tasks are specific and actionable (e.g., "Logical Reasoning - Strengthen Questions" not just "Logical Reasoning").
-Skip weekends or include lighter study loads based on the intensity level.`;
+Ensure the schedule progresses logically through the curriculum while maintaining consistent Triple Review cycles and appropriate rest periods.
       
       const result = await model.generateContent(prompt);
       const text = result.response.text();
