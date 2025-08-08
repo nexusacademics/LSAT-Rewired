@@ -177,7 +177,28 @@ Skip weekends or include lighter study loads based on the intensity level.`;
       }
       
       const jsonString = text.substring(jsonStart, jsonEnd);
-      const schedule = JSON.parse(jsonString);
+      const schedule = async function generateSchedule(prompt: string): Promise<any[]> {
+  const response = await model.generateContent(prompt);
+  const text = response.response.text();
+
+  try {
+    // First attempt: parse as-is
+    return JSON.parse(text);
+  } catch (err1) {
+    try {
+      // Second attempt: extract JSON from markdown code block
+      const extracted = extractJsonFromMarkdown(text);
+      if (extracted) {
+        return JSON.parse(extracted);
+      }
+    } catch (err2) {
+      // Fall through to final error
+    }
+
+    // If all else fails, throw original error
+    throw new Error("Failed to parse AI response as JSON:\n" + text);
+  }
+}
       
       onScheduleGenerated(schedule);
       onClose();
