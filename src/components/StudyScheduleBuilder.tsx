@@ -3,6 +3,8 @@ import { Calendar, Clock, Target, TrendingUp, BookOpen, Scale, Brain, Plus, Filt
 import { useTheme } from '../contexts/ThemeContext';
 import GenerateScheduleModal from './GenerateScheduleModal'; // adjust path as needed
 
+import { exportScheduleAsICS } from '../utils/exportCalendar';
+
 // Mock FullCalendar replacement for demo
 const MockCalendar = ({ events, view, onEventClick, onDateClick }) => {
   const { theme } = useTheme();
@@ -407,6 +409,7 @@ const StudyScheduleBuilder = () => {
                   ? 'text-slate-400 hover:text-slate-200'
                   : 'text-slate-500 hover:text-slate-700'
               }`}>
+                onClick={() => exportScheduleAsICS(schedule)}
                 <Download className="w-4 h-4" />
               </button>
               <button className={`p-2 transition-colors ${
