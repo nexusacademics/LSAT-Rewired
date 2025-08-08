@@ -139,7 +139,7 @@ const GenerateScheduleModal: React.FC<GenerateScheduleModalProps> = ({
       const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY || '');
       const model = genAI.getGenerativeModel({ model: 'gemini-1.5-pro' });
       
-      const prompt = # Enhanced LSAT Study Calendar Prompt for Gemini
+      const prompt = `# Enhanced LSAT Study Calendar Prompt for Gemini
 
 You are an expert LSAT study planner specializing in a structured curriculum approach with integrated Triple Review methodology. Create a comprehensive day-by-day study schedule with the following requirements:
 
@@ -265,7 +265,7 @@ Output ONLY a JSON array with objects in this exact format:
 ]
 ```
 
-Ensure the schedule progresses logically through the curriculum while maintaining consistent Triple Review cycles and appropriate rest periods.
+Ensure the schedule progresses logically through the curriculum while maintaining consistent Triple Review cycles and appropriate rest periods.`;
       
       const result = await model.generateContent(prompt);
       const text = result.response.text();
