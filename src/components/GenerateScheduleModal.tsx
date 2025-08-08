@@ -108,14 +108,6 @@ const GenerateScheduleModal: React.FC<GenerateScheduleModalProps> = ({
     const match = text.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
     return match ? match[1] : null;
   };
-const cleanJsonResponse = (raw: string): string => {
-  // Remove common prefixes like "json", "json\n", etc.
-  const cleaned = raw.trim().replace(/^json\s*/i, '').trim();
-
-  // If wrapped in code block, extract just the JSON
-  const markdownMatch = cleaned.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
-  return markdownMatch ? markdownMatch[1].trim() : cleaned;
-};
 
   const generateSchedule = async () => {
     if (Object.keys(validationErrors).length > 0) return;
@@ -248,97 +240,27 @@ Integrate Triple Review cycles throughout remaining study period using PrepTests
    - Begin full practice tests in final 25-30% of study period
    - Continue Triple Review sections alongside full practice tests
 
-4. **Rest Days:** Include one rest day (0 hours) every 7 days to prevent burnout
+4. **Rest Days:** Include rest days (0 hours) every 7-10 days to prevent burnout
 
-5. **Task Specificity:** Make each task specific and actionable with lesson names, PrepTest numbers, and section types
-
-6. **Multi-Task Days REQUIRED:** It is common to have **2-3 tasks per day** (e.g., 1.5 hours of curriculum and 1.5 hours of Triple Review). Do not limit to one task per day unless rest day or full-length test.
-
-If the output gets too long:
-- Split long lessons across multiple days (e.g., Day 1/3, Day 2/3)
-- Use abbreviated task names (e.g., "LR: Circuit Logic (1/2)", "TR: PT101 LR1 - Timed")
-- Reduce text without losing clarity — keep task purpose and test/lesson reference
+4. **Task Specificity:** Make each task specific and actionable with lesson names, PrepTest numbers, and section types
 
 Output Format:
-Output ONLY a pure JSON array with NO markdown formatting, code blocks, or explanatory text. Do NOT wrap the JSON in json or tags. Start directly with [ and end with ]. EACH INDIVIDUAL TASK must be a separate object. Do NOT bundle multiple tasks in a single event.
+Output ONLY a pure JSON array with NO markdown formatting, code blocks, or explanatory text. Do NOT wrap the JSON in json or tags. Start directly with [ and end with ]. EACH INDIVIDUAL TASK must be a separate object. Do NOT bundle multiple tasks under one date.
+The scheduler is expecting objects with these tags:
 
-[
-  {
-    "date": "2025-08-12",
-    "task": "LR Curriculum: Circuit Logic - The Origin Story (Day 1/3)",
-    "estimatedHours": 1.5
-  },
-  {
-    "date": "2025-08-15",
-    "task": "LR Curriculum: Using Circuits - Deductive Structure Family (Day 2/3)",
-    "estimatedHours": 2
-  },
-  {
-    "date": "2025-08-15",
-    "task": "Triple Review: PT 101 LR Section 1 - Blind Review",
-    "estimatedHours": 3
-  },
-  {
-    "date": "2025-08-20",
-    "task": "RC Curriculum: Structure Is a Verb - How to Read Actively (Day 3/7)",
-    "estimatedHours": 2
-  },
-  {
-    "date": "2025-08-20",
-    "task": "Triple Review: PT 103 RC - Timed Section",
-    "estimatedHours": 1
-  },
-  {
-    "date": "2025-09-15",
-    "task": "Full Practice Test: PT 140 - Timed Full Test",
-    "estimatedHours": 4
-  },
-  {
-    "date": "2025-09-16",
-    "task": "Full Practice Test: PT 140 - Blind Review Day 1",
-    "estimatedHours": 3
-  },
-  {
-    "date": "2025-09-16",
-    "task": "RC Curriculum: Spot the Blueprint (Day 2/7)",
-    "estimatedHours": 2
-  },
-  {
-    "date": "2025-09-17",
-    "task": "Full Practice Test: PT 140 - Blind Review Day 2",
-    "estimatedHours": 3
-  },
-  {
-    "date": "2025-09-17",
-    "task": "Triple Review: PT 108 LR Section 2 - Strategy Planning",
-    "estimatedHours": 2
-  },
-  {
-    "date": "2025-09-18",
-    "task": "Full Practice Test: PT 140 - Strategy Review & Analysis",
-    "estimatedHours": 3
-  },
-  {
-    "date": "2025-08-21",
-    "task": "Rest Day",
-    "estimatedHours": 0
-  }
-]
+id: String(Date.now() + index),
+      title: item.task,
+      start: item.date,
+      section: item.section || 'Practice',
+      topics: [item.task],
+      estimatedHours: item.estimatedHours,
+      completedHours: 0,
+      difficulty: item.difficulty || 'Intermediate',
+      completed: false,
+      allDay: false
 
-CRITICAL: Each task must be its own separate JSON object with its own date, task description, and estimated hours. This allows each task to appear as an individual calendar event. 
 
-**CRITICAL: Each task must be its own separate JSON object, even if multiple tasks share the same date.**
-
-CRITICAL: You MUST schedule all the following:
-
-- At least one Triple Review cycleevery two weeks
-- A minimum of 5 full-length practice tests (PT 140–158), maximum 1 per week
-- One rest day per 7 days
-- All 24 curriculum lessons (LR + RC) across the full timeline
-- Daily hours should add up to approximately ${weeklyHours} per week
-
-Ensure these are **spread logically** across the study period — not clumped together or missing entirely.
-
+CRITICAL: Each task must be its own separate JSON object with its own date, task description, and estimated hours. This allows each task to appear as an individual calendar event.
 OUTPUT REQUIREMENTS:
 
 NO markdown formatting
@@ -357,22 +279,31 @@ Reduce the detail in task descriptions but maintain specificity
 Use abbreviated PrepTest references (e.g., "PT140" instead of "PrepTest 140")
 Focus on essential information only
 
-Verification: The final entry in your JSON array must have the date at least one day before the ${testDate}.
+Verification: The final entry in your JSON array must have the date ${testDate} or the day before.
 Ensure the schedule progresses logically through the curriculum while maintaining consistent Triple Review cycles and appropriate rest periods for the COMPLETE study period.`;
       
-const result = await model.generateContent(prompt);
-const response = await result.response;
-const text = response.text();
-console.log("RAW Gemini response:", await response.text());
+      const result = await model.generateContent(prompt);
+      const text = result.response.text();
 
-
-let schedule;
-try {
-  const cleanedText = cleanJsonResponse(text);
-  schedule = JSON.parse(cleanedText);
-} catch (err) {
-  throw new Error("Failed to parse AI response as JSON:\n" + text);
-}
+      let schedule;
+      try {
+        // First attempt: parse as-is
+        schedule = JSON.parse(text);
+      } catch (err1) {
+        try {
+          // Second attempt: extract JSON from markdown code block
+          const extracted = extractJsonFromMarkdown(text);
+          if (extracted) {
+            schedule = JSON.parse(extracted);
+          } else {
+            // If no markdown block found, re-throw the original error
+            throw err1;
+          }
+        } catch (err2) {
+          // If extraction or parsing of extracted content fails
+          throw new Error("Failed to parse AI response as JSON:\n" + text);
+        }
+      }
       
       onScheduleGenerated(schedule);
       onClose();
