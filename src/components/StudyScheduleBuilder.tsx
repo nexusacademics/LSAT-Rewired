@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Calendar, Clock, Target, TrendingUp, BookOpen, Scale, Brain, Plus, Filter, Download, Settings, Sun, Moon, BarChart3 } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import GenerateScheduleModal from './GenerateScheduleModal'; // adjust path as needed
-
 import { exportScheduleAsICS } from '../utils/exportCalendar';
 
 // Mock FullCalendar replacement for demo
@@ -405,7 +404,8 @@ const StudyScheduleBuilder = () => {
 
             <div className="flex items-center space-x-2">
               <button 
-                onClick={() => exportScheduleAsICS(schedule)}
+                onClick={() => exportScheduleAsICS(generatedSchedule)}
+                disabled={generatedSchedule.length === 0}
                 className={`p-2 transition-colors ${
                 isDarkMode 
                   ? 'text-slate-400 hover:text-slate-200'
