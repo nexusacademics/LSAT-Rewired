@@ -262,7 +262,6 @@ Output ONLY a JSON array with objects in this exact format:
     "estimatedHours": 0
   }
 ]
-```
 
 Ensure the schedule progresses logically through the curriculum while maintaining consistent Triple Review cycles and appropriate rest periods.`;
       
