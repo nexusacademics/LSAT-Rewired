@@ -1,5 +1,7 @@
+// src/components/GenerateScheduleModal.tsx
 import React, { useState, useEffect } from 'react';
 import { X, Calendar, Clock, Target, Brain, BookOpen, Scale, AlertCircle, CheckCircle, Loader } from 'lucide-react';
+import { GoogleGenerativeAI } from '@google/generative-ai'; // Ensure this import is present
 
 interface GenerateScheduleModalProps {
   isOpen: boolean;
@@ -103,6 +105,12 @@ const GenerateScheduleModal: React.FC<GenerateScheduleModalProps> = ({
     setShowPreview(true);
   };
 
+  // Helper function to extract JSON from a markdown code block
+  const extractJsonFromMarkdown = (text: string): string | null => {
+    const match = text.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
+    return match ? match[1] : null;
+  };
+
   const generateSchedule = async () => {
     if (Object.keys(validationErrors).length > 0) return;
     
@@ -127,8 +135,7 @@ const GenerateScheduleModal: React.FC<GenerateScheduleModalProps> = ({
       const dailyHours = Math.round((parseInt(weeklyHours) / 7) * 10) / 10; // Round to 1 decimal
       const intensityLevel = intensityPresets[studyIntensity as keyof typeof intensityPresets].label;
 
-      // Import and use GoogleGenerativeAI
-      const { GoogleGenerativeAI } = await import('@google/generative-ai');
+      // Initialize Gemini AI
       const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY || '');
       const model = genAI.getGenerativeModel({ model: 'gemini-1.5-pro' });
       
@@ -169,36 +176,26 @@ Skip weekends or include lighter study loads based on the intensity level.`;
       
       const result = await model.generateContent(prompt);
       const text = result.response.text();
-      const jsonStart = text.indexOf('[');
-      const jsonEnd = text.lastIndexOf(']') + 1;
-      
-      if (jsonStart === -1 || jsonEnd === 0) {
-        throw new Error('No valid JSON found in AI response');
-      }
-      
-      const jsonString = text.substring(jsonStart, jsonEnd);
-      const schedule = async function generateSchedule(prompt: string): Promise<any[]> {
-  const response = await model.generateContent(prompt);
-  const text = response.response.text();
 
-  try {
-    // First attempt: parse as-is
-    return JSON.parse(text);
-  } catch (err1) {
-    try {
-      // Second attempt: extract JSON from markdown code block
-      const extracted = extractJsonFromMarkdown(text);
-      if (extracted) {
-        return JSON.parse(extracted);
+      let schedule;
+      try {
+        // First attempt: parse as-is
+        schedule = JSON.parse(text);
+      } catch (err1) {
+        try {
+          // Second attempt: extract JSON from markdown code block
+          const extracted = extractJsonFromMarkdown(text);
+          if (extracted) {
+            schedule = JSON.parse(extracted);
+          } else {
+            // If no markdown block found, re-throw the original error
+            throw err1;
+          }
+        } catch (err2) {
+          // If extraction or parsing of extracted content fails
+          throw new Error("Failed to parse AI response as JSON:\n" + text);
+        }
       }
-    } catch (err2) {
-      // Fall through to final error
-    }
-
-    // If all else fails, throw original error
-    throw new Error("Failed to parse AI response as JSON:\n" + text);
-  }
-}
       
       onScheduleGenerated(schedule);
       onClose();
