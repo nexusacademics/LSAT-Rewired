@@ -207,7 +207,20 @@ Integrate Triple Review cycles throughout remaining study period using PrepTests
 
 **Section Rotation:** LR Section 1 → RC → LR Section 2, then move to next PrepTest
 
-**Available PrepTests:** 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130
+**Available PrepTests for Triple Review:** 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139
+
+### Phase 4: Full-Length Practice Tests (Final portion of study period)
+**MANDATORY:** Students must complete a minimum of 5 full-length practice tests and up to 19 from PrepTests 140-158.
+
+**Full Practice Test Protocol:**
+- **Frequency:** Maximum 1 full practice test per week (in addition to ongoing Triple Review sections)
+- **Process:** 
+  - Day 1: Full timed test (3.5 hours including breaks)
+  - Day 2-3: Complete Blind Review (6+ hours total)
+  - Day 4: Strategy Review and analysis (3+ hours)
+- **Test Selection:** Use PrepTests 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158
+- **Priority Order:** Start with PT 140 and work sequentially upward
+- **Integration:** Schedule full practice tests to complement, not replace, ongoing curriculum and Triple Review work
 
 ## Scheduling Rules:
 
@@ -220,9 +233,16 @@ Integrate Triple Review cycles throughout remaining study period using PrepTests
    - Early Phase: LR curriculum only
    - Middle Phase: LR curriculum + Triple Review cycles
    - Later Phase: RC curriculum + Triple Review cycles
-   - Final Phase: Triple Review focus with curriculum review
+   - Final Phase: RC curriculum + Triple Review + Full Practice Tests (max 1 per week)
 
-3. **Rest Days:** Include rest days (0 hours) every 7-10 days to prevent burnout
+3. **Full Practice Test Requirements:**
+   - Schedule minimum 5 and maximum 19 full practice tests from PrepTests 140-158
+   - Never schedule more than 1 full practice test per week
+   - Allow 4-day cycles for full practice tests: Timed test → Blind Review (2 days) → Strategy Review
+   - Begin full practice tests in final 25-30% of study period
+   - Continue Triple Review sections alongside full practice tests
+
+4. **Rest Days:** Include rest days (0 hours) every 7-10 days to prevent burnout
 
 4. **Task Specificity:** Make each task specific and actionable with lesson names, PrepTest numbers, and section types
 
@@ -253,6 +273,36 @@ Output ONLY a JSON array with objects in this exact format:
       "RC Curriculum: Structure Is a Verb - How to Read Actively (Day 3/7)",
       "Triple Review: PT 103 RC - Timed Section (1hr)",
       "Total: RC Curriculum + Triple Review"
+    ],
+    "estimatedHours": 3
+  },
+  {
+    "date": "2025-09-15",
+    "tasks": [
+      "Full Practice Test: PT 140 - Timed Full Test (3.5hrs)"
+    ],
+    "estimatedHours": 4
+  },
+  {
+    "date": "2025-09-16",
+    "tasks": [
+      "Full Practice Test: PT 140 - Blind Review Day 1 (3hrs)",
+      "RC Curriculum: Spot the Blueprint (Day 2/7)"
+    ],
+    "estimatedHours": 5
+  },
+  {
+    "date": "2025-09-17",
+    "tasks": [
+      "Full Practice Test: PT 140 - Blind Review Day 2 (3hrs)",
+      "Triple Review: PT 108 LR Section 2 - Strategy Planning (2hrs)"
+    ],
+    "estimatedHours": 5
+  },
+  {
+    "date": "2025-09-18",
+    "tasks": [
+      "Full Practice Test: PT 140 - Strategy Review & Analysis (3hrs)"
     ],
     "estimatedHours": 3
   },
