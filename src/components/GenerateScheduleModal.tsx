@@ -360,8 +360,9 @@ Focus on essential information only
 Verification: The final entry in your JSON array must have the date at least one day before the ${testDate}.
 Ensure the schedule progresses logically through the curriculum while maintaining consistent Triple Review cycles and appropriate rest periods for the COMPLETE study period.`;
       
-      const result = await model.generateContent(prompt);
-      const text = result.response.text();
+const result = await model.generateContent(prompt);
+const response = await result.response;
+const text = response.text();
 
 let schedule;
 try {
