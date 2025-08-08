@@ -363,6 +363,8 @@ Ensure the schedule progresses logically through the curriculum while maintainin
 const result = await model.generateContent(prompt);
 const response = await result.response;
 const text = response.text();
+console.log("RAW Gemini response:", await response.text());
+
 
 let schedule;
 try {
