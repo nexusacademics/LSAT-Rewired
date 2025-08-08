@@ -1,10 +1,8 @@
-// utils/exportCalendar.ts
-import { createEvents } from 'ics';
+import { createEvents } from 'ics'; // if you want, though you aren't using it now
 
 export function generateICS(events: typeof filteredEvents) {
   const pad = (num: number) => (num < 10 ? '0' + num : num);
 
-  // Convert JS Date to YYYYMMDDTHHMMSSZ format (UTC)
   const toICSDate = (date: Date) => {
     return date.getUTCFullYear().toString() +
       pad(date.getUTCMonth() + 1) +
@@ -22,7 +20,6 @@ export function generateICS(events: typeof filteredEvents) {
 
   events.forEach(event => {
     const start = new Date(event.start);
-    // Let's assume each event lasts estimatedHours hours
     const end = new Date(start.getTime() + event.estimatedHours * 60 * 60 * 1000);
 
     icsLines.push('BEGIN:VEVENT');
@@ -40,14 +37,16 @@ export function generateICS(events: typeof filteredEvents) {
   return icsLines.join('\r\n');
 }
 
-
-function formatToICSDateTime(dateStr: string | Date): [number, number, number, number, number] {
-  const date = new Date(dateStr);
-  return [
-    date.getFullYear(),
-    date.getMonth() + 1,
-    date.getDate(),
-    date.getHours(),
-    date.getMinutes(),
-  ];
+export function exportScheduleAsICS(schedule: typeof filteredEvents) {
+  const icsContent = generateICS(schedule);
+  const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'lsat-study-schedule.ics';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
 }
