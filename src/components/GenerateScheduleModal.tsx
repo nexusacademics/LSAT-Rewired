@@ -240,7 +240,7 @@ Integrate Triple Review cycles throughout remaining study period using PrepTests
    - Begin full practice tests in final 25-30% of study period
    - Continue Triple Review sections alongside full practice tests
 
-4. **Rest Days:** Include rest days (0 hours) every 7-10 days to prevent burnout
+4. **Rest Days:** Include one rest day (0 hours) every 7 days to prevent burnout
 
 4. **Task Specificity:** Make each task specific and actionable with lesson names, PrepTest numbers, and section types
 
