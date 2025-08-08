@@ -207,7 +207,7 @@ const StudyScheduleBuilder = () => {
       title: item.task,
       start: item.date,
       section: item.section || 'Practice',
-      topics: item.task,
+      topics: [item.task],
       estimatedHours: item.estimatedHours,
       completedHours: 0,
       difficulty: item.difficulty || 'Intermediate',
