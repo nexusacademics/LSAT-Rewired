@@ -261,6 +261,7 @@ id: String(Date.now() + index),
 
 
 CRITICAL: Each task must be its own separate JSON object with its own date, task description, and estimated hours. This allows each task to appear as an individual calendar event.
+
 OUTPUT REQUIREMENTS:
 
 NO markdown formatting
