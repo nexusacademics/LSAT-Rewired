@@ -74,9 +74,7 @@ const GenerateScheduleModal: React.FC<GenerateScheduleModalProps> = ({
     
     if (studyWeeks < 4) {
       errors.dateRange = 'We recommend at least 4 weeks of study time';
-    } else if (studyWeeks > 24) {
-      errors.dateRange = 'Study period longer than 6 months - consider a more intensive schedule';
-    }
+    } 
     
     const hours = parseInt(weeklyHours);
     if (!weeklyHours || hours < 1) {
