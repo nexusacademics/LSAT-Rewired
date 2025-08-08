@@ -3,6 +3,7 @@ import { Calendar, Clock, Target, TrendingUp, BookOpen, Scale, Brain, Plus, Filt
 import { useTheme } from '../contexts/ThemeContext';
 import GenerateScheduleModal from './GenerateScheduleModal'; // adjust path as needed
 import { generateICS } from '../utils/exportCalendar';
+import { exportScheduleAsICS } from '../utils/exportCalendar';
 
 // Mock FullCalendar replacement for demo
   const MockCalendar = ({ events, view, onEventClick, onDateClick }) => {
