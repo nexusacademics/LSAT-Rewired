@@ -250,7 +250,14 @@ Integrate Triple Review cycles throughout remaining study period using PrepTests
 
 4. **Rest Days:** Include one rest day (0 hours) every 7 days to prevent burnout
 
-4. **Task Specificity:** Make each task specific and actionable with lesson names, PrepTest numbers, and section types
+5. **Task Specificity:** Make each task specific and actionable with lesson names, PrepTest numbers, and section types
+
+6. **Multi-Task Days REQUIRED:** It is common to have **2-3 tasks per day** (e.g., 1.5 hours of curriculum and 1.5 hours of Triple Review). Do not limit to one task per day unless rest day or full-length test.
+
+If the output gets too long:
+- Split long lessons across multiple days (e.g., Day 1/3, Day 2/3)
+- Use abbreviated task names (e.g., "LR: Circuit Logic (1/2)", "TR: PT101 LR1 - Timed")
+- Reduce text without losing clarity — keep task purpose and test/lesson reference
 
 Output Format:
 Output ONLY a pure JSON array with NO markdown formatting, code blocks, or explanatory text. Do NOT wrap the JSON in json or tags. Start directly with [ and end with ]. EACH INDIVIDUAL TASK must be a separate object. Do NOT bundle multiple tasks in a single event.
@@ -318,7 +325,20 @@ Output ONLY a pure JSON array with NO markdown formatting, code blocks, or expla
   }
 ]
 
-CRITICAL: Each task must be its own separate JSON object with its own date, task description, and estimated hours. This allows each task to appear as an individual calendar event.
+CRITICAL: Each task must be its own separate JSON object with its own date, task description, and estimated hours. This allows each task to appear as an individual calendar event. 
+
+**CRITICAL: Each task must be its own separate JSON object, even if multiple tasks share the same date.**
+
+CRITICAL: You MUST schedule all the following:
+
+- At least one Triple Review cycleevery two weeks
+- A minimum of 5 full-length practice tests (PT 140–158), maximum 1 per week
+- One rest day per 7 days
+- All 24 curriculum lessons (LR + RC) across the full timeline
+- Daily hours should add up to approximately ${weeklyHours} per week
+
+Ensure these are **spread logically** across the study period — not clumped together or missing entirely.
+
 OUTPUT REQUIREMENTS:
 
 NO markdown formatting
