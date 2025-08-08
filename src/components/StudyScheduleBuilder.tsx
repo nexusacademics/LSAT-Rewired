@@ -404,12 +404,13 @@ const StudyScheduleBuilder = () => {
             </div>
 
             <div className="flex items-center space-x-2">
-              <button className={`p-2 transition-colors ${
+              <button 
+                onClick={() => exportScheduleAsICS(schedule)}
+                className={`p-2 transition-colors ${
                 isDarkMode 
                   ? 'text-slate-400 hover:text-slate-200'
                   : 'text-slate-500 hover:text-slate-700'
               }`}>
-                onClick={() => exportScheduleAsICS(schedule)}
                 <Download className="w-4 h-4" />
               </button>
               <button className={`p-2 transition-colors ${
