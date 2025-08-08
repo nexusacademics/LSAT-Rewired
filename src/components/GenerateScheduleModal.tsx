@@ -244,69 +244,68 @@ Integrate Triple Review cycles throughout remaining study period using PrepTests
 
 4. **Task Specificity:** Make each task specific and actionable with lesson names, PrepTest numbers, and section types
 
-## Output Format:
-Output ONLY a JSON array with objects in this exact format:
+Output Format:
+Output ONLY a JSON array where EACH INDIVIDUAL TASK is a separate object. Do NOT bundle multiple tasks under one date.
 
 [
   {
     "date": "2025-08-12",
-    "tasks": [
-      "LR Curriculum: Circuit Logic - The Origin Story (Day 1/3)",
-      "Total: LR Foundation Work"
-    ],
+    "task": "LR Curriculum: Circuit Logic - The Origin Story (Day 1/3)",
+    "estimatedHours": 1.5
+  },
+  {
+    "date": "2025-08-15",
+    "task": "LR Curriculum: Using Circuits - Deductive Structure Family (Day 2/3)",
     "estimatedHours": 2
   },
   {
     "date": "2025-08-15",
-    "tasks": [
-      "LR Curriculum: Using Circuits - Deductive Structure Family (Day 2/3)",
-      "Triple Review: PT 101 LR Section 1 - Blind Review (3hrs)",
-      "Total: Curriculum + Triple Review"
-    ],
-    "estimatedHours": 5
-  },
-  {
-    "date": "2025-08-20",
-    "tasks": [
-      "RC Curriculum: Structure Is a Verb - How to Read Actively (Day 3/7)",
-      "Triple Review: PT 103 RC - Timed Section (1hr)",
-      "Total: RC Curriculum + Triple Review"
-    ],
+    "task": "Triple Review: PT 101 LR Section 1 - Blind Review",
     "estimatedHours": 3
   },
   {
+    "date": "2025-08-20",
+    "task": "RC Curriculum: Structure Is a Verb - How to Read Actively (Day 3/7)",
+    "estimatedHours": 2
+  },
+  {
+    "date": "2025-08-20",
+    "task": "Triple Review: PT 103 RC - Timed Section",
+    "estimatedHours": 1
+  },
+  {
     "date": "2025-09-15",
-    "tasks": [
-      "Full Practice Test: PT 140 - Timed Full Test (3.5hrs)"
-    ],
+    "task": "Full Practice Test: PT 140 - Timed Full Test",
     "estimatedHours": 4
   },
   {
     "date": "2025-09-16",
-    "tasks": [
-      "Full Practice Test: PT 140 - Blind Review Day 1 (3hrs)",
-      "RC Curriculum: Spot the Blueprint (Day 2/7)"
-    ],
-    "estimatedHours": 5
+    "task": "Full Practice Test: PT 140 - Blind Review Day 1",
+    "estimatedHours": 3
+  },
+  {
+    "date": "2025-09-16",
+    "task": "RC Curriculum: Spot the Blueprint (Day 2/7)",
+    "estimatedHours": 2
   },
   {
     "date": "2025-09-17",
-    "tasks": [
-      "Full Practice Test: PT 140 - Blind Review Day 2 (3hrs)",
-      "Triple Review: PT 108 LR Section 2 - Strategy Planning (2hrs)"
-    ],
-    "estimatedHours": 5
+    "task": "Full Practice Test: PT 140 - Blind Review Day 2",
+    "estimatedHours": 3
+  },
+  {
+    "date": "2025-09-17",
+    "task": "Triple Review: PT 108 LR Section 2 - Strategy Planning",
+    "estimatedHours": 2
   },
   {
     "date": "2025-09-18",
-    "tasks": [
-      "Full Practice Test: PT 140 - Strategy Review & Analysis (3hrs)"
-    ],
+    "task": "Full Practice Test: PT 140 - Strategy Review & Analysis",
     "estimatedHours": 3
   },
   {
     "date": "2025-08-21",
-    "tasks": ["Rest Day"],
+    "task": "Rest Day",
     "estimatedHours": 0
   }
 ]
