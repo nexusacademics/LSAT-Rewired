@@ -245,7 +245,7 @@ Integrate Triple Review cycles throughout remaining study period using PrepTests
 4. **Task Specificity:** Make each task specific and actionable with lesson names, PrepTest numbers, and section types
 
 Output Format:
-Output ONLY a JSON array where EACH INDIVIDUAL TASK is a separate object. Do NOT bundle multiple tasks under one date.
+Output ONLY a pure JSON array with NO markdown formatting, code blocks, or explanatory text. Do NOT wrap the JSON in json or  tags. Start directly with [ and end with ]. EACH INDIVIDUAL TASK must be a separate object. Do NOT bundle multiple tasks under one date.
 
 [
   {
@@ -309,6 +309,16 @@ Output ONLY a JSON array where EACH INDIVIDUAL TASK is a separate object. Do NOT
     "estimatedHours": 0
   }
 ]
+
+CRITICAL: Each task must be its own separate JSON object with its own date, task description, and estimated hours. This allows each task to appear as an individual calendar event.
+OUTPUT REQUIREMENTS:
+
+NO markdown formatting
+NO code block wrappers
+NO explanatory text before or after the JSON
+Start immediately with [
+End with ]
+Ensure valid JSON syntax throughout
 
 CRITICAL OUTPUT REQUIREMENTS:
 YOU MUST generate a complete schedule for ALL ${totalDays} days from ${startDate} to ${testDate}. Do not stop early.
