@@ -418,7 +418,7 @@ const StudyScheduleBuilder = () => {
 
             <div className="flex items-center space-x-2">
               <button 
-                onClick={() => exportScheduleAsICS(generatedSchedule)}
+                onClick={() => exportScheduleAsICS(handleDownloadICS)}
                 disabled={generatedSchedule.length === 0}
                 className={`p-2 transition-colors ${
                 isDarkMode 
