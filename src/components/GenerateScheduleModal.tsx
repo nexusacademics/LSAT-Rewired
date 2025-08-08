@@ -229,7 +229,6 @@ Integrate Triple Review cycles throughout remaining study period using PrepTests
 ## Output Format:
 Output ONLY a JSON array with objects in this exact format:
 
-```json
 [
   {
     "date": "2025-08-12",
