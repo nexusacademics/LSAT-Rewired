@@ -311,7 +311,17 @@ Output ONLY a JSON array with objects in this exact format:
   }
 ]
 
-Ensure the schedule progresses logically through the curriculum while maintaining consistent Triple Review cycles and appropriate rest periods.`;
+CRITICAL OUTPUT REQUIREMENTS:
+YOU MUST generate a complete schedule for ALL ${totalDays} days from ${startDate} to ${testDate}. Do not stop early.
+If the response becomes too long:
+
+Break the curriculum lessons into shorter daily segments
+Reduce the detail in task descriptions but maintain specificity
+Use abbreviated PrepTest references (e.g., "PT140" instead of "PrepTest 140")
+Focus on essential information only
+
+Verification: The final entry in your JSON array must have the date ${testDate} or the day before.
+Ensure the schedule progresses logically through the curriculum while maintaining consistent Triple Review cycles and appropriate rest periods for the COMPLETE study period.`;
       
       const result = await model.generateContent(prompt);
       const text = result.response.text();
