@@ -150,10 +150,10 @@ const StudyScheduleBuilder = () => {
     const sampleEvents = [
       {
         id: '1',
-        title: 'Logic Games Fundamentals',
+        title: 'Conditional Reasoning Fundamentals',
         start: '2025-08-10',
         section: 'Fundamentals',
-        topics: ['Logic Games', 'Basic Diagrams'],
+        topics: ['Conditional Reasoning', 'Basic Diagrams'],
         estimatedHours: 8,
         completedHours: 8,
         difficulty: 'Beginner',
