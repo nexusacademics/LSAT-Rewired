@@ -444,6 +444,8 @@ const TripleReview: React.FC<TripleReviewProps> = ({
                 questionData={currentQuestionData}
                 session={session}
                 existingCircuit={existingCircuitForQuestion}
+                containerHeight="calc(100vh - 180px)" // Adjust based on your measurements
+
               />
             </div>
           </div>
