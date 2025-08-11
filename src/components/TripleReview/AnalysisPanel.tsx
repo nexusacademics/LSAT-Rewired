@@ -2,6 +2,8 @@ import React, { useState, useRef, useCallback, useEffect } from 'react';
 
 export const AnalysisPanel = ({ 
   isBlindReview, 
+  isStrategyReview = false,   // <-- NEW
+  currentQuestion = null,     // <-- NEW
   analysisNotes = {}, 
   onNoteChange, 
   focusRingColor = 'focus:ring-2 focus:ring-blue-500' 
@@ -9,7 +11,6 @@ export const AnalysisPanel = ({
   const containerRef = useRef(null);
   const innerPanelRef = useRef(null);
   
-  // Define the four text areas
   const textAreas = ['Conclusion', 'Premises', 'Assumption', 'Answers'];
   
   const labelMap = {
@@ -26,11 +27,9 @@ export const AnalysisPanel = ({
     Answers: 'Enter Notes on the Answer Choices...'
   };
 
-  // Minimum height for each textarea (2 lines approximately)
-  const MIN_HEIGHT = 48; // pixels
-  const LABEL_HEIGHT = 20; // approximate height for label + margin
+  const MIN_HEIGHT = 48;
+  const LABEL_HEIGHT = 20;
 
-  // Use internal state if onNoteChange is not provided, otherwise sync with props
   const [internalNotes, setInternalNotes] = useState(() => ({
     Conclusion: analysisNotes.Conclusion || '',
     Premises: analysisNotes.Premises || '',
@@ -38,7 +37,6 @@ export const AnalysisPanel = ({
     Answers: analysisNotes.Answers || ''
   }));
 
-  // State to track heights of each textarea
   const [heights, setHeights] = useState(() => {
     const initialHeights = {};
     textAreas.forEach(key => {
@@ -52,7 +50,9 @@ export const AnalysisPanel = ({
   const [startHeights, setStartHeights] = useState({});
   const [availableHeight, setAvailableHeight] = useState(0);
 
-  // Update internal state when props change
+  // NEW: toggle state for iframe
+  const [showStrategyFrame, setShowStrategyFrame] = useState(false);
+
   useEffect(() => {
     if (onNoteChange && analysisNotes) {
       setInternalNotes({
@@ -64,29 +64,21 @@ export const AnalysisPanel = ({
     }
   }, [analysisNotes, onNoteChange]);
 
-  // Always use internal state for the UI, but sync with parent
   const handleTextChange = (key, value) => {
-    console.log('handleTextChange called:', key, value);
-    
-    // Update internal state immediately
     setInternalNotes(prev => ({
       ...prev,
       [key]: value
     }));
-    
-    // Also notify parent if callback exists
     if (onNoteChange) {
       onNoteChange(key, value);
     }
   };
 
-  // Calculate available height for textareas
   useEffect(() => {
     const updateAvailableHeight = () => {
       if (innerPanelRef.current) {
         const containerHeight = innerPanelRef.current.clientHeight;
-        // Subtract space for labels and margins (4 textareas * label height + gaps)
-        const usedByLabels = textAreas.length * LABEL_HEIGHT + (textAreas.length - 1) * 12; // 12px gap between items
+        const usedByLabels = textAreas.length * LABEL_HEIGHT + (textAreas.length - 1) * 12;
         setAvailableHeight(containerHeight - usedByLabels);
       }
     };
@@ -96,7 +88,6 @@ export const AnalysisPanel = ({
     return () => window.removeEventListener('resize', updateAvailableHeight);
   }, []);
 
-  // Initialize heights when available height changes
   useEffect(() => {
     if (availableHeight > 0) {
       const equalHeight = Math.max(MIN_HEIGHT, availableHeight / textAreas.length);
@@ -117,27 +108,17 @@ export const AnalysisPanel = ({
 
   const handleMouseMove = useCallback((e) => {
     if (!isResizing) return;
-
     const deltaY = e.clientY - startY;
     const newHeights = { ...startHeights };
-    
-    // Calculate new height for the resizing textarea
     const proposedHeight = Math.max(MIN_HEIGHT, startHeights[isResizing] + deltaY);
     const heightDiff = proposedHeight - startHeights[isResizing];
-    
-    // Calculate total height of other textareas that can be shrunk
     const otherKeys = textAreas.filter(key => key !== isResizing);
     const totalOtherHeight = otherKeys.reduce((sum, key) => sum + startHeights[key], 0);
     const totalOtherMinHeight = otherKeys.length * MIN_HEIGHT;
     const maxShrinkage = totalOtherHeight - totalOtherMinHeight;
-    
-    // Limit the expansion based on how much others can shrink
     const actualHeightDiff = Math.min(Math.max(heightDiff, -startHeights[isResizing] + MIN_HEIGHT), maxShrinkage);
     const actualNewHeight = startHeights[isResizing] + actualHeightDiff;
-    
     newHeights[isResizing] = actualNewHeight;
-    
-    // Distribute the height change among other textareas
     if (actualHeightDiff !== 0) {
       const changePerOther = -actualHeightDiff / otherKeys.length;
       otherKeys.forEach(key => {
@@ -145,7 +126,6 @@ export const AnalysisPanel = ({
         newHeights[key] = Math.max(MIN_HEIGHT, newHeight);
       });
     }
-    
     setHeights(newHeights);
   }, [isResizing, startY, startHeights, textAreas]);
 
@@ -153,27 +133,42 @@ export const AnalysisPanel = ({
     setIsResizing(null);
   }, []);
 
-  // Add and remove event listeners for mouse events
   useEffect(() => {
     if (isResizing) {
       document.addEventListener('mousemove', handleMouseMove);
       document.addEventListener('mouseup', handleMouseUp);
     }
-    
     return () => {
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
     };
   }, [isResizing, handleMouseMove, handleMouseUp]);
 
+  // Build URL for strategy iframe
+  const strategyUrl = currentQuestion
+    ? `https://example.com/strategies/${encodeURIComponent(currentQuestion.id)}`
+    : null;
+
   return (
     <div ref={containerRef} className="flex flex-col flex-1 min-h-0 overflow-hidden">
       {/* Header */}
       <div className="bg-white rounded-2xl shadow-sm border border-slate-200 flex-shrink-0">
-        <div className="p-4 border-b border-slate-100">
+        <div className="p-4 border-b border-slate-100 flex justify-between items-center">
           <h3 className="text-md font-semibold text-slate-900">
             {isBlindReview ? 'Analysis Template' : 'Analysis Notes'}
           </h3>
+
+          {/* Toggle only if in Strategy Review */}
+          {isStrategyReview && (
+            <label className="flex items-center space-x-2 text-sm">
+              <span>Show Strategy</span>
+              <input
+                type="checkbox"
+                checked={showStrategyFrame}
+                onChange={() => setShowStrategyFrame(v => !v)}
+              />
+            </label>
+          )}
         </div>
       </div>
       
@@ -184,44 +179,47 @@ export const AnalysisPanel = ({
           ref={innerPanelRef}
           style={{ gap: '12px' }}
         >
-          {textAreas.map((key, index) => (
-            <div
-              key={key}
-              className="flex flex-col relative transition-all duration-200 ease-in-out"
-              style={{ 
-                height: `${heights[key] + LABEL_HEIGHT}px`,
-                minHeight: `${MIN_HEIGHT + LABEL_HEIGHT}px`
-              }}
-            >
-              <label className="block text-sm font-medium text-slate-700 mb-1 flex-shrink-0">
-                {labelMap[key]}
-              </label>
-              <textarea
-                className={`w-full border border-slate-300 rounded-lg p-2 text-sm ${focusRingColor} resize-none overflow-auto`}
-                placeholder={placeholderMap[key]}
-                defaultValue={internalNotes[key]}
-                onChange={(e) => {
-                  console.log('textarea onChange:', key, e.target.value);
-                  handleTextChange(key, e.target.value);
-                }}
+          {isStrategyReview && showStrategyFrame && strategyUrl ? (
+            <iframe
+              key={strategyUrl}
+              src={strategyUrl}
+              className="w-full flex-1 border-0"
+            />
+          ) : (
+            textAreas.map((key, index) => (
+              <div
+                key={key}
+                className="flex flex-col relative transition-all duration-200 ease-in-out"
                 style={{ 
-                  height: `${heights[key]}px`,
-                  minHeight: `${MIN_HEIGHT}px`
+                  height: `${heights[key] + LABEL_HEIGHT}px`,
+                  minHeight: `${MIN_HEIGHT + LABEL_HEIGHT}px`
                 }}
-              />
-              
-              {/* Resize handle (except for last item) */}
-              {index < textAreas.length - 1 && (
-                <div
-                  className="absolute bottom-0 left-0 right-0 h-2 cursor-row-resize hover:bg-blue-100 hover:bg-opacity-50 transition-colors duration-150 flex items-center justify-center group"
-                  onMouseDown={(e) => handleMouseDown(key, e)}
-                  style={{ transform: 'translateY(6px)' }}
-                >
-                  <div className="w-8 h-0.5 bg-slate-300 group-hover:bg-blue-400 transition-colors duration-150 rounded-full" />
-                </div>
-              )}
-            </div>
-          ))}
+              >
+                <label className="block text-sm font-medium text-slate-700 mb-1 flex-shrink-0">
+                  {labelMap[key]}
+                </label>
+                <textarea
+                  className={`w-full border border-slate-300 rounded-lg p-2 text-sm ${focusRingColor} resize-none overflow-auto`}
+                  placeholder={placeholderMap[key]}
+                  defaultValue={internalNotes[key]}
+                  onChange={(e) => handleTextChange(key, e.target.value)}
+                  style={{ 
+                    height: `${heights[key]}px`,
+                    minHeight: `${MIN_HEIGHT}px`
+                  }}
+                />
+                {index < textAreas.length - 1 && (
+                  <div
+                    className="absolute bottom-0 left-0 right-0 h-2 cursor-row-resize hover:bg-blue-100 hover:bg-opacity-50 flex items-center justify-center group"
+                    onMouseDown={(e) => handleMouseDown(key, e)}
+                    style={{ transform: 'translateY(6px)' }}
+                  >
+                    <div className="w-8 h-0.5 bg-slate-300 group-hover:bg-blue-400 rounded-full" />
+                  </div>
+                )}
+              </div>
+            ))
+          )}
         </div>
       </div>
     </div>
