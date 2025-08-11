@@ -10,20 +10,20 @@ export const AnalysisPanel = ({
   const innerPanelRef = useRef(null);
   
   // Define the four text areas
-  const textAreas = ['Conclusion', 'Premises', 'Assumption', 'Notes'];
+  const textAreas = ['Conclusion', 'Premises', 'Assumption', 'Answers'];
   
   const labelMap = {
     Conclusion: 'Conclusion',
     Premises: 'Premises',
     Assumption: 'Assumption', 
-    Notes: 'Notes'
+    Answers: 'Answer Choice Analyses'
   };
   
   const placeholderMap = {
     Conclusion: 'Enter Conclusion...',
     Premises: 'Enter Premises...',
     Assumption: 'Enter Assumption...',
-    Notes: 'Enter Notes...'
+    Answers: 'Enter Notes on the Answer Choices...'
   };
 
   // Minimum height for each textarea (2 lines approximately)
@@ -35,7 +35,7 @@ export const AnalysisPanel = ({
     Conclusion: analysisNotes.Conclusion || '',
     Premises: analysisNotes.Premises || '',
     Assumption: analysisNotes.Assumption || '',
-    Notes: analysisNotes.Notes || ''
+    Answers: analysisNotes.Answers || ''
   }));
 
   // State to track heights of each textarea
@@ -59,7 +59,7 @@ export const AnalysisPanel = ({
         Conclusion: analysisNotes.Conclusion || '',
         Premises: analysisNotes.Premises || '',
         Assumption: analysisNotes.Assumption || '',
-        Notes: analysisNotes.Notes || ''
+        Answers: analysisNotes.Answers || ''
       });
     }
   }, [analysisNotes, onNoteChange]);
