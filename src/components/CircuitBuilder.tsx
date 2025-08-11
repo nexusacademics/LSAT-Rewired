@@ -445,7 +445,7 @@ const CorrectAnswerNode = ({ id, data, selected }: NodeProps) => {
        <Handle type="source" position={Position.Top} id="top-source" className="w-3 h-3" />
       
        <Handle type="target" position={Position.Left} id="left-target" className="w-3 h-3" />
-       <Handle type="source" position={Position.Left" id="left-source" className="w-3 h-3" />
+       <Handle type="source" position={Position.Left} id="left-source" className="w-3 h-3" />
       
        <Handle type="target" position={Position.Bottom} id="bottom-target" className="w-3 h-3" />
        <Handle type="source" position={Position.Bottom} id="bottom-source" className="w-3 h-3" />
