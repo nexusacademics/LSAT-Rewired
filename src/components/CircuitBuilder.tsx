@@ -277,7 +277,7 @@ const BackingPremiseNode = ({ id, data, selected }: NodeProps) => {
        <Handle type="source" position={Position.Bottom} id="bottom-source" className="w-3 h-3" />
       
        <Handle type="target" position={Position.Right} id="right-target" className="w-3 h-3" />
-       <Handle type="source" position={Position.Right" id="right-source" className="w-3 h-3" />
+       <Handle type="source" position={Position.Right} id="right-source" className="w-3 h-3" />
       <div className="text-xs font-medium mb-2 text-gray-800">Backing/Linking Premise</div>
       <textarea
         ref={textareaRef}
@@ -406,7 +406,7 @@ const CounterclaimNode = ({ id, data, selected }: NodeProps) => {
        <Handle type="source" position={Position.Bottom} id="bottom-source" className="w-3 h-3" />
       
        <Handle type="target" position={Position.Right} id="right-target" className="w-3 h-3" />
-       <Handle type="source" position={Position.Right" id="right-source" className="w-3 h-3" />
+       <Handle type="source" position={Position.Right} id="right-source" className="w-3 h-3" />
       <div className="text-xs font-medium mb-2 text-red-800">Counterclaim/Concession</div>
       <textarea
         ref={textareaRef}
