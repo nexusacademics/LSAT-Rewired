@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useRef  } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import ReactFlow, {
   Node,
   Edge,
@@ -57,6 +57,7 @@ interface TestSession {
     }
   };
 }
+
 // Custom Node Components
 const ConclusionSubjectNode = ({ id, data, selected }: NodeProps) => {
   const [content, setContent] = useState(data.content || '');
@@ -227,7 +228,7 @@ const MajorPremiseNode = ({ id, data, selected }: NodeProps) => {
        <Handle type="source" position={Position.Left} id="left-source" className="w-3 h-3" />
       
        <Handle type="target" position={Position.Bottom} id="bottom-target" className="w-3 h-3" />
-       <Handle type="source" position={Position.Bottom} id="bottom-source" className="w-3 h-3" />
+       <Handle type="source" position={Position.Bottom" id="bottom-source" className="w-3 h-3" />
       
        <Handle type="target" position={Position.Right} id="right-target" className="w-3 h-3" />
        <Handle type="source" position={Position.Right} id="right-source" className="w-3 h-3" />
@@ -273,10 +274,10 @@ const BackingPremiseNode = ({ id, data, selected }: NodeProps) => {
        <Handle type="source" position={Position.Left} id="left-source" className="w-3 h-3" />
       
        <Handle type="target" position={Position.Bottom} id="bottom-target" className="w-3 h-3" />
-       <Handle type="source" position={Position.Bottom} id="bottom-source" className="w-3 h-3" />
+       <Handle type="source" position={Position.Bottom" id="bottom-source" className="w-3 h-3" />
       
        <Handle type="target" position={Position.Right} id="right-target" className="w-3 h-3" />
-       <Handle type="source" position={Position.Right} id="right-source" className="w-3 h-3" />
+       <Handle type="source" position={Position.Right" id="right-source" className="w-3 h-3" />
       <div className="text-xs font-medium mb-2 text-gray-800">Backing/Linking Premise</div>
       <textarea
         ref={textareaRef}
@@ -402,10 +403,10 @@ const CounterclaimNode = ({ id, data, selected }: NodeProps) => {
        <Handle type="source" position={Position.Left} id="left-source" className="w-3 h-3" />
       
        <Handle type="target" position={Position.Bottom} id="bottom-target" className="w-3 h-3" />
-       <Handle type="source" position={Position.Bottom} id="bottom-source" className="w-3 h-3" />
+       <Handle type="source" position={Position.Bottom" id="bottom-source" className="w-3 h-3" />
       
        <Handle type="target" position={Position.Right} id="right-target" className="w-3 h-3" />
-       <Handle type="source" position={Position.Right} id="right-source" className="w-3 h-3" />
+       <Handle type="source" position={Position.Right" id="right-source" className="w-3 h-3" />
       <div className="text-xs font-medium mb-2 text-red-800">Counterclaim/Concession</div>
       <textarea
         ref={textareaRef}
@@ -451,7 +452,7 @@ const CorrectAnswerNode = ({ id, data, selected }: NodeProps) => {
        <Handle type="source" position={Position.Bottom} id="bottom-source" className="w-3 h-3" />
       
        <Handle type="target" position={Position.Right} id="right-target" className="w-3 h-3" />
-       <Handle type="source" position={Position.Right} id="right-source" className="w-3 h-3" />
+       <Handle type="source" position={Position.Right" id="right-source" className="w-3 h-3" />
       <div className="text-xs font-medium mb-2 text-green-800">Correct Answer</div>
       <textarea
         ref={textareaRef}
@@ -641,9 +642,9 @@ const CircuitBuilderFlow = () => {
   }, [setNodes, setEdges]);
 
   return (
-   <div className="flex flex-col bg-slate-50">
+   <div className="flex flex-col h-full bg-slate-50">
       {/* Header */}
-      <div className="bg-white border-b border-slate-200 px-6 py-4">
+      <div className="bg-white border-b border-slate-200 px-6 py-4 flex-shrink-0">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             
@@ -682,9 +683,9 @@ const CircuitBuilderFlow = () => {
         </div>
       </div>
 
-      <div className="flex-1 flex overflow-hidden">
-                {/* Sidebar */}
-        <div className="w-56 bg-white border-r border-slate-200 p-4 space-y-6 overflow-y-auto">
+      <div className="flex-1 flex overflow-hidden min-h-0">
+        {/* Sidebar */}
+        <div className="w-56 bg-white border-r border-slate-200 p-4 space-y-6 overflow-y-auto flex-shrink-0">
           <div>
             <h3 className="text-base font-semibold text-slate-900 mb-3">Node Types</h3>
             <div className="space-y-2">
@@ -727,7 +728,7 @@ const CircuitBuilderFlow = () => {
         </div>
 
         {/* React Flow Canvas */}
-        <div className="flex flex-1" ref={reactFlowWrapper}  style={{ overflow: 'hidden' }}
+        <div className="flex-1 min-w-0" ref={reactFlowWrapper}
            onDragOver={(event) => event.preventDefault()} // Allow drop by preventing default
             onDrop={(event) => {
               event.preventDefault();
@@ -770,8 +771,7 @@ const CircuitBuilderFlow = () => {
             defaultViewport={{ x: 0, y: 0, zoom: 1.5 }}
            >
             <Background color="#e2e8f0" gap={20} />
-            <Controls position="top-left"
-              />
+            <Controls position="top-left" />
            
             
             {nodes.length === 0 && (
