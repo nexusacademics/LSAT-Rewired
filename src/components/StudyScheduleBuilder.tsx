@@ -181,6 +181,17 @@ const StudyScheduleBuilder = () => {
         difficulty: 'Intermediate',
         completed: false
       }
+       {
+        id: '4',
+        title: 'Logical Reasoning Practice',
+        start: '2025-08-24',
+        section: 'Practice',
+        topics: ['Logical Reasoning', 'Assumption Questions'],
+        estimatedHours: 12,
+        completedHours: 0,
+        difficulty: 'Intermediate',
+        completed: false
+      }
     ];
     setEvents(sampleEvents);
   }, []);
