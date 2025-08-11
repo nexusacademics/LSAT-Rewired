@@ -180,7 +180,7 @@ const StudyScheduleBuilder = () => {
         completedHours: 0,
         difficulty: 'Intermediate',
         completed: false
-      }
+      },
        {
         id: '4',
         title: 'Logical Reasoning Practice',
