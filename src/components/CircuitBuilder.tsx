@@ -181,7 +181,7 @@ const MinorPremiseNode = ({ id, data, selected }: NodeProps) => {
        <Handle type="source" position={Position.Left} id="left-source" className="w-3 h-3" />
       
        <Handle type="target" position={Position.Bottom} id="bottom-target" className="w-3 h-3" />
-       <Handle type="source" position={Position.Bottom} id="bottom-source" className="w-3 h-3" />
+       <Handle type="source" position={Position.Bottom id="bottom-source" className="w-3 h-3" />
       
        <Handle type="target" position={Position.Right} id="right-target" className="w-3 h-3" />
        <Handle type="source" position={Position.Right} id="right-source" className="w-3 h-3" />
@@ -332,7 +332,7 @@ const AssumptionNode = ({ id, data, selected }: NodeProps) => {
        <Handle type="source" position={Position.Left} id="left-source" className="w-3 h-3" />
       
        <Handle type="target" position={Position.Bottom} id="bottom-target" className="w-3 h-3" />
-       <Handle type="source" position={Position.Bottom} id="bottom-source" className="w-3 h-3" />
+       <Handle type="source" position={Position.Bottom" id="bottom-source" className="w-3 h-3" />
       
        <Handle type="target" position={Position.Right} id="right-target" className="w-3 h-3" />
        <Handle type="source" position={Position.Right} id="right-source" className="w-3 h-3" />
@@ -402,7 +402,7 @@ const CounterclaimNode = ({ id, data, selected }: NodeProps) => {
        <Handle type="source" position={Position.Left} id="left-source" className="w-3 h-3" />
       
        <Handle type="target" position={Position.Bottom} id="bottom-target" className="w-3 h-3" />
-       <Handle type="source" position={Position.Bottom} id="bottom-source" className="w-3 h-3" />
+       <Handle type="source" position={Position.Bottom" id="bottom-source" className="w-3 h-3" />
       
        <Handle type="target" position={Position.Right} id="right-target" className="w-3 h-3" />
        <Handle type="source" position={Position.Right} id="right-source" className="w-3 h-3" />
@@ -445,7 +445,7 @@ const CorrectAnswerNode = ({ id, data, selected }: NodeProps) => {
        <Handle type="source" position={Position.Top} id="top-source" className="w-3 h-3" />
       
        <Handle type="target" position={Position.Left} id="left-target" className="w-3 h-3" />
-       <Handle type="source" position={Position.Left} id="left-source" className="w-3 h-3" />
+       <Handle type="source" position={Position.Left" id="left-source" className="w-3 h-3" />
       
        <Handle type="target" position={Position.Bottom} id="bottom-target" className="w-3 h-3" />
        <Handle type="source" position={Position.Bottom} id="bottom-source" className="w-3 h-3" />
@@ -641,12 +641,11 @@ const CircuitBuilderFlow = () => {
   }, [setNodes, setEdges]);
 
   return (
-   <div className="flex flex-col bg-slate-50">
-      {/* Header */}
-      <div className="bg-white border-b border-slate-200 px-6 py-4">
+    <div className="h-screen flex flex-col bg-slate-50">
+      {/* Header - Fixed height */}
+      <div className="bg-white border-b border-slate-200 px-6 py-4 flex-shrink-0">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            
             <h1 className="text-xl font-semibold text-slate-900">Circuit Builder</h1>
           </div>
 
@@ -682,78 +681,81 @@ const CircuitBuilderFlow = () => {
         </div>
       </div>
 
-      <div className="flex-1 flex overflow-hidden">
-                {/* Sidebar */}
-        <div className="w-56 bg-white border-r border-slate-200 p-4 space-y-6 overflow-y-auto">
-          <div>
-            <h3 className="text-base font-semibold text-slate-900 mb-3">Node Types</h3>
-            <div className="space-y-2">
-              {nodeTypeOptions.map(({ type, label, color, description }) => (
-                <div
-                  key={type}
-                  draggable
-                  onDragStart={(event) => {
-                    event.dataTransfer.setData('application/reactflow', type);
-                    event.dataTransfer.effectAllowed = 'move';
-                  }}
-                 className={`group w-full p-2 text-left border-2 rounded-lg cursor-move select-none transition-colors ${color}`}
-
-                >
-                  <div className="text-sm font-medium">{label}</div>
-                  <div className="text-xs opacity-75 group-hover:block hidden">{description}</div>
-                </div>
-              ))}
+      {/* Main content area - Takes remaining height */}
+      <div className="flex-1 flex min-h-0">
+        {/* Sidebar - Fixed width, scrollable */}
+        <div className="w-56 bg-white border-r border-slate-200 flex-shrink-0 flex flex-col">
+          <div className="p-4 space-y-6 overflow-y-auto flex-1">
+            <div>
+              <h3 className="text-base font-semibold text-slate-900 mb-3">Node Types</h3>
+              <div className="space-y-2">
+                {nodeTypeOptions.map(({ type, label, color, description }) => (
+                  <div
+                    key={type}
+                    draggable
+                    onDragStart={(event) => {
+                      event.dataTransfer.setData('application/reactflow', type);
+                      event.dataTransfer.effectAllowed = 'move';
+                    }}
+                    className={`group w-full p-2 text-left border-2 rounded-lg cursor-move select-none transition-colors ${color}`}
+                  >
+                    <div className="text-sm font-medium">{label}</div>
+                    <div className="text-xs opacity-75 group-hover:block hidden">{description}</div>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
 
-          <div>
-            <h3 className="text-base font-semibold text-slate-900 mb-3">Instructions</h3>
-            <button
-              onClick={() => setShowInstructions(true)}
-              className="w-full p-2 rounded-lg text-sm font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors flex items-center justify-center"
-            >
-              <Info className="h-4 w-4 mr-2" />
-              View Instructions
-            </button>
-          </div>
+            <div>
+              <h3 className="text-base font-semibold text-slate-900 mb-3">Instructions</h3>
+              <button
+                onClick={() => setShowInstructions(true)}
+                className="w-full p-2 rounded-lg text-sm font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors flex items-center justify-center"
+              >
+                <Info className="h-4 w-4 mr-2" />
+                View Instructions
+              </button>
+            </div>
 
-          <div className="text-xs text-slate-500 p-2 bg-slate-50 rounded">
-            <strong>Usage:</strong><br/>
-            1. Select a node type<br/>
-            2. Click on canvas to add<br/>
-            3. Drag to connect nodes<br/>
-            4. Click nodes to edit content
+            <div className="text-xs text-slate-500 p-2 bg-slate-50 rounded">
+              <strong>Usage:</strong><br/>
+              1. Drag node types to canvas<br/>
+              2. Click nodes to edit content<br/>
+              3. Drag from handles to connect<br/>
+              4. Select and delete as needed
+            </div>
           </div>
         </div>
 
-        {/* React Flow Canvas */}
-        <div className="flex flex-1" ref={reactFlowWrapper}  style={{ overflow: 'hidden' }}
-           onDragOver={(event) => event.preventDefault()} // Allow drop by preventing default
-            onDrop={(event) => {
-              event.preventDefault();
-              if (!reactFlowWrapper.current) return;
-          
-              const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
-              const type = event.dataTransfer.getData('application/reactflow');
-              if (!type) return;
-          
-              const position = project({
-                x: event.clientX - reactFlowBounds.left,
-                y: event.clientY - reactFlowBounds.top,
-              });
-          
-              const newNode: Node = {
-                id: `node-${Date.now()}`,
-                type,
-                position,
-                data: {
-                  content: type === 'assumption' ? JSON.stringify(['', '']) : '',
-                  onContentChange: handleNodeContentChange
-                }, 
-              };
-          
-              setNodes((nds) => nds.concat(newNode));
-            }}>
+        {/* React Flow Canvas - Takes remaining space */}
+        <div className="flex-1 min-w-0" ref={reactFlowWrapper}
+          onDragOver={(event) => event.preventDefault()}
+          onDrop={(event) => {
+            event.preventDefault();
+            if (!reactFlowWrapper.current) return;
+        
+            const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
+            const type = event.dataTransfer.getData('application/reactflow');
+            if (!type) return;
+        
+            const position = project({
+              x: event.clientX - reactFlowBounds.left,
+              y: event.clientY - reactFlowBounds.top,
+            });
+        
+            const newNode: Node = {
+              id: `node-${Date.now()}`,
+              type,
+              position,
+              data: {
+                content: type === 'assumption' ? JSON.stringify(['', '']) : '',
+                onContentChange: handleNodeContentChange
+              }, 
+            };
+        
+            setNodes((nds) => nds.concat(newNode));
+          }}
+        >
           <ReactFlow
             nodes={nodes}
             edges={styledEdges}
@@ -764,21 +766,19 @@ const CircuitBuilderFlow = () => {
             onEdgeClick={onEdgeClick}
             connectionMode={ConnectionMode.Loose}
             onPaneClick={onPaneClick}
-            onEdgeClick={onEdgeClick}
             onNodeClick={onNodeClick}
             fitView
             defaultViewport={{ x: 0, y: 0, zoom: 1.5 }}
-           >
+            className="h-full w-full"
+          >
             <Background color="#e2e8f0" gap={20} />
-            <Controls position="top-left"
-              />
-           
+            <Controls position="top-left" />
             
             {nodes.length === 0 && (
               <Panel position="center">
                 <div className="text-center text-slate-400 bg-white p-8 rounded-lg shadow-sm border border-slate-200">
                   <Plus className="h-12 w-12 mx-auto mb-4" />
-                  <p className="text-lg font-medium">Click and drag the elements to the left to start building your circuit</p>
+                  <p className="text-lg font-medium">Drag node types from the sidebar to start building your circuit</p>
                 </div>
               </Panel>
             )}
@@ -796,15 +796,14 @@ const CircuitBuilderFlow = () => {
             >
               ×
             </button>
-            <h2 className="text-2xl font-bold text-slate-900 mb-4">React Flow Circuit Builder</h2>
+            <h2 className="text-2xl font-bold text-slate-900 mb-4">Circuit Builder</h2>
             <div className="text-slate-700 space-y-3 text-sm">
-              <p>• **Select a node type** from the left sidebar</p>
-              <p>• **Click on the canvas** to add a new node of the selected type</p>
-              <p>• **Drag from one node to another** to create connections</p>
-              <p>• **Click inside a node** to edit its content directly</p>
+              <p>• **Drag node types** from the left sidebar to the canvas</p>
+              <p>• **Click inside nodes** to edit their content directly</p>
+              <p>• **Drag from handles** (connection points) to create connections</p>
               <p>• **Select nodes/edges** and use "Delete Selected" to remove them</p>
-              <p>• **Use the minimap and controls** for navigation</p>
-              <p>• React Flow provides built-in **zoom, pan, and selection** features</p>
+              <p>• **Use mouse/trackpad** to zoom and pan around the canvas</p>
+              <p>• **Analysis score** updates automatically based on your diagram</p>
             </div>
             <button
               onClick={() => setShowInstructions(false)}
