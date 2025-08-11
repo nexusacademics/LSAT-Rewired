@@ -728,8 +728,8 @@ const CircuitBuilderFlow = () => {
         </div>
 
         {/* React Flow Canvas */}
-        <div className="flex-1 min-w-0" ref={reactFlowWrapper}
-           onDragOver={(event) => event.preventDefault()} // Allow drop by preventing default
+        <div className="flex-1 min-w-0 relative" ref={reactFlowWrapper}
+            onDragOver={(event) => event.preventDefault()}
             onDrop={(event) => {
               event.preventDefault();
               if (!reactFlowWrapper.current) return;
@@ -769,6 +769,8 @@ const CircuitBuilderFlow = () => {
             onNodeClick={onNodeClick}
             fitView
             defaultViewport={{ x: 0, y: 0, zoom: 1.5 }}
+            style={{ height: '100%', width: '100%' }} // Ensure it fills the container
+
            >
             <Background color="#e2e8f0" gap={20} />
             <Controls position="top-left" />
