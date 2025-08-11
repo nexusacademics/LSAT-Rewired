@@ -10,20 +10,20 @@ export const AnalysisPanel = ({
   const innerPanelRef = useRef(null);
   
   // Define the four text areas
-  const textAreas = ['summary', 'strengths', 'weaknesses', 'recommendations'];
+  const textAreas = ['Conclusion', 'Premises', 'Assumption', 'Notes'];
   
   const labelMap = {
-    summary: 'Summary',
-    strengths: 'Strengths',
-    weaknesses: 'Weaknesses', 
-    recommendations: 'Recommendations'
+    Conclusion: 'Conclusion',
+    Premises: 'Premises',
+    Assumption: 'Assumption', 
+    Notes: 'Notes'
   };
   
   const placeholderMap = {
-    summary: 'Enter summary...',
-    strengths: 'Enter strengths...',
-    weaknesses: 'Enter weaknesses...',
-    recommendations: 'Enter recommendations...'
+    Conclusion: 'Enter Conclusion...',
+    Premises: 'Enter Premises...',
+    Assumption: 'Enter Assumption...',
+    Notes: 'Enter Notes...'
   };
 
   // Minimum height for each textarea (2 lines approximately)
@@ -32,10 +32,10 @@ export const AnalysisPanel = ({
 
   // Use internal state if onNoteChange is not provided, otherwise sync with props
   const [internalNotes, setInternalNotes] = useState(() => ({
-    summary: analysisNotes.summary || '',
-    strengths: analysisNotes.strengths || '',
-    weaknesses: analysisNotes.weaknesses || '',
-    recommendations: analysisNotes.recommendations || ''
+    Conclusion: analysisNotes.Conclusion || '',
+    Premises: analysisNotes.Premises || '',
+    Assumption: analysisNotes.Assumption || '',
+    Notes: analysisNotes.Notes || ''
   }));
 
   // State to track heights of each textarea
@@ -56,10 +56,10 @@ export const AnalysisPanel = ({
   useEffect(() => {
     if (onNoteChange && analysisNotes) {
       setInternalNotes({
-        summary: analysisNotes.summary || '',
-        strengths: analysisNotes.strengths || '',
-        weaknesses: analysisNotes.weaknesses || '',
-        recommendations: analysisNotes.recommendations || ''
+        Conclusion: analysisNotes.Conclusion || '',
+        Premises: analysisNotes.Premises || '',
+        Assumption: analysisNotes.Assumption || '',
+        Notes: analysisNotes.Notes || ''
       });
     }
   }, [analysisNotes, onNoteChange]);
