@@ -18,7 +18,6 @@ import {
 } from 'lucide-react';
 import { TestSession, ProcessedQuestion } from '../../App';
 
-
 // Custom icon for text resize (double A)
 const TextResizeIcon = ({ className }: { className?: string }) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -125,7 +124,7 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   const [showTextSizeDropdown, setShowTextSizeDropdown] = useState(false);
   const [showLineSpacingDropdown, setShowLineSpacingDropdown] = useState(false);
-   const [myValue, setMyValue] = useState('');
+
   const PhaseIcon = getPhaseIcon(session.phase);
   const phaseColor = getPhaseColor(session.phase);
 
@@ -229,8 +228,8 @@ export const Header: React.FC<HeaderProps> = ({
       <div className="py-4 px-6">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div className="flex items-center space-x-4 md:mb-0 mb-2">
-            <div className={`p-3 bg-${phaseColor}-100 rounded-xl`}>
-              <PhaseIcon className={`h-6 w-6 text-${phaseColor}-600`} />
+            <div className={p-3 bg-${phaseColor}-100 rounded-xl}>
+              <PhaseIcon className={h-6 w-6 text-${phaseColor}-600} />
             </div>
             <div>
               <h1 className="text-2xl font-bold text-slate-900">
@@ -245,16 +244,16 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="flex items-center space-x-4">
             {session.phase === 'timed' && (
               <div className="flex items-center space-x-2">
-                <div className={`text-2xl font-mono font-bold transition-all ${timerColor} ${timerBgColor} ${timeRemaining <= 60 ? 'animate-pulse' : ''} px-2 py-1 rounded`}>
+                <div className={text-2xl font-mono font-bold transition-all ${timerColor} ${timerBgColor} ${timeRemaining <= 60 ? 'animate-pulse' : ''} px-2 py-1 rounded}>
                   {timeDisplay}
                 </div>
                 <button
                   onClick={onToggleTimer}
-                  className={`p-2 rounded-lg ${
+                  className={p-2 rounded-lg ${
                     isTimerRunning
                       ? 'bg-red-100 text-red-600 hover:bg-red-200'
                       : 'bg-green-100 text-green-600 hover:bg-green-200'
-                  }`}
+                  }}
                 >
                   {isTimerRunning ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}
                 </button>
@@ -263,7 +262,7 @@ export const Header: React.FC<HeaderProps> = ({
 
             <button
               onClick={onToggleFlag}
-              className={`p-2 rounded-lg transition-colors ${getFlagButtonColor()}`}
+              className={p-2 rounded-lg transition-colors ${getFlagButtonColor()}}
               title={isCurrentQuestionFlagged() ? "Unflag Question" : "Flag Question"}
             >
               <Flag className="h-5 w-5" />
@@ -300,49 +299,50 @@ export const Header: React.FC<HeaderProps> = ({
       </div>
 
       {/* Formatting Toolbar */}
-     <div className="border-t border-slate-200 px-6 py-3 bg-slate-50">
-  <div className="flex items-center justify-between">
-    {/* Left side: formatting buttons */}
-    <div className="flex items-center space-x-1">
-      {formattingTools.map((tool) => {
-        const Icon = tool.icon;
-        const isSelected = selectedTool === tool.id;
-        return (
-          <button
-            key={tool.id}
-            onClick={() => handleToolClick(tool.id)}
-            className={`p-2 rounded-lg border transition-all ${
-              isSelected 
-                ? 'bg-blue-100 border-blue-300 text-blue-700 shadow-sm' 
-                : `bg-white border-slate-200 text-slate-600 ${tool.bgColor}`
-            }`}
-            title={tool.label}
-          >
-            {tool.id.startsWith('highlight-') ? (
-              <div className="relative">
-                <Icon className="h-4 w-4" />
-                <div 
-                  className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full border border-white"
-                  style={{ backgroundColor: tool.color }}
-                />
-              </div>
-            ) : (
-              <Icon className="h-4 w-4" />
-            )}
-          </button>
-        );
-      })}
-
-      {/* ... text size dropdown, line spacing dropdown, clear formatting button ... */}
-        {/* Text Size Dropdown */}
+      <div className="border-t border-slate-200 px-6 py-3 bg-slate-50">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-1">
+            {formattingTools.map((tool) => {
+              const Icon = tool.icon;
+              const isSelected = selectedTool === tool.id;
+              
+              return (
+                <button
+                  key={tool.id}
+                  onClick={() => handleToolClick(tool.id)}
+                  className={p-2 rounded-lg border transition-all ${
+                    isSelected 
+                      ? 'bg-blue-100 border-blue-300 text-blue-700 shadow-sm' 
+                      : bg-white border-slate-200 text-slate-600 ${tool.bgColor}
+                  }}
+                  title={tool.label}
+                >
+                  {tool.id.startsWith('highlight-') ? (
+                    <div className="relative">
+                      <Icon className="h-4 w-4" />
+                      <div 
+                        className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full border border-white"
+                        style={{ backgroundColor: tool.color }}
+                      />
+                    </div>
+                  ) : (
+                    <Icon className="h-4 w-4" />
+                  )}
+                </button>
+              );
+            })}
+            
+            <div className="w-px h-6 bg-slate-300 mx-2" />
+            
+            {/* Text Size Dropdown */}
             <div className="relative">
               <button
                 onClick={handleTextSizeClick}
-                className={`p-2 rounded-lg border transition-all ${
+                className={p-2 rounded-lg border transition-all ${
                   showTextSizeDropdown
                     ? 'bg-blue-100 border-blue-300 text-blue-700 shadow-sm'
                     : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-100'
-                }`}
+                }}
                 title="Text Size"
               >
                 <TextResizeIcon className="h-4 w-4" />
@@ -352,25 +352,25 @@ export const Header: React.FC<HeaderProps> = ({
                 <div className="absolute top-full mt-1 left-0 bg-white border border-slate-200 rounded-lg shadow-lg z-50 min-w-32">
                   <button
                     onClick={() => handleTextSizeChange('small')}
-                    className={`w-full px-3 py-2 text-left text-sm hover:bg-slate-50 first:rounded-t-lg ${
+                    className={w-full px-3 py-2 text-left text-sm hover:bg-slate-50 first:rounded-t-lg ${
                       textSize === 'small' ? 'bg-blue-50 text-blue-700' : 'text-slate-700'
-                    }`}
+                    }}
                   >
                     Small
                   </button>
                   <button
                     onClick={() => handleTextSizeChange('medium')}
-                    className={`w-full px-3 py-2 text-left text-sm hover:bg-slate-50 ${
+                    className={w-full px-3 py-2 text-left text-sm hover:bg-slate-50 ${
                       textSize === 'medium' ? 'bg-blue-50 text-blue-700' : 'text-slate-700'
-                    }`}
+                    }}
                   >
                     Medium
                   </button>
                   <button
                     onClick={() => handleTextSizeChange('large')}
-                    className={`w-full px-3 py-2 text-left text-sm hover:bg-slate-50 last:rounded-b-lg ${
+                    className={w-full px-3 py-2 text-left text-sm hover:bg-slate-50 last:rounded-b-lg ${
                       textSize === 'large' ? 'bg-blue-50 text-blue-700' : 'text-slate-700'
-                    }`}
+                    }}
                   >
                     Large
                   </button>
@@ -382,11 +382,11 @@ export const Header: React.FC<HeaderProps> = ({
             <div className="relative">
               <button
                 onClick={handleLineSpacingClick}
-                className={`p-2 rounded-lg border transition-all ${
+                className={p-2 rounded-lg border transition-all ${
                   showLineSpacingDropdown
                     ? 'bg-blue-100 border-blue-300 text-blue-700 shadow-sm'
                     : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-100'
-                }`}
+                }}
                 title="Line Spacing"
               >
                 <LineSpacingIcon className="h-4 w-4" />
@@ -396,25 +396,25 @@ export const Header: React.FC<HeaderProps> = ({
                 <div className="absolute top-full mt-1 left-0 bg-white border border-slate-200 rounded-lg shadow-lg z-50 min-w-32">
                   <button
                     onClick={() => handleLineSpacingChange('normal')}
-                    className={`w-full px-3 py-2 text-left text-sm hover:bg-slate-50 first:rounded-t-lg ${
+                    className={w-full px-3 py-2 text-left text-sm hover:bg-slate-50 first:rounded-t-lg ${
                       lineSpacing === 'normal' ? 'bg-blue-50 text-blue-700' : 'text-slate-700'
-                    }`}
+                    }}
                   >
                     Normal
                   </button>
                   <button
                     onClick={() => handleLineSpacingChange('relaxed')}
-                    className={`w-full px-3 py-2 text-left text-sm hover:bg-slate-50 ${
+                    className={w-full px-3 py-2 text-left text-sm hover:bg-slate-50 ${
                       lineSpacing === 'relaxed' ? 'bg-blue-50 text-blue-700' : 'text-slate-700'
-                    }`}
+                    }}
                   >
                     Relaxed
                   </button>
                   <button
                     onClick={() => handleLineSpacingChange('loose')}
-                    className={`w-full px-3 py-2 text-left text-sm hover:bg-slate-50 last:rounded-b-lg ${
+                    className={w-full px-3 py-2 text-left text-sm hover:bg-slate-50 last:rounded-b-lg ${
                       lineSpacing === 'loose' ? 'bg-blue-50 text-blue-700' : 'text-slate-700'
-                    }`}
+                    }}
                   >
                     Loose
                   </button>
@@ -429,38 +429,19 @@ export const Header: React.FC<HeaderProps> = ({
             >
               <RotateCcw className="h-4 w-4" />
             </button>
-       <div className="text-sm text-slate-500">
-      {selectedTool === 'eraser' ? (
-        <span>Select formatted text to remove highlighting or underlining</span>
-      ) : selectedTool ? (
-        <span>Select text in the passage to apply formatting</span>
-      ) : (
-        <span>Choose a formatting tool, then select text in the passage</span>
-      )}
-    </div>
           </div>
           
-   
-    
-    {/* Right side: input + help text */}
-    <div className="flex items-center space-x-4">
-      <input
-        type="string"
-        inputMode="sting"
-        placeholder="Search Passage Here"
-        value={myValue}
-        onChange={(e) => setMyValue(e.target.value)}
-        className="p-2 border border-gray-300 rounded w-48 text-sm"
-        style={{
-          appearance: 'textfield',
-          MozAppearance: 'textfield',
-          WebkitAppearance: 'none',
-        }}
-      />
-    </div>
-  </div>
-</div>
-
+          <div className="text-sm text-slate-500">
+            {selectedTool === 'eraser' ? (
+              <span>Select formatted text to remove highlighting or underlining</span>
+            ) : selectedTool ? (
+              <span>Select text in the passage to apply formatting</span>
+            ) : (
+              <span>Choose a formatting tool, then select text in the passage</span>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
