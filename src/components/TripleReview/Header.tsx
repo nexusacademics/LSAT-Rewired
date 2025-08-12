@@ -339,10 +339,9 @@ export const Header: React.FC<HeaderProps> = ({
     {/* Right side: input + help text */}
     <div className="flex items-center space-x-4">
       <input
-        type="number"
-        inputMode="numeric"
-        pattern="[0-9]*"
-        placeholder="Explanation ID"
+        type="string"
+        inputMode="sting"
+        placeholder="Search Passage Here"
         value={myValue}
         onChange={(e) => setMyValue(e.target.value)}
         className="p-2 border border-gray-300 rounded w-24 text-sm"
