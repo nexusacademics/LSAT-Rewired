@@ -231,7 +231,7 @@ const findMatchingTextNodeInDOM = (root: HTMLElement, text: string): Text | null
           span.style.paddingBottom = '1px';
         }
         
-        span.className = formatted-text ${type};
+        span.className = `formatted-text ${type}`;
         span.setAttribute('data-format-type', type);
         span.setAttribute('data-color', type === 'underline' ? '#000000' : color);
         
