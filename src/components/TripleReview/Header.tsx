@@ -440,15 +440,7 @@ export const Header: React.FC<HeaderProps> = ({
               <span>Choose a formatting tool, then select text in the passage</span>
             )}
     </div>
-     <div className="text-sm text-slate-500 whitespace-nowrap">
-        {selectedTool === 'eraser' ? (
-          <span>Select formatted text to remove highlighting or underlining</span>
-        ) : selectedTool ? (
-          <span>Select text in the passage to apply formatting</span>
-        ) : (
-          <span>Choose a formatting tool, then select text in the passage</span>
-        )}
-      </div>
+    
     {/* Right side: input + help text */}
     <div className="flex items-center space-x-4">
       <input
