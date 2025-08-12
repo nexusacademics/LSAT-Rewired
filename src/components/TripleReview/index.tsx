@@ -399,7 +399,7 @@ const TripleReview: React.FC<TripleReviewProps> = ({
       />
 
 
-      <div ref={mainContentRef} className="flex-1 p-6 overflow-y-auto">
+        <div ref={mainContentRef} className="flex-1 p-6 overflow-y-auto">
         {showSectionTransition && (
           <SectionTransition
             session={session}
@@ -437,7 +437,6 @@ const TripleReview: React.FC<TripleReviewProps> = ({
               onClearPassageFormatting={clearPassageFormattingRef}
               textSize={textSize}
               lineSpacing={lineSpacing}
-              searchQuery={searchQuery}
             />
             <div className="lg:col-span-2 h-full">
               <CircuitBuilder
