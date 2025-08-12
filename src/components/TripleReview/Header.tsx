@@ -440,7 +440,9 @@ export const Header: React.FC<HeaderProps> = ({
               <span>Choose a formatting tool, then select text in the passage</span>
             )}
           </div>
-          <div>
+          
+        </div>
+        <div>
             <input
               type="number"
               inputMode="numeric"
@@ -454,7 +456,6 @@ export const Header: React.FC<HeaderProps> = ({
                 WebkitAppearance: 'none',
               }}
             />
-        </div>
         </div>
       </div>
     </div>
