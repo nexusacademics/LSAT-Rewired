@@ -249,11 +249,11 @@ export const Header: React.FC<HeaderProps> = ({
                 </div>
                 <button
                   onClick={onToggleTimer}
-                  className={p-2 rounded-lg ${
+                  className={`p-2 rounded-lg ${
                     isTimerRunning
                       ? 'bg-red-100 text-red-600 hover:bg-red-200'
                       : 'bg-green-100 text-green-600 hover:bg-green-200'
-                  }}
+                  }`}
                 >
                   {isTimerRunning ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}
                 </button>
