@@ -262,7 +262,7 @@ export const Header: React.FC<HeaderProps> = ({
 
             <button
               onClick={onToggleFlag}
-              className={p-2 rounded-lg transition-colors ${getFlagButtonColor()}}
+              className={`p-2 rounded-lg transition-colors ${getFlagButtonColor()}`}
               title={isCurrentQuestionFlagged() ? "Unflag Question" : "Flag Question"}
             >
               <Flag className="h-5 w-5" />
