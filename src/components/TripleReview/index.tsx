@@ -364,6 +364,13 @@ const TripleReview: React.FC<TripleReviewProps> = ({
         onClose={() => setShowStrategySummary(false)}
       />
     );
+    // Inside TripleReview component
+    const [searchQuery, setSearchQuery] = useState("");
+    
+    const handleSearchChange = (value: string) => {
+      setSearchQuery(value);
+    };
+
   }
 
   return (
