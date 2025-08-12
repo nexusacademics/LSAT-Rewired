@@ -404,17 +404,17 @@ export const Header: React.FC<HeaderProps> = ({
                   </button>
                   <button
                     onClick={() => handleLineSpacingChange('relaxed')}
-                    className={w-full px-3 py-2 text-left text-sm hover:bg-slate-50 ${
+                    className={`w-full px-3 py-2 text-left text-sm hover:bg-slate-50 ${
                       lineSpacing === 'relaxed' ? 'bg-blue-50 text-blue-700' : 'text-slate-700'
-                    }}
+                    }`}
                   >
                     Relaxed
                   </button>
                   <button
                     onClick={() => handleLineSpacingChange('loose')}
-                    className={w-full px-3 py-2 text-left text-sm hover:bg-slate-50 last:rounded-b-lg ${
+                    className={`w-full px-3 py-2 text-left text-sm hover:bg-slate-50 last:rounded-b-lg ${
                       lineSpacing === 'loose' ? 'bg-blue-50 text-blue-700' : 'text-slate-700'
-                    }}
+                    }`}
                   >
                     Loose
                   </button>
