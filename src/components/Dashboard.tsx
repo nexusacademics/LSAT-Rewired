@@ -66,13 +66,12 @@ const Dashboard: React.FC<DashboardProps> = ({
     });
   };
 
+
+const [errorMessage, setErrorMessage] = useState("");
   
   //Direct Search
  const handleDirectSearch = () => {
-  if (!directTest || !directSection || !directQuestion) {
-    alert("Please fill all search fields.");
-    return;
-  }
+
 
   // Assuming allProcessedTests is an object with test ids as keys
   const testsArray = Object.values(allProcessedTests);
@@ -83,24 +82,24 @@ const Dashboard: React.FC<DashboardProps> = ({
     return match && match[0] === directTest.trim();
   });
 
-  if (!selectedTest) {
-    alert("PrepTest not found.");
-    return;
-  }
+ if (!selectedTest) {
+  setErrorMessage("PrepTest not found. Please check the test number and try again.");
+  return;
+}
 
   const sectionIndex = parseInt(directSection, 10) - 1;
   const questionIndex = parseInt(directQuestion, 10) - 1;
 
   const selectedSection = selectedTest.sections?.[sectionIndex];
   if (!selectedSection) {
-    alert("Section not found.");
+     setErrorMessage("Section number not found. Please check the section number and try again.");
     return;
   }
 
   const selectedQuestion = selectedSection.questions?.[questionIndex];
   if (!selectedQuestion) {
-    alert("Question not found.");
-    return;
+    setErrorMessage("Question number not found. Please check the question number and try again.");
+  return;
   }
 
   // Construct a question object with necessary fields for SearchResultsModal
@@ -491,6 +490,7 @@ const handleSearch = () => {
                         disabled={
                                 !directTest.trim() || !directSection.trim() || !directQuestion.trim()
                       } >
+                      <Search className="h-4 w-4 mr-2" />
                       Submit
                     </Button>
                 </div>
@@ -538,7 +538,6 @@ const handleSearch = () => {
                   }`}
                   aria-label="Search"
                 >
-                  <Search className="h-5 w-5" />
                 </button>
               </div>
 
@@ -556,6 +555,15 @@ const handleSearch = () => {
           allProcessedTests={allProcessedTests}
         />
         </div>
+       {/* Error Message for Direct Search */}
+          <div>
+          {errorMessage && (
+        <ErrorModal 
+          message={errorMessage} 
+          onClose={() => setErrorMessage("")} 
+        />
+      )}
+            </div>
       <div>
         {/*Search Results Modal */}
         <SearchResultsModal
@@ -579,6 +587,7 @@ const handleSearch = () => {
 
 
       </div>
+     
       </div>
   
   );
@@ -705,7 +714,7 @@ const SessionSection: React.FC<SessionSectionProps> = ({
         </Card>
       );
     }
-
+    
     // Archived sessions
     return (
       <Card 
@@ -834,5 +843,31 @@ const DrillSection: React.FC<DrillSectionProps> = ({
   );
 
 };
+// Simple Error Modal Component
+interface ErrorModalProps {
+  message: string;
+  onClose: () => void;
+}
 
+const ErrorModal: React.FC<ErrorModalProps> = ({ message, onClose }) => {
+  const { theme } = useTheme();
+  
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className={`max-w-md w-full mx-4 p-6 rounded-lg shadow-lg ${
+        theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-white text-gray-900'
+      }`}>
+        <h3 className="text-lg font-semibold mb-4">Search Error</h3>
+        <p className="mb-6">{message}</p>
+        <Button 
+          variant="primary" 
+          onClick={onClose}
+          className="w-full"
+        >
+          OK
+        </Button>
+      </div>
+    </div>
+  );
+};
 export default Dashboard;

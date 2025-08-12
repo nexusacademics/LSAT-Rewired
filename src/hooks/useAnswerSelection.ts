@@ -90,22 +90,23 @@ export const useAnswerSelection = ({
   onUpdateSession(updatedSession);
 };
 
-  const handleNoteChange = (questionId: string, noteType: keyof QuestionAnalysisNotes, value: string) => {
-    onUpdateSession({
-      ...session,
-      analysisNotes: {
-        ...session.analysisNotes,
-        [questionId]: {
-          ...(session.analysisNotes[questionId] || { 
-            questionTypeAnalysis: '', 
-            argumentStructure: '', 
-            answerChoiceAnalysis: '' 
-          }),
-          [noteType]: value,
-        },
+  const handleNoteChange = (questionId: string, noteType: 'Conclusion' | 'Premises' | 'Assumption' | 'Answers', value: string) => {
+  onUpdateSession({
+    ...session,
+    analysisNotes: {
+      ...session.analysisNotes,
+      [questionId]: {
+        ...(session.analysisNotes[questionId] || { 
+          Conclusion: '', 
+          Premises: '', 
+          Assumption: '',
+          Answers: ''
+        }),
+        [noteType]: value,
       },
-    });
-  };
+    },
+  });
+};
 
   return {
     greyedOutOptions,

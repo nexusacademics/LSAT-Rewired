@@ -25,6 +25,14 @@ export interface ProcessedQuestion {
   options: string[];
   correctAnswer: number;
   type: string;
+  explanations?: {
+    conclusion?: string;
+    roles?: string;
+    assumption?: string;
+    prediction?: string;
+    correct?: string;
+    incorrect?: string;
+  };
   // Add metadata fields
   test_name?: string;
   test_id?: string;

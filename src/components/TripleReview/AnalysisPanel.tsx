@@ -1,44 +1,43 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 export const AnalysisPanel = ({ 
   isBlindReview, 
+  isStrategyReview = false,
+  currentQuestion = null,
   analysisNotes = {}, 
   onNoteChange, 
-  focusRingColor = 'focus:ring-2 focus:ring-blue-500' 
+  focusRingColor = 'focus:ring-2 focus:ring-blue-500'
 }) => {
   const containerRef = useRef(null);
   const innerPanelRef = useRef(null);
   
-  // Define the four text areas
-  const textAreas = ['summary', 'strengths', 'weaknesses', 'recommendations'];
+  const textAreas = ['Conclusion', 'Premises', 'Assumption', 'Answers'];
   
   const labelMap = {
-    summary: 'Summary',
-    strengths: 'Strengths',
-    weaknesses: 'Weaknesses', 
-    recommendations: 'Recommendations'
+    Conclusion: 'Conclusion',
+    Premises: 'Premises',
+    Assumption: 'Assumption', 
+    Answers: 'Answer Choice Analyses'
   };
   
   const placeholderMap = {
-    summary: 'Enter summary...',
-    strengths: 'Enter strengths...',
-    weaknesses: 'Enter weaknesses...',
-    recommendations: 'Enter recommendations...'
+    Conclusion: 'Enter Conclusion...',
+    Premises: 'Enter Premises...',
+    Assumption: 'Enter Assumption...',
+    Answers: 'Enter Notes on the Answer Choices...'
   };
 
-  // Minimum height for each textarea (2 lines approximately)
-  const MIN_HEIGHT = 48; // pixels
-  const LABEL_HEIGHT = 20; // approximate height for label + margin
+  const MIN_HEIGHT = 48;
+  const LABEL_HEIGHT = 20;
 
-  // Use internal state if onNoteChange is not provided, otherwise sync with props
   const [internalNotes, setInternalNotes] = useState(() => ({
-    summary: analysisNotes.summary || '',
-    strengths: analysisNotes.strengths || '',
-    weaknesses: analysisNotes.weaknesses || '',
-    recommendations: analysisNotes.recommendations || ''
+    Conclusion: analysisNotes.Conclusion || '',
+    Premises: analysisNotes.Premises || '',
+    Assumption: analysisNotes.Assumption || '',
+    Answers: analysisNotes.Answers || ''
   }));
 
-  // State to track heights of each textarea
   const [heights, setHeights] = useState(() => {
     const initialHeights = {};
     textAreas.forEach(key => {
@@ -52,41 +51,42 @@ export const AnalysisPanel = ({
   const [startHeights, setStartHeights] = useState({});
   const [availableHeight, setAvailableHeight] = useState(0);
 
-  // Update internal state when props change
+  // NEW: State for explanations toggle and navigation
+  const [showExplanations, setShowExplanations] = useState(false);
+  const [currentExplanationIndex, setCurrentExplanationIndex] = useState(0);
+
   useEffect(() => {
     if (onNoteChange && analysisNotes) {
       setInternalNotes({
-        summary: analysisNotes.summary || '',
-        strengths: analysisNotes.strengths || '',
-        weaknesses: analysisNotes.weaknesses || '',
-        recommendations: analysisNotes.recommendations || ''
+        Conclusion: analysisNotes.Conclusion || '',
+        Premises: analysisNotes.Premises || '',
+        Assumption: analysisNotes.Assumption || '',
+        Answers: analysisNotes.Answers || ''
       });
     }
   }, [analysisNotes, onNoteChange]);
 
-  // Always use internal state for the UI, but sync with parent
+  // Reset explanations toggle and index when question changes
+  useEffect(() => {
+    setShowExplanations(false);
+    setCurrentExplanationIndex(0);
+  }, [currentQuestion?.id]);
+
   const handleTextChange = (key, value) => {
-    console.log('handleTextChange called:', key, value);
-    
-    // Update internal state immediately
     setInternalNotes(prev => ({
       ...prev,
       [key]: value
     }));
-    
-    // Also notify parent if callback exists
     if (onNoteChange) {
       onNoteChange(key, value);
     }
   };
 
-  // Calculate available height for textareas
   useEffect(() => {
     const updateAvailableHeight = () => {
       if (innerPanelRef.current) {
         const containerHeight = innerPanelRef.current.clientHeight;
-        // Subtract space for labels and margins (4 textareas * label height + gaps)
-        const usedByLabels = textAreas.length * LABEL_HEIGHT + (textAreas.length - 1) * 12; // 12px gap between items
+        const usedByLabels = textAreas.length * LABEL_HEIGHT + (textAreas.length - 1) * 12;
         setAvailableHeight(containerHeight - usedByLabels);
       }
     };
@@ -96,7 +96,6 @@ export const AnalysisPanel = ({
     return () => window.removeEventListener('resize', updateAvailableHeight);
   }, []);
 
-  // Initialize heights when available height changes
   useEffect(() => {
     if (availableHeight > 0) {
       const equalHeight = Math.max(MIN_HEIGHT, availableHeight / textAreas.length);
@@ -117,27 +116,17 @@ export const AnalysisPanel = ({
 
   const handleMouseMove = useCallback((e) => {
     if (!isResizing) return;
-
     const deltaY = e.clientY - startY;
     const newHeights = { ...startHeights };
-    
-    // Calculate new height for the resizing textarea
     const proposedHeight = Math.max(MIN_HEIGHT, startHeights[isResizing] + deltaY);
     const heightDiff = proposedHeight - startHeights[isResizing];
-    
-    // Calculate total height of other textareas that can be shrunk
     const otherKeys = textAreas.filter(key => key !== isResizing);
     const totalOtherHeight = otherKeys.reduce((sum, key) => sum + startHeights[key], 0);
     const totalOtherMinHeight = otherKeys.length * MIN_HEIGHT;
     const maxShrinkage = totalOtherHeight - totalOtherMinHeight;
-    
-    // Limit the expansion based on how much others can shrink
     const actualHeightDiff = Math.min(Math.max(heightDiff, -startHeights[isResizing] + MIN_HEIGHT), maxShrinkage);
     const actualNewHeight = startHeights[isResizing] + actualHeightDiff;
-    
     newHeights[isResizing] = actualNewHeight;
-    
-    // Distribute the height change among other textareas
     if (actualHeightDiff !== 0) {
       const changePerOther = -actualHeightDiff / otherKeys.length;
       otherKeys.forEach(key => {
@@ -145,7 +134,6 @@ export const AnalysisPanel = ({
         newHeights[key] = Math.max(MIN_HEIGHT, newHeight);
       });
     }
-    
     setHeights(newHeights);
   }, [isResizing, startY, startHeights, textAreas]);
 
@@ -153,27 +141,79 @@ export const AnalysisPanel = ({
     setIsResizing(null);
   }, []);
 
-  // Add and remove event listeners for mouse events
   useEffect(() => {
     if (isResizing) {
       document.addEventListener('mousemove', handleMouseMove);
       document.addEventListener('mouseup', handleMouseUp);
     }
-    
     return () => {
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
     };
   }, [isResizing, handleMouseMove, handleMouseUp]);
 
+  // Get available explanations and current explanation
+  const getAvailableExplanations = () => {
+    if (!currentQuestion?.explanations) return [];
+    
+    const explanations = currentQuestion.explanations;
+    const availableExplanations = [];
+    
+    // Define the order and check for content
+    const explanationOrder = [
+      { key: 'conclusion', label: 'Conclusion', content: explanations.conclusion },
+      { key: 'roles', label: 'Premises/Roles', content: explanations.roles },
+      { key: 'assumption', label: 'Assumption', content: explanations.assumption },
+      { key: 'prediction', label: 'Prediction', content: explanations.prediction },
+      { key: 'correct', label: 'Correct Answer', content: explanations.correct },
+      { key: 'incorrect', label: 'Incorrect Answers', content: explanations.incorrect }
+    ];
+    
+    explanationOrder.forEach(exp => {
+      if (exp.content && exp.content.trim()) {
+        availableExplanations.push(exp);
+      }
+    });
+    
+    return availableExplanations;
+  };
+
+  const availableExplanations = getAvailableExplanations();
+  const currentExplanation = availableExplanations[currentExplanationIndex];
+
+  const handlePreviousExplanation = () => {
+    setCurrentExplanationIndex(prev => 
+      prev > 0 ? prev - 1 : availableExplanations.length - 1
+    );
+  };
+
+  const handleNextExplanation = () => {
+    setCurrentExplanationIndex(prev => 
+      prev < availableExplanations.length - 1 ? prev + 1 : 0
+    );
+  };
+
   return (
     <div ref={containerRef} className="flex flex-col flex-1 min-h-0 overflow-hidden">
       {/* Header */}
       <div className="bg-white rounded-2xl shadow-sm border border-slate-200 flex-shrink-0">
-        <div className="p-4 border-b border-slate-100">
+        <div className="p-4 border-b border-slate-100 flex justify-between items-center">
           <h3 className="text-md font-semibold text-slate-900">
-            {isBlindReview ? 'Analysis Template' : 'Answer Explanations'}
+            {isBlindReview ? 'Analysis Template' : 'Analysis Notes'}
           </h3>
+
+          {/* Toggle only if in Strategy Review */}
+          {isStrategyReview && (
+            <label className="flex items-center space-x-2 text-sm cursor-pointer">
+              <span>Show Explanations</span>
+              <input
+                type="checkbox"
+                checked={showExplanations}
+                onChange={() => setShowExplanations(v => !v)}
+                className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+              />
+            </label>
+          )}
         </div>
       </div>
       
@@ -184,44 +224,135 @@ export const AnalysisPanel = ({
           ref={innerPanelRef}
           style={{ gap: '12px' }}
         >
-          {textAreas.map((key, index) => (
-            <div
-              key={key}
-              className="flex flex-col relative transition-all duration-200 ease-in-out"
-              style={{ 
-                height: `${heights[key] + LABEL_HEIGHT}px`,
-                minHeight: `${MIN_HEIGHT + LABEL_HEIGHT}px`
-              }}
-            >
-              <label className="block text-sm font-medium text-slate-700 mb-1 flex-shrink-0">
-                {labelMap[key]}
-              </label>
-              <textarea
-                className={`w-full border border-slate-300 rounded-lg p-2 text-sm ${focusRingColor} resize-none overflow-auto`}
-                placeholder={placeholderMap[key]}
-                defaultValue={internalNotes[key]}
-                onChange={(e) => {
-                  console.log('textarea onChange:', key, e.target.value);
-                  handleTextChange(key, e.target.value);
-                }}
-                style={{ 
-                  height: `${heights[key]}px`,
-                  minHeight: `${MIN_HEIGHT}px`
-                }}
-              />
-              
-              {/* Resize handle (except for last item) */}
-              {index < textAreas.length - 1 && (
-                <div
-                  className="absolute bottom-0 left-0 right-0 h-2 cursor-row-resize hover:bg-blue-100 hover:bg-opacity-50 transition-colors duration-150 flex items-center justify-center group"
-                  onMouseDown={(e) => handleMouseDown(key, e)}
-                  style={{ transform: 'translateY(6px)' }}
-                >
-                  <div className="w-8 h-0.5 bg-slate-300 group-hover:bg-blue-400 transition-colors duration-150 rounded-full" />
+          {isStrategyReview && showExplanations ? (
+            <div className="flex-1 flex flex-col min-h-0">
+              {availableExplanations.length > 0 ? (
+                <>
+                  {/* Navigation Header */}
+                  <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-200">
+                    <div className="flex items-center space-x-2">
+                      <button
+                        onClick={handlePreviousExplanation}
+                        disabled={availableExplanations.length <= 1}
+                        className="p-1 rounded-md hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <ChevronLeft className="w-5 h-5 text-slate-600" />
+                      </button>
+                      
+                      <div className="text-center">
+                        <h4 className="font-semibold text-slate-800 text-lg">
+                          {currentExplanation?.label}
+                        </h4>
+                        <p className="text-sm text-slate-500">
+                          {currentExplanationIndex + 1} of {availableExplanations.length}
+                        </p>
+                      </div>
+                      
+                      <button
+                        onClick={handleNextExplanation}
+                        disabled={availableExplanations.length <= 1}
+                        className="p-1 rounded-md hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <ChevronRight className="w-5 h-5 text-slate-600" />
+                      </button>
+                    </div>
+                    
+                    {/* Progress dots */}
+                    {availableExplanations.length > 1 && (
+                      <div className="flex space-x-1">
+                        {availableExplanations.map((_, index) => (
+                          <button
+                            key={index}
+                            onClick={() => setCurrentExplanationIndex(index)}
+                            className={`w-2 h-2 rounded-full ${
+                              index === currentExplanationIndex
+                                ? 'bg-blue-500'
+                                : 'bg-slate-300 hover:bg-slate-400'
+                            }`}
+                          />
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Current Explanation Content */}
+                  <div className="flex-1 overflow-auto">
+                    <div className="prose prose-slate max-w-none">
+                      <div className="text-slate-700 leading-relaxed whitespace-pre-wrap">
+                        {currentExplanation?.content}
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Navigation Footer */}
+                  {availableExplanations.length > 1 && (
+                    <div className="mt-4 pt-3 border-t border-slate-200 flex justify-between items-center">
+                      <button
+                        onClick={handlePreviousExplanation}
+                        className="flex items-center space-x-2 px-3 py-2 text-sm text-slate-600 hover:text-slate-800 hover:bg-slate-50 rounded-md transition-colors"
+                      >
+                        <ChevronLeft className="w-4 h-4" />
+                        <span>Previous</span>
+                      </button>
+                      
+                      <div className="text-sm text-slate-500">
+                        Use arrows or dots to navigate
+                      </div>
+                      
+                      <button
+                        onClick={handleNextExplanation}
+                        className="flex items-center space-x-2 px-3 py-2 text-sm text-slate-600 hover:text-slate-800 hover:bg-slate-50 rounded-md transition-colors"
+                      >
+                        <span>Next</span>
+                        <ChevronRight className="w-4 h-4" />
+                      </button>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="flex-1 flex items-center justify-center">
+                  <div className="text-center text-slate-500">
+                    <p className="text-lg mb-2">No explanations available</p>
+                    <p className="text-sm">for this question</p>
+                  </div>
                 </div>
               )}
             </div>
-          ))}
+          ) : (
+            textAreas.map((key, index) => (
+              <div
+                key={key}
+                className="flex flex-col relative transition-all duration-200 ease-in-out"
+                style={{ 
+                  height: `${heights[key] + LABEL_HEIGHT}px`,
+                  minHeight: `${MIN_HEIGHT + LABEL_HEIGHT}px`
+                }}
+              >
+                <label className="block text-sm font-medium text-slate-700 mb-1 flex-shrink-0">
+                  {labelMap[key]}
+                </label>
+                <textarea
+                  className={`w-full border border-slate-300 rounded-lg p-2 text-sm ${focusRingColor} resize-none overflow-auto`}
+                  placeholder={placeholderMap[key]}
+                  defaultValue={internalNotes[key]}
+                  onChange={(e) => handleTextChange(key, e.target.value)}
+                  style={{ 
+                    height: `${heights[key]}px`,
+                    minHeight: `${MIN_HEIGHT}px`
+                  }}
+                />
+                {index < textAreas.length - 1 && (
+                  <div
+                    className="absolute bottom-0 left-0 right-0 h-2 cursor-row-resize hover:bg-blue-100 hover:bg-opacity-50 flex items-center justify-center group"
+                    onMouseDown={(e) => handleMouseDown(key, e)}
+                    style={{ transform: 'translateY(6px)' }}
+                  >
+                    <div className="w-8 h-0.5 bg-slate-300 group-hover:bg-blue-400 rounded-full" />
+                  </div>
+                )}
+              </div>
+            ))
+          )}
         </div>
       </div>
     </div>

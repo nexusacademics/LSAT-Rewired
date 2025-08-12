@@ -18,10 +18,13 @@ export interface User {
   };
 }
 
+// In types/user.ts, replace the existing QuestionAnalysisNotes interface with:
+
 export interface QuestionAnalysisNotes {
-  questionTypeAnalysis: string;
-  argumentStructure: string;
-  answerChoiceAnalysis: string;
+  Conclusion: string;
+  Premises: string;
+  Assumption: string;
+  Answers: string;
 }
 
 export interface TestSession {
