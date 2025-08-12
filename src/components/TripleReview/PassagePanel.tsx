@@ -18,14 +18,7 @@ interface PassagePanelProps {
   textSize: 'small' | 'medium' | 'large';
   lineSpacing: 'normal' | 'loose' | 'relaxed';
 }
-const highlightText = (text: string, query: string) => {
-  if (!query) return text;
 
-  const regex = new RegExp((${query}), "gi");
-  return text.split(regex).map((part, i) =>
-    regex.test(part) ? <mark key={i} className="bg-yellow-300">{part}</mark> : part
-  );
-};
 
 export const PassagePanel: React.FC<PassagePanelProps> = ({
   currentQuestionData,
