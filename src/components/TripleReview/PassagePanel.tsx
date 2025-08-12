@@ -253,6 +253,7 @@ const findMatchingTextNodeInDOM = (root: HTMLElement, text: string): Text | null
   };
 
   const handleMouseUp = () => {
+    console.log('handleMouseUp triggered, selectedTool:', selectedTool);
     if (!selectedTool) return;
     
     // Small delay to ensure selection is complete
