@@ -457,8 +457,6 @@ export const Header: React.FC<HeaderProps> = ({
           WebkitAppearance: 'none',
         }}
       />
-
-     
     </div>
   </div>
 </div>
