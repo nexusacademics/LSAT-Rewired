@@ -442,7 +442,9 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
           
         </div>
-        <div>
+        
+      </div>
+      <div>
             <input
               type="number"
               inputMode="numeric"
@@ -457,7 +459,6 @@ export const Header: React.FC<HeaderProps> = ({
               }}
             />
         </div>
-      </div>
     </div>
   );
 };
