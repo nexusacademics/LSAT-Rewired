@@ -352,25 +352,25 @@ export const Header: React.FC<HeaderProps> = ({
                 <div className="absolute top-full mt-1 left-0 bg-white border border-slate-200 rounded-lg shadow-lg z-50 min-w-32">
                   <button
                     onClick={() => handleTextSizeChange('small')}
-                    className={w-full px-3 py-2 text-left text-sm hover:bg-slate-50 first:rounded-t-lg ${
+                    className={`w-full px-3 py-2 text-left text-sm hover:bg-slate-50 first:rounded-t-lg ${
                       textSize === 'small' ? 'bg-blue-50 text-blue-700' : 'text-slate-700'
-                    }
+                    }`}
                   >
                     Small
                   </button>
                   <button
                     onClick={() => handleTextSizeChange('medium')}
-                    className={w-full px-3 py-2 text-left text-sm hover:bg-slate-50 ${
+                    className={`w-full px-3 py-2 text-left text-sm hover:bg-slate-50 ${
                       textSize === 'medium' ? 'bg-blue-50 text-blue-700' : 'text-slate-700'
-                    }
+                    }`}
                   >
                     Medium
                   </button>
                   <button
                     onClick={() => handleTextSizeChange('large')}
-                    className={w-full px-3 py-2 text-left text-sm hover:bg-slate-50 last:rounded-b-lg ${
+                    className={`w-full px-3 py-2 text-left text-sm hover:bg-slate-50 last:rounded-b-lg ${
                       textSize === 'large' ? 'bg-blue-50 text-blue-700' : 'text-slate-700'
-                    }
+                    }`}
                   >
                     Large
                   </button>
@@ -382,11 +382,11 @@ export const Header: React.FC<HeaderProps> = ({
             <div className="relative">
               <button
                 onClick={handleLineSpacingClick}
-                className={p-2 rounded-lg border transition-all ${
+                className={`p-2 rounded-lg border transition-all ${
                   showLineSpacingDropdown
                     ? 'bg-blue-100 border-blue-300 text-blue-700 shadow-sm'
                     : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-100'
-                }
+                }`}
                 title="Line Spacing"
               >
                 <LineSpacingIcon className="h-4 w-4" />
@@ -396,25 +396,25 @@ export const Header: React.FC<HeaderProps> = ({
                 <div className="absolute top-full mt-1 left-0 bg-white border border-slate-200 rounded-lg shadow-lg z-50 min-w-32">
                   <button
                     onClick={() => handleLineSpacingChange('normal')}
-                    className={w-full px-3 py-2 text-left text-sm hover:bg-slate-50 first:rounded-t-lg ${
+                    className={`w-full px-3 py-2 text-left text-sm hover:bg-slate-50 first:rounded-t-lg ${
                       lineSpacing === 'normal' ? 'bg-blue-50 text-blue-700' : 'text-slate-700'
-                    }
+                    }`}
                   >
                     Normal
                   </button>
                   <button
                     onClick={() => handleLineSpacingChange('relaxed')}
-                    className={w-full px-3 py-2 text-left text-sm hover:bg-slate-50 ${
+                    className={`w-full px-3 py-2 text-left text-sm hover:bg-slate-50 ${
                       lineSpacing === 'relaxed' ? 'bg-blue-50 text-blue-700' : 'text-slate-700'
-                    }
+                    }`}
                   >
                     Relaxed
                   </button>
                   <button
                     onClick={() => handleLineSpacingChange('loose')}
-                    className={w-full px-3 py-2 text-left text-sm hover:bg-slate-50 last:rounded-b-lg ${
+                    className={`w-full px-3 py-2 text-left text-sm hover:bg-slate-50 last:rounded-b-lg ${
                       lineSpacing === 'loose' ? 'bg-blue-50 text-blue-700' : 'text-slate-700'
-                    }
+                    }`}
                   >
                     Loose
                   </button>
