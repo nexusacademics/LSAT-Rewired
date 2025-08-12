@@ -466,9 +466,11 @@ const TripleReview: React.FC<TripleReviewProps> = ({
               lineSpacing={lineSpacing}
             />
 
-            {session.phase !== 'timed' && (
+           {session.phase !== 'timed' && (
               <AnalysisPanel
                 isBlindReview={session.phase === 'blind-review'}
+                isStrategyReview={session.phase === 'strategy-review'}  // ← NEW
+                currentQuestion={currentQuestionData}                   // ← NEW
                 analysisNotes={session.analysisNotes?.[currentQuestionData.id] || {}}
                 onNoteChange={(noteType, value) => handleNoteChange(currentQuestionData.id, noteType, value)}
                 focusRingColor={session.phase === 'blind-review' ? 'focus:ring-2 focus:ring-blue-500' : 'focus:ring-2 focus:ring-green-500'}
