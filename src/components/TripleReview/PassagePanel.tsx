@@ -21,7 +21,7 @@ interface PassagePanelProps {
 const highlightText = (text: string, query: string) => {
   if (!query) return text;
 
-  const regex = new RegExp(`(${query})`, "gi");
+  const regex = new RegExp((${query}), "gi");
   return text.split(regex).map((part, i) =>
     regex.test(part) ? <mark key={i} className="bg-yellow-300">{part}</mark> : part
   );
@@ -212,11 +212,11 @@ const findMatchingTextNodeInDOM = (root: HTMLElement, text: string): Text | null
         span.style.borderRadius = '3px';
         span.style.boxDecorationBreak = 'clone';
       } else if (type === 'underline') {
-        span.style.borderBottom = `4px solid #000000`; // Always black for underline
+        span.style.borderBottom = 4px solid #000000; // Always black for underline
         span.style.paddingBottom = '1px';
       }
       
-      span.className = `formatted-text ${type}`;
+      span.className = formatted-text ${type};
       span.setAttribute('data-format-type', type);
       span.setAttribute('data-color', type === 'underline' ? '#000000' : color);
       
@@ -234,11 +234,11 @@ const findMatchingTextNodeInDOM = (root: HTMLElement, text: string): Text | null
           span.style.borderRadius = '3px';
           span.style.boxDecorationBreak = 'clone';
         } else if (type === 'underline') {
-          span.style.borderBottom = `4px solid #000000`; // Always black for underline
+          span.style.borderBottom = 4px solid #000000; // Always black for underline
           span.style.paddingBottom = '1px';
         }
         
-        span.className = `formatted-text ${type}`;
+        span.className = formatted-text ${type};
         span.setAttribute('data-format-type', type);
         span.setAttribute('data-color', type === 'underline' ? '#000000' : color);
         
@@ -253,7 +253,6 @@ const findMatchingTextNodeInDOM = (root: HTMLElement, text: string): Text | null
   };
 
   const handleMouseUp = () => {
-    console.log('handleMouseUp triggered, selectedTool:', selectedTool);
     if (!selectedTool) return;
     
     // Small delay to ensure selection is complete
@@ -302,11 +301,11 @@ const findMatchingTextNodeInDOM = (root: HTMLElement, text: string): Text | null
         <div className="prose max-w-none">
           <div 
             ref={passageRef}
-            className={`text-slate-700 ${getTextSizeClass()} ${getLineSpacingClass()} ${selectedTool ? 'select-text cursor-text' : ''}`}
-            
+            className={text-slate-700 ${getTextSizeClass()} ${getLineSpacingClass()} ${selectedTool ? 'select-text cursor-text' : ''}}
+            onMouseUp={handleMouseUp}
             style={{ userSelect: selectedTool ? 'text' : 'auto' }}
           >
-            <div className="whitespace-pre-line" onMouseUp={handleMouseUp}>{currentQuestionData.passage}</div>
+            <div className="whitespace-pre-line">{currentQuestionData.passage}</div>
           </div>
         </div>
         
