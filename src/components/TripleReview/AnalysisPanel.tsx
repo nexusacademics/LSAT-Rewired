@@ -2,11 +2,11 @@ import React, { useState, useRef, useCallback, useEffect } from 'react';
 
 export const AnalysisPanel = ({ 
   isBlindReview, 
-  isStrategyReview = false,   // <-- NEW
-  currentQuestion = null,     // <-- NEW
+  isStrategyReview = false,
+  currentQuestion = null,
   analysisNotes = {}, 
   onNoteChange, 
-  focusRingColor = 'focus:ring-2 focus:ring-blue-500' 
+  focusRingColor = 'focus:ring-2 focus:ring-blue-500'
 }) => {
   const containerRef = useRef(null);
   const innerPanelRef = useRef(null);
@@ -50,8 +50,8 @@ export const AnalysisPanel = ({
   const [startHeights, setStartHeights] = useState({});
   const [availableHeight, setAvailableHeight] = useState(0);
 
-  // NEW: toggle state for iframe
-  const [showStrategyFrame, setShowStrategyFrame] = useState(false);
+  // NEW: State for explanations toggle
+  const [showExplanations, setShowExplanations] = useState(false);
 
   useEffect(() => {
     if (onNoteChange && analysisNotes) {
@@ -63,6 +63,11 @@ export const AnalysisPanel = ({
       });
     }
   }, [analysisNotes, onNoteChange]);
+
+  // Reset explanations toggle when question changes
+  useEffect(() => {
+    setShowExplanations(false);
+  }, [currentQuestion?.id]);
 
   const handleTextChange = (key, value) => {
     setInternalNotes(prev => ({
@@ -144,10 +149,20 @@ export const AnalysisPanel = ({
     };
   }, [isResizing, handleMouseMove, handleMouseUp]);
 
-  // Build URL for strategy iframe
-  const strategyUrl = currentQuestion
-    ? `https://example.com/strategies/${encodeURIComponent(currentQuestion.id)}`
-    : null;
+  // Get explanation content from currentQuestion
+  const getExplanationContent = () => {
+    if (!currentQuestion?.explanations) return null;
+    
+    const explanations = currentQuestion.explanations;
+    return {
+      Conclusion: explanations.conclusion,
+      Premises: explanations.roles, // Assuming roles = premises
+      Assumption: explanations.assumption,
+      Prediction: explanations.prediction,
+      Correct: explanations.correct,
+      Incorrect: explanations.incorrect
+    };
+  };
 
   return (
     <div ref={containerRef} className="flex flex-col flex-1 min-h-0 overflow-hidden">
@@ -160,12 +175,13 @@ export const AnalysisPanel = ({
 
           {/* Toggle only if in Strategy Review */}
           {isStrategyReview && (
-            <label className="flex items-center space-x-2 text-sm">
-              <span>Show Strategy</span>
+            <label className="flex items-center space-x-2 text-sm cursor-pointer">
+              <span>Show Explanations</span>
               <input
                 type="checkbox"
-                checked={showStrategyFrame}
-                onChange={() => setShowStrategyFrame(v => !v)}
+                checked={showExplanations}
+                onChange={() => setShowExplanations(v => !v)}
+                className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
               />
             </label>
           )}
@@ -179,12 +195,28 @@ export const AnalysisPanel = ({
           ref={innerPanelRef}
           style={{ gap: '12px' }}
         >
-          {isStrategyReview && showStrategyFrame && strategyUrl ? (
-            <iframe
-              key={strategyUrl}
-              src={strategyUrl}
-              className="w-full flex-1 border-0"
-            />
+          {isStrategyReview && showExplanations ? (
+            <div className="flex-1 overflow-auto space-y-4">
+              {getExplanationContent() ? (
+                <>
+                  {/* Render explanations */}
+                  {Object.entries(getExplanationContent()).map(([key, content]) => (
+                    content && (
+                      <div key={key} className="border-l-4 border-blue-500 pl-4">
+                        <h4 className="font-semibold text-slate-800 mb-2">{key} Explanation</h4>
+                        <div className="text-slate-700 whitespace-pre-wrap leading-relaxed">
+                          {content}
+                        </div>
+                      </div>
+                    )
+                  ))}
+                </>
+              ) : (
+                <div className="flex items-center justify-center h-32">
+                  <div className="text-slate-500">No explanations available for this question</div>
+                </div>
+              )}
+            </div>
           ) : (
             textAreas.map((key, index) => (
               <div
