@@ -300,6 +300,15 @@ export const Header: React.FC<HeaderProps> = ({
 
       {/* Formatting Toolbar */}
       <div className="border-t border-slate-200 px-6 py-3 bg-slate-50">
+        <div>
+          <input
+          type="text"
+          placeholder="Search passage..."
+          value={searchQuery}
+          onChange={(e) => onSearchChange(e.target.value)}
+          className="border rounded px-2 py-1 text-sm ml-2"
+          />
+          </div>
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-1">
             {formattingTools.map((tool) => {
