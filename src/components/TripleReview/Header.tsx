@@ -244,7 +244,7 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="flex items-center space-x-4">
             {session.phase === 'timed' && (
               <div className="flex items-center space-x-2">
-                <div className={text-2xl font-mono font-bold transition-all ${timerColor} ${timerBgColor} ${timeRemaining <= 60 ? 'animate-pulse' : ''} px-2 py-1 rounded}>
+                <div className="text-2xl font-mono font-bold transition-all ${timerColor} ${timerBgColor} ${timeRemaining <= 60 ? 'animate-pulse' : ''} px-2 py-1 rounded">
                   {timeDisplay}
                 </div>
                 <button
