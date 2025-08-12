@@ -352,9 +352,9 @@ export const Header: React.FC<HeaderProps> = ({
                 <div className="absolute top-full mt-1 left-0 bg-white border border-slate-200 rounded-lg shadow-lg z-50 min-w-32">
                   <button
                     onClick={() => handleTextSizeChange('small')}
-                    className={w-full px-3 py-2 text-left text-sm hover:bg-slate-50 first:rounded-t-lg ${
+                    className={`w-full px-3 py-2 text-left text-sm hover:bg-slate-50 first:rounded-t-lg ${
                       textSize === 'small' ? 'bg-blue-50 text-blue-700' : 'text-slate-700'
-                    }}
+                    }`}
                   >
                     Small
                   </button>
