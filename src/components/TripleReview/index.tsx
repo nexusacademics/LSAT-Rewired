@@ -445,6 +445,7 @@ const TripleReview: React.FC<TripleReviewProps> = ({
               onClearPassageFormatting={clearPassageFormattingRef}
               textSize={textSize}
               lineSpacing={lineSpacing}
+              searchQuery={searchQuery}
             />
             <div className="lg:col-span-2 h-full">
               <CircuitBuilder
