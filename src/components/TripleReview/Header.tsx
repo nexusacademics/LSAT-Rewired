@@ -300,42 +300,41 @@ export const Header: React.FC<HeaderProps> = ({
       </div>
 
       {/* Formatting Toolbar */}
-      <div className="border-t border-slate-200 px-6 py-3 bg-slate-50">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-1">
-            {formattingTools.map((tool) => {
-              const Icon = tool.icon;
-              const isSelected = selectedTool === tool.id;
-              
-              return (
-                <button
-                  key={tool.id}
-                  onClick={() => handleToolClick(tool.id)}
-                  className={p-2 rounded-lg border transition-all ${
-                    isSelected 
-                      ? 'bg-blue-100 border-blue-300 text-blue-700 shadow-sm' 
-                      : bg-white border-slate-200 text-slate-600 ${tool.bgColor}
-                  }}
-                  title={tool.label}
-                >
-                  {tool.id.startsWith('highlight-') ? (
-                    <div className="relative">
-                      <Icon className="h-4 w-4" />
-                      <div 
-                        className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full border border-white"
-                        style={{ backgroundColor: tool.color }}
-                      />
-                    </div>
-                  ) : (
-                    <Icon className="h-4 w-4" />
-                  )}
-                </button>
-              );
-            })}
-            
-            <div className="w-px h-6 bg-slate-300 mx-2" />
-            
-            {/* Text Size Dropdown */}
+     <div className="border-t border-slate-200 px-6 py-3 bg-slate-50">
+  <div className="flex items-center justify-between">
+    {/* Left side: formatting buttons */}
+    <div className="flex items-center space-x-1">
+      {formattingTools.map((tool) => {
+        const Icon = tool.icon;
+        const isSelected = selectedTool === tool.id;
+        return (
+          <button
+            key={tool.id}
+            onClick={() => handleToolClick(tool.id)}
+            className={`p-2 rounded-lg border transition-all ${
+              isSelected 
+                ? 'bg-blue-100 border-blue-300 text-blue-700 shadow-sm' 
+                : `bg-white border-slate-200 text-slate-600 ${tool.bgColor}`
+            }`}
+            title={tool.label}
+          >
+            {tool.id.startsWith('highlight-') ? (
+              <div className="relative">
+                <Icon className="h-4 w-4" />
+                <div 
+                  className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full border border-white"
+                  style={{ backgroundColor: tool.color }}
+                />
+              </div>
+            ) : (
+              <Icon className="h-4 w-4" />
+            )}
+          </button>
+        );
+      })}
+
+      {/* ... text size dropdown, line spacing dropdown, clear formatting button ... */}
+        {/* Text Size Dropdown */}
             <div className="relative">
               <button
                 onClick={handleTextSizeClick}
@@ -440,7 +439,7 @@ export const Header: React.FC<HeaderProps> = ({
             ) : (
               <span>Choose a formatting tool, then select text in the passage</span>
             )}
-          </div>
+    </div>
      <div className="text-sm text-slate-500 whitespace-nowrap">
         {selectedTool === 'eraser' ? (
           <span>Select formatted text to remove highlighting or underlining</span>
