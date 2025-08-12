@@ -1,4 +1,5 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 export const AnalysisPanel = ({ 
   isBlindReview, 
@@ -50,8 +51,9 @@ export const AnalysisPanel = ({
   const [startHeights, setStartHeights] = useState({});
   const [availableHeight, setAvailableHeight] = useState(0);
 
-  // NEW: State for explanations toggle
+  // NEW: State for explanations toggle and navigation
   const [showExplanations, setShowExplanations] = useState(false);
+  const [currentExplanationIndex, setCurrentExplanationIndex] = useState(0);
 
   useEffect(() => {
     if (onNoteChange && analysisNotes) {
@@ -64,9 +66,10 @@ export const AnalysisPanel = ({
     }
   }, [analysisNotes, onNoteChange]);
 
-  // Reset explanations toggle when question changes
+  // Reset explanations toggle and index when question changes
   useEffect(() => {
     setShowExplanations(false);
+    setCurrentExplanationIndex(0);
   }, [currentQuestion?.id]);
 
   const handleTextChange = (key, value) => {
@@ -149,19 +152,45 @@ export const AnalysisPanel = ({
     };
   }, [isResizing, handleMouseMove, handleMouseUp]);
 
-  // Get explanation content from currentQuestion
-  const getExplanationContent = () => {
-    if (!currentQuestion?.explanations) return null;
+  // Get available explanations and current explanation
+  const getAvailableExplanations = () => {
+    if (!currentQuestion?.explanations) return [];
     
     const explanations = currentQuestion.explanations;
-    return {
-      Conclusion: explanations.conclusion,
-      Premises: explanations.roles, // Assuming roles = premises
-      Assumption: explanations.assumption,
-      Prediction: explanations.prediction,
-      Correct: explanations.correct,
-      Incorrect: explanations.incorrect
-    };
+    const availableExplanations = [];
+    
+    // Define the order and check for content
+    const explanationOrder = [
+      { key: 'conclusion', label: 'Conclusion', content: explanations.conclusion },
+      { key: 'roles', label: 'Premises/Roles', content: explanations.roles },
+      { key: 'assumption', label: 'Assumption', content: explanations.assumption },
+      { key: 'prediction', label: 'Prediction', content: explanations.prediction },
+      { key: 'correct', label: 'Correct Answer', content: explanations.correct },
+      { key: 'incorrect', label: 'Incorrect Answers', content: explanations.incorrect }
+    ];
+    
+    explanationOrder.forEach(exp => {
+      if (exp.content && exp.content.trim()) {
+        availableExplanations.push(exp);
+      }
+    });
+    
+    return availableExplanations;
+  };
+
+  const availableExplanations = getAvailableExplanations();
+  const currentExplanation = availableExplanations[currentExplanationIndex];
+
+  const handlePreviousExplanation = () => {
+    setCurrentExplanationIndex(prev => 
+      prev > 0 ? prev - 1 : availableExplanations.length - 1
+    );
+  };
+
+  const handleNextExplanation = () => {
+    setCurrentExplanationIndex(prev => 
+      prev < availableExplanations.length - 1 ? prev + 1 : 0
+    );
   };
 
   return (
@@ -196,24 +225,96 @@ export const AnalysisPanel = ({
           style={{ gap: '12px' }}
         >
           {isStrategyReview && showExplanations ? (
-            <div className="flex-1 overflow-auto space-y-4">
-              {getExplanationContent() ? (
+            <div className="flex-1 flex flex-col min-h-0">
+              {availableExplanations.length > 0 ? (
                 <>
-                  {/* Render explanations */}
-                  {Object.entries(getExplanationContent()).map(([key, content]) => (
-                    content && (
-                      <div key={key} className="border-l-4 border-blue-500 pl-4">
-                        <h4 className="font-semibold text-slate-800 mb-2">{key} Explanation</h4>
-                        <div className="text-slate-700 whitespace-pre-wrap leading-relaxed">
-                          {content}
-                        </div>
+                  {/* Navigation Header */}
+                  <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-200">
+                    <div className="flex items-center space-x-2">
+                      <button
+                        onClick={handlePreviousExplanation}
+                        disabled={availableExplanations.length <= 1}
+                        className="p-1 rounded-md hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <ChevronLeft className="w-5 h-5 text-slate-600" />
+                      </button>
+                      
+                      <div className="text-center">
+                        <h4 className="font-semibold text-slate-800 text-lg">
+                          {currentExplanation?.label}
+                        </h4>
+                        <p className="text-sm text-slate-500">
+                          {currentExplanationIndex + 1} of {availableExplanations.length}
+                        </p>
                       </div>
-                    )
-                  ))}
+                      
+                      <button
+                        onClick={handleNextExplanation}
+                        disabled={availableExplanations.length <= 1}
+                        className="p-1 rounded-md hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <ChevronRight className="w-5 h-5 text-slate-600" />
+                      </button>
+                    </div>
+                    
+                    {/* Progress dots */}
+                    {availableExplanations.length > 1 && (
+                      <div className="flex space-x-1">
+                        {availableExplanations.map((_, index) => (
+                          <button
+                            key={index}
+                            onClick={() => setCurrentExplanationIndex(index)}
+                            className={`w-2 h-2 rounded-full ${
+                              index === currentExplanationIndex
+                                ? 'bg-blue-500'
+                                : 'bg-slate-300 hover:bg-slate-400'
+                            }`}
+                          />
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Current Explanation Content */}
+                  <div className="flex-1 overflow-auto">
+                    <div className="prose prose-slate max-w-none">
+                      <div className="text-slate-700 leading-relaxed whitespace-pre-wrap">
+                        {currentExplanation?.content}
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Navigation Footer */}
+                  {availableExplanations.length > 1 && (
+                    <div className="mt-4 pt-3 border-t border-slate-200 flex justify-between items-center">
+                      <button
+                        onClick={handlePreviousExplanation}
+                        className="flex items-center space-x-2 px-3 py-2 text-sm text-slate-600 hover:text-slate-800 hover:bg-slate-50 rounded-md transition-colors"
+                      >
+                        <ChevronLeft className="w-4 h-4" />
+                        <span>Previous</span>
+                      </button>
+                      
+                      <div className="text-sm text-slate-500">
+                        Use arrows or dots to navigate
+                      </div>
+                      
+                      <button
+                        onClick={handleNextExplanation}
+                        className="flex items-center space-x-2 px-3 py-2 text-sm text-slate-600 hover:text-slate-800 hover:bg-slate-50 rounded-md transition-colors"
+                      >
+                        <span>Next</span>
+                        <ChevronRight className="w-4 h-4" />
+                      </button>
+                    </div>
+                  )}
                 </>
               ) : (
-                <div className="flex items-center justify-center h-32">
-                  <div className="text-slate-500">No explanations available for this question</div>
+                <div className="flex-1 flex items-center justify-center">
+                  <div className="text-center text-slate-500">
+                    <p className="text-lg mb-2">No explanations available</p>
+                    <p className="text-sm">for this question</p>
+                  </div>
                 </div>
               )}
             </div>
