@@ -360,9 +360,9 @@ export const Header: React.FC<HeaderProps> = ({
                   </button>
                   <button
                     onClick={() => handleTextSizeChange('medium')}
-                    className={w-full px-3 py-2 text-left text-sm hover:bg-slate-50 ${
+                    className={`w-full px-3 py-2 text-left text-sm hover:bg-slate-50 ${
                       textSize === 'medium' ? 'bg-blue-50 text-blue-700' : 'text-slate-700'
-                    }}
+                    }`}
                   >
                     Medium
                   </button>
