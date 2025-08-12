@@ -382,11 +382,11 @@ export const Header: React.FC<HeaderProps> = ({
             <div className="relative">
               <button
                 onClick={handleLineSpacingClick}
-                className={p-2 rounded-lg border transition-all ${
+                className={`p-2 rounded-lg border transition-all ${
                   showLineSpacingDropdown
                     ? 'bg-blue-100 border-blue-300 text-blue-700 shadow-sm'
                     : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-100'
-                }}
+                }`}
                 title="Line Spacing"
               >
                 <LineSpacingIcon className="h-4 w-4" />
