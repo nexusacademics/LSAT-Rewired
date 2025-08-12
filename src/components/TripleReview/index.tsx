@@ -58,19 +58,11 @@ const TripleReview: React.FC<TripleReviewProps> = ({
     : processedPrepTest.sections;
 
   const currentSectionData = currentSections[session.currentSectionIndex];
-  console.log('Current section data:', currentSectionData);
   const questionsInCurrentSection = currentSectionData?.questions || [];
   const currentQuestionData = questionsInCurrentSection[session.currentQuestionIndex];
   const [textSize, setTextSize] = useState<'small' | 'medium' | 'large'>('medium');
   const [lineSpacing, setLineSpacing] = useState<'normal' | 'loose' | 'relaxed'>('loose');
 
-   // Inside TripleReview component
-    const [searchQuery, setSearchQuery] = useState("");
-    
-    const handleSearchChange = (value: string) => {
-      setSearchQuery(value);
-    };
-  
   const handleTextSizeChange = (size: 'small' | 'medium' | 'large') => {
     setTextSize(size);
   };
