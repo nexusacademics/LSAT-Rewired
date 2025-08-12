@@ -344,7 +344,7 @@ export const Header: React.FC<HeaderProps> = ({
         placeholder="Search Passage Here"
         value={myValue}
         onChange={(e) => setMyValue(e.target.value)}
-        className="p-2 border border-gray-300 rounded w-24 text-sm"
+        className="p-2 border border-gray-300 rounded w-48 text-sm"
         style={{
           appearance: 'textfield',
           MozAppearance: 'textfield',
