@@ -40,6 +40,7 @@ export const PassagePanel: React.FC<PassagePanelProps> = ({
   lineSpacing
 }) => {
   const passageRef = useRef<HTMLDivElement>(null);
+  const passageText = currentQuestionData.passage || "";
 
   // Get text size classes
   const getTextSizeClass = () => {
