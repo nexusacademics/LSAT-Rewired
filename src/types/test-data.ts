@@ -25,7 +25,7 @@ export interface ProcessedQuestion {
   options: string[];
   correctAnswer: number;
   type: string;
-   explanations?: {
+  explanations?: {
     conclusion?: string;
     roles?: string;
     assumption?: string;
