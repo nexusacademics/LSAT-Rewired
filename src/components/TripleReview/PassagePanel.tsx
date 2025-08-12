@@ -205,7 +205,7 @@ const findMatchingTextNodeInDOM = (root: HTMLElement, text: string): Text | null
         span.style.borderRadius = '3px';
         span.style.boxDecorationBreak = 'clone';
       } else if (type === 'underline') {
-        span.style.borderBottom = 4px solid #000000; // Always black for underline
+        span.style.borderBottom = '4px solid #000000'; // Always black for underline
         span.style.paddingBottom = '1px';
       }
       
