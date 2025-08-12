@@ -301,6 +301,21 @@ export const Header: React.FC<HeaderProps> = ({
       {/* Formatting Toolbar */}
       <div className="border-t border-slate-200 px-6 py-3 bg-slate-50">
         <div className="flex items-center">
+          <div>
+            <input
+              type="number"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              className="p-2 border border-gray-300 rounded"
+              value={myValue}
+              onChange={(e) => setMyValue(e.target.value)}
+              style={{
+                appearance: 'textfield',
+                MozAppearance: 'textfield',
+                WebkitAppearance: 'none',
+              }}
+            />
+        </div>
           <div className="flex items-center space-x-1">
             {formattingTools.map((tool) => {
               const Icon = tool.icon;
