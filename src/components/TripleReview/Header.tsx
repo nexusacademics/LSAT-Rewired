@@ -18,6 +18,8 @@ import {
 } from 'lucide-react';
 import { TestSession, ProcessedQuestion } from '../../App';
 
+const [myValue, setMyValue] = useState('');
+
 // Custom icon for text resize (double A)
 const TextResizeIcon = ({ className }: { className?: string }) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
