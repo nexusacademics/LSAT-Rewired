@@ -294,7 +294,7 @@ const findMatchingTextNodeInDOM = (root: HTMLElement, text: string): Text | null
         <div className="prose max-w-none">
           <div 
             ref={passageRef}
-            className={text-slate-700 ${getTextSizeClass()} ${getLineSpacingClass()} ${selectedTool ? 'select-text cursor-text' : ''}}
+            className={`text-slate-700 ${getTextSizeClass()} ${getLineSpacingClass()} ${selectedTool ? 'select-text cursor-text' : ''}`}
             onMouseUp={handleMouseUp}
             style={{ userSelect: selectedTool ? 'text' : 'auto' }}
           >
