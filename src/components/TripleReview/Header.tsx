@@ -18,7 +18,6 @@ import {
 } from 'lucide-react';
 import { TestSession, ProcessedQuestion } from '../../App';
 
-const [myValue, setMyValue] = useState('');
 
 // Custom icon for text resize (double A)
 const TextResizeIcon = ({ className }: { className?: string }) => (
@@ -126,7 +125,7 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   const [showTextSizeDropdown, setShowTextSizeDropdown] = useState(false);
   const [showLineSpacingDropdown, setShowLineSpacingDropdown] = useState(false);
-
+   const [myValue, setMyValue] = useState('');
   const PhaseIcon = getPhaseIcon(session.phase);
   const phaseColor = getPhaseColor(session.phase);
 
