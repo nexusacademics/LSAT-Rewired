@@ -310,11 +310,11 @@ export const Header: React.FC<HeaderProps> = ({
                 <button
                   key={tool.id}
                   onClick={() => handleToolClick(tool.id)}
-                  className={p-2 rounded-lg border transition-all ${
+                  className={`p-2 rounded-lg border transition-all ${
                     isSelected 
                       ? 'bg-blue-100 border-blue-300 text-blue-700 shadow-sm' 
                       : bg-white border-slate-200 text-slate-600 ${tool.bgColor}
-                  }}
+                  }`}
                   title={tool.label}
                 >
                   {tool.id.startsWith('highlight-') ? (
