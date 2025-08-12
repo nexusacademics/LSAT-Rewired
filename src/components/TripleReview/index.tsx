@@ -403,6 +403,8 @@ const TripleReview: React.FC<TripleReviewProps> = ({
         onTextSizeChange={handleTextSizeChange}
         lineSpacing={lineSpacing}
         onLineSpacingChange={handleLineSpacingChange}
+        searchQuery={searchQuery}
+        onSearchChange={handleSearchChange}
       />
 
       <div ref={mainContentRef} className="flex-1 p-6 overflow-y-auto">
