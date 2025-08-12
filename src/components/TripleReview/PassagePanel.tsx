@@ -303,10 +303,10 @@ const findMatchingTextNodeInDOM = (root: HTMLElement, text: string): Text | null
           <div 
             ref={passageRef}
             className={`text-slate-700 ${getTextSizeClass()} ${getLineSpacingClass()} ${selectedTool ? 'select-text cursor-text' : ''}`}
-            onMouseUp={handleMouseUp}
+            
             style={{ userSelect: selectedTool ? 'text' : 'auto' }}
           >
-            <div className="whitespace-pre-line">{currentQuestionData.passage}</div>
+            <div className="whitespace-pre-line" onMouseUp={handleMouseUp}>{currentQuestionData.passage}</div>
           </div>
         </div>
         
