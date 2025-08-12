@@ -10,6 +10,7 @@ interface PassagePanelProps {
   existingCircuitForQuestion: Circuit | undefined;
   onShowCircuitBuilder: () => void;
   isCircuitBuilderOpen: boolean;
+  searchQuery: string;
   // New props for formatting
   selectedTool: string | null;
   onClearPassageFormatting: React.MutableRefObject<(() => void) | null>;
