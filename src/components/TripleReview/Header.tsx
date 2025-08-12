@@ -342,7 +342,7 @@ export const Header: React.FC<HeaderProps> = ({
                   showTextSizeDropdown
                     ? 'bg-blue-100 border-blue-300 text-blue-700 shadow-sm'
                     : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-100'
-                }}
+                }
                 title="Text Size"
               >
                 <TextResizeIcon className="h-4 w-4" />
@@ -354,7 +354,7 @@ export const Header: React.FC<HeaderProps> = ({
                     onClick={() => handleTextSizeChange('small')}
                     className={w-full px-3 py-2 text-left text-sm hover:bg-slate-50 first:rounded-t-lg ${
                       textSize === 'small' ? 'bg-blue-50 text-blue-700' : 'text-slate-700'
-                    }}
+                    }
                   >
                     Small
                   </button>
@@ -362,7 +362,7 @@ export const Header: React.FC<HeaderProps> = ({
                     onClick={() => handleTextSizeChange('medium')}
                     className={w-full px-3 py-2 text-left text-sm hover:bg-slate-50 ${
                       textSize === 'medium' ? 'bg-blue-50 text-blue-700' : 'text-slate-700'
-                    }}
+                    }
                   >
                     Medium
                   </button>
@@ -370,7 +370,7 @@ export const Header: React.FC<HeaderProps> = ({
                     onClick={() => handleTextSizeChange('large')}
                     className={w-full px-3 py-2 text-left text-sm hover:bg-slate-50 last:rounded-b-lg ${
                       textSize === 'large' ? 'bg-blue-50 text-blue-700' : 'text-slate-700'
-                    }}
+                    }
                   >
                     Large
                   </button>
@@ -386,7 +386,7 @@ export const Header: React.FC<HeaderProps> = ({
                   showLineSpacingDropdown
                     ? 'bg-blue-100 border-blue-300 text-blue-700 shadow-sm'
                     : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-100'
-                }}
+                }
                 title="Line Spacing"
               >
                 <LineSpacingIcon className="h-4 w-4" />
@@ -398,7 +398,7 @@ export const Header: React.FC<HeaderProps> = ({
                     onClick={() => handleLineSpacingChange('normal')}
                     className={w-full px-3 py-2 text-left text-sm hover:bg-slate-50 first:rounded-t-lg ${
                       lineSpacing === 'normal' ? 'bg-blue-50 text-blue-700' : 'text-slate-700'
-                    }}
+                    }
                   >
                     Normal
                   </button>
@@ -406,7 +406,7 @@ export const Header: React.FC<HeaderProps> = ({
                     onClick={() => handleLineSpacingChange('relaxed')}
                     className={w-full px-3 py-2 text-left text-sm hover:bg-slate-50 ${
                       lineSpacing === 'relaxed' ? 'bg-blue-50 text-blue-700' : 'text-slate-700'
-                    }}
+                    }
                   >
                     Relaxed
                   </button>
@@ -414,7 +414,7 @@ export const Header: React.FC<HeaderProps> = ({
                     onClick={() => handleLineSpacingChange('loose')}
                     className={w-full px-3 py-2 text-left text-sm hover:bg-slate-50 last:rounded-b-lg ${
                       lineSpacing === 'loose' ? 'bg-blue-50 text-blue-700' : 'text-slate-700'
-                    }}
+                    }
                   >
                     Loose
                   </button>
