@@ -62,6 +62,13 @@ const TripleReview: React.FC<TripleReviewProps> = ({
   const currentQuestionData = questionsInCurrentSection[session.currentQuestionIndex];
   const [textSize, setTextSize] = useState<'small' | 'medium' | 'large'>('medium');
   const [lineSpacing, setLineSpacing] = useState<'normal' | 'loose' | 'relaxed'>('loose');
+
+   // Inside TripleReview component
+    const [searchQuery, setSearchQuery] = useState("");
+    
+    const handleSearchChange = (value: string) => {
+      setSearchQuery(value);
+    };
   
   const handleTextSizeChange = (size: 'small' | 'medium' | 'large') => {
     setTextSize(size);
@@ -364,14 +371,7 @@ const TripleReview: React.FC<TripleReviewProps> = ({
         onClose={() => setShowStrategySummary(false)}
       />
     );
-    // Inside TripleReview component
-    const [searchQuery, setSearchQuery] = useState("");
-    
-    const handleSearchChange = (value: string) => {
-      setSearchQuery(value);
-    };
-
-  }
+   }
 
   return (
     <div className="fixed inset-0 flex flex-col bg-slate-50 z-40">
