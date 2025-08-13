@@ -517,6 +517,7 @@ const TripleReview: React.FC<TripleReviewProps> = ({
             triggeredByTimer={isSectionTransitionTriggeredByTimer}
             isTimedSession={session.phase === 'timed'}
             isCompleteTest={!session.selectedSectionId}
+            onResetTimer={resetTimer}   // <--- pass it down if you want
           />
         </Portal>
       )}
