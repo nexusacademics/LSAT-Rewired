@@ -259,4 +259,4 @@ export const SectionTransition: React.FC<SectionTransitionProps> = React.memo(({
       </div>
     </div>
   );
-};
+});
