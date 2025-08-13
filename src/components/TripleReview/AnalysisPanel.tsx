@@ -193,6 +193,71 @@ export const AnalysisPanel = ({
     );
   };
 
+   // Highlighting logic
+  const highlightText = (text = '') => {
+    const headingRegex = /^((?:[\w/-]+\s?){1,4}):/; // up to 4 words before colon
+    const answerChoiceRegex = /\(([A-E])\)/g;
+
+    return text.split('\n').map((line, lineIndex) => {
+      const headingMatch = line.match(headingRegex);
+      if (headingMatch) {
+        const heading = headingMatch[0];
+        const restOfLine = line.slice(heading.length);
+
+        // Process (A)-(E) inside rest of line
+        const segments = [];
+        let last = 0;
+        let match;
+        while ((match = answerChoiceRegex.exec(restOfLine)) !== null) {
+          const idx = match.index;
+          segments.push(restOfLine.slice(last, idx));
+          segments.push(
+            <span
+              key={`choice-${lineIndex}-${idx}`}
+              className="bg-black text-white font-bold"
+            >
+              {match[0]}
+            </span>
+          );
+          last = idx + match[0].length;
+        }
+        segments.push(restOfLine.slice(last));
+
+        return (
+          <div key={`line-${lineIndex}`} className="whitespace-pre-wrap">
+            <span className="bg-yellow-300 font-bold">{heading}</span>
+            {segments}
+          </div>
+        );
+      } else {
+        // Highlight (A)-(E) in normal lines
+        const segments = [];
+        let last = 0;
+        let match;
+        while ((match = answerChoiceRegex.exec(line)) !== null) {
+          const idx = match.index;
+          segments.push(line.slice(last, idx));
+          segments.push(
+            <span
+              key={`choice-${lineIndex}-${idx}`}
+              className="bg-black text-white font-bold"
+            >
+              {match[0]}
+            </span>
+          );
+          last = idx + match[0].length;
+        }
+        segments.push(line.slice(last));
+
+        return (
+          <div key={`line-${lineIndex}`} className="whitespace-pre-wrap">
+            {segments}
+          </div>
+        );
+      }
+    });
+  };
+  
   return (
     <div ref={containerRef} className="flex flex-col flex-1 min-h-0 overflow-hidden">
       {/* Header */}
