@@ -111,6 +111,9 @@ const TripleReview: React.FC<TripleReviewProps> = ({
     }
   };
 
+  const [isIntermissionMode, setIsIntermissionMode] = useState(false);
+  const [intermissionDuration, setIntermissionDuration] = useState(0);
+  
   const handleSubmitSection = React.useCallback((triggeredByTimer: boolean = false) => {
   if (triggeredByTimer) {
     setIsSectionTransitionTriggeredByTimer(true);
