@@ -605,6 +605,14 @@ const handleIntermissionEnd = () => {
         onContinueReviewing={handleContinueReviewing}
         onClose={() => setShowPausePopup(false)}
       />
+      {isIntermissionMode && (
+      <IntermissionModal
+        countdownSeconds={intermissionDuration}
+        onFinish={handleIntermissionEnd}
+        isIntermission={true}
+        triggeredByTimer={isSectionTransitionTriggeredByTimer}
+      />
+    )}
     </div>
   );
 };
