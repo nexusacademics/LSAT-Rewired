@@ -225,91 +225,90 @@ export const AnalysisPanel = ({
           style={{ gap: '12px' }}
         >
          {isStrategyReview && showExplanations ? (
-  <div className="flex-1 flex flex-col min-h-0">
-    {availableExplanations.length > 0 ? (
-      <>
-        {/* Navigation Header */}
-        <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-200">
-          <div className="flex items-center space-x-2">
-            <div className="text-center">
-              <h4 className="font-semibold text-slate-800 text-lg">
-                {currentExplanation?.label}
-              </h4>
-              <p className="text-sm text-slate-500">
-                Explanation Part {currentExplanationIndex + 1} of {availableExplanations.length}
-              </p>
-            </div>                                           
-          </div>
-
-          {/* Progress dots */}
-          {availableExplanations.length > 1 && (
-            <div className="flex space-x-1">
-              {availableExplanations.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentExplanationIndex(index)}
-                  className={`w-2 h-2 rounded-full ${
-                    index === currentExplanationIndex
-                      ? 'bg-blue-500'
-                      : 'bg-slate-300 hover:bg-slate-400'
-                  }`}
-                />
-              ))}
+            <div className="flex-1 flex flex-col min-h-0">
+              {availableExplanations.length > 0 ? (
+                <>
+                  {/* Navigation Header */}
+                  <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-200">
+                    <div className="flex items-center space-x-2">
+                      <div className="text-center">
+                        <h4 className="font-semibold text-slate-800 text-lg">
+                          {currentExplanation?.label}
+                        </h4>
+                        <p className="text-sm text-slate-500">
+                          Explanation Part {currentExplanationIndex + 1} of {availableExplanations.length}
+                        </p>
+                      </div>                                           
+                    </div>
+          
+                    {/* Progress dots */}
+                    {availableExplanations.length > 1 && (
+                      <div className="flex space-x-1">
+                        {availableExplanations.map((_, index) => (
+                          <button
+                            key={index}
+                            onClick={() => setCurrentExplanationIndex(index)}
+                            className={`w-2 h-2 rounded-full ${
+                              index === currentExplanationIndex
+                                ? 'bg-blue-500'
+                                : 'bg-slate-300 hover:bg-slate-400'
+                            }`}
+                          />
+                        ))}
+                      </div>
+                    )}
+                  </div>
+          
+                  {/* Current Explanation Content */}
+                  <div className="flex-1 overflow-auto">
+                    <div className="prose prose-slate max-w-none space-y-4">
+                      <div className="flex bg-slate-50 border border-slate-200 shadow-sm rounded-lg p-4">
+                        {/* Left accent bar */}
+                        <div className="w-1 bg-blue-500 rounded-l-lg mr-3" />
+          
+                        {/* Content */}
+                        <div className="text-slate-700 leading-relaxed whitespace-pre-wrap">
+                          {currentExplanation?.content}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+          
+                  {/* Navigation Footer */}
+                  {availableExplanations.length > 1 && (
+                    <div className="mt-4 pt-3 border-t border-slate-200 flex justify-between items-center">
+                      <button
+                        onClick={handlePreviousExplanation}
+                        className="flex items-center space-x-2 px-3 py-2 text-sm text-slate-600 hover:text-slate-800 hover:bg-slate-50 rounded-md transition-colors"
+                      >
+                        <ChevronLeft className="w-4 h-4" />
+                        <span>Previous</span>
+                      </button>
+          
+                      <div className="text-sm text-slate-500">
+                        Use arrows or dots to navigate
+                      </div>
+          
+                      <button
+                        onClick={handleNextExplanation}
+                        className="flex items-center space-x-2 px-3 py-2 text-sm text-slate-600 hover:text-slate-800 hover:bg-slate-50 rounded-md transition-colors"
+                      >
+                        <span>Next</span>
+                        <ChevronRight className="w-4 h-4" />
+                      </button>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="flex-1 flex items-center justify-center">
+                  <div className="text-center text-slate-500">
+                    <p className="text-lg mb-2">No explanations available</p>
+                    <p className="text-sm">for this question</p>
+                  </div>
+                </div>
+              )}
             </div>
-          )}
-        </div>
-
-        {/* Current Explanation Content */}
-        <div className="flex-1 overflow-auto">
-          <div className="prose prose-slate max-w-none space-y-4">
-            <div className="flex bg-slate-50 border border-slate-200 shadow-sm rounded-lg p-4">
-              {/* Left accent bar */}
-              <div className="w-1 bg-blue-500 rounded-l-lg mr-3" />
-
-              {/* Content */}
-              <div className="text-slate-700 leading-relaxed whitespace-pre-wrap">
-                {currentExplanation?.content}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Navigation Footer */}
-        {availableExplanations.length > 1 && (
-          <div className="mt-4 pt-3 border-t border-slate-200 flex justify-between items-center">
-            <button
-              onClick={handlePreviousExplanation}
-              className="flex items-center space-x-2 px-3 py-2 text-sm text-slate-600 hover:text-slate-800 hover:bg-slate-50 rounded-md transition-colors"
-            >
-              <ChevronLeft className="w-4 h-4" />
-              <span>Previous</span>
-            </button>
-
-            <div className="text-sm text-slate-500">
-              Use arrows or dots to navigate
-            </div>
-
-            <button
-              onClick={handleNextExplanation}
-              className="flex items-center space-x-2 px-3 py-2 text-sm text-slate-600 hover:text-slate-800 hover:bg-slate-50 rounded-md transition-colors"
-            >
-              <span>Next</span>
-              <ChevronRight className="w-4 h-4" />
-            </button>
-          </div>
-        )}
-      </>
-    ) : (
-      <div className="flex-1 flex items-center justify-center">
-        <div className="text-center text-slate-500">
-          <p className="text-lg mb-2">No explanations available</p>
-          <p className="text-sm">for this question</p>
-        </div>
-      </div>
-    )}
-  </div>
-) :
- (
+          ) :(
             textAreas.map((key, index) => (
               <div
                 key={key}
