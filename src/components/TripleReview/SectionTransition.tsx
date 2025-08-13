@@ -1,7 +1,7 @@
 // components/TripleReview/SectionTransition.tsx
 import React, { useState, useEffect } from 'react';
 import { TestSession } from '../../App';
-import { AlertTriangle, Play, Home, X, Clock } from 'lucide-react';
+import { Play, X, Clock } from 'lucide-react';
 
 interface SectionTransitionProps {
   session: TestSession;
@@ -9,52 +9,62 @@ interface SectionTransitionProps {
   onCancel: () => void;
   onConfirm: () => void;
   triggeredByTimer: boolean;
-  isTimedSession?: boolean; // New prop to check if this is a timed session
-  isCompleteTest?: boolean; // New prop to check if this is a complete test
+  isTimedSession?: boolean;
+  isCompleteTest?: boolean;
 }
 
-export const SectionTransition: React.FC<SectionTransitionProps> = ({
+export const SectionTransition: React.FC<SectionTransitionProps> = React.memo(({
   session,
   isLastSection,
   onCancel,
   onConfirm,
   triggeredByTimer,
   isTimedSession = false,
-  isCompleteTest = false
+  isCompleteTest = false,
 }) => {
   const [countdown, setCountdown] = useState<number | null>(null);
   const [isIntermission, setIsIntermission] = useState(false);
-  const [showingCountdown, setShowingCountdown] = useState(false);
 
-  // Determine if we should show countdown
+  // Derived flags
   const shouldShowCountdown = isTimedSession && isCompleteTest && !isLastSection;
-  
-  // Determine if this is the intermission (after section 2, assuming 0-indexed)
-  const isAfterSection2 = session.currentSectionIndex === 1; // 0-indexed, so section 2 is index 1
+  const isAfterSection2 = session.currentSectionIndex === 1;
 
-  // Start the countdown when triggered by timer OR when user confirms manual section end
+  // showingCountdown derived from countdown state
+  const showingCountdown = countdown !== null;
+
+  
+  // Reset countdown & intermission when countdown no longer needed
+  useEffect(() => {
+    if (!shouldShowCountdown && countdown !== null) {
+      setCountdown(null);
+      setIsIntermission(false);
+    }
+  }, [shouldShowCountdown]);
+
+  // Start the countdown (called on timer trigger or manual)
   const startCountdown = () => {
-    const initialTime = isAfterSection2 ? 600 : 60; // 10 minutes (600s) or 1 minute (60s)
+    const initialTime = isAfterSection2 ? 600 : 60;
     setCountdown(initialTime);
     setIsIntermission(isAfterSection2);
-    setShowingCountdown(true);
   };
 
+  // Auto-start countdown if triggered by timer and countdown not started
   useEffect(() => {
-    // Auto-start countdown if triggered by timer
-    if (shouldShowCountdown && triggeredByTimer) {
+    if (shouldShowCountdown && triggeredByTimer && countdown === null) {
       startCountdown();
     }
-  }, [shouldShowCountdown, triggeredByTimer, isAfterSection2]);
+  }, [shouldShowCountdown, triggeredByTimer, isAfterSection2, countdown]);
 
+  // Countdown timer effect
   useEffect(() => {
     if (countdown === null || countdown <= 0) return;
 
     const timer = setInterval(() => {
-      setCountdown(prev => {
+      setCountdown((prev) => {
         if (prev === null || prev <= 1) {
           clearInterval(timer);
-          // Auto-advance when countdown reaches 0
+          setCountdown(null); // Hide countdown UI after finishing
+          setIsIntermission(false);
           setTimeout(() => onConfirm(), 100);
           return 0;
         }
@@ -96,8 +106,8 @@ export const SectionTransition: React.FC<SectionTransitionProps> = ({
               </p>
             </div>
             <p className="text-sm text-slate-500 text-center">
-              The next section will begin automatically when the timer reaches zero, 
-              or you can advance immediately using the button below.
+              The next section will begin automatically when the timer reaches zero, or you can
+              advance immediately using the button below.
             </p>
           </>
         );
@@ -108,9 +118,7 @@ export const SectionTransition: React.FC<SectionTransitionProps> = ({
               <div className="text-2xl font-bold text-blue-600 mb-2">
                 {countdown !== null ? formatTime(countdown) : '--:--'}
               </div>
-              <p className="text-slate-600">
-                {triggeredByTimer ? 'Time is up! ' : ''}Prepare for the next section
-              </p>
+              <p className="text-slate-600">{triggeredByTimer ? 'Time is up! ' : ''}Prepare for the next section</p>
             </div>
             <p className="text-sm text-slate-500 text-center">
               Review the upcoming section instructions or advance immediately.
@@ -120,26 +128,28 @@ export const SectionTransition: React.FC<SectionTransitionProps> = ({
       }
     }
 
-    // Show initial confirmation for manual section end in timed tests
     if (shouldShowCountdown && !triggeredByTimer) {
       return (
         <>
           Are you ready to move on to the next section?
-          <br /><br />
+          <br />
+          <br />
           <span>
-            <span className="font-semibold text-red-600">NOTE:</span> You will not be permitted to come back to this section once you move on.
+            <span className="font-semibold text-red-600">NOTE:</span> You will not be permitted to come
+            back to this section once you move on.
           </span>
         </>
       );
     }
 
-    // Fallback for non-timed or non-complete test scenarios
     return (
       <>
         Are you ready to move on to the next section?
-        <br /><br />
+        <br />
+        <br />
         <span>
-          <span className="font-semibold text-red-600">NOTE:</span> You will not be permitted to come back to this section once you move on.
+          <span className="font-semibold text-red-600">NOTE:</span> You will not be permitted to come
+          back to this section once you move on.
         </span>
       </>
     );
@@ -158,7 +168,6 @@ export const SectionTransition: React.FC<SectionTransitionProps> = ({
       );
     }
 
-    // For timed tests that need countdown but haven't started it yet (manual section end)
     if (shouldShowCountdown && !triggeredByTimer) {
       return (
         <>
@@ -172,13 +181,12 @@ export const SectionTransition: React.FC<SectionTransitionProps> = ({
             onClick={startCountdown}
             className="w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center"
           >
-            Next Section
+            Start Break Before Next Section
           </button>
         </>
       );
     }
 
-    // Fallback for non-timed sessions - show traditional confirmation
     return (
       <>
         <button
@@ -198,8 +206,8 @@ export const SectionTransition: React.FC<SectionTransitionProps> = ({
   };
 
   return (
-    <div 
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60]" 
+    <div
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60]"
       onClick={(e) => {
         if (!showingCountdown) {
           onCancel();
@@ -207,7 +215,7 @@ export const SectionTransition: React.FC<SectionTransitionProps> = ({
         e.stopPropagation();
       }}
     >
-      <div 
+      <div
         className={`bg-white rounded-2xl shadow-lg max-w-md w-full mx-4 transform transition-all ${
           isIntermission ? 'max-w-lg' : ''
         }`}
@@ -215,27 +223,23 @@ export const SectionTransition: React.FC<SectionTransitionProps> = ({
       >
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-slate-200">
-        <div className="flex items-center gap-2">
-          {showingCountdown && <Clock size={20} className="text-blue-600" />}
-          <h3 className="text-xl font-bold text-slate-900">
-            {getTransitionTitle()}
-          </h3>
-        </div>
-        {!showingCountdown && (
-          <button
-            onClick={onCancel}
-            className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 transition-colors"
-          >
-            <X size={16} />
-          </button>
-        )}
+          <div className="flex items-center gap-2">
+            {showingCountdown && <Clock size={20} className="text-blue-600" />}
+            <h3 className="text-xl font-bold text-slate-900">{getTransitionTitle()}</h3>
+          </div>
+          {!showingCountdown && (
+            <button
+              onClick={onCancel}
+              className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 transition-colors"
+            >
+              <X size={16} />
+            </button>
+          )}
         </div>
 
         {/* Content */}
         <div className="p-6">
-          <div className="text-slate-700 leading-relaxed mb-6">
-            {getTransitionMessage()}
-          </div>
+          <div className="text-slate-700 leading-relaxed mb-6">{getTransitionMessage()}</div>
 
           {/* Next Section Preview (for non-intermission breaks) */}
           {showingCountdown && !isIntermission && (
@@ -244,18 +248,15 @@ export const SectionTransition: React.FC<SectionTransitionProps> = ({
                 Next: Section {session.currentSectionIndex + 2}
               </h4>
               <p className="text-sm text-slate-600">
-                {/* You can customize this based on your section types */}
                 Prepare for the upcoming section. Review instructions and get ready.
               </p>
             </div>
           )}
 
           {/* Buttons */}
-          <div className="flex flex-col gap-3 mt-6">
-            {renderButtons()}
-          </div>
+          <div className="flex flex-col gap-3 mt-6">{renderButtons()}</div>
         </div>
       </div>
     </div>
   );
-};
+});
