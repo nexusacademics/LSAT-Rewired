@@ -256,24 +256,6 @@ export const QuestionTracker: React.FC<QuestionTrackerProps> = ({
   );
 };
 
-// Demo component to show the system in action
-const QuestionTrackerDemo: React.FC = () => {
-  const [currentPhase, setCurrentPhase] = React.useState<'timed' | 'blindReview' | 'strategyReview' | 'strategyPlanning' | 'archive'>('timed');
-  const [currentQuestion, setCurrentQuestion] = React.useState(0);
-  
-  // Sample questions with different flag combinations
- const sampleQuestions = [
-  { id: '1' },
-  { id: '2' },
-  { id: '3' },
-  { id: '4' },
-  { id: '5' },
-  { id: '6' },
-  { id: '7' },
-  { id: '8' },
-  { id: '9' },
-  { id: '10' },
-];
 
 const QuestionTrackerDemo: React.FC = () => {
   const [currentPhase, setCurrentPhase] = React.useState<
