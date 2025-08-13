@@ -53,7 +53,7 @@ useEffect(() => {
   
   // Reset countdown & intermission when countdown no longer needed
   useEffect(() => {
-    if (!shouldShowCountdown) {
+    if (!shouldShowCountdown && countdown !== null) {
       setCountdown(null);
       setIsIntermission(false);
     }
