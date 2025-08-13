@@ -149,11 +149,11 @@ export const SectionTransition: React.FC<SectionTransitionProps> = ({
     if (showingCountdown) {
       return (
         <button
-         onClick={() => setCountdown(0)} // set countdown to zero to trigger auto-advance
-      className="w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
-    >
-      <Play size={16} />
-      {isIntermission ? 'Resume Test' : 'Advance Immediately to Next Section'}
+          onClick={onConfirm}
+          className="w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
+        >
+          <Play size={16} />
+          {isIntermission ? 'Resume Test' : 'Advance Immediately to Next Section'}
         </button>
       );
     }
@@ -172,7 +172,7 @@ export const SectionTransition: React.FC<SectionTransitionProps> = ({
             onClick={startCountdown}
             className="w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center"
           >
-            Next Section
+            Start Break Before Next Section
           </button>
         </>
       );
