@@ -43,7 +43,7 @@ export const SectionTransition: React.FC<SectionTransitionProps> = ({
           id="section-transition-title"
           className="text-2xl font-semibold text-slate-900 mb-4"
         >
-          {isLastSection ? 'Test Complete!' : `Section ${session.currentSectionIndex + 1} Complete!`}
+          {isLastSection ? 'Test Complete!' : ``}
         </h3>
         <p id="section-transition-desc" className="text-slate-600 mb-6">
           {isLastSection ? (
