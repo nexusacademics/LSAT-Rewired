@@ -32,7 +32,7 @@ export const SectionTransition: React.FC<SectionTransitionProps> = ({
   // showingCountdown derived from countdown state
   const showingCountdown = countdown !== null;
 
-  Debugging logs - uncomment if needed
+  // Debugging logs - uncomment if needed
   console.log({
   countdown,
    showingCountdown,
