@@ -13,7 +13,7 @@ interface SectionTransitionProps {
   isCompleteTest?: boolean;
 }
 
-export const SectionTransition: React.FC<SectionTransitionProps> = ({
+export const SectionTransition: React.FC<SectionTransitionProps> = React.memo(({
   session,
   isLastSection,
   onCancel,
