@@ -111,14 +111,14 @@ const TripleReview: React.FC<TripleReviewProps> = ({
     }
   };
 
-  const handleSubmitSection = (triggeredByTimer: boolean = false) => {
-    if (triggeredByTimer) {
-      setIsSectionTransitionTriggeredByTimer(true);
-    } else {
-      setIsSectionTransitionTriggeredByTimer(false);
-    }
-    setShowSectionTransition(true);
-  };
+  const handleSubmitSection = React.useCallback((triggeredByTimer: boolean = false) => {
+  if (triggeredByTimer) {
+    setIsSectionTransitionTriggeredByTimer(true);
+  } else {
+    setIsSectionTransitionTriggeredByTimer(false);
+  }
+  setShowSectionTransition(true);
+}, []);
 
   // Modified pause handler to save timer state
   const handlePauseReview = () => {
