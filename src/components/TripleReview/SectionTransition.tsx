@@ -42,10 +42,13 @@ export const SectionTransition: React.FC<SectionTransitionProps> = ({
    isLastSection,
   });
 useEffect(() => {
-  if (countdown === null) {
-    console.log('Countdown reset to null!');
+  console.log('shouldShowCountdown changed:', shouldShowCountdown);
+  if (!shouldShowCountdown) {
+    console.log('Resetting countdown & intermission because shouldShowCountdown is false');
+    setCountdown(null);
+    setIsIntermission(false);
   }
-}, [countdown]);
+}, [shouldShowCountdown]);
  
   
   // Reset countdown & intermission when countdown no longer needed
