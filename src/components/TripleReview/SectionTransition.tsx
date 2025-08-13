@@ -32,15 +32,15 @@ export const SectionTransition: React.FC<SectionTransitionProps> = ({
   // showingCountdown derived from countdown state
   const showingCountdown = countdown !== null;
 
-  // Debugging logs - uncomment if needed
-  // console.log({
-  //   countdown,
-  //   showingCountdown,
-  //   isIntermission,
-  //   shouldShowCountdown,
-  //   triggeredByTimer,
-  //   isLastSection,
-  // });
+  Debugging logs - uncomment if needed
+  console.log({
+  countdown,
+   showingCountdown,
+   isIntermission,
+   shouldShowCountdown,
+   triggeredByTimer,
+   isLastSection,
+  });
 
   // Reset countdown & intermission when countdown no longer needed
   useEffect(() => {
