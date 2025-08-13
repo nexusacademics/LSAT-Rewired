@@ -32,8 +32,6 @@ export const SectionTransition: React.FC<SectionTransitionProps> = ({
   // showingCountdown derived from countdown state
   const showingCountdown = countdown !== null;
 
-
- 
   
   // Reset countdown & intermission when countdown no longer needed
   useEffect(() => {
@@ -49,17 +47,7 @@ export const SectionTransition: React.FC<SectionTransitionProps> = ({
     setCountdown(initialTime);
     setIsIntermission(isAfterSection2);
   };
-useEffect(() => {
-  console.log({
-    countdown,
-    showingCountdown: countdown !== null,
-    isIntermission,
-    shouldShowCountdown,
-    triggeredByTimer,
-    isLastSection,
-    sessionSectionIndex: session.currentSectionIndex,
-  });
-});
+
   // Auto-start countdown if triggered by timer and countdown not started
   useEffect(() => {
     if (shouldShowCountdown && triggeredByTimer && countdown === null) {
