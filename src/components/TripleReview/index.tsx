@@ -217,7 +217,31 @@ const TripleReview: React.FC<TripleReviewProps> = ({
       setIsTimerRunning(true);
     }
   };
+  const onTimerEnd = () => {
+  setIsSectionTransitionTriggeredByTimer(true);
+  const nextSectionIndex = session.currentSectionIndex + 1;
+  const isFullTest = !session.selectedSectionId && currentSections.length === 4;
 
+  if (isFullTest) {
+    // Intermission durations as you defined
+    if (nextSectionIndex === 1 || nextSectionIndex === 3) {
+      setIntermissionDuration(60);  // 1 minute break
+      setIsIntermissionMode(true);
+      setShowSectionTransition(false);
+      return;
+    } else if (nextSectionIndex === 2) {
+      setIntermissionDuration(600); // 10 minute break
+      setIsIntermissionMode(true);
+      setShowSectionTransition(false);
+      return;
+    }
+  }
+
+  // Otherwise fallback to SectionTransition modal
+  handleSubmitSection(true);
+};
+
+  
   const {
     timeRemaining,
     getTimeDisplay,
@@ -227,10 +251,7 @@ const TripleReview: React.FC<TripleReviewProps> = ({
   } = useTimer({
     initialTime: getInitialTime(),
     isRunning: isTimerRunning,
-    onTimeUp: () => {
-      setIsSectionTransitionTriggeredByTimer(true);
-      handleSubmitSection(true);
-    },
+    onTimeUp: onTimerEnd,
     phase: session.phase
   });
 
