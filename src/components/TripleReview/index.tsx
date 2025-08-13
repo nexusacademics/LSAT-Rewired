@@ -302,6 +302,24 @@ const TripleReview: React.FC<TripleReviewProps> = ({
     const nextSectionIndex = session.currentSectionIndex + 1;
     const updatedCompletedSectionIds = [...session.completedSectionIds, currentSectionData.id];
 
+    const isFullTest = !session.selectedSectionId && currentSections.length === 4;
+      // Decide if this transition is intermission and set timer accordingly
+      if (isFullTest) {
+        // Between sections 1&2 and 3&4: 1 minute
+        // Between 2&3: 10 minutes
+        if (nextSectionIndex === 1 || nextSectionIndex === 3) {
+          setIntermissionDuration(60);  // 1 minute break
+          setIsIntermissionMode(true);
+          setShowSectionTransition(false);
+          return;  // wait for intermission to finish
+        } else if (nextSectionIndex === 2) {
+          setIntermissionDuration(600); // 10 minute break
+          setIsIntermissionMode(true);
+          setShowSectionTransition(false);
+          return;  // wait for intermission to finish
+        }
+      }
+    
     let updatedSession = { ...session };
     if (session.phase === 'timed') {
       updatedSession.timedAnswers = { ...session.answeredQuestions };
