@@ -236,7 +236,7 @@ export const AnalysisPanel = ({
                           {currentExplanation?.label}
                         </h4>
                         <p className="text-sm text-slate-500">
-                          Explanation part {currentExplanationIndex + 1} of {availableExplanations.length}
+                          Explanation Part {currentExplanationIndex + 1} of {availableExplanations.length}
                         </p>
                       </div>                                           
                     </div>
