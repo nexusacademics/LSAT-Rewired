@@ -34,7 +34,7 @@ export const QuestionPanel: React.FC<QuestionPanelProps> = ({
       {/* Question Stem */}
       <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
         <div className="mb-4">
-          <h3 className="text-base font-semibold text-slate-900">
+          <h3 className="text-lg font-semibold text-slate-900">
             <div className="whitespace-pre-line">{currentQuestionData.question}</div>
           </h3>
         </div>
@@ -42,7 +42,7 @@ export const QuestionPanel: React.FC<QuestionPanelProps> = ({
 
       {/* Answer Choices */}
       <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 relative">
-        <h3 className="text-base font-semibold text-slate-900 mb-4">Answer Choices</h3>
+        <h3 className="text-lg font-semibold text-slate-900 mb-4">Answer Choices</h3>
         
         {/* Overlay for Blind Review */}
         {session.phase === 'blind-review' && !showAnswerChoices && (
@@ -104,7 +104,7 @@ export const QuestionPanel: React.FC<QuestionPanelProps> = ({
                       session.phase === 'strategy-review'
                     }
                   />
-                  <span className="font-base text-slate-700 mr-3">
+                  <span className="font-medium text-slate-700 mr-3">
                     ({String.fromCharCode(65 + index)})
                   </span>
                   <span className={`text-slate-700 flex-1 ${
