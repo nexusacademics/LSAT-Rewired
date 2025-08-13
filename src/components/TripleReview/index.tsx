@@ -16,7 +16,7 @@ import { useTimer } from '../../hooks/useTimer';
 import { useQuestionNavigation } from '../../hooks/useQuestionNavigation';
 import { useAnswerSelection } from '../../hooks/useAnswerSelection';
 import { usePortal } from '../../hooks/usePortal';
-import { IntermissionModal } from './IntermissionModal';
+import { IntermissionModal } from './intermissionModal';
 
 
 interface TripleReviewProps {
