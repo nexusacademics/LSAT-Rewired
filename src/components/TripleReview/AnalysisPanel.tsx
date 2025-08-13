@@ -231,13 +231,7 @@ export const AnalysisPanel = ({
                   {/* Navigation Header */}
                   <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-200">
                     <div className="flex items-center space-x-2">
-                      <button
-                        onClick={handlePreviousExplanation}
-                        disabled={availableExplanations.length <= 1}
-                        className="p-1 rounded-md hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        <ChevronLeft className="w-5 h-5 text-slate-600" />
-                      </button>
+                      
                       
                       <div className="text-center">
                         <h4 className="font-semibold text-slate-800 text-lg">
@@ -248,13 +242,7 @@ export const AnalysisPanel = ({
                         </p>
                       </div>
                       
-                      <button
-                        onClick={handleNextExplanation}
-                        disabled={availableExplanations.length <= 1}
-                        className="p-1 rounded-md hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        <ChevronRight className="w-5 h-5 text-slate-600" />
-                      </button>
+                     
                     </div>
                     
                     {/* Progress dots */}
