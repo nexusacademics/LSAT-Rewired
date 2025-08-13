@@ -308,7 +308,7 @@ export const AnalysisPanel = ({
       </div>
     )}
   </div>
-) : null}
+) :
  (
             textAreas.map((key, index) => (
               <div
