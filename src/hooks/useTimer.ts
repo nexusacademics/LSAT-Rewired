@@ -37,6 +37,10 @@ export const useTimer = ({ initialTime, isRunning, onTimeUp, phase }: UseTimerPr
     };
   }, [isRunning, phase, timeRemaining, onTimeUp]);
 
+    const resetTimer = useCallback(() => {
+  setTimeRemaining(initialTime);
+}, [initialTime]);
+
   const getTimeDisplay = () => {
     const minutes = Math.floor(timeRemaining / 60);
     const seconds = timeRemaining % 60;
@@ -55,9 +59,7 @@ export const useTimer = ({ initialTime, isRunning, onTimeUp, phase }: UseTimerPr
     return '';
   };
 
-  const resetTimer = useCallback(() => {
-  setTimeRemaining(initialTime);
-}, [initialTime]);
+
   
   return {
     timeRemaining,
