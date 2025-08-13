@@ -18,6 +18,7 @@ interface FloatingChatButtonProps {
   setLastProcessedQuestionIdForChat: React.Dispatch<React.SetStateAction<{ questionId: string; phase: string } | null>>;
   hasInitialChatWelcomeBeenSent: boolean;
   setHasInitialChatWelcomeBeenSent: React.Dispatch<React.SetStateAction<boolean>>;
+  isStrategySummaryActive: boolean;
 }
 
 const FloatingChatButton: React.FC<FloatingChatButtonProps> = ({
