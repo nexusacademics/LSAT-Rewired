@@ -7,7 +7,7 @@ interface SectionTransitionProps {
   onCancel: () => void;
   onConfirm: () => void;
   triggeredByTimer?: boolean;  // modal triggered by timer expiring
-  onResetTimer?: () => void;   // callback to reset timer if needed
+  onResetTimer?: () => void;
   isTimedSession?: boolean;
 }
 
@@ -19,11 +19,51 @@ export const SectionTransition: React.FC<SectionTransitionProps> = ({
   triggeredByTimer = false,
   onResetTimer,
 }) => {
+  const currentSectionNumber = session.currentSectionIndex + 1;
+
   const handleConfirm = () => {
     if (!triggeredByTimer && onResetTimer) {
       onResetTimer();
     }
     onConfirm();
+  };
+
+  const renderMessage = () => {
+    if (triggeredByTimer && isLastSection) {
+      // Timer triggered in last section — test complete message
+      return (
+        <>
+          Test Complete! You have completed all sections of this test.
+        </>
+      );
+    } else if (!triggeredByTimer) {
+      // Called by button
+      if (currentSectionNumber < 4) {
+        return (
+          <>
+            Are you ready to move on to the next section?
+            <br /><br />
+            <b>NOTE:</b> You will not be permitted to come back to this section once you move on.
+          </>
+        );
+      } else {
+        // Last section called by button
+        return (
+          <>
+            This is the last section of the test. Are you ready to complete your session?
+          </>
+        );
+      }
+    } else {
+      // Fallback for other timer-triggered cases, if any
+      return (
+        <>
+          Time is up for this section!
+          <br /><br />
+          <b>NOTE:</b> You will not be permitted to come back to this section once you move on.
+        </>
+      );
+    }
   };
 
   return (
@@ -43,28 +83,15 @@ export const SectionTransition: React.FC<SectionTransitionProps> = ({
           id="section-transition-title"
           className="text-2xl font-semibold text-slate-900 mb-4"
         >
-          {isLastSection ? 'Test Complete!' : ``}
+          {triggeredByTimer && isLastSection
+            ? 'Test Complete!'
+            : `Section ${currentSectionNumber} Complete!`}
         </h3>
         <p id="section-transition-desc" className="text-slate-600 mb-6">
-          {isLastSection ? (
-            'You have completed all sections of this test.'
-          ) : triggeredByTimer ? (
-            <>
-              Time is up for this section!
-              <br /><br />
-              <b>NOTE:</b> You will not be permitted to come back to this section once you move on.
-            </>
-          ) : (
-            <>
-              Are you ready to move on to the next section?
-              <br /><br />
-              <b>NOTE:</b> You will not be permitted to come back to this section once you move on.
-            </>
-          )}
+          {renderMessage()}
         </p>
 
         <div className="flex space-x-3">
-          {/* Show Continue Working button only if NOT triggered by timer */}
           {!triggeredByTimer && (
             <button
               onClick={onCancel}
