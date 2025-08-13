@@ -32,7 +32,7 @@ export const SectionTransition: React.FC<SectionTransitionProps> = ({
 
   return (
     <div
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+      className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
       onClick={triggeredByTimer ? undefined : onCancel} // disable click outside to cancel if triggered by timer
       role="dialog"
       aria-modal="true"
