@@ -334,18 +334,52 @@ export const AnalysisPanel = ({
                         {/* Content with highlighting */}
                         <div className="text-slate-700 leading-relaxed whitespace-pre-wrap">
                           {currentExplanation?.content.split('\n').map((line, idx) => {
-                            const match = line.match(/^((?:[\w/-]+\s?){1,4}):/);
-                            if (match) {
-                              const keyWord = match[1];
-                              const restOfLine = line.slice(match[0].length);
+                            // Match up to 4 words before colon
+                            const headingMatch = line.match(/^((?:[\w/-]+\s?){1,4}):/);
+                            const answerChoiceRegex = /\(([A-E])\)/g;
+                  
+                            if (headingMatch) {
+                              const heading = headingMatch[0]; // includes colon
+                              const restOfLine = line.slice(heading.length);
+                  
+                              // Highlight (A)-(E) in the rest of line
+                              const segments = [];
+                              let lastIndex = 0;
+                              let match;
+                              while ((match = answerChoiceRegex.exec(restOfLine)) !== null) {
+                                segments.push(restOfLine.slice(lastIndex, match.index));
+                                segments.push(
+                                  <span key={`choice-${idx}-${match.index}`} className="bg-black text-white font-bold">
+                                    {match[0]}
+                                  </span>
+                                );
+                                lastIndex = match.index + match[0].length;
+                              }
+                              segments.push(restOfLine.slice(lastIndex));
+                  
                               return (
                                 <div key={idx}>
-                                  <span className="font-semibold text-blue-600">{keyWord}:</span>
-                                  {restOfLine}
+                                  <span className="bg-yellow-300 font-bold">{heading}</span>
+                                  {segments}
                                 </div>
                               );
+                            } else {
+                              // Normal line: just highlight (A)-(E)
+                              const segments = [];
+                              let lastIndex = 0;
+                              let match;
+                              while ((match = answerChoiceRegex.exec(line)) !== null) {
+                                segments.push(line.slice(lastIndex, match.index));
+                                segments.push(
+                                  <span key={`choice-${idx}-${match.index}`} className="bg-black text-white font-bold">
+                                    {match[0]}
+                                  </span>
+                                );
+                                lastIndex = match.index + match[0].length;
+                              }
+                              segments.push(line.slice(lastIndex));
+                              return <div key={idx}>{segments}</div>;
                             }
-                            return <div key={idx}>{line}</div>;
                           })}
                         </div>
                       </div>
