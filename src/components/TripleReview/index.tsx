@@ -323,6 +323,7 @@ const TripleReview: React.FC<TripleReviewProps> = ({
       setIsSectionTransitionTriggeredByTimer(false);
       // Restart timer for next section if it was running
       if (session.phase === 'timed') {
+        resetTimer();  
         setIsTimerRunning(true);
       }
     } else {
