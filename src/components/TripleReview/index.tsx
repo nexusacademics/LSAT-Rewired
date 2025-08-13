@@ -299,7 +299,7 @@ const TripleReview: React.FC<TripleReviewProps> = ({
     setTimeout(() => setShowSuccessMessage(false), 3000);
   };
 
-  const handleConfirmSectionSubmit = () => {
+  const handleConfirmSectionSubmit = (triggeredByTimer = false) => {
     const nextSectionIndex = session.currentSectionIndex + 1;
     const updatedCompletedSectionIds = [...session.completedSectionIds, currentSectionData.id];
 
