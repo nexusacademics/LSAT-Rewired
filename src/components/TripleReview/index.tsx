@@ -363,6 +363,48 @@ const TripleReview: React.FC<TripleReviewProps> = ({
 
   const isLastSection = session.currentSectionIndex === currentSections.length - 1;
 
+const handleIntermissionEnd = () => {
+  setIsIntermissionMode(false);
+
+  // Advance the section index + reset timer and session states exactly like normal section submit
+
+  const nextSectionIndex = session.currentSectionIndex + 1;
+  const updatedCompletedSectionIds = [...session.completedSectionIds, currentSectionData.id];
+  let updatedSession = { ...session };
+  if (session.phase === 'timed') {
+    updatedSession.timedAnswers = { ...session.answeredQuestions };
+    // Clear timer state for completed section
+    const sectionTimerKey = `section-${session.currentSectionIndex}`;
+    const updatedTimerStates = { ...session.timerStates };
+    delete updatedTimerStates[sectionTimerKey];
+    updatedSession.timerStates = updatedTimerStates;
+  } else if (session.phase === 'blind-review') {
+    updatedSession.blindReviewAnswers = { ...session.answeredQuestions };
+  }
+  updatedSession.answeredQuestions = {};
+
+  if (nextSectionIndex < currentSections.length) {
+    onUpdateSession({
+      ...updatedSession,
+      currentSectionIndex: nextSectionIndex,
+      currentQuestionIndex: 0,
+      completedSectionIds: updatedCompletedSectionIds,
+    });
+    resetTimer();
+    setIsTimerRunning(true);
+  } else {
+    const updatedCompletedPhases = [...session.completedPhases, session.phase];
+    onUpdateSession({
+      ...updatedSession,
+      endTime: new Date(),
+      completedSectionIds: updatedCompletedSectionIds,
+      completedPhases: updatedCompletedPhases,
+    });
+    onExitSession();
+  }
+};
+
+  
   if (!currentQuestionData) {
     return (
       <div className="fixed inset-0 flex items-center justify-center bg-slate-50 z-40">
