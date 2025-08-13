@@ -4,36 +4,19 @@ import { TestSession } from '../../App';
 interface SectionTransitionProps {
   session: TestSession;
   isLastSection: boolean;
-  onCancel: () => void;
   onConfirm: () => void;
-  triggeredByTimer?: boolean;  // optional: modal triggered by timer expiring
-  onResetTimer?: () => void;   // optional: callback to reset timer in parent/header
-  isTimedSession?: boolean;    // optional: indicate if timed mode is active
+  onCancel?: () => void; // Optional, but probably not used anymore
+  isTimedSession?: boolean; // You can remove if not used
 }
 
 export const SectionTransition: React.FC<SectionTransitionProps> = ({
   session,
   isLastSection,
-  onCancel,
   onConfirm,
-  triggeredByTimer = false,
-  onResetTimer,
-  isTimedSession = false,
 }) => {
-  
-  // If the modal is NOT triggered by timer, and timer reset callback is provided,
-  // we reset timer when user confirms transition.
-  const handleConfirm = () => {
-    if (!triggeredByTimer && onResetTimer) {
-      onResetTimer();
-    }
-    onConfirm();
-  };
-
   return (
     <div
       className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
-      onClick={triggeredByTimer ? undefined : onCancel} // disable click outside to cancel if triggered by timer
       role="dialog"
       aria-modal="true"
       aria-labelledby="section-transition-title"
@@ -52,15 +35,9 @@ export const SectionTransition: React.FC<SectionTransitionProps> = ({
         <p id="section-transition-desc" className="text-slate-600 mb-6">
           {isLastSection ? (
             'You have completed all sections of this test.'
-          ) : triggeredByTimer ? (
-            <>
-              Time is up for this section!
-              <br /><br />
-              <b>NOTE:</b> You will not be permitted to come back to this section once you move on.
-            </>
           ) : (
             <>
-              Are you ready to move on to the next section?
+              Time is up for this section!
               <br /><br />
               <b>NOTE:</b> You will not be permitted to come back to this section once you move on.
             </>
@@ -68,20 +45,18 @@ export const SectionTransition: React.FC<SectionTransitionProps> = ({
         </p>
 
         <div className="flex space-x-3">
-          {/* Disable cancel if triggered by timer, since user can't continue working */}
+          {/* Cancel button removed or hidden since user cannot continue working */}
+          {/* 
           <button
-            onClick={onCancel}
-            disabled={triggeredByTimer}
-            className={`flex-1 px-4 py-2 rounded-lg transition-colors
-              ${triggeredByTimer
-                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}`}
+            disabled
+            className="flex-1 px-4 py-2 bg-gray-300 text-gray-500 cursor-not-allowed rounded-lg"
           >
             Continue Working
           </button>
+          */}
 
           <button
-            onClick={handleConfirm}
+            onClick={onConfirm}
             className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
           >
             {isLastSection
