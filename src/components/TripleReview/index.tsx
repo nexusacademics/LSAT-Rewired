@@ -218,7 +218,8 @@ const TripleReview: React.FC<TripleReviewProps> = ({
     timeRemaining,
     getTimeDisplay,
     getTimerColor,
-    getTimerBgColor
+    getTimerBgColor,
+    resetTimer,
   } = useTimer({
     initialTime: getInitialTime(),
     isRunning: isTimerRunning,
