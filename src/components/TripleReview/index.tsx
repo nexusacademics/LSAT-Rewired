@@ -227,29 +227,10 @@ const TripleReview: React.FC<TripleReviewProps> = ({
   } = useTimer({
     initialTime: getInitialTime(),
     isRunning: isTimerRunning,
-    const onTimerEnd = () => {
-  setIsSectionTransitionTriggeredByTimer(true);
-  const nextSectionIndex = session.currentSectionIndex + 1;
-  const isFullTest = !session.selectedSectionId && currentSections.length === 4;
-
-  if (isFullTest) {
-    // Intermission durations as you defined
-    if (nextSectionIndex === 1 || nextSectionIndex === 3) {
-      setIntermissionDuration(60);  // 1 minute break
-      setIsIntermissionMode(true);
-      setShowSectionTransition(false);
-      return;
-    } else if (nextSectionIndex === 2) {
-      setIntermissionDuration(600); // 10 minute break
-      setIsIntermissionMode(true);
-      setShowSectionTransition(false);
-      return;
-    }
-  }
-
-  // Otherwise fallback to SectionTransition modal
-  handleSubmitSection(true);
-};
+    onTimeUp: () => {
+      setIsSectionTransitionTriggeredByTimer(true);
+      handleSubmitSection(true);
+    },
     phase: session.phase
   });
 
@@ -318,7 +299,7 @@ const TripleReview: React.FC<TripleReviewProps> = ({
     setTimeout(() => setShowSuccessMessage(false), 3000);
   };
 
-  const handleConfirmSectionSubmit = (triggeredByTimer = false) => {
+  const handleConfirmSectionSubmit = () => {
     const nextSectionIndex = session.currentSectionIndex + 1;
     const updatedCompletedSectionIds = [...session.completedSectionIds, currentSectionData.id];
 
@@ -330,20 +311,12 @@ const TripleReview: React.FC<TripleReviewProps> = ({
         if (nextSectionIndex === 1 || nextSectionIndex === 3) {
           setIntermissionDuration(60);  // 1 minute break
           setIsIntermissionMode(true);
-           if (triggeredByTimer) {
-            setShowSectionTransition(false); // skip modal
-          } else {
-            setShowSectionTransition(true); // show modal if manual
-          }
+          setShowSectionTransition(false);
           return;  // wait for intermission to finish
         } else if (nextSectionIndex === 2) {
           setIntermissionDuration(600); // 10 minute break
           setIsIntermissionMode(true);
-          if (triggeredByTimer) {
-            setShowSectionTransition(false);
-          } else {
-            setShowSectionTransition(true);
-          }
+          setShowSectionTransition(false);
           return;  // wait for intermission to finish
         }
       }
