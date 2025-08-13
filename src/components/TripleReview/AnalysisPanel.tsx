@@ -269,8 +269,7 @@ export const AnalysisPanel = ({
                         {/* Content with highlighting */}
                         <div className="text-slate-700 leading-relaxed whitespace-pre-wrap">
                           {currentExplanation?.content.split('\n').map((line, idx) => {
-                            const match = line.match(/^((?:\w+\s?){1,4}):/
-);
+                            const match = line.match(/^((?:[\w/-]+\s?){1,4}):/);
                             if (match) {
                               const keyWord = match[1];
                               const restOfLine = line.slice(match[0].length);
