@@ -42,7 +42,7 @@ const isNonChatPhase =
   currentView !== 'triple-review' ||
   (currentSession?.phase !== 'blind-review' && currentSession?.phase !== 'strategy-review');
 
-if (isNonChatPhase) return null;
+if (isNonChatPhase || isStrategySummaryActive) return null;
 
 const toggleChat = () => {
   setIsOpen(!isOpen);
