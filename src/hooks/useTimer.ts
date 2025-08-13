@@ -18,24 +18,20 @@ export const useTimer = ({ initialTime, isRunning, onTimeUp, phase }: UseTimerPr
   }, [initialTime, phase]);
 
   useEffect(() => {
-    let interval: NodeJS.Timeout | null = null;
-    if (isRunning && phase === 'timed' && timeRemaining > 0) {
-      interval = setInterval(() => {
-        setTimeRemaining(prevTime => {
-          if (prevTime <= 1) {
-            onTimeUp();
-            return 0;
-          }
-          return prevTime - 1;
-        });
-      }, 1000);
-    } else if (interval) {
-      clearInterval(interval);
-    }
-    return () => {
-      if (interval) clearInterval(interval);
-    };
-  }, [isRunning, phase, timeRemaining, onTimeUp]);
+     if (!isRunning || phase !== 'timed') return;
+
+  const interval = setInterval(() => {
+    setTimeRemaining(prevTime => {
+      if (prevTime <= 1) {
+        onTimeUp();
+        return 0;
+      }
+      return prevTime - 1;
+    });
+  }, 1000);
+
+  return () => clearInterval(interval);
+}, [isRunning, phase, onTimeUp]);
 
   const getTimeDisplay = () => {
     const minutes = Math.floor(timeRemaining / 60);
