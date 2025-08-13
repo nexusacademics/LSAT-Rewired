@@ -231,18 +231,14 @@ export const AnalysisPanel = ({
                   {/* Navigation Header */}
                   <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-200">
                     <div className="flex items-center space-x-2">
-                      
-                      
                       <div className="text-center">
                         <h4 className="font-semibold text-slate-800 text-lg">
                           {currentExplanation?.label}
                         </h4>
                         <p className="text-sm text-slate-500">
-                          {currentExplanationIndex + 1} of {availableExplanations.length}
+                          Explanation part {currentExplanationIndex + 1} of {availableExplanations.length}
                         </p>
-                      </div>
-                      
-                     
+                      </div>                                           
                     </div>
                     
                     {/* Progress dots */}
