@@ -104,7 +104,7 @@ export const QuestionPanel: React.FC<QuestionPanelProps> = ({
                       session.phase === 'strategy-review'
                     }
                   />
-                  <span className="font-medium text-slate-700 mr-3">
+                  <span className="font-base text-slate-700 mr-3">
                     ({String.fromCharCode(65 + index)})
                   </span>
                   <span className={`text-slate-700 flex-1 ${
