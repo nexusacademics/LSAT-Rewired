@@ -400,20 +400,7 @@ const TripleReview: React.FC<TripleReviewProps> = ({
 
 
         <div ref={mainContentRef} className="flex-1 p-6 overflow-y-auto">
-        {showSectionTransition && (
-          <SectionTransition
-            session={session}
-            isLastSection={isLastSection}
-            onCancel={() => {
-              setShowSectionTransition(false);
-              setIsSectionTransitionTriggeredByTimer(false);
-            }}
-            onConfirm={handleConfirmSectionSubmit}
-            triggeredByTimer={isSectionTransitionTriggeredByTimer}
-            isTimedSession={session.phase === 'timed'}
-            isCompleteTest={!session.selectedSectionId}
-          />
-        )}
+       
 
         {session.phase === 'timed' && !isTimerRunning && !showSectionTransition && (
           <PausedOverlay
