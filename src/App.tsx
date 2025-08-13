@@ -159,8 +159,6 @@ function AppContent() {
             setLastProcessedQuestionIdForChat={setLastProcessedQuestionIdForChat} // NEW: Pass lifted setter
             hasInitialChatWelcomeBeenSent={hasInitialChatWelcomeBeenSent} // NEW: Pass lifted state
             setHasInitialChatWelcomeBeenSent={setHasInitialChatWelcomeBeenSent} // NEW: Pass lifted setter
-          
-
           />
         )}
       </div>
