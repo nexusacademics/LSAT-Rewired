@@ -16,6 +16,7 @@ import { useTimer } from '../../hooks/useTimer';
 import { useQuestionNavigation } from '../../hooks/useQuestionNavigation';
 import { useAnswerSelection } from '../../hooks/useAnswerSelection';
 import { usePortal } from '../../hooks/usePortal';
+import { IntermissionModal } from './intermissionModal';
 
 
 interface TripleReviewProps {
@@ -111,14 +112,17 @@ const TripleReview: React.FC<TripleReviewProps> = ({
     }
   };
 
-  const handleSubmitSection = (triggeredByTimer: boolean = false) => {
-    if (triggeredByTimer) {
-      setIsSectionTransitionTriggeredByTimer(true);
-    } else {
-      setIsSectionTransitionTriggeredByTimer(false);
-    }
-    setShowSectionTransition(true);
-  };
+  const [isIntermissionMode, setIsIntermissionMode] = useState(false);
+  const [intermissionDuration, setIntermissionDuration] = useState(0);
+  
+  const handleSubmitSection = React.useCallback((triggeredByTimer: boolean = false) => {
+  if (triggeredByTimer) {
+    setIsSectionTransitionTriggeredByTimer(true);
+  } else {
+    setIsSectionTransitionTriggeredByTimer(false);
+  }
+  setShowSectionTransition(true);
+}, []);
 
   // Modified pause handler to save timer state
   const handlePauseReview = () => {
@@ -213,19 +217,41 @@ const TripleReview: React.FC<TripleReviewProps> = ({
       setIsTimerRunning(true);
     }
   };
+  const onTimerEnd = () => {
+  setIsSectionTransitionTriggeredByTimer(true);
+  const nextSectionIndex = session.currentSectionIndex + 1;
+  const isFullTest = !session.selectedSectionId && currentSections.length === 4;
 
+  if (isFullTest) {
+    // Intermission durations as you defined
+    if (nextSectionIndex === 1 || nextSectionIndex === 3) {
+      setIntermissionDuration(60);  // 1 minute break
+      setIsIntermissionMode(true);
+      setShowSectionTransition(false);
+      return;
+    } else if (nextSectionIndex === 2) {
+      setIntermissionDuration(600); // 10 minute break
+      setIsIntermissionMode(true);
+      setShowSectionTransition(false);
+      return;
+    }
+  }
+
+  // Otherwise fallback to SectionTransition modal
+  handleSubmitSection(true);
+};
+
+  
   const {
     timeRemaining,
     getTimeDisplay,
     getTimerColor,
-    getTimerBgColor
+    getTimerBgColor,
+    resetTimer,
   } = useTimer({
     initialTime: getInitialTime(),
     isRunning: isTimerRunning,
-    onTimeUp: () => {
-      setIsSectionTransitionTriggeredByTimer(true);
-      handleSubmitSection(true);
-    },
+    onTimeUp: onTimerEnd,
     phase: session.phase
   });
 
@@ -298,6 +324,24 @@ const TripleReview: React.FC<TripleReviewProps> = ({
     const nextSectionIndex = session.currentSectionIndex + 1;
     const updatedCompletedSectionIds = [...session.completedSectionIds, currentSectionData.id];
 
+    const isFullTest = !session.selectedSectionId && currentSections.length === 4;
+      // Decide if this transition is intermission and set timer accordingly
+      if (isFullTest) {
+        // Between sections 1&2 and 3&4: 1 minute
+        // Between 2&3: 10 minutes
+        if (nextSectionIndex === 1 || nextSectionIndex === 3) {
+          setIntermissionDuration(60);  // 1 minute break
+          setIsIntermissionMode(true);
+          setShowSectionTransition(false);
+          return;  // wait for intermission to finish
+        } else if (nextSectionIndex === 2) {
+          setIntermissionDuration(600); // 10 minute break
+          setIsIntermissionMode(true);
+          setShowSectionTransition(false);
+          return;  // wait for intermission to finish
+        }
+      }
+    
     let updatedSession = { ...session };
     if (session.phase === 'timed') {
       updatedSession.timedAnswers = { ...session.answeredQuestions };
@@ -322,6 +366,7 @@ const TripleReview: React.FC<TripleReviewProps> = ({
       setIsSectionTransitionTriggeredByTimer(false);
       // Restart timer for next section if it was running
       if (session.phase === 'timed') {
+        resetTimer();  
         setIsTimerRunning(true);
       }
     } else {
@@ -340,6 +385,48 @@ const TripleReview: React.FC<TripleReviewProps> = ({
 
   const isLastSection = session.currentSectionIndex === currentSections.length - 1;
 
+const handleIntermissionEnd = () => {
+  setIsIntermissionMode(false);
+
+  // Advance the section index + reset timer and session states exactly like normal section submit
+
+  const nextSectionIndex = session.currentSectionIndex + 1;
+  const updatedCompletedSectionIds = [...session.completedSectionIds, currentSectionData.id];
+  let updatedSession = { ...session };
+  if (session.phase === 'timed') {
+    updatedSession.timedAnswers = { ...session.answeredQuestions };
+    // Clear timer state for completed section
+    const sectionTimerKey = `section-${session.currentSectionIndex}`;
+    const updatedTimerStates = { ...session.timerStates };
+    delete updatedTimerStates[sectionTimerKey];
+    updatedSession.timerStates = updatedTimerStates;
+  } else if (session.phase === 'blind-review') {
+    updatedSession.blindReviewAnswers = { ...session.answeredQuestions };
+  }
+  updatedSession.answeredQuestions = {};
+
+  if (nextSectionIndex < currentSections.length) {
+    onUpdateSession({
+      ...updatedSession,
+      currentSectionIndex: nextSectionIndex,
+      currentQuestionIndex: 0,
+      completedSectionIds: updatedCompletedSectionIds,
+    });
+    resetTimer();
+    setIsTimerRunning(true);
+  } else {
+    const updatedCompletedPhases = [...session.completedPhases, session.phase];
+    onUpdateSession({
+      ...updatedSession,
+      endTime: new Date(),
+      completedSectionIds: updatedCompletedSectionIds,
+      completedPhases: updatedCompletedPhases,
+    });
+    onExitSession();
+  }
+};
+
+  
   if (!currentQuestionData) {
     return (
       <div className="fixed inset-0 flex items-center justify-center bg-slate-50 z-40">
@@ -400,20 +487,7 @@ const TripleReview: React.FC<TripleReviewProps> = ({
 
 
         <div ref={mainContentRef} className="flex-1 p-6 overflow-y-auto">
-        {showSectionTransition && (
-          <SectionTransition
-            session={session}
-            isLastSection={isLastSection}
-            onCancel={() => {
-              setShowSectionTransition(false);
-              setIsSectionTransitionTriggeredByTimer(false);
-            }}
-            onConfirm={handleConfirmSectionSubmit}
-            triggeredByTimer={isSectionTransitionTriggeredByTimer}
-            isTimedSession={session.phase === 'timed'}
-            isCompleteTest={!session.selectedSectionId}
-          />
-        )}
+       
 
         {session.phase === 'timed' && !isTimerRunning && !showSectionTransition && (
           <PausedOverlay
@@ -528,6 +602,7 @@ const TripleReview: React.FC<TripleReviewProps> = ({
             triggeredByTimer={isSectionTransitionTriggeredByTimer}
             isTimedSession={session.phase === 'timed'}
             isCompleteTest={!session.selectedSectionId}
+            onResetTimer={resetTimer}   // <--- pass it down if you want
           />
         </Portal>
       )}
@@ -552,6 +627,14 @@ const TripleReview: React.FC<TripleReviewProps> = ({
         onContinueReviewing={handleContinueReviewing}
         onClose={() => setShowPausePopup(false)}
       />
+      {isIntermissionMode && (
+      <IntermissionModal
+        countdownSeconds={intermissionDuration}
+        onFinish={handleIntermissionEnd}
+        isIntermission={true}
+        triggeredByTimer={isSectionTransitionTriggeredByTimer}
+      />
+    )}
     </div>
   );
 };

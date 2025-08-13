@@ -1,5 +1,5 @@
 // hooks/useTimer.ts
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 interface UseTimerProps {
   initialTime: number;
@@ -37,6 +37,10 @@ export const useTimer = ({ initialTime, isRunning, onTimeUp, phase }: UseTimerPr
     };
   }, [isRunning, phase, timeRemaining, onTimeUp]);
 
+    const resetTimer = useCallback(() => {
+  setTimeRemaining(initialTime);
+}, [initialTime]);
+
   const getTimeDisplay = () => {
     const minutes = Math.floor(timeRemaining / 60);
     const seconds = timeRemaining % 60;
@@ -55,10 +59,13 @@ export const useTimer = ({ initialTime, isRunning, onTimeUp, phase }: UseTimerPr
     return '';
   };
 
+
+  
   return {
     timeRemaining,
     getTimeDisplay,
     getTimerColor,
-    getTimerBgColor
+    getTimerBgColor,
+    resetTimer,  
   };
 };
