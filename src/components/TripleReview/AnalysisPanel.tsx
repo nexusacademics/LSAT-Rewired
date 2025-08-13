@@ -265,10 +265,23 @@ export const AnalysisPanel = ({
                       <div className="flex bg-slate-50 border border-slate-200 shadow-sm rounded-lg p-4">
                         {/* Left accent bar */}
                         <div className="w-1 bg-blue-500 rounded-l-lg mr-3" />
-          
-                        {/* Content */}
+                  
+                        {/* Content with highlighting */}
                         <div className="text-slate-700 leading-relaxed whitespace-pre-wrap">
-                          {currentExplanation?.content}
+                          {currentExplanation?.content.split('\n').map((line, idx) => {
+                            const match = line.match(/^(\w+):/);
+                            if (match) {
+                              const keyWord = match[1];
+                              const restOfLine = line.slice(match[0].length);
+                              return (
+                                <div key={idx}>
+                                  <span className="font-semibold text-blue-600">{keyWord}:</span>
+                                  {restOfLine}
+                                </div>
+                              );
+                            }
+                            return <div key={idx}>{line}</div>;
+                          })}
                         </div>
                       </div>
                     </div>
