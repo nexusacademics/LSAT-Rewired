@@ -311,12 +311,20 @@ const TripleReview: React.FC<TripleReviewProps> = ({
         if (nextSectionIndex === 1 || nextSectionIndex === 3) {
           setIntermissionDuration(60);  // 1 minute break
           setIsIntermissionMode(true);
-          setShowSectionTransition(false);
+           if (triggeredByTimer) {
+            setShowSectionTransition(false); // skip modal
+          } else {
+            setShowSectionTransition(true); // show modal if manual
+          }
           return;  // wait for intermission to finish
         } else if (nextSectionIndex === 2) {
           setIntermissionDuration(600); // 10 minute break
           setIsIntermissionMode(true);
-          setShowSectionTransition(false);
+          if (triggeredByTimer) {
+            setShowSectionTransition(false);
+          } else {
+            setShowSectionTransition(true);
+          }
           return;  // wait for intermission to finish
         }
       }
