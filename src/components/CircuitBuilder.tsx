@@ -101,7 +101,7 @@ const ConclusionSubjectNode = ({ id, data, selected }: NodeProps) => {
         ref={textareaRef}
         className="w-full bg-transparent text-xs resize-none outline-none text-center overflow-hidden text-purple-700"
         value={content}
-        onChange={handleContentChange}
+         onChange={handleContentChange}         onFocus={() => setIsEditing(true)}         onBlur={() => setIsEditing(false)}
         placeholder="Click to edit"
         rows={1}
       />
@@ -149,7 +149,7 @@ const ConclusionPredicateNode = ({ id, data, selected }: NodeProps) => {
         ref={textareaRef}
         className="w-full bg-transparent text-xs resize-none outline-none text-center overflow-hidden text-purple-900"
         value={content}
-        onChange={handleContentChange}
+         onChange={handleContentChange}         onFocus={() => setIsEditing(true)}         onBlur={() => setIsEditing(false)}
         placeholder="Click to edit"
         rows={1}
       />
@@ -197,7 +197,7 @@ const MinorPremiseNode = ({ id, data, selected }: NodeProps) => {
         ref={textareaRef}
         className="w-full bg-transparent text-xs resize-none outline-none text-center overflow-hidden text-black"
         value={content}
-        onChange={handleContentChange}
+         onChange={handleContentChange}         onFocus={() => setIsEditing(true)}         onBlur={() => setIsEditing(false)}
         placeholder="Click to edit"
         rows={1}
       />
@@ -245,7 +245,7 @@ const MajorPremiseNode = ({ id, data, selected }: NodeProps) => {
         ref={textareaRef}
         className="w-full bg-transparent text-xs resize-none outline-none text-center overflow-hidden text-blue-800"
         value={content}
-        onChange={handleContentChange}
+         onChange={handleContentChange}         onFocus={() => setIsEditing(true)}         onBlur={() => setIsEditing(false)}
         placeholder="Click to edit"
         rows={1}
       />
@@ -293,7 +293,7 @@ const BackingPremiseNode = ({ id, data, selected }: NodeProps) => {
         ref={textareaRef}
         className="w-full bg-transparent text-xs resize-none outline-none text-center overflow-hidden text-gray-800"
         value={content}
-        onChange={handleContentChange}
+         onChange={handleContentChange}         onFocus={() => setIsEditing(true)}         onBlur={() => setIsEditing(false)}
         placeholder="Click to edit"
         rows={1}
       />
@@ -426,7 +426,7 @@ const CounterclaimNode = ({ id, data, selected }: NodeProps) => {
         ref={textareaRef}
         className="w-full bg-transparent text-xs resize-none outline-none text-center overflow-hidden text-red-800"
         value={content}
-        onChange={handleContentChange}
+         onChange={handleContentChange}         onFocus={() => setIsEditing(true)}         onBlur={() => setIsEditing(false)}
         placeholder="Click to edit"
         rows={1}
       />
@@ -474,7 +474,7 @@ const CorrectAnswerNode = ({ id, data, selected }: NodeProps) => {
         ref={textareaRef}
         className="w-full bg-transparent text-xs resize-none outline-none text-center overflow-hidden text-green-800"
         value={content}
-        onChange={handleContentChange}
+         onChange={handleContentChange}         onFocus={() => setIsEditing(true)}         onBlur={() => setIsEditing(false)}
         placeholder="Click to edit"
         rows={1}
       />
