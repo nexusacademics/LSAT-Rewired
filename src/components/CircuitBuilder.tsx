@@ -58,6 +58,9 @@ interface TestSession {
   };
 }
 
+//New State
+const [isEditing, setIsEditing] = useState(false);
+
 // Custom Node Components
 const ConclusionSubjectNode = ({ id, data, selected }: NodeProps) => {
   const [content, setContent] = useState(data.content || '');
@@ -80,7 +83,8 @@ const ConclusionSubjectNode = ({ id, data, selected }: NodeProps) => {
     selected
       ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
       : undefined
-  }>
+  }
+       data-nodrag={isEditing}>
          {/* Handles on all four sides */}
        <Handle type="target" position={Position.Top} id="top-target" className="w-3 h-3" />
        <Handle type="source" position={Position.Top} id="top-source" className="w-3 h-3" />
