@@ -99,8 +99,6 @@ const ConclusionSubjectNode = ({ id, data, selected }: NodeProps) => {
         className="w-full bg-transparent text-xs resize-none outline-none text-center overflow-hidden text-purple-700"
         value={content}
         onChange={handleContentChange}
-        onMouseDown={(e) => e.stopPropagation()}
-        onDragStart={(e) => e.preventDefault()}
         placeholder="Click to edit"
         rows={1}
       />
