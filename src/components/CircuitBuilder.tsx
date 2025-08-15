@@ -104,6 +104,8 @@ const ConclusionSubjectNode = ({ id, data, selected }: NodeProps) => {
         onChange={handleContentChange}         
         onFocus={() => setIsEditing(true)}         
         onBlur={() => setIsEditing(false)}
+         onMouseDown={(e) => e.stopPropagation()}
+        onPointerDown={(e) => e.stopPropagation()}
         placeholder="Click to edit"
         rows={1}
       />
