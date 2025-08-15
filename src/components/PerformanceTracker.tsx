@@ -81,7 +81,7 @@ const PerformanceTracker: React.FC<PerformanceTrackerProps> = ({
   const currentData = performanceData[timeframe];
 
   return (
-    <div className={`min-h-screen p-6 ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}>
+    <div className={`min-h-screen p-10 ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}>
       <div className="max-w-7xl mx-auto space-y-8">
         {/* Header */}
         <div className="flex items-center justify-between">
