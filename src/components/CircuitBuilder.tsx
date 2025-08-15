@@ -99,17 +99,13 @@ const ConclusionSubjectNode = ({ id, data, selected }: NodeProps) => {
       <div className="text-xs font-medium mb-2 text-purple-700">Conclusion Subject</div>
         <div className="nodrag">
           <textarea
-        ref={textareaRef}
-        className="w-full bg-transparent text-xs resize-none outline-none text-center overflow-hidden text-purple-700"
-        value={content}
-        onChange={handleContentChange}         
-        onFocus={() => setIsEditing(true)}         
-        onBlur={() => setIsEditing(false)}
-         onMouseDown={(e) => e.stopPropagation()}
-        onPointerDown={(e) => e.stopPropagation()}
-        placeholder="Click to edit"
-        rows={1}
-      />
+            ref={textareaRef}
+            className="w-full bg-transparent text-xs resize-none outline-none text-center overflow-hidden text-purple-700"
+            value={content}
+            onChange={handleContentChange}         
+            placeholder="Click to edit"
+            rows={1}
+          />
         </div>
     </div>
   );
@@ -151,16 +147,16 @@ const ConclusionPredicateNode = ({ id, data, selected }: NodeProps) => {
        <Handle type="target" position={Position.Right} id="right-target" className="w-3 h-3" />
        <Handle type="source" position={Position.Right} id="right-source" className="w-3 h-3" />
       <div className="text-xs font-medium mb-2 text-purple-900">Conclusion Predicate/Claim</div>
-      <textarea
-        ref={textareaRef}
-        className="w-full bg-transparent text-xs resize-none outline-none text-center overflow-hidden text-purple-900"
-        value={content}
-         onChange={handleContentChange}         
-        onFocus={() => setIsEditing(true)}         
-        onBlur={() => setIsEditing(false)}
-        placeholder="Click to edit"
-        rows={1}
-      />
+      <div className="nodrag">
+          <textarea
+          ref={textareaRef}
+          className="w-full bg-transparent text-xs resize-none outline-none text-center overflow-hidden text-purple-900"
+          value={content}
+          onChange={handleContentChange}         
+          placeholder="Click to edit"
+          rows={1}
+        />
+      </div>
     </div>
   );
 };
