@@ -62,7 +62,7 @@ interface TestSession {
 
 // Custom Node Components
 const ConclusionSubjectNode = ({ id, data, selected }: NodeProps) => {
-  const [content, setContent] = useState(data.content || '');
+  const [content, setContent] = useState(data.content || '');   const [isEditing, setIsEditing] = useState(false); 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setContent(e.target.value);
@@ -110,7 +110,7 @@ const ConclusionSubjectNode = ({ id, data, selected }: NodeProps) => {
 };
 
 const ConclusionPredicateNode = ({ id, data, selected }: NodeProps) => {
-  const [content, setContent] = useState(data.content || '');
+  const [content, setContent] = useState(data.content || '');   const [isEditing, setIsEditing] = useState(false); 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -130,6 +130,7 @@ const ConclusionPredicateNode = ({ id, data, selected }: NodeProps) => {
     selected
       ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
       : undefined}
+      data-nodrag={isEditing}
       >
          {/* Handles on all four sides */}
       <Handle type="target" position={Position.Top} id="top-target" className="w-3 h-3" />
@@ -157,7 +158,7 @@ const ConclusionPredicateNode = ({ id, data, selected }: NodeProps) => {
 };
 
 const MinorPremiseNode = ({ id, data, selected }: NodeProps) => {
-  const [content, setContent] = useState(data.content || '');
+  const [content, setContent] = useState(data.content || '');   const [isEditing, setIsEditing] = useState(false); 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -176,7 +177,9 @@ const MinorPremiseNode = ({ id, data, selected }: NodeProps) => {
        style={
     selected
       ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
-      : undefined}>
+      : undefined}
+      data-nodrag={isEditing}
+      >
          {/* Handles on all four sides */}
       <Handle type="target" position={Position.Top} id="top-target" className="w-3 h-3" />
        <Handle type="source" position={Position.Top} id="top-source" className="w-3 h-3" />
@@ -203,7 +206,7 @@ const MinorPremiseNode = ({ id, data, selected }: NodeProps) => {
 };
 
 const MajorPremiseNode = ({ id, data, selected }: NodeProps) => {
-  const [content, setContent] = useState(data.content || '');
+  const [content, setContent] = useState(data.content || '');   const [isEditing, setIsEditing] = useState(false); 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -222,7 +225,9 @@ const MajorPremiseNode = ({ id, data, selected }: NodeProps) => {
        style={
     selected
       ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
-      : undefined}>
+      : undefined}
+      data-nodrag={isEditing}
+      >
          {/* Handles on all four sides */}
      <Handle type="target" position={Position.Top} id="top-target" className="w-3 h-3" />
        <Handle type="source" position={Position.Top} id="top-source" className="w-3 h-3" />
@@ -249,7 +254,7 @@ const MajorPremiseNode = ({ id, data, selected }: NodeProps) => {
 };
 
 const BackingPremiseNode = ({ id, data, selected }: NodeProps) => {
-  const [content, setContent] = useState(data.content || '');
+  const [content, setContent] = useState(data.content || '');   const [isEditing, setIsEditing] = useState(false); 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -268,7 +273,9 @@ const BackingPremiseNode = ({ id, data, selected }: NodeProps) => {
        style={
     selected
       ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
-      : undefined}>
+      : undefined}
+      data-nodrag={isEditing}
+      >
          {/* Handles on all four sides */}
      <Handle type="target" position={Position.Top} id="top-target" className="w-3 h-3" />
        <Handle type="source" position={Position.Top} id="top-source" className="w-3 h-3" />
@@ -327,7 +334,9 @@ const AssumptionNode = ({ id, data, selected }: NodeProps) => {
        style={
     selected
       ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
-      : undefined}>
+      : undefined}
+      data-nodrag={isEditing}
+      >
          {/* Handles on all four sides */}
      <Handle type="target" position={Position.Top} id="top-target" className="w-3 h-3" />
        <Handle type="source" position={Position.Top} id="top-source" className="w-3 h-3" />
@@ -378,7 +387,7 @@ const AssumptionNode = ({ id, data, selected }: NodeProps) => {
 };
 
 const CounterclaimNode = ({ id, data, selected }: NodeProps) => {
-  const [content, setContent] = useState(data.content || '');
+  const [content, setContent] = useState(data.content || '');   const [isEditing, setIsEditing] = useState(false); 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -397,7 +406,9 @@ const CounterclaimNode = ({ id, data, selected }: NodeProps) => {
        style={
     selected
       ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
-      : undefined}>
+      : undefined}
+      data-nodrag={isEditing}
+      >
           {/* Handles on all four sides */}
      <Handle type="target" position={Position.Top} id="top-target" className="w-3 h-3" />
        <Handle type="source" position={Position.Top} id="top-source" className="w-3 h-3" />
@@ -424,7 +435,7 @@ const CounterclaimNode = ({ id, data, selected }: NodeProps) => {
 };
 
 const CorrectAnswerNode = ({ id, data, selected }: NodeProps) => {
-  const [content, setContent] = useState(data.content || '');
+  const [content, setContent] = useState(data.content || '');   const [isEditing, setIsEditing] = useState(false); 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -443,7 +454,9 @@ const CorrectAnswerNode = ({ id, data, selected }: NodeProps) => {
        style={
     selected
       ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
-      : undefined}>
+      : undefined}
+      data-nodrag={isEditing}
+      >
          {/* Handles on all four sides */}
   <Handle type="target" position={Position.Top} id="top-target" className="w-3 h-3" />
        <Handle type="source" position={Position.Top} id="top-source" className="w-3 h-3" />
