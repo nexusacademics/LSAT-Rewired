@@ -87,7 +87,7 @@ const PerformanceTracker: React.FC<PerformanceTrackerProps> = ({
         <div className="flex items-center justify-between">
           <div>
             <h1 className={`text-3xl font-bold ${themeClasses.text}`}>Performance Analytics</h1>
-            <p className={`text-3xl font-bold ${themeClasses.text}`}>Track your circuit mastery and analysis quality</p>
+            <p className={`text-3xl text-base font-bold ${themeClasses.text}`}>Track your circuit mastery and analysis quality</p>
           </div>
 
           <div className={`flex space-x-1 ${themeClasses.tabBackground} p-1 rounded-xl`}>
