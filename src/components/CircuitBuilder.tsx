@@ -101,7 +101,9 @@ const ConclusionSubjectNode = ({ id, data, selected }: NodeProps) => {
         ref={textareaRef}
         className="w-full bg-transparent text-xs resize-none outline-none text-center overflow-hidden text-purple-700"
         value={content}
-         onChange={handleContentChange}         onFocus={() => setIsEditing(true)}         onBlur={() => setIsEditing(false)}
+        onChange={handleContentChange}         
+        onFocus={() => setIsEditing(true)}         
+        onBlur={() => setIsEditing(false)}
         placeholder="Click to edit"
         rows={1}
       />
@@ -149,7 +151,9 @@ const ConclusionPredicateNode = ({ id, data, selected }: NodeProps) => {
         ref={textareaRef}
         className="w-full bg-transparent text-xs resize-none outline-none text-center overflow-hidden text-purple-900"
         value={content}
-         onChange={handleContentChange}         onFocus={() => setIsEditing(true)}         onBlur={() => setIsEditing(false)}
+         onChange={handleContentChange}         
+        onFocus={() => setIsEditing(true)}         
+        onBlur={() => setIsEditing(false)}
         placeholder="Click to edit"
         rows={1}
       />
@@ -197,7 +201,9 @@ const MinorPremiseNode = ({ id, data, selected }: NodeProps) => {
         ref={textareaRef}
         className="w-full bg-transparent text-xs resize-none outline-none text-center overflow-hidden text-black"
         value={content}
-         onChange={handleContentChange}         onFocus={() => setIsEditing(true)}         onBlur={() => setIsEditing(false)}
+        onChange={handleContentChange}         
+        onFocus={() => setIsEditing(true)}         
+        onBlur={() => setIsEditing(false)}
         placeholder="Click to edit"
         rows={1}
       />
@@ -245,7 +251,9 @@ const MajorPremiseNode = ({ id, data, selected }: NodeProps) => {
         ref={textareaRef}
         className="w-full bg-transparent text-xs resize-none outline-none text-center overflow-hidden text-blue-800"
         value={content}
-         onChange={handleContentChange}         onFocus={() => setIsEditing(true)}         onBlur={() => setIsEditing(false)}
+        onChange={handleContentChange}         
+        onFocus={() => setIsEditing(true)}         
+        onBlur={() => setIsEditing(false)}
         placeholder="Click to edit"
         rows={1}
       />
@@ -293,7 +301,9 @@ const BackingPremiseNode = ({ id, data, selected }: NodeProps) => {
         ref={textareaRef}
         className="w-full bg-transparent text-xs resize-none outline-none text-center overflow-hidden text-gray-800"
         value={content}
-         onChange={handleContentChange}         onFocus={() => setIsEditing(true)}         onBlur={() => setIsEditing(false)}
+         onChange={handleContentChange}         
+        onFocus={() => setIsEditing(true)}         
+        onBlur={() => setIsEditing(false)}
         placeholder="Click to edit"
         rows={1}
       />
@@ -309,7 +319,7 @@ const AssumptionNode = ({ id, data, selected }: NodeProps) => {
       return ['', ''];
     }
   });
-
+   const [isEditing, setIsEditing] = useState(false);
   const textareaRef1 = useRef<HTMLTextAreaElement>(null);
   const textareaRef2 = useRef<HTMLTextAreaElement>(null);
 
@@ -359,6 +369,8 @@ const AssumptionNode = ({ id, data, selected }: NodeProps) => {
             className="bg-red-50 border border-red-300 rounded px-2 py-1 outline-none w-full text-red-900 resize-none min-h-[32px]"
             value={assumptionParts[0]}
             onChange={(e) => handlePartChange(0, e.target.value)}
+             onFocus={() => setIsEditing(true)}         
+            onBlur={() => setIsEditing(false)}
             placeholder="Enter assumption..."
             style={{ 
               overflow: 'hidden',
@@ -374,6 +386,8 @@ const AssumptionNode = ({ id, data, selected }: NodeProps) => {
             className="bg-red-50 border border-red-300 rounded px-2 py-1 outline-none w-full text-red-900 resize-none min-h-[32px]"
             value={assumptionParts[1]}
             onChange={(e) => handlePartChange(1, e.target.value)}
+             onFocus={() => setIsEditing(true)}         
+            onBlur={() => setIsEditing(false)}
             placeholder="Enter overlooked possibility..."
             style={{ 
               overflow: 'hidden',
