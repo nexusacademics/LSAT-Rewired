@@ -490,7 +490,7 @@ const CircuitBuilderFlow = () => {
   const { getNodes, getEdges, project } = useReactFlow();
  useEffect(() => {
   const handleKeyDown = (event: KeyboardEvent) => {
-    if (event.key === 'Delete' || event.key === 'Backspace') {
+    if (event.key === 'Delete') {
       const selectedNodes = getNodes().filter((node) => node.selected);
       const selectedEdges = getEdges().filter((edge) => edge.selected);
 
