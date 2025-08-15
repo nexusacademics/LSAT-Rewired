@@ -59,7 +59,6 @@ interface TestSession {
 }
 
 //New State
-const [isEditing, setIsEditing] = useState(false);
 
 // Custom Node Components
 const ConclusionSubjectNode = ({ id, data, selected }: NodeProps) => {
