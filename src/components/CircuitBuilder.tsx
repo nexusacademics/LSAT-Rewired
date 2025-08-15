@@ -197,16 +197,16 @@ const MinorPremiseNode = ({ id, data, selected }: NodeProps) => {
        <Handle type="target" position={Position.Right} id="right-target" className="w-3 h-3" />
        <Handle type="source" position={Position.Right} id="right-source" className="w-3 h-3" />
       <div className="text-xs font-medium mb-2 text-black">Minor Premise</div>
-      <textarea
-        ref={textareaRef}
-        className="w-full bg-transparent text-xs resize-none outline-none text-center overflow-hidden text-black"
-        value={content}
-        onChange={handleContentChange}         
-        onFocus={() => setIsEditing(true)}         
-        onBlur={() => setIsEditing(false)}
-        placeholder="Click to edit"
-        rows={1}
-      />
+      <div className="nodrag">
+          <textarea
+          ref={textareaRef}
+          className="w-full bg-transparent text-xs resize-none outline-none text-center overflow-hidden text-black"
+          value={content}
+          onChange={handleContentChange}         
+          placeholder="Click to edit"
+          rows={1}
+        />
+      </div>
     </div>
   );
 };
@@ -247,16 +247,18 @@ const MajorPremiseNode = ({ id, data, selected }: NodeProps) => {
        <Handle type="target" position={Position.Right} id="right-target" className="w-3 h-3" />
        <Handle type="source" position={Position.Right} id="right-source" className="w-3 h-3" />
       <div className="text-xs font-medium mb-2 text-blue-800">Major Premise</div>
-      <textarea
-        ref={textareaRef}
-        className="w-full bg-transparent text-xs resize-none outline-none text-center overflow-hidden text-blue-800"
-        value={content}
-        onChange={handleContentChange}         
-        onFocus={() => setIsEditing(true)}         
-        onBlur={() => setIsEditing(false)}
-        placeholder="Click to edit"
-        rows={1}
-      />
+        <div className="nodrag">
+          <textarea
+            ref={textareaRef}
+            className="w-full bg-transparent text-xs resize-none outline-none text-center overflow-hidden text-blue-800"
+            value={content}
+            onChange={handleContentChange}         
+                 
+            
+            placeholder="Click to edit"
+            rows={1}
+          />
+        </div>
     </div>
   );
 };
@@ -297,16 +299,18 @@ const BackingPremiseNode = ({ id, data, selected }: NodeProps) => {
        <Handle type="target" position={Position.Right} id="right-target" className="w-3 h-3" />
        <Handle type="source" position={Position.Right} id="right-source" className="w-3 h-3" />
       <div className="text-xs font-medium mb-2 text-gray-800">Backing/Linking Premise</div>
-      <textarea
-        ref={textareaRef}
-        className="w-full bg-transparent text-xs resize-none outline-none text-center overflow-hidden text-gray-800"
-        value={content}
-         onChange={handleContentChange}         
-        onFocus={() => setIsEditing(true)}         
-        onBlur={() => setIsEditing(false)}
-        placeholder="Click to edit"
-        rows={1}
-      />
+        <div className="nodrag">
+          <textarea
+          ref={textareaRef}
+          className="w-full bg-transparent text-xs resize-none outline-none text-center overflow-hidden text-gray-800"
+          value={content}
+           onChange={handleContentChange}         
+               
+          
+          placeholder="Click to edit"
+          rows={1}
+        />
+        </div>
     </div>
   );
 };
@@ -364,36 +368,40 @@ const AssumptionNode = ({ id, data, selected }: NodeProps) => {
       <div className="text-xs leading-relaxed text-red-800 space-y-2">
         <div className="flex flex-col">
           <span className="mb-1">The author assumes that:</span>
-          <textarea
+          <div className="nodrag">
+            <textarea
             ref={textareaRef1}
             className="bg-red-50 border border-red-300 rounded px-2 py-1 outline-none w-full text-red-900 resize-none min-h-[32px]"
             value={assumptionParts[0]}
             onChange={(e) => handlePartChange(0, e.target.value)}
-             onFocus={() => setIsEditing(true)}         
-            onBlur={() => setIsEditing(false)}
+                  
+            
             placeholder="Enter assumption..."
             style={{ 
               overflow: 'hidden',
               lineHeight: '1.4'
             }}
           />
+          </div>
         </div>
         
         <div className="flex flex-col">
           <span className="mb-1">and overlooks the possibility that:</span>
-          <textarea
+          <div className="nodrag">
+            <textarea
             ref={textareaRef2}
             className="bg-red-50 border border-red-300 rounded px-2 py-1 outline-none w-full text-red-900 resize-none min-h-[32px]"
             value={assumptionParts[1]}
             onChange={(e) => handlePartChange(1, e.target.value)}
-             onFocus={() => setIsEditing(true)}         
-            onBlur={() => setIsEditing(false)}
+                  
+            
             placeholder="Enter overlooked possibility..."
             style={{ 
               overflow: 'hidden',
               lineHeight: '1.4'
             }}
           />
+          </div>
         </div>
       </div>
     </div>
@@ -436,14 +444,16 @@ const CounterclaimNode = ({ id, data, selected }: NodeProps) => {
        <Handle type="target" position={Position.Right} id="right-target" className="w-3 h-3" />
        <Handle type="source" position={Position.Right} id="right-source" className="w-3 h-3" />
       <div className="text-xs font-medium mb-2 text-red-800">Counterclaim/Concession</div>
-      <textarea
+      <div className="nodrag">
+        <textarea
         ref={textareaRef}
         className="w-full bg-transparent text-xs resize-none outline-none text-center overflow-hidden text-red-800"
         value={content}
-         onChange={handleContentChange}         onFocus={() => setIsEditing(true)}         onBlur={() => setIsEditing(false)}
+         onChange={handleContentChange}              
         placeholder="Click to edit"
         rows={1}
       />
+      </div>
     </div>
   );
 };
@@ -484,14 +494,16 @@ const CorrectAnswerNode = ({ id, data, selected }: NodeProps) => {
        <Handle type="target" position={Position.Right} id="right-target" className="w-3 h-3" />
        <Handle type="source" position={Position.Right} id="right-source" className="w-3 h-3" />
       <div className="text-xs font-medium mb-2 text-green-800">Correct Answer</div>
-      <textarea
+      <div className="nodrag">
+        <textarea
         ref={textareaRef}
         className="w-full bg-transparent text-xs resize-none outline-none text-center overflow-hidden text-green-800"
         value={content}
-         onChange={handleContentChange}         onFocus={() => setIsEditing(true)}         onBlur={() => setIsEditing(false)}
+         onChange={handleContentChange}              
         placeholder="Click to edit"
         rows={1}
       />
+      </div>
     </div>
   );
 };
