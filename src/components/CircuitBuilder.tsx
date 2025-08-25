@@ -802,7 +802,7 @@ const CircuitBuilderFlow = () => {
             onEdgeClick={onEdgeClick}
             onNodeClick={onNodeClick}
             
-            defaultViewport={{ x: 0, y: 0, zoom: 0.5 }}
+            defaultViewport={{ x: 0, y: 0, zoom: 1.0 }}
             style={{ height: '100%', width: '100%' }} // Ensure it fills the container
 
            >
