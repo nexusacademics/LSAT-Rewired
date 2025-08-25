@@ -834,7 +834,7 @@ const CircuitBuilderFlow = () => {
             </button>
             <h2 className="text-2xl font-bold text-slate-900 mb-4">React Flow Circuit Builder</h2>
             <div className="text-slate-700 space-y-3 text-sm">
-              <p>• **Select a node type** from the left sidebar</p>
+              <p>• <b>Select a node type</b> from the left sidebar</p>
               <p>• **Click on the canvas** to add a new node of the selected type</p>
               <p>• **Drag from one node to another** to create connections</p>
               <p>• **Click inside a node** to edit its content directly</p>
