@@ -759,14 +759,6 @@ const CircuitBuilderFlow = () => {
               View Instructions
             </button>
           </div>
-
-          <div className="text-xs text-slate-500 p-2 bg-slate-50 rounded">
-            <strong>Usage:</strong><br/>
-            1. Select a node type<br/>
-            2. Click on canvas to add<br/>
-            3. Drag to connect nodes<br/>
-            4. Click nodes to edit content
-          </div>
         </div>
 
         {/* React Flow Canvas */}
