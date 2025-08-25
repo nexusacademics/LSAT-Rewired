@@ -801,7 +801,7 @@ const CircuitBuilderFlow = () => {
             onPaneClick={onPaneClick}
             onEdgeClick={onEdgeClick}
             onNodeClick={onNodeClick}
-            fitView
+            
             defaultViewport={{ x: 0, y: 0, zoom: 0.5 }}
             style={{ height: '100%', width: '100%' }} // Ensure it fills the container
 
