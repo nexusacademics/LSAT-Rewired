@@ -9,6 +9,7 @@ interface SectionTransitionProps {
   triggeredByTimer?: boolean;  // modal triggered by timer expiring
   onResetTimer?: () => void;
   isTimedSession?: boolean;
+   isCompleteTest?: boolean; // ADD THIS LINE
 }
 
 export const SectionTransition: React.FC<SectionTransitionProps> = ({
@@ -18,6 +19,7 @@ export const SectionTransition: React.FC<SectionTransitionProps> = ({
   onConfirm,
   triggeredByTimer = false,
   onResetTimer,
+   isCompleteTest, // ADD THIS LINE
 }) => {
   const currentSectionNumber = session.currentSectionIndex + 1;
 
