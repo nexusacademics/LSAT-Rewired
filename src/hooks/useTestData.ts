@@ -28,8 +28,7 @@ export function useTestData() {
         console.log('Supabase sections data:', sections);
         console.log('Supabase sections error:', sectionsError);
         if (sectionsError) throw sectionsError;
-       // ADD THIS LINE: Log total questions fetched
-        console.log(`Total questions fetched from 'questions' table: ${questions.length}`);
+      
         // Fetch all questions with explanations, ordered by their question_order
         const { data: questions, error: questionsError } = await supabase
           .from('questions')
@@ -52,7 +51,9 @@ export function useTestData() {
         console.log('Supabase questions data:', questions);
         console.log('Supabase questions error:', questionsError);
         if (questionsError) throw questionsError;
-
+ 
+        // ADD THIS LINE: Log total questions fetched
+        console.log(`Total questions fetched from 'questions' table: ${questions.length}`);
         // Fetch all question options, ordered by their option_order
         const batchSize = 1000;
         let allOptions: any[] = [];
