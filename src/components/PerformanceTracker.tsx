@@ -81,13 +81,13 @@ const PerformanceTracker: React.FC<PerformanceTrackerProps> = ({
   const currentData = performanceData[timeframe];
 
   return (
-    <div className={`min-h-screen p-6 ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}>
+    <div className={`min-h-screen pt-14 ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}>
       <div className="max-w-7xl mx-auto space-y-8">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
             <h1 className={`text-3xl font-bold ${themeClasses.text}`}>Performance Analytics</h1>
-            <p className={`text-3xl font-bold ${themeClasses.text}`}>Track your circuit mastery and analysis quality</p>
+            <p className={`text-3xl text-base font-bold ${themeClasses.text}`}>Track your circuit mastery and analysis quality</p>
           </div>
 
           <div className={`flex space-x-1 ${themeClasses.tabBackground} p-1 rounded-xl`}>

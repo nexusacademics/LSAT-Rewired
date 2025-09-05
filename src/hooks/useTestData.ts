@@ -28,7 +28,7 @@ export function useTestData() {
         console.log('Supabase sections data:', sections);
         console.log('Supabase sections error:', sectionsError);
         if (sectionsError) throw sectionsError;
-
+      
         // Fetch all questions with explanations, ordered by their question_order
         const { data: questions, error: questionsError } = await supabase
           .from('questions')
@@ -51,7 +51,9 @@ export function useTestData() {
         console.log('Supabase questions data:', questions);
         console.log('Supabase questions error:', questionsError);
         if (questionsError) throw questionsError;
-
+ 
+        // ADD THIS LINE: Log total questions fetched
+        console.log(`Total questions fetched from 'questions' table: ${questions.length}`);
         // Fetch all question options, ordered by their option_order
         const batchSize = 1000;
         let allOptions: any[] = [];
@@ -144,6 +146,8 @@ export function useTestData() {
         sections.forEach(s => {
           const processedQuestions = (questionsMap.get(s.id) || [])
             .sort((a, b) => a.question_order - b.question_order); // Ensure questions are sorted
+            // ADD THIS LINE: Log questions per section
+          console.log(`Section ${s.name} (${s.id}) has ${processedQuestions.length} questions.`);
 
           const processedSection: ProcessedSection = {
             id: s.id,

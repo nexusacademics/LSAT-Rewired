@@ -58,9 +58,11 @@ interface TestSession {
   };
 }
 
+//New State
+
 // Custom Node Components
 const ConclusionSubjectNode = ({ id, data, selected }: NodeProps) => {
-  const [content, setContent] = useState(data.content || '');
+  const [content, setContent] = useState(data.content || '');   
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setContent(e.target.value);
@@ -80,7 +82,8 @@ const ConclusionSubjectNode = ({ id, data, selected }: NodeProps) => {
     selected
       ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
       : undefined
-  }>
+  }
+ >
          {/* Handles on all four sides */}
        <Handle type="target" position={Position.Top} id="top-target" className="w-3 h-3" />
        <Handle type="source" position={Position.Top} id="top-source" className="w-3 h-3" />
@@ -94,20 +97,22 @@ const ConclusionSubjectNode = ({ id, data, selected }: NodeProps) => {
        <Handle type="target" position={Position.Right} id="right-target" className="w-3 h-3" />
        <Handle type="source" position={Position.Right} id="right-source" className="w-3 h-3" />
       <div className="text-xs font-medium mb-2 text-purple-700">Conclusion Subject</div>
-      <textarea
-        ref={textareaRef}
-        className="w-full bg-transparent text-xs resize-none outline-none text-center overflow-hidden text-purple-700"
-        value={content}
-        onChange={handleContentChange}
-        placeholder="Click to edit"
-        rows={1}
-      />
+        <div className="nodrag">
+          <textarea
+            ref={textareaRef}
+            className="w-full bg-transparent text-xs resize-none outline-none text-center overflow-hidden text-purple-700"
+            value={content}
+            onChange={handleContentChange}         
+            placeholder="Click to edit"
+            rows={1}
+          />
+        </div>
     </div>
   );
 };
 
 const ConclusionPredicateNode = ({ id, data, selected }: NodeProps) => {
-  const [content, setContent] = useState(data.content || '');
+  const [content, setContent] = useState(data.content || '');   
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -127,6 +132,7 @@ const ConclusionPredicateNode = ({ id, data, selected }: NodeProps) => {
     selected
       ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
       : undefined}
+
       >
          {/* Handles on all four sides */}
       <Handle type="target" position={Position.Top} id="top-target" className="w-3 h-3" />
@@ -141,20 +147,22 @@ const ConclusionPredicateNode = ({ id, data, selected }: NodeProps) => {
        <Handle type="target" position={Position.Right} id="right-target" className="w-3 h-3" />
        <Handle type="source" position={Position.Right} id="right-source" className="w-3 h-3" />
       <div className="text-xs font-medium mb-2 text-purple-900">Conclusion Predicate/Claim</div>
-      <textarea
-        ref={textareaRef}
-        className="w-full bg-transparent text-xs resize-none outline-none text-center overflow-hidden text-purple-900"
-        value={content}
-        onChange={handleContentChange}
-        placeholder="Click to edit"
-        rows={1}
-      />
+      <div className="nodrag">
+          <textarea
+          ref={textareaRef}
+          className="w-full bg-transparent text-xs resize-none outline-none text-center overflow-hidden text-purple-900"
+          value={content}
+          onChange={handleContentChange}         
+          placeholder="Click to edit"
+          rows={1}
+        />
+      </div>
     </div>
   );
 };
 
 const MinorPremiseNode = ({ id, data, selected }: NodeProps) => {
-  const [content, setContent] = useState(data.content || '');
+  const [content, setContent] = useState(data.content || '');   
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -173,7 +181,9 @@ const MinorPremiseNode = ({ id, data, selected }: NodeProps) => {
        style={
     selected
       ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
-      : undefined}>
+      : undefined}
+
+      >
          {/* Handles on all four sides */}
       <Handle type="target" position={Position.Top} id="top-target" className="w-3 h-3" />
        <Handle type="source" position={Position.Top} id="top-source" className="w-3 h-3" />
@@ -187,20 +197,22 @@ const MinorPremiseNode = ({ id, data, selected }: NodeProps) => {
        <Handle type="target" position={Position.Right} id="right-target" className="w-3 h-3" />
        <Handle type="source" position={Position.Right} id="right-source" className="w-3 h-3" />
       <div className="text-xs font-medium mb-2 text-black">Minor Premise</div>
-      <textarea
-        ref={textareaRef}
-        className="w-full bg-transparent text-xs resize-none outline-none text-center overflow-hidden text-black"
-        value={content}
-        onChange={handleContentChange}
-        placeholder="Click to edit"
-        rows={1}
-      />
+      <div className="nodrag">
+          <textarea
+          ref={textareaRef}
+          className="w-full bg-transparent text-xs resize-none outline-none text-center overflow-hidden text-black"
+          value={content}
+          onChange={handleContentChange}         
+          placeholder="Click to edit"
+          rows={1}
+        />
+      </div>
     </div>
   );
 };
 
 const MajorPremiseNode = ({ id, data, selected }: NodeProps) => {
-  const [content, setContent] = useState(data.content || '');
+  const [content, setContent] = useState(data.content || '');   
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -219,7 +231,9 @@ const MajorPremiseNode = ({ id, data, selected }: NodeProps) => {
        style={
     selected
       ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
-      : undefined}>
+      : undefined}
+
+      >
          {/* Handles on all four sides */}
      <Handle type="target" position={Position.Top} id="top-target" className="w-3 h-3" />
        <Handle type="source" position={Position.Top} id="top-source" className="w-3 h-3" />
@@ -233,20 +247,24 @@ const MajorPremiseNode = ({ id, data, selected }: NodeProps) => {
        <Handle type="target" position={Position.Right} id="right-target" className="w-3 h-3" />
        <Handle type="source" position={Position.Right} id="right-source" className="w-3 h-3" />
       <div className="text-xs font-medium mb-2 text-blue-800">Major Premise</div>
-      <textarea
-        ref={textareaRef}
-        className="w-full bg-transparent text-xs resize-none outline-none text-center overflow-hidden text-blue-800"
-        value={content}
-        onChange={handleContentChange}
-        placeholder="Click to edit"
-        rows={1}
-      />
+        <div className="nodrag">
+          <textarea
+            ref={textareaRef}
+            className="w-full bg-transparent text-xs resize-none outline-none text-center overflow-hidden text-blue-800"
+            value={content}
+            onChange={handleContentChange}         
+                 
+            
+            placeholder="Click to edit"
+            rows={1}
+          />
+        </div>
     </div>
   );
 };
 
 const BackingPremiseNode = ({ id, data, selected }: NodeProps) => {
-  const [content, setContent] = useState(data.content || '');
+  const [content, setContent] = useState(data.content || '');   
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -265,7 +283,9 @@ const BackingPremiseNode = ({ id, data, selected }: NodeProps) => {
        style={
     selected
       ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
-      : undefined}>
+      : undefined}
+
+      >
          {/* Handles on all four sides */}
      <Handle type="target" position={Position.Top} id="top-target" className="w-3 h-3" />
        <Handle type="source" position={Position.Top} id="top-source" className="w-3 h-3" />
@@ -279,14 +299,18 @@ const BackingPremiseNode = ({ id, data, selected }: NodeProps) => {
        <Handle type="target" position={Position.Right} id="right-target" className="w-3 h-3" />
        <Handle type="source" position={Position.Right} id="right-source" className="w-3 h-3" />
       <div className="text-xs font-medium mb-2 text-gray-800">Backing/Linking Premise</div>
-      <textarea
-        ref={textareaRef}
-        className="w-full bg-transparent text-xs resize-none outline-none text-center overflow-hidden text-gray-800"
-        value={content}
-        onChange={handleContentChange}
-        placeholder="Click to edit"
-        rows={1}
-      />
+        <div className="nodrag">
+          <textarea
+          ref={textareaRef}
+          className="w-full bg-transparent text-xs resize-none outline-none text-center overflow-hidden text-gray-800"
+          value={content}
+           onChange={handleContentChange}         
+               
+          
+          placeholder="Click to edit"
+          rows={1}
+        />
+        </div>
     </div>
   );
 };
@@ -299,7 +323,7 @@ const AssumptionNode = ({ id, data, selected }: NodeProps) => {
       return ['', ''];
     }
   });
-
+   const [isEditing, setIsEditing] = useState(false);
   const textareaRef1 = useRef<HTMLTextAreaElement>(null);
   const textareaRef2 = useRef<HTMLTextAreaElement>(null);
 
@@ -324,7 +348,9 @@ const AssumptionNode = ({ id, data, selected }: NodeProps) => {
        style={
     selected
       ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
-      : undefined}>
+      : undefined}
+
+      >
          {/* Handles on all four sides */}
      <Handle type="target" position={Position.Top} id="top-target" className="w-3 h-3" />
        <Handle type="source" position={Position.Top} id="top-source" className="w-3 h-3" />
@@ -342,32 +368,40 @@ const AssumptionNode = ({ id, data, selected }: NodeProps) => {
       <div className="text-xs leading-relaxed text-red-800 space-y-2">
         <div className="flex flex-col">
           <span className="mb-1">The author assumes that:</span>
-          <textarea
+          <div className="nodrag">
+            <textarea
             ref={textareaRef1}
             className="bg-red-50 border border-red-300 rounded px-2 py-1 outline-none w-full text-red-900 resize-none min-h-[32px]"
             value={assumptionParts[0]}
             onChange={(e) => handlePartChange(0, e.target.value)}
+                  
+            
             placeholder="Enter assumption..."
             style={{ 
               overflow: 'hidden',
               lineHeight: '1.4'
             }}
           />
+          </div>
         </div>
         
         <div className="flex flex-col">
           <span className="mb-1">and overlooks the possibility that:</span>
-          <textarea
+          <div className="nodrag">
+            <textarea
             ref={textareaRef2}
             className="bg-red-50 border border-red-300 rounded px-2 py-1 outline-none w-full text-red-900 resize-none min-h-[32px]"
             value={assumptionParts[1]}
             onChange={(e) => handlePartChange(1, e.target.value)}
+                  
+            
             placeholder="Enter overlooked possibility..."
             style={{ 
               overflow: 'hidden',
               lineHeight: '1.4'
             }}
           />
+          </div>
         </div>
       </div>
     </div>
@@ -375,7 +409,7 @@ const AssumptionNode = ({ id, data, selected }: NodeProps) => {
 };
 
 const CounterclaimNode = ({ id, data, selected }: NodeProps) => {
-  const [content, setContent] = useState(data.content || '');
+  const [content, setContent] = useState(data.content || '');   
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -394,7 +428,9 @@ const CounterclaimNode = ({ id, data, selected }: NodeProps) => {
        style={
     selected
       ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
-      : undefined}>
+      : undefined}
+
+      >
           {/* Handles on all four sides */}
      <Handle type="target" position={Position.Top} id="top-target" className="w-3 h-3" />
        <Handle type="source" position={Position.Top} id="top-source" className="w-3 h-3" />
@@ -408,20 +444,22 @@ const CounterclaimNode = ({ id, data, selected }: NodeProps) => {
        <Handle type="target" position={Position.Right} id="right-target" className="w-3 h-3" />
        <Handle type="source" position={Position.Right} id="right-source" className="w-3 h-3" />
       <div className="text-xs font-medium mb-2 text-red-800">Counterclaim/Concession</div>
-      <textarea
+      <div className="nodrag">
+        <textarea
         ref={textareaRef}
         className="w-full bg-transparent text-xs resize-none outline-none text-center overflow-hidden text-red-800"
         value={content}
-        onChange={handleContentChange}
+         onChange={handleContentChange}              
         placeholder="Click to edit"
         rows={1}
       />
+      </div>
     </div>
   );
 };
 
 const CorrectAnswerNode = ({ id, data, selected }: NodeProps) => {
-  const [content, setContent] = useState(data.content || '');
+  const [content, setContent] = useState(data.content || '');   
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -440,7 +478,9 @@ const CorrectAnswerNode = ({ id, data, selected }: NodeProps) => {
        style={
     selected
       ? { boxShadow: '0 0 12px 5px rgba(202, 138, 4, 0.8)' }
-      : undefined}>
+      : undefined}
+
+      >
          {/* Handles on all four sides */}
   <Handle type="target" position={Position.Top} id="top-target" className="w-3 h-3" />
        <Handle type="source" position={Position.Top} id="top-source" className="w-3 h-3" />
@@ -454,14 +494,16 @@ const CorrectAnswerNode = ({ id, data, selected }: NodeProps) => {
        <Handle type="target" position={Position.Right} id="right-target" className="w-3 h-3" />
        <Handle type="source" position={Position.Right} id="right-source" className="w-3 h-3" />
       <div className="text-xs font-medium mb-2 text-green-800">Correct Answer</div>
-      <textarea
+      <div className="nodrag">
+        <textarea
         ref={textareaRef}
         className="w-full bg-transparent text-xs resize-none outline-none text-center overflow-hidden text-green-800"
         value={content}
-        onChange={handleContentChange}
+         onChange={handleContentChange}              
         placeholder="Click to edit"
         rows={1}
       />
+      </div>
     </div>
   );
 };
@@ -490,7 +532,7 @@ const CircuitBuilderFlow = () => {
   const { getNodes, getEdges, project } = useReactFlow();
  useEffect(() => {
   const handleKeyDown = (event: KeyboardEvent) => {
-    if (event.key === 'Delete' || event.key === 'Backspace') {
+    if (event.key === 'Delete') {
       const selectedNodes = getNodes().filter((node) => node.selected);
       const selectedEdges = getEdges().filter((edge) => edge.selected);
 
@@ -717,14 +759,6 @@ const CircuitBuilderFlow = () => {
               View Instructions
             </button>
           </div>
-
-          <div className="text-xs text-slate-500 p-2 bg-slate-50 rounded">
-            <strong>Usage:</strong><br/>
-            1. Select a node type<br/>
-            2. Click on canvas to add<br/>
-            3. Drag to connect nodes<br/>
-            4. Click nodes to edit content
-          </div>
         </div>
 
         {/* React Flow Canvas */}
@@ -767,8 +801,8 @@ const CircuitBuilderFlow = () => {
             onPaneClick={onPaneClick}
             onEdgeClick={onEdgeClick}
             onNodeClick={onNodeClick}
-            fitView
-            defaultViewport={{ x: 0, y: 0, zoom: 1.5 }}
+            
+            defaultViewport={{ x: 0, y: 0, zoom: 1.0 }}
             style={{ height: '100%', width: '100%' }} // Ensure it fills the container
 
            >
@@ -800,7 +834,7 @@ const CircuitBuilderFlow = () => {
             </button>
             <h2 className="text-2xl font-bold text-slate-900 mb-4">React Flow Circuit Builder</h2>
             <div className="text-slate-700 space-y-3 text-sm">
-              <p>• **Select a node type** from the left sidebar</p>
+              <p>• <b>Select a node type</b> from the left sidebar</p>
               <p>• **Click on the canvas** to add a new node of the selected type</p>
               <p>• **Drag from one node to another** to create connections</p>
               <p>• **Click inside a node** to edit its content directly</p>

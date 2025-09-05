@@ -9,6 +9,7 @@ interface SectionTransitionProps {
   triggeredByTimer?: boolean;  // modal triggered by timer expiring
   onResetTimer?: () => void;
   isTimedSession?: boolean;
+   isCompleteTest?: boolean; // ADD THIS LINE
 }
 
 export const SectionTransition: React.FC<SectionTransitionProps> = ({
@@ -18,6 +19,7 @@ export const SectionTransition: React.FC<SectionTransitionProps> = ({
   onConfirm,
   triggeredByTimer = false,
   onResetTimer,
+   isCompleteTest, // ADD THIS LINE
 }) => {
   const currentSectionNumber = session.currentSectionIndex + 1;
 
@@ -28,43 +30,56 @@ export const SectionTransition: React.FC<SectionTransitionProps> = ({
     onConfirm();
   };
 
-  const renderMessage = () => {
-    if (triggeredByTimer && isLastSection) {
-      // Timer triggered in last section — test complete message
+   const renderMessage = () => {
+    // Case 1: Single section test (when isCompleteTest is false, meaning session.selectedSectionId is defined)
+    if (!isCompleteTest) {
       return (
         <>
-          Test Complete! You have completed all sections of this test.
+          Are you ready to finish this {session.phase === 'timed' ? 'timed' : ''} section?
+          <br /><br />
+          <b>NOTE:</b> You will only be able to review this section in review once you click Finish Session below.
         </>
       );
-    } else if (!triggeredByTimer) {
-      // Called by button
-      if (currentSectionNumber < 4) {
+    }
+    // Case 2: Full test scenarios (when isCompleteTest is true)
+    else {
+      if (triggeredByTimer && isLastSection) {
+        // Timer triggered in last section of a full test
         return (
           <>
-            Are you ready to move on to the next section?
+            Test Complete! You have completed all sections of this test.
+          </>
+        );
+      } else if (!triggeredByTimer) {
+        // Called by button in a full test
+        if (!isLastSection) { // Mid-test section, button clicked
+          return (
+            <>
+              Are you ready to move on to the next section?
+              <br /><br />
+              <b>NOTE:</b> You will not be permitted to come back to this section once you move on.
+            </>
+          );
+        } else { // Last section of a full test, button clicked
+          return (
+            <>
+              This is the last section of the test. Are you ready to complete your session?
+            </>
+          );
+        }
+      } else {
+        // Timer triggered in a mid-test section of a full test
+        return (
+          <>
+            Time is up for this section!
             <br /><br />
             <b>NOTE:</b> You will not be permitted to come back to this section once you move on.
           </>
         );
-      } else {
-        // Last section called by button
-        return (
-          <>
-            This is the last section of the test. Are you ready to complete your session?
-          </>
-        );
       }
-    } else {
-      // Fallback for other timer-triggered cases, if any
-      return (
-        <>
-          Time is up for this section!
-          <br /><br />
-          <b>NOTE:</b> You will not be permitted to come back to this section once you move on.
-        </>
-      );
     }
   };
+
 
   return (
     <div
@@ -106,7 +121,7 @@ export const SectionTransition: React.FC<SectionTransitionProps> = ({
             className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
           >
             {isLastSection
-              ? 'Finish Test'
+              ? 'Finish Session'
               : session.selectedSectionId
               ? 'Finish Section'
               : 'Next Section'}

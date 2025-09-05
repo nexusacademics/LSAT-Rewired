@@ -193,6 +193,71 @@ export const AnalysisPanel = ({
     );
   };
 
+   // Highlighting logic
+  const highlightText = (text = '') => {
+    const headingRegex = /^((?:[\w/-]+\s?){1,4}):/; // up to 4 words before colon
+    const answerChoiceRegex = /\(([A-E])\)/g;
+
+    return text.split('\n').map((line, lineIndex) => {
+      const headingMatch = line.match(headingRegex);
+      if (headingMatch) {
+        const heading = headingMatch[0];
+        const restOfLine = line.slice(heading.length);
+
+        // Process (A)-(E) inside rest of line
+        const segments = [];
+        let last = 0;
+        let match;
+        while ((match = answerChoiceRegex.exec(restOfLine)) !== null) {
+          const idx = match.index;
+          segments.push(restOfLine.slice(last, idx));
+          segments.push(
+            <span
+              key={`choice-${lineIndex}-${idx}`}
+              className="bg-black text-white font-bold"
+            >
+              {match[0]}
+            </span>
+          );
+          last = idx + match[0].length;
+        }
+        segments.push(restOfLine.slice(last));
+
+        return (
+          <div key={`line-${lineIndex}`} className="whitespace-pre-wrap">
+            <span className="bg-yellow-300 font-bold">{heading}</span>
+            {segments}
+          </div>
+        );
+      } else {
+        // Highlight (A)-(E) in normal lines
+        const segments = [];
+        let last = 0;
+        let match;
+        while ((match = answerChoiceRegex.exec(line)) !== null) {
+          const idx = match.index;
+          segments.push(line.slice(last, idx));
+          segments.push(
+            <span
+              key={`choice-${lineIndex}-${idx}`}
+              className="bg-black text-white font-bold"
+            >
+              {match[0]}
+            </span>
+          );
+          last = idx + match[0].length;
+        }
+        segments.push(line.slice(last));
+
+        return (
+          <div key={`line-${lineIndex}`} className="whitespace-pre-wrap">
+            {segments}
+          </div>
+        );
+      }
+    });
+  };
+  
   return (
     <div ref={containerRef} className="flex flex-col flex-1 min-h-0 overflow-hidden">
       {/* Header */}
@@ -224,39 +289,23 @@ export const AnalysisPanel = ({
           ref={innerPanelRef}
           style={{ gap: '12px' }}
         >
-          {isStrategyReview && showExplanations ? (
+         {isStrategyReview && showExplanations ? (
             <div className="flex-1 flex flex-col min-h-0">
               {availableExplanations.length > 0 ? (
                 <>
                   {/* Navigation Header */}
                   <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-200">
                     <div className="flex items-center space-x-2">
-                      <button
-                        onClick={handlePreviousExplanation}
-                        disabled={availableExplanations.length <= 1}
-                        className="p-1 rounded-md hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        <ChevronLeft className="w-5 h-5 text-slate-600" />
-                      </button>
-                      
                       <div className="text-center">
                         <h4 className="font-semibold text-slate-800 text-lg">
                           {currentExplanation?.label}
                         </h4>
                         <p className="text-sm text-slate-500">
-                          {currentExplanationIndex + 1} of {availableExplanations.length}
+                          Explanation Part {currentExplanationIndex + 1} of {availableExplanations.length}
                         </p>
-                      </div>
-                      
-                      <button
-                        onClick={handleNextExplanation}
-                        disabled={availableExplanations.length <= 1}
-                        className="p-1 rounded-md hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        <ChevronRight className="w-5 h-5 text-slate-600" />
-                      </button>
+                      </div>                                           
                     </div>
-                    
+          
                     {/* Progress dots */}
                     {availableExplanations.length > 1 && (
                       <div className="flex space-x-1">
@@ -274,16 +323,69 @@ export const AnalysisPanel = ({
                       </div>
                     )}
                   </div>
-                  
+          
                   {/* Current Explanation Content */}
                   <div className="flex-1 overflow-auto">
-                    <div className="prose prose-slate max-w-none">
-                      <div className="text-slate-700 leading-relaxed whitespace-pre-wrap">
-                        {currentExplanation?.content}
+                    <div className="prose prose-slate max-w-none space-y-4">
+                      <div className="flex bg-slate-50 border border-slate-200 shadow-sm rounded-lg p-4">
+                        {/* Left accent bar */}
+                        <div className="w-1 bg-blue-500 rounded-l-lg mr-3" />
+                  
+                        {/* Content with highlighting */}
+                        <div className="text-slate-700 leading-relaxed whitespace-pre-wrap">
+                          {currentExplanation?.content.split('\n').map((line, idx) => {
+                            // Match up to 4 words before colon
+                            const headingMatch = line.match(/^((?:[\w/-]+\s?){1,4}):/);
+                            const answerChoiceRegex = /\(([A-E])\)/g;
+                  
+                            if (headingMatch) {
+                              const heading = headingMatch[0]; // includes colon
+                              const restOfLine = line.slice(heading.length);
+                  
+                              // Highlight (A)-(E) in the rest of line
+                              const segments = [];
+                              let lastIndex = 0;
+                              let match;
+                              while ((match = answerChoiceRegex.exec(restOfLine)) !== null) {
+                                segments.push(restOfLine.slice(lastIndex, match.index));
+                                segments.push(
+                                  <span key={`choice-${idx}-${match.index}`} className="font-bold text-black">
+                                    {match[0]}
+                                  </span>
+                                );
+                                lastIndex = match.index + match[0].length;
+                              }
+                              segments.push(restOfLine.slice(lastIndex));
+                  
+                              return (
+                                <div key={idx}>
+                                  <span className="font-bold text-blue-600">{heading}</span>
+                                  {segments}
+                                </div>
+                              );
+                            } else {
+                              // Normal line: just highlight (A)-(E)
+                              const segments = [];
+                              let lastIndex = 0;
+                              let match;
+                              while ((match = answerChoiceRegex.exec(line)) !== null) {
+                                segments.push(line.slice(lastIndex, match.index));
+                                segments.push(
+                                  <span key={`choice-${idx}-${match.index}`} className="font-bold text-black">
+                                    {match[0]}
+                                  </span>
+                                );
+                                lastIndex = match.index + match[0].length;
+                              }
+                              segments.push(line.slice(lastIndex));
+                              return <div key={idx}>{segments}</div>;
+                            }
+                          })}
+                        </div>
                       </div>
                     </div>
                   </div>
-                  
+          
                   {/* Navigation Footer */}
                   {availableExplanations.length > 1 && (
                     <div className="mt-4 pt-3 border-t border-slate-200 flex justify-between items-center">
@@ -294,11 +396,11 @@ export const AnalysisPanel = ({
                         <ChevronLeft className="w-4 h-4" />
                         <span>Previous</span>
                       </button>
-                      
+          
                       <div className="text-sm text-slate-500">
                         Use arrows or dots to navigate
                       </div>
-                      
+          
                       <button
                         onClick={handleNextExplanation}
                         className="flex items-center space-x-2 px-3 py-2 text-sm text-slate-600 hover:text-slate-800 hover:bg-slate-50 rounded-md transition-colors"
@@ -318,7 +420,7 @@ export const AnalysisPanel = ({
                 </div>
               )}
             </div>
-          ) : (
+          ) :(
             textAreas.map((key, index) => (
               <div
                 key={key}

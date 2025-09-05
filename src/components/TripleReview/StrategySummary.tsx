@@ -40,7 +40,7 @@ export const StrategySummary: React.FC<StrategySummaryProps> = ({
   const blindReviewScore = calculateScore(session.blindReviewAnswers, currentSections);
 
   return (
-    <div className="fixed inset-0 bg-slate-50 flex flex-col items-center justify-center z-40 p-4 overflow-y-auto">
+    <div className="fixed inset-0 bg-slate-50 flex flex-col items-center justify-center z-50 p-4 overflow-y-auto">
       <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 lg:p-8 max-w-6xl w-full text-center my-4 max-h-[90vh] overflow-y-auto">
         <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-900 mb-3 sm:mb-4">
           Strategy Review: Performance Summary
