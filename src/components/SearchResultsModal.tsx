@@ -192,7 +192,7 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
                         {/* Passage Preview */}
                         {question.passage && (
                           <div>
-                            <p className="text-xs font-serif font-medium text-gray-600 mb-1">Passage:</p>
+                            <p className="text-xs font-medium text-gray-600 mb-1">Passage:</p>
                             <p className="text-sm text-gray-700 leading-relaxed bg-blue-50 p-2 rounded">
                               {question.passage.slice(0, 200)}
                               {question.passage.length > 200 && '...'}
