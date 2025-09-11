@@ -241,8 +241,11 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
                           <div>
                             <p className="text-xs font-medium text-gray-600 mb-1">Passage:</p>
                             <p className="text-sm text-gray-700 leading-relaxed bg-blue-50 p-2 rounded">
-                              {question.passage.slice(0, 200)}
-                              {question.passage.length > 200 && '...'}
+                              {/* Apply highlightText here for passage preview */}
+                              {highlightText(
+                                question.passage.slice(0, 200) + (question.passage.length > 200 ? '...' : ''),
+                                searchTerm
+                              )}
                             </p>
                           </div>
                         )}
@@ -252,8 +255,11 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
                           <div>
                             <p className="text-xs font-medium text-gray-600 mb-1">Question:</p>
                             <p className="text-sm text-gray-700 leading-relaxed">
-                              {getQuestionText(question).slice(0, 150)}
-                              {getQuestionText(question).length > 150 && '...'}
+                              {/* Apply highlightText here for question stem preview */}
+                              {highlightText(
+                                getQuestionText(question).slice(0, 150) + (getQuestionText(question).length > 150 ? '...' : ''),
+                                searchTerm
+                              )}
                             </p>
                           </div>
                         )}
