@@ -256,7 +256,7 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
                 {/* Question Stem */}
                 <div>
                   <h4 className="font-semibold text-gray-700 mb-2">Question:</h4>
-                  <div className="text-sm leading-relaxed bg-blue-50 p-3 rounded">
+                  <div className="text-sm font-serif leading-relaxed bg-blue-50 p-3 rounded">
                     {getQuestionText(selectedQuestionState)}
                   </div>
                 </div>
