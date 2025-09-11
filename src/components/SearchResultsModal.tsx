@@ -246,7 +246,7 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
                 {/* Passage/Stimulus */}
                 {selectedQuestionState.passage && (
                   <div className="border-l-4 border-blue-200 pl-4">
-                    <h4 className="font-semibold font-serif text-gray-700 mb-2">Passage:</h4>
+                    <h4 className="font-semibold text-gray-700 mb-2">Passage:</h4>
                     <div className="text-sm font-serif leading-relaxed whitespace-pre-wrap bg-gray-50 p-3 rounded">
                       {selectedQuestionState.passage}
                     </div>
@@ -255,7 +255,7 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
 
                 {/* Question Stem */}
                 <div>
-                  <h4 className="font-semibold font-serif text-gray-700 mb-2">Question:</h4>
+                  <h4 className="font-semibold text-gray-700 mb-2">Question:</h4>
                   <div className="text-sm font-serif leading-relaxed bg-blue-50 p-3 rounded">
                     {getQuestionText(selectedQuestionState)}
                   </div>
@@ -264,7 +264,7 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
                 {/* Answer Choices */}
                 {selectedQuestionState.options && selectedQuestionState.options.length > 0 && (
                   <div>
-                    <h4 className="font-semibold font-serif  text-gray-700 mb-2">Answer Options:</h4>
+                    <h4 className="font-semibold text-gray-700 mb-2">Answer Options:</h4>
                     <div className="bg-gray-50 p-3 font-serif rounded">
                       {renderAnswerChoices(selectedQuestionState.options)}
                     </div>
