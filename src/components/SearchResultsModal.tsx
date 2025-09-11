@@ -264,7 +264,7 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
                 {/* Answer Choices */}
                 {selectedQuestionState.options && selectedQuestionState.options.length > 0 && (
                   <div>
-                    <h4 className="font-semibold text-gray-700 mb-2">Answer Options:</h4>
+                    <h4 className="font-semibold font-serif  text-gray-700 mb-2">Answer Options:</h4>
                     <div className="bg-gray-50 p-3 rounded">
                       {renderAnswerChoices(selectedQuestionState.options)}
                     </div>
