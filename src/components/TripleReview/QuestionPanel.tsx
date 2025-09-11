@@ -34,7 +34,7 @@ export const QuestionPanel: React.FC<QuestionPanelProps> = ({
       {/* Question Stem */}
       <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
         <div className="mb-4">
-          <h3 className="text-lg font-semibold text-slate-900">
+          <h3 className="text-lg font-serif font-semibold text-slate-900">
             <div className="whitespace-pre-line">{currentQuestionData.question}</div>
           </h3>
         </div>
