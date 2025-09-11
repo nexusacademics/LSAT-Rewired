@@ -41,7 +41,7 @@ export const QuestionPanel: React.FC<QuestionPanelProps> = ({
       </div>
 
       {/* Answer Choices */}
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 relative">
+      <div className="bg-white font-serif rounded-2xl shadow-sm border border-slate-200 p-6 relative">
         <h3 className="text-lg font-semibold text-slate-900 mb-4">Answer Choices</h3>
         
         {/* Overlay for Blind Review */}
