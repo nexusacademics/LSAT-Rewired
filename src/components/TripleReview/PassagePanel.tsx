@@ -37,8 +37,8 @@ export const PassagePanel: React.FC<PassagePanelProps> = ({
   // Get text size classes
   const getTextSizeClass = () => {
     switch (textSize) {
-      case 'small': return 'text-sm';
-      case 'medium': return 'text-base';
+      case 'small': return 'text-[10-pt]';
+      case 'medium': return 'text-[12-]';
       case 'large': return 'text-lg';
       default: return 'text-base';
     }
