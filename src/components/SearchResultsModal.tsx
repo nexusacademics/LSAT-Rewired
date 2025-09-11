@@ -10,7 +10,7 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
   onSelect,
   initialSelectedQuestion = null,
   disableBackToResults = false, 
-
+  searchTerm
 }) => {
   type Screen = 'results' | 'question';
 
