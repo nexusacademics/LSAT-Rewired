@@ -247,7 +247,7 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
                 {selectedQuestionState.passage && (
                   <div className="border-l-4 border-blue-200 pl-4">
                     <h4 className="font-semibold text-gray-700 mb-2">Passage:</h4>
-                    <div className="text-sm leading-relaxed whitespace-pre-wrap bg-gray-50 p-3 rounded">
+                    <div className="text-sm font-serif leading-relaxed whitespace-pre-wrap bg-gray-50 p-3 rounded">
                       {selectedQuestionState.passage}
                     </div>
                   </div>
