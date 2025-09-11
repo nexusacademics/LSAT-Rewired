@@ -107,7 +107,12 @@ console.log('All Processed Tests received by TimeModeSelectionModal:', allProces
 
             <div className="space-y-3">
              {Object.values(allProcessedTests)
-              .sort()
+              .sort((a, b) => {
+                  // Extract the number from the test name (e.g., "PrepTest 85" -> 85)
+                  const numA = parseInt(a.name.match(/\d+/)?.[0] || '0', 10);
+                  const numB = parseInt(b.name.match(/\d+/)?.[0] || '0', 10);
+                  return numA - numB;
+                })
               .filter(test => test.name.toLowerCase().includes(searchTerm.toLowerCase()))
               .map((test) => (
                 <button
