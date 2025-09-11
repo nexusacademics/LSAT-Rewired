@@ -1,7 +1,7 @@
 // components/SearchResultsModal.tsx
 import React, { useState, useEffect } from 'react';
 import { Dialog } from '@headlessui/react';
-import { ProcessedQuestion, SearchResultsModalProps } from '../types/dashboard.types';
+import { ProcessedQuestion, SearchResultsModalProps } from '../types/dashboard.types.ts';
 
 const SearchResultsModal: React.FC<SearchResultsModalProps> = ({ 
   isOpen, 
