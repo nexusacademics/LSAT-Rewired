@@ -107,6 +107,7 @@ console.log('All Processed Tests received by TimeModeSelectionModal:', allProces
 
             <div className="space-y-3">
              {Object.values(allProcessedTests)
+              .sort()
               .filter(test => test.name.toLowerCase().includes(searchTerm.toLowerCase()))
               .map((test) => (
                 <button
