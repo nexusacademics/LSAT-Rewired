@@ -520,8 +520,25 @@ const nodeTypes = {
   'correct-answer': CorrectAnswerNode,
 };
 
+// Define the props interface
+interface CircuitBuilderFlowProps {
+  onBack: () => void;
+  onSaveCircuit: (circuit: Circuit) => void;
+  questionData: ProcessedQuestion;
+  session: TestSession;
+  existingCircuit?: Circuit;
+  containerHeight?: string;
+}
+
 // Main Circuit Builder Component
-const CircuitBuilderFlow = () => {
+const CircuitBuilderFlow: React.FC<CircuitBuilderFlowProps> = ({
+  onBack,
+  onSaveCircuit,
+  questionData,
+  session,
+  existingCircuit,
+  containerHeight
+}) => {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [selectedNodeType, setSelectedNodeType] = useState<DiagramNode['type']>('conclusion-subject');
@@ -530,6 +547,53 @@ const CircuitBuilderFlow = () => {
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
    // UseReactFlow gives access to graph state and helpers
   const { getNodes, getEdges, project } = useReactFlow();
+
+  // Load existing circuit data when component mounts or existingCircuit changes
+  useEffect(() => {
+    if (existingCircuit && existingCircuit.diagram.length > 0) {
+      console.log('Loading existing circuit:', existingCircuit);
+      
+      // Convert DiagramNodes to React Flow Nodes
+      const loadedNodes: Node[] = existingCircuit.diagram.map(diagramNode => ({
+        id: diagramNode.id,
+        type: diagramNode.type,
+        position: diagramNode.position,
+        data: {
+          content: diagramNode.content,
+          onContentChange: handleNodeContentChange
+        },
+        ...(diagramNode.size && { 
+          style: { 
+            width: diagramNode.size.width, 
+            height: diagramNode.size.height 
+          } 
+        })
+      }));
+
+      // Convert connections to React Flow Edges
+      const loadedEdges: Edge[] = [];
+      existingCircuit.diagram.forEach(diagramNode => {
+        diagramNode.connections.forEach(connection => {
+          loadedEdges.push({
+            id: `edge-${diagramNode.id}-${connection.targetId}`,
+            source: diagramNode.id,
+            target: connection.targetId,
+            markerEnd: { type: MarkerType.ArrowClosed },
+            style: { 
+              stroke: connection.style === 'dashed' ? '#64748b' : '#64748b', 
+              strokeWidth: 2,
+              strokeDasharray: connection.style === 'dashed' ? '5,5' : undefined
+            }
+          });
+        });
+      });
+
+      setNodes(loadedNodes);
+      setEdges(loadedEdges);
+      console.log(`Loaded ${loadedNodes.length} nodes and ${loadedEdges.length} edges`);
+    }
+  }, [existingCircuit, handleNodeContentChange]);
+
  useEffect(() => {
   const handleKeyDown = (event: KeyboardEvent) => {
     if (event.key === 'Delete') {
@@ -660,8 +724,48 @@ const CircuitBuilderFlow = () => {
     setSaveStatus('saving');
     try {
       const score = calculateAnalysisScore();
-      // Here you would typically call your save function
-      console.log('Saving circuit with score:', score);
+      
+      // Convert React Flow nodes and edges back to DiagramNode format
+      const currentNodes = getNodes();
+      const currentEdges = getEdges();
+      
+      const diagramNodes: DiagramNode[] = currentNodes.map(node => {
+        // Find all outgoing edges for this node
+        const outgoingEdges = currentEdges.filter(edge => edge.source === node.id);
+        const connections = outgoingEdges.map(edge => ({
+          targetId: edge.target!,
+          style: (edge.style?.strokeDasharray ? 'dashed' : 'solid') as 'solid' | 'dashed'
+        }));
+
+        return {
+          id: node.id,
+          type: node.type as DiagramNode['type'],
+          shape: 'rounded-rectangle' as const, // Default shape
+          content: node.data.content || '',
+          position: node.position,
+          size: node.style?.width && node.style?.height ? {
+            width: typeof node.style.width === 'number' ? node.style.width : parseInt(node.style.width as string),
+            height: typeof node.style.height === 'number' ? node.style.height : parseInt(node.style.height as string)
+          } : undefined,
+          connections
+        };
+      });
+
+      // Create or update the circuit
+      const circuit: Circuit = {
+        id: existingCircuit?.id || `circuit-${Date.now()}`,
+        questionId: questionData.id,
+        diagram: diagramNodes,
+        annotations: existingCircuit?.annotations || [],
+        analysisQuality: score,
+        createdAt: existingCircuit?.createdAt || new Date()
+      };
+
+      console.log('Saving circuit:', circuit);
+      
+      // Call the parent callback to save the circuit
+      onSaveCircuit(circuit);
+      
       setSaveStatus('saved');
       setTimeout(() => setSaveStatus('idle'), 2000);
     } catch (error) {
@@ -669,7 +773,7 @@ const CircuitBuilderFlow = () => {
       setSaveStatus('error');
       setTimeout(() => setSaveStatus('idle'), 3000);
     }
-  }, [calculateAnalysisScore]);
+  }, [calculateAnalysisScore, getNodes, getEdges, existingCircuit, questionData.id, onSaveCircuit]);
 
   // Delete selected elements
   const deleteSelected = useCallback(() => {
@@ -690,6 +794,12 @@ const CircuitBuilderFlow = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             
+            <button
+              onClick={onBack}
+              className="px-4 py-2 text-slate-600 hover:text-slate-900 border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors"
+            >
+              ← Back
+            </button>
             <h1 className="text-xl font-semibold text-slate-900">Circuit Builder</h1>
           </div>
 
@@ -763,6 +873,7 @@ const CircuitBuilderFlow = () => {
 
         {/* React Flow Canvas */}
         <div className="flex-1 min-w-0 relative" ref={reactFlowWrapper}
+            style={{ height: containerHeight || 'calc(100vh - 200px)' }}
             onDragOver={(event) => event.preventDefault()}
             onDrop={(event) => {
               event.preventDefault();
