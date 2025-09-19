@@ -583,6 +583,7 @@ const handleSearch = () => {
               handleSelect(question);
             }}
             disableBackToResults={directSearchMode}  // <-- pass this prop here
+              searchTerm={searchTerm}
           />
 
 

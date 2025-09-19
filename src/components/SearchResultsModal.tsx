@@ -1,7 +1,7 @@
 // components/SearchResultsModal.tsx
 import React, { useState, useEffect } from 'react';
 import { Dialog } from '@headlessui/react';
-import { ProcessedQuestion, SearchResultsModalProps } from '../types/dashboard.types';
+import { ProcessedQuestion, SearchResultsModalProps } from '../types/dashboard.types.ts';
 
 const SearchResultsModal: React.FC<SearchResultsModalProps> = ({ 
   isOpen, 
@@ -10,7 +10,7 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
   onSelect,
   initialSelectedQuestion = null,
   disableBackToResults = false, 
-
+  searchTerm
 }) => {
   type Screen = 'results' | 'question';
 
@@ -156,6 +156,53 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
     
     return parts.join(', ');
   };
+
+   // NEW: highlightText helper function
+  const highlightText = (text: string, keywords: string): (string | JSX.Element)[] => {
+    if (!keywords || keywords.trim() === '') {
+      return [text];
+    }
+
+    const searchWords = keywords.trim().split(/\s+/).filter(Boolean);
+    let parts: (string | JSX.Element)[] = [text]; // Start with the full text as a single part
+
+    searchWords.forEach(word => {
+      const newParts: (string | JSX.Element)[] = [];
+      const escapedWord = word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // Escape special characters for regex
+      const regex = new RegExp(`(${escapedWord})`, 'gi'); // Case-insensitive, global match, capture group for the word
+
+      parts.forEach(part => {
+        if (typeof part === 'string') {
+          // Only process string parts
+          let lastIndex = 0;
+          let match;
+          while ((match = regex.exec(part)) !== null) {
+            // Add the text before the match
+            if (match.index > lastIndex) {
+              newParts.push(part.substring(lastIndex, match.index));
+            }
+            // Add the highlighted text (using match[1] for the captured group)
+            newParts.push(
+              <span key={`${match.index}-${match[1]}-${Math.random()}`} className="bg-yellow-200">
+                {match[1]}
+              </span>
+            );
+            lastIndex = regex.lastIndex;
+          }
+          // Add any remaining text after the last match
+          if (lastIndex < part.length) {
+            newParts.push(part.substring(lastIndex));
+          }
+        } else {
+          // If it's already a JSX element (e.g., a previous highlight), just push it as is
+          newParts.push(part);
+        }
+      });
+      parts = newParts; // Update parts for the next iteration with the results of this word's highlighting
+    });
+
+    return parts;
+  };
   
   return (
     <Dialog open={isOpen} onClose={handleClose} className="relative z-50">
@@ -193,9 +240,12 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
                         {question.passage && (
                           <div>
                             <p className="text-xs font-medium text-gray-600 mb-1">Passage:</p>
-                            <p className="text-sm text-gray-700 leading-relaxed bg-blue-50 p-2 rounded">
-                              {question.passage.slice(0, 200)}
-                              {question.passage.length > 200 && '...'}
+                            <p className="text-sm font-serif text-gray-700 leading-relaxed bg-blue-50 p-2 rounded">
+                              {/* Apply highlightText here for passage preview */}
+                              {highlightText(
+                                question.passage.slice(0, 200) + (question.passage.length > 200 ? '...' : ''),
+                                searchTerm
+                              )}
                             </p>
                           </div>
                         )}
@@ -204,9 +254,12 @@ const SearchResultsModal: React.FC<SearchResultsModalProps> = ({
                         {getQuestionText(question) && (
                           <div>
                             <p className="text-xs font-medium text-gray-600 mb-1">Question:</p>
-                            <p className="text-sm text-gray-700 leading-relaxed">
-                              {getQuestionText(question).slice(0, 150)}
-                              {getQuestionText(question).length > 150 && '...'}
+                            <p className="text-sm font-serif text-gray-700 leading-relaxed">
+                              {/* Apply highlightText here for question stem preview */}
+                              {highlightText(
+                                getQuestionText(question).slice(0, 150) + (getQuestionText(question).length > 150 ? '...' : ''),
+                                searchTerm
+                              )}
                             </p>
                           </div>
                         )}
