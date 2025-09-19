@@ -1,10 +1,94 @@
 // hooks/useTestSessions.ts
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import type { User, TestSession } from '../types/user';
+
+// Helper function to restore Date objects from JSON
+const reviveDates = (session: any): TestSession => {
+  return {
+    ...session,
+    startTime: new Date(session.startTime),
+    endTime: session.endTime ? new Date(session.endTime) : undefined,
+    pausedAt: session.pausedAt ? new Date(session.pausedAt) : undefined,
+    circuits: session.circuits?.map((circuit: any) => ({
+      ...circuit,
+      createdAt: new Date(circuit.createdAt)
+    })) || []
+  };
+};
+
+// Helper function to get the localStorage key for a user
+const getStorageKey = (userId: string) => `lsat-rewired-sessions-${userId}`;
 
 export function useTestSessions(user: User | null) {
   const [userSessions, setUserSessions] = useState<TestSession[]>([]);
   const [currentSession, setCurrentSession] = useState<TestSession | null>(null);
+
+  // Load sessions from localStorage when component mounts or user changes
+  useEffect(() => {
+    if (!user) {
+      setUserSessions([]);
+      setCurrentSession(null);
+      return;
+    }
+
+    try {
+      const storageKey = getStorageKey(user.id);
+      const storedSessions = localStorage.getItem(storageKey);
+      
+      if (storedSessions) {
+        const parsedSessions = JSON.parse(storedSessions);
+        const sessionsWithDates = parsedSessions.map(reviveDates);
+        setUserSessions(sessionsWithDates);
+        
+        console.log(`Loaded ${sessionsWithDates.length} sessions from localStorage for user ${user.id}`);
+      } else {
+        console.log(`No stored sessions found for user ${user.id}`);
+        setUserSessions([]);
+      }
+    } catch (error) {
+      console.error('Error loading sessions from localStorage:', error);
+      setUserSessions([]);
+    }
+  }, [user]);
+
+  // Save sessions to localStorage whenever userSessions changes
+  useEffect(() => {
+    if (!user || userSessions.length === 0) {
+      return;
+    }
+
+    try {
+      const storageKey = getStorageKey(user.id);
+      localStorage.setItem(storageKey, JSON.stringify(userSessions));
+      console.log(`Saved ${userSessions.length} sessions to localStorage for user ${user.id}`);
+    } catch (error) {
+      console.error('Error saving sessions to localStorage:', error);
+      
+      // If localStorage is full, try to clear old sessions
+      if (error instanceof Error && error.name === 'QuotaExceededError') {
+        console.warn('localStorage quota exceeded, attempting to clear old sessions...');
+        try {
+          // Keep only the 10 most recent sessions
+          const recentSessions = userSessions
+            .sort((a, b) => new Date(b.startTime).getTime() - new Date(a.startTime).getTime())
+            .slice(0, 10);
+          
+          localStorage.setItem(storageKey, JSON.stringify(recentSessions));
+          setUserSessions(recentSessions);
+          console.log(`Cleared old sessions, kept ${recentSessions.length} recent sessions`);
+        } catch (secondError) {
+          console.error('Failed to clear old sessions:', secondError);
+        }
+      }
+    }
+  }, [userSessions, user]);
+
+  // Clear localStorage when user logs out
+  useEffect(() => {
+    if (!user) {
+      setCurrentSession(null);
+    }
+  }, [user]);
 
   const startNewTestSession = useCallback((
     testId: string,
@@ -85,6 +169,7 @@ export function useTestSessions(user: User | null) {
   }, [userSessions]);
 
   const updateSession = useCallback((updatedSession: TestSession) => {
+    console.log('Updating session:', updatedSession.id);
     setCurrentSession(updatedSession);
     setUserSessions(prev => 
       prev.map(session => 
@@ -98,12 +183,28 @@ export function useTestSessions(user: User | null) {
     setCurrentSession(null);
   }, []);
 
+  // Utility function to clear all stored sessions (for debugging or user preference)
+  const clearStoredSessions = useCallback(() => {
+    if (!user) return;
+    
+    try {
+      const storageKey = getStorageKey(user.id);
+      localStorage.removeItem(storageKey);
+      setUserSessions([]);
+      setCurrentSession(null);
+      console.log(`Cleared all stored sessions for user ${user.id}`);
+    } catch (error) {
+      console.error('Error clearing stored sessions:', error);
+    }
+  }, [user]);
+
   return {
     userSessions,
     currentSession,
     startNewTestSession,
     resumeTestSession,
     updateSession,
-    exitSession
+    exitSession,
+    clearStoredSessions
   };
 }
