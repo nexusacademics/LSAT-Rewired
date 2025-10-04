@@ -548,6 +548,21 @@ const CircuitBuilderFlow: React.FC<CircuitBuilderFlowProps> = ({
    // UseReactFlow gives access to graph state and helpers
   const { getNodes, getEdges, project } = useReactFlow();
 
+  // Guard against undefined questionData
+  if (!questionData) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full bg-white rounded-lg shadow p-8">
+        <p className="text-lg text-slate-600 mb-4">Unable to load question data</p>
+        <button
+          onClick={onBack}
+          className="px-4 py-2 bg-slate-600 text-white rounded-lg hover:bg-slate-700"
+        >
+          Go Back
+        </button>
+      </div>
+    );
+  }
+
   // Handle content changes from nodes - must be declared before useEffect that uses it
   const handleNodeContentChange = useCallback((nodeId: string, content: string) => {
     setNodes(nds => nds.map(node =>
