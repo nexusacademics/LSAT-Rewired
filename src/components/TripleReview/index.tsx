@@ -505,7 +505,7 @@ const handleIntermissionEnd = () => {
           />
         )}
 
-        {showCircuitBuilder && session.phase !== 'timed' && currentQuestionData ? (
+        {showCircuitBuilder && session.phase !== 'timed' ? (
           <div className="grid lg:grid-cols-3 gap-6 h-full">
             <PassagePanel
               currentQuestionData={currentQuestionData}

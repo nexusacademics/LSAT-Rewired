@@ -524,7 +524,7 @@ const nodeTypes = {
 interface CircuitBuilderFlowProps {
   onBack: () => void;
   onSaveCircuit: (circuit: Circuit) => void;
-  questionData: ProcessedQuestion;
+  questionData?: ProcessedQuestion;
   session: TestSession;
   existingCircuit?: Circuit;
   containerHeight?: string;
@@ -547,21 +547,6 @@ const CircuitBuilderFlow: React.FC<CircuitBuilderFlowProps> = ({
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
    // UseReactFlow gives access to graph state and helpers
   const { getNodes, getEdges, project } = useReactFlow();
-
-  // Guard against undefined questionData
-  if (!questionData) {
-    return (
-      <div className="flex flex-col items-center justify-center h-full bg-white rounded-lg shadow p-8">
-        <p className="text-lg text-slate-600 mb-4">Unable to load question data</p>
-        <button
-          onClick={onBack}
-          className="px-4 py-2 bg-slate-600 text-white rounded-lg hover:bg-slate-700"
-        >
-          Go Back
-        </button>
-      </div>
-    );
-  }
 
   // Handle content changes from nodes - must be declared before useEffect that uses it
   const handleNodeContentChange = useCallback((nodeId: string, content: string) => {
@@ -769,7 +754,7 @@ const CircuitBuilderFlow: React.FC<CircuitBuilderFlowProps> = ({
       // Create or update the circuit
       const circuit: Circuit = {
         id: existingCircuit?.id || `circuit-${Date.now()}`,
-        questionId: questionData.id,
+        questionId: questionData?.id || 'unknown',
         diagram: diagramNodes,
         annotations: existingCircuit?.annotations || [],
         analysisQuality: score,
@@ -777,10 +762,10 @@ const CircuitBuilderFlow: React.FC<CircuitBuilderFlowProps> = ({
       };
 
       console.log('Saving circuit:', circuit);
-      
+
       // Call the parent callback to save the circuit
       onSaveCircuit(circuit);
-      
+
       setSaveStatus('saved');
       setTimeout(() => setSaveStatus('idle'), 2000);
     } catch (error) {
@@ -788,7 +773,7 @@ const CircuitBuilderFlow: React.FC<CircuitBuilderFlowProps> = ({
       setSaveStatus('error');
       setTimeout(() => setSaveStatus('idle'), 3000);
     }
-  }, [calculateAnalysisScore, getNodes, getEdges, existingCircuit, questionData.id, onSaveCircuit]);
+  }, [calculateAnalysisScore, getNodes, getEdges, existingCircuit, questionData?.id, onSaveCircuit]);
 
   // Delete selected elements
   const deleteSelected = useCallback(() => {
