@@ -548,6 +548,15 @@ const CircuitBuilderFlow: React.FC<CircuitBuilderFlowProps> = ({
    // UseReactFlow gives access to graph state and helpers
   const { getNodes, getEdges, project } = useReactFlow();
 
+  // Handle content changes from nodes - must be declared before useEffect that uses it
+  const handleNodeContentChange = useCallback((nodeId: string, content: string) => {
+    setNodes(nds => nds.map(node =>
+      node.id === nodeId
+        ? { ...node, data: { ...node.data, content } }
+        : node
+    ));
+  }, [setNodes]);
+
   // Load existing circuit data when component mounts or existingCircuit changes
   useEffect(() => {
     if (existingCircuit && existingCircuit.diagram.length > 0) {
@@ -636,15 +645,6 @@ const CircuitBuilderFlow: React.FC<CircuitBuilderFlowProps> = ({
     { type: 'assumption' as const, label: 'Assumption/Flaw', color: 'bg-red-100 border-red-300 text-red-800', description: 'Unstated Premise implied by the author' },
     { type: 'correct-answer' as const, label: 'Correct Answer', color: 'bg-green-200 border-green-400 text-green-800', description: 'The correct answer choice for the question' }
   ];
-
-  // Handle content changes from nodes
-  const handleNodeContentChange = useCallback((nodeId: string, content: string) => {
-    setNodes(nds => nds.map(node => 
-      node.id === nodeId 
-        ? { ...node, data: { ...node.data, content } }
-        : node
-    ));
-  }, [setNodes]);
 
   // Handle edge connections
   const [selectedEdgeIds, setSelectedEdgeIds] = useState<Set<string>>(new Set());
