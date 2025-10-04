@@ -34,6 +34,103 @@ export const PassagePanel: React.FC<PassagePanelProps> = ({
 }) => {
   const passageRef = useRef<HTMLDivElement>(null);
 
+  // Helper function to highlight search matches
+  const highlightSearchMatches = (text: string, query: string): React.ReactNode => {
+    if (!query || query.trim() === '') {
+      return text;
+    }
+
+    const escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp(`(${escapedQuery})`, 'gi');
+    const parts = text.split(regex);
+
+    return parts.map((part, index) => {
+      if (part.toLowerCase() === query.toLowerCase()) {
+        return (
+          <mark
+            key={index}
+            className="search-highlight"
+            style={{ backgroundColor: '#93c5fd', color: '#1e293b', borderRadius: '2px', padding: '0 2px' }}
+          >
+            {part}
+          </mark>
+        );
+      }
+      return <span key={index}>{part}</span>;
+    });
+  };
+
+  // Apply search highlighting to the DOM after render
+  useEffect(() => {
+    if (!passageRef.current) return;
+
+    // Remove existing search highlights first
+    const existingHighlights = passageRef.current.querySelectorAll('.search-highlight');
+    existingHighlights.forEach(highlight => {
+      const textNode = document.createTextNode(highlight.textContent || '');
+      highlight.parentNode?.replaceChild(textNode, highlight);
+    });
+    passageRef.current.normalize();
+
+    if (!searchQuery || searchQuery.trim() === '') {
+      return;
+    }
+
+    // Walk through all text nodes and highlight matches
+    const walker = document.createTreeWalker(
+      passageRef.current,
+      NodeFilter.SHOW_TEXT,
+      null
+    );
+
+    const textNodes: Text[] = [];
+    let node: Node | null;
+    while ((node = walker.nextNode())) {
+      textNodes.push(node as Text);
+    }
+
+    const escapedQuery = searchQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp(escapedQuery, 'gi');
+
+    textNodes.forEach(textNode => {
+      const text = textNode.nodeValue || '';
+      const matches = Array.from(text.matchAll(new RegExp(escapedQuery, 'gi')));
+
+      if (matches.length === 0) return;
+
+      const fragment = document.createDocumentFragment();
+      let lastIndex = 0;
+
+      matches.forEach(match => {
+        const matchIndex = match.index!;
+
+        // Add text before match
+        if (matchIndex > lastIndex) {
+          fragment.appendChild(document.createTextNode(text.slice(lastIndex, matchIndex)));
+        }
+
+        // Add highlighted match
+        const mark = document.createElement('mark');
+        mark.className = 'search-highlight';
+        mark.style.backgroundColor = '#93c5fd';
+        mark.style.color = '#1e293b';
+        mark.style.borderRadius = '2px';
+        mark.style.padding = '0 2px';
+        mark.textContent = match[0];
+        fragment.appendChild(mark);
+
+        lastIndex = matchIndex + match[0].length;
+      });
+
+      // Add remaining text
+      if (lastIndex < text.length) {
+        fragment.appendChild(document.createTextNode(text.slice(lastIndex)));
+      }
+
+      textNode.parentNode?.replaceChild(fragment, textNode);
+    });
+  }, [searchQuery]);
+
   // Get text size classes
   const getTextSizeClass = () => {
     switch (textSize) {
@@ -286,7 +383,7 @@ const findMatchingTextNodeInDOM = (root: HTMLElement, text: string): Text | null
       {/* Passage */}
       <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
         <div className="prose max-w-none">
-          <div 
+          <div
             ref={passageRef}
             className={`text-slate-700 font-serif ${getTextSizeClass()} ${getLineSpacingClass()} ${selectedTool ? 'select-text cursor-text' : ''}`}
             onMouseUp={handleMouseUp}
@@ -301,9 +398,9 @@ const findMatchingTextNodeInDOM = (root: HTMLElement, text: string): Text | null
           <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
             <p className="text-sm text-blue-700">
               {selectedTool === 'eraser' ? (
-                <><strong>Eraser mode active:</strong> Select formatted text in the passage to remove highlighting or underlining.</>
+                <><strong>Eraser mode active:</strong> Select formatted text in the passage or answer choices to remove highlighting or underlining.</>
               ) : (
-                <><strong>{selectedTool === 'underline' ? 'Underline' : 'Highlight'} mode active:</strong> Select text in the passage above to apply formatting.</>
+                <><strong>{selectedTool === 'underline' ? 'Underline' : 'Highlight'} mode active:</strong> Select text in the passage above or answer choices to apply formatting.</>
               )}
             </p>
           </div>

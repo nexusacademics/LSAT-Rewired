@@ -52,6 +52,10 @@ const TripleReview: React.FC<TripleReviewProps> = ({
   // Add formatting toolbar state
   const [selectedTool, setSelectedTool] = useState<string | null>(null);
   const clearPassageFormattingRef = useRef<(() => void) | null>(null);
+  const clearAnswerFormattingRef = useRef<(() => void) | null>(null);
+
+  // Search state
+  const [searchQuery, setSearchQuery] = useState<string>('');
 
   // Determine sections and current question
   const currentSections: ProcessedSection[] = session.selectedSectionId
@@ -78,6 +82,7 @@ const TripleReview: React.FC<TripleReviewProps> = ({
     setShowSuccessMessage(false);
     setLastSavedScore(undefined);
     setSelectedTool(null); // Clear selected tool when navigating between questions
+    setShowCircuitBuilder(false); // Close Circuit Builder when navigating to a new question
   }, [currentQuestionData?.id]);
 
   // Formatting toolbar handlers
@@ -88,6 +93,9 @@ const TripleReview: React.FC<TripleReviewProps> = ({
   const handleClearFormatting = () => {
     if (clearPassageFormattingRef.current) {
       clearPassageFormattingRef.current();
+    }
+    if (clearAnswerFormattingRef.current) {
+      clearAnswerFormattingRef.current();
     }
     setSelectedTool(null);
   };
@@ -302,18 +310,35 @@ const TripleReview: React.FC<TripleReviewProps> = ({
     (c) => c.questionId === currentQuestionData?.id
   );
 
+  // Debug logging
+  useEffect(() => {
+    console.log('Current Question ID:', currentQuestionData?.id);
+    console.log('All circuits:', session.circuits.map(c => ({ id: c.id, questionId: c.questionId })));
+    console.log('Existing circuit for question:', existingCircuitForQuestion);
+  }, [currentQuestionData?.id, session.circuits, existingCircuitForQuestion]);
+
   const handleSaveCircuitFromBuilder = (updatedCircuit: Circuit) => {
-    if (!currentQuestionData) return;
+    console.log('=== SAVING CIRCUIT ===');
+    console.log('Updated circuit:', updatedCircuit);
+    console.log('Current question ID:', currentQuestionData?.id);
+    console.log('Existing circuit for question:', existingCircuitForQuestion);
+
+    // Find existing circuit by the circuit's questionId (not current question)
+    // This handles the case where user navigates away while Circuit Builder is still open
+    const existingCircuit = session.circuits.find(c => c.questionId === updatedCircuit.questionId);
 
     let updatedCircuits;
-    if (existingCircuitForQuestion) {
+    if (existingCircuit) {
+      console.log('Updating existing circuit');
       updatedCircuits = session.circuits.map((c) =>
         c.id === updatedCircuit.id ? updatedCircuit : c
       );
     } else {
+      console.log('Adding new circuit');
       updatedCircuits = [...session.circuits, updatedCircuit];
     }
 
+    console.log('All circuits after update:', updatedCircuits.map(c => ({ id: c.id, questionId: c.questionId })));
     onUpdateSession({ ...session, circuits: updatedCircuits });
     setLastSavedScore(updatedCircuit.analysisQuality);
     setShowSuccessMessage(true);
@@ -483,6 +508,8 @@ const handleIntermissionEnd = () => {
         onTextSizeChange={handleTextSizeChange}
         lineSpacing={lineSpacing}
         onLineSpacingChange={handleLineSpacingChange}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
       />
 
 
@@ -506,6 +533,7 @@ const handleIntermissionEnd = () => {
               existingCircuitForQuestion={existingCircuitForQuestion}
               onShowCircuitBuilder={() => setShowCircuitBuilder(true)}
               isCircuitBuilderOpen={showCircuitBuilder}
+              searchQuery={searchQuery}
               // Add formatting props
               selectedTool={selectedTool}
               onClearPassageFormatting={clearPassageFormattingRef}
@@ -534,6 +562,7 @@ const handleIntermissionEnd = () => {
               existingCircuitForQuestion={existingCircuitForQuestion}
               onShowCircuitBuilder={() => setShowCircuitBuilder(true)}
               isCircuitBuilderOpen={showCircuitBuilder}
+              searchQuery={searchQuery}
               // Add formatting props
               selectedTool={selectedTool}
               onClearPassageFormatting={clearPassageFormattingRef}
@@ -559,6 +588,9 @@ const handleIntermissionEnd = () => {
               greyedOutOptions={greyedOutOptions}
               onAnswerSelection={(optionIndex) => handleAnswerSelection(currentQuestionData.id, optionIndex)}
               onToggleGreyOut={handleToggleGreyOut}
+              selectedTool={selectedTool}
+              onClearAnswerFormatting={clearAnswerFormattingRef}
+              searchQuery={searchQuery}
             />
           </div>
         )}

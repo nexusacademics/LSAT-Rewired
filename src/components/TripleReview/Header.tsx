@@ -1,20 +1,22 @@
 // components/TripleReview/Header.tsx
-import React, { useState } from 'react';
-import { 
-  Timer, 
-  Play, 
-  Pause, 
-  Flag, 
-  ChevronRight, 
-  Brain, 
-  BookOpen, 
+import React, { useState, useEffect, useRef } from 'react';
+import {
+  Timer,
+  Play,
+  Pause,
+  Flag,
+  ChevronRight,
+  Brain,
+  BookOpen,
   Target,
   Underline,
   Highlighter,
   Palette,
   AlignLeft,
   RotateCcw,
-  Eraser
+  Eraser,
+  Search,
+  X
 } from 'lucide-react';
 import { TestSession, ProcessedQuestion } from '../../App';
 
@@ -65,6 +67,9 @@ interface HeaderProps {
   onTextSizeChange: (size: 'small' | 'medium' | 'large') => void;
   lineSpacing: 'normal' | 'relaxed' | 'loose';
   onLineSpacingChange: (spacing: 'normal' | 'relaxed' | 'loose') => void;
+  // Search props
+  searchQuery: string;
+  onSearchChange: (query: string) => void;
 }
 
 const getPhaseColor = (phase: string) => {
@@ -120,10 +125,41 @@ export const Header: React.FC<HeaderProps> = ({
   textSize,
   onTextSizeChange,
   lineSpacing,
-  onLineSpacingChange
+  onLineSpacingChange,
+  searchQuery,
+  onSearchChange
 }) => {
   const [showTextSizeDropdown, setShowTextSizeDropdown] = useState(false);
   const [showLineSpacingDropdown, setShowLineSpacingDropdown] = useState(false);
+  const [isSearchActive, setIsSearchActive] = useState(false);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  // Handle Ctrl-F to activate search
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+        e.preventDefault();
+        setIsSearchActive(true);
+        setTimeout(() => {
+          searchInputRef.current?.focus();
+        }, 0);
+      }
+
+      // Escape to close search
+      if (e.key === 'Escape' && isSearchActive) {
+        setIsSearchActive(false);
+        onSearchChange('');
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isSearchActive, onSearchChange]);
+
+  const handleSearchClose = () => {
+    setIsSearchActive(false);
+    onSearchChange('');
+  };
 
   const PhaseIcon = getPhaseIcon(session.phase);
   const phaseColor = getPhaseColor(session.phase);
@@ -300,8 +336,8 @@ export const Header: React.FC<HeaderProps> = ({
 
       {/* Formatting Toolbar */}
       <div className="border-t border-slate-200 px-6 py-3 bg-slate-50">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-1">
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center space-x-1 flex-shrink-0">
             {formattingTools.map((tool) => {
               const Icon = tool.icon;
               const isSelected = selectedTool === tool.id;
@@ -430,8 +466,40 @@ export const Header: React.FC<HeaderProps> = ({
               <RotateCcw className="h-4 w-4" />
             </button>
           </div>
-          
-          <div className="text-sm text-slate-500">
+
+          {/* Search Field */}
+          <div className="flex-1 max-w-md">
+            {isSearchActive ? (
+              <div className="flex items-center bg-white border border-blue-300 rounded-lg shadow-sm">
+                <Search className="h-4 w-4 text-slate-400 ml-3" />
+                <input
+                  ref={searchInputRef}
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => onSearchChange(e.target.value)}
+                  placeholder="Search in passage and answer choices..."
+                  className="flex-1 px-3 py-1.5 text-sm border-none focus:outline-none focus:ring-0"
+                />
+                <button
+                  onClick={handleSearchClose}
+                  className="p-1.5 text-slate-400 hover:text-slate-600 mr-2"
+                  title="Close search (Esc)"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => setIsSearchActive(true)}
+                className="flex items-center space-x-2 px-3 py-1.5 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors text-sm text-slate-600"
+              >
+                <Search className="h-4 w-4" />
+                <span>Search (Ctrl+F)</span>
+              </button>
+            )}
+          </div>
+
+          <div className="text-sm text-slate-500 flex-shrink-0">
             {selectedTool === 'eraser' ? (
               <span>Select formatted text to remove highlighting or underlining</span>
             ) : selectedTool ? (

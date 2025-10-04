@@ -520,8 +520,25 @@ const nodeTypes = {
   'correct-answer': CorrectAnswerNode,
 };
 
+// Define the props interface
+interface CircuitBuilderFlowProps {
+  onBack: () => void;
+  onSaveCircuit: (circuit: Circuit) => void;
+  questionData?: ProcessedQuestion;
+  session: TestSession;
+  existingCircuit?: Circuit;
+  containerHeight?: string;
+}
+
 // Main Circuit Builder Component
-const CircuitBuilderFlow = () => {
+const CircuitBuilderFlow: React.FC<CircuitBuilderFlowProps> = ({
+  onBack,
+  onSaveCircuit,
+  questionData,
+  session,
+  existingCircuit,
+  containerHeight
+}) => {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [selectedNodeType, setSelectedNodeType] = useState<DiagramNode['type']>('conclusion-subject');
@@ -530,6 +547,72 @@ const CircuitBuilderFlow = () => {
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
    // UseReactFlow gives access to graph state and helpers
   const { getNodes, getEdges, project } = useReactFlow();
+
+  // Handle content changes from nodes - must be declared before useEffect that uses it
+  const handleNodeContentChange = useCallback((nodeId: string, content: string) => {
+    setNodes(nds => nds.map(node =>
+      node.id === nodeId
+        ? { ...node, data: { ...node.data, content } }
+        : node
+    ));
+  }, [setNodes]);
+
+  // Load existing circuit data when component mounts or existingCircuit changes
+  useEffect(() => {
+    console.log('Circuit Builder useEffect triggered');
+    console.log('existingCircuit:', existingCircuit);
+    console.log('questionData?.id:', questionData?.id);
+
+    // If there's an existing circuit for THIS question, load it
+    if (existingCircuit && existingCircuit.diagram.length > 0 && existingCircuit.questionId === questionData?.id) {
+      console.log('Loading existing circuit for current question:', existingCircuit);
+
+      // Convert DiagramNodes to React Flow Nodes
+      const loadedNodes: Node[] = existingCircuit.diagram.map(diagramNode => ({
+        id: diagramNode.id,
+        type: diagramNode.type,
+        position: diagramNode.position,
+        data: {
+          content: diagramNode.content,
+          onContentChange: handleNodeContentChange
+        },
+        ...(diagramNode.size && {
+          style: {
+            width: diagramNode.size.width,
+            height: diagramNode.size.height
+          }
+        })
+      }));
+
+      // Convert connections to React Flow Edges
+      const loadedEdges: Edge[] = [];
+      existingCircuit.diagram.forEach(diagramNode => {
+        diagramNode.connections.forEach(connection => {
+          loadedEdges.push({
+            id: `edge-${diagramNode.id}-${connection.targetId}`,
+            source: diagramNode.id,
+            target: connection.targetId,
+            markerEnd: { type: MarkerType.ArrowClosed },
+            style: {
+              stroke: connection.style === 'dashed' ? '#64748b' : '#64748b',
+              strokeWidth: 2,
+              strokeDasharray: connection.style === 'dashed' ? '5,5' : undefined
+            }
+          });
+        });
+      });
+
+      setNodes(loadedNodes);
+      setEdges(loadedEdges);
+      console.log(`Loaded ${loadedNodes.length} nodes and ${loadedEdges.length} edges`);
+    } else {
+      // No circuit for this question - start fresh
+      console.log('No circuit for this question - clearing canvas');
+      setNodes([]);
+      setEdges([]);
+    }
+  }, [existingCircuit, questionData?.id, handleNodeContentChange]);
+
  useEffect(() => {
   const handleKeyDown = (event: KeyboardEvent) => {
     if (event.key === 'Delete') {
@@ -572,15 +655,6 @@ const CircuitBuilderFlow = () => {
     { type: 'assumption' as const, label: 'Assumption/Flaw', color: 'bg-red-100 border-red-300 text-red-800', description: 'Unstated Premise implied by the author' },
     { type: 'correct-answer' as const, label: 'Correct Answer', color: 'bg-green-200 border-green-400 text-green-800', description: 'The correct answer choice for the question' }
   ];
-
-  // Handle content changes from nodes
-  const handleNodeContentChange = useCallback((nodeId: string, content: string) => {
-    setNodes(nds => nds.map(node => 
-      node.id === nodeId 
-        ? { ...node, data: { ...node.data, content } }
-        : node
-    ));
-  }, [setNodes]);
 
   // Handle edge connections
   const [selectedEdgeIds, setSelectedEdgeIds] = useState<Set<string>>(new Set());
@@ -660,16 +734,62 @@ const CircuitBuilderFlow = () => {
     setSaveStatus('saving');
     try {
       const score = calculateAnalysisScore();
-      // Here you would typically call your save function
-      console.log('Saving circuit with score:', score);
-      setSaveStatus('saved');
-      setTimeout(() => setSaveStatus('idle'), 2000);
+      
+      // Convert React Flow nodes and edges back to DiagramNode format
+      const currentNodes = getNodes();
+      const currentEdges = getEdges();
+      
+      const diagramNodes: DiagramNode[] = currentNodes.map(node => {
+        // Find all outgoing edges for this node
+        const outgoingEdges = currentEdges.filter(edge => edge.source === node.id);
+        const connections = outgoingEdges.map(edge => ({
+          targetId: edge.target!,
+          style: (edge.style?.strokeDasharray ? 'dashed' : 'solid') as 'solid' | 'dashed'
+        }));
+
+        return {
+          id: node.id,
+          type: node.type as DiagramNode['type'],
+          shape: 'rounded-rectangle' as const, // Default shape
+          content: node.data.content || '',
+          position: node.position,
+          size: node.style?.width && node.style?.height ? {
+            width: typeof node.style.width === 'number' ? node.style.width : parseInt(node.style.width as string),
+            height: typeof node.style.height === 'number' ? node.style.height : parseInt(node.style.height as string)
+          } : undefined,
+          connections
+        };
+      });
+
+      // Create or update the circuit
+      const circuit: Circuit = {
+        id: existingCircuit?.id || `circuit-${Date.now()}`,
+        questionId: questionData?.id || 'unknown',
+        diagram: diagramNodes,
+        annotations: existingCircuit?.annotations || [],
+        analysisQuality: score,
+        createdAt: existingCircuit?.createdAt || new Date()
+      };
+
+      console.log('Saving circuit:', circuit);
+      console.log('onSaveCircuit type:', typeof onSaveCircuit);
+
+      // Call the parent callback to save the circuit
+      if (typeof onSaveCircuit === 'function') {
+        onSaveCircuit(circuit);
+        setSaveStatus('saved');
+        setTimeout(() => setSaveStatus('idle'), 2000);
+      } else {
+        console.error('onSaveCircuit is not a function:', onSaveCircuit);
+        setSaveStatus('error');
+        setTimeout(() => setSaveStatus('idle'), 3000);
+      }
     } catch (error) {
       console.error('Failed to save circuit:', error);
       setSaveStatus('error');
       setTimeout(() => setSaveStatus('idle'), 3000);
     }
-  }, [calculateAnalysisScore]);
+  }, [calculateAnalysisScore, getNodes, getEdges, existingCircuit, questionData?.id, onSaveCircuit]);
 
   // Delete selected elements
   const deleteSelected = useCallback(() => {
@@ -683,13 +803,89 @@ const CircuitBuilderFlow = () => {
     setEdges([]);
   }, [setNodes, setEdges]);
 
+  // Handle close with auto-save
+  const handleClose = useCallback(() => {
+    // Auto-save before closing if there are any nodes
+    if (getNodes().length > 0) {
+      saveCircuit();
+    }
+    onBack();
+  }, [getNodes, saveCircuit, onBack]);
+
+  // Auto-save on unmount if there are changes
+  // Use refs to avoid re-running the effect on every prop change
+  const savedCallbackRef = useRef(onSaveCircuit);
+  const existingCircuitRef = useRef(existingCircuit);
+
+  // CRITICAL: Capture the initial questionId and NEVER update it
+  // This prevents the circuit from being saved to the wrong question if the user
+  // navigates to a different question while the Circuit Builder is still open
+  const initialQuestionIdRef = useRef(questionData?.id);
+
+  useEffect(() => {
+    savedCallbackRef.current = onSaveCircuit;
+    existingCircuitRef.current = existingCircuit;
+    // DO NOT update initialQuestionIdRef here - it must stay fixed
+  });
+
+  useEffect(() => {
+    return () => {
+      // Save on unmount if there are nodes
+      const currentNodes = getNodes();
+      console.log('CircuitBuilder unmounting. Node count:', currentNodes.length);
+      console.log('Will save to question ID:', initialQuestionIdRef.current);
+
+      if (currentNodes.length > 0) {
+        // Force a synchronous save before unmounting
+        try {
+          const currentEdges = getEdges();
+          const score = calculateAnalysisScore(currentNodes, currentEdges);
+
+          const diagramNodes: DiagramNode[] = currentNodes.map(node => {
+            const outgoingEdges = currentEdges.filter(edge => edge.source === node.id);
+            const connections = outgoingEdges.map(edge => ({
+              targetId: edge.target,
+              style: edge.style?.strokeDasharray ? 'dashed' : 'solid'
+            }));
+
+            return {
+              id: node.id,
+              type: node.type as DiagramNode['type'],
+              shape: 'rounded-rectangle' as const,
+              content: node.data.content || '',
+              position: node.position,
+              size: node.style?.width && node.style?.height ? {
+                width: typeof node.style.width === 'number' ? node.style.width : parseInt(node.style.width as string),
+                height: typeof node.style.height === 'number' ? node.style.height : parseInt(node.style.height as string)
+              } : undefined,
+              connections
+            };
+          });
+
+          const circuit: Circuit = {
+            id: existingCircuitRef.current?.id || `circuit-${Date.now()}`,
+            questionId: initialQuestionIdRef.current || 'unknown',
+            diagram: diagramNodes,
+            annotations: existingCircuitRef.current?.annotations || [],
+            analysisQuality: score,
+            createdAt: existingCircuitRef.current?.createdAt || new Date()
+          };
+
+          console.log('Auto-saving circuit on unmount:', circuit.id, 'to question:', circuit.questionId);
+          savedCallbackRef.current(circuit);
+        } catch (error) {
+          console.error('Failed to auto-save on unmount:', error);
+        }
+      }
+    };
+  }, []); // Empty deps - only register once
+
   return (
    <div className="flex flex-col h-full bg-slate-50">
       {/* Header */}
       <div className="bg-white border-b border-slate-200 px-6 py-4 flex-shrink-0">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            
             <h1 className="text-xl font-semibold text-slate-900">Circuit Builder</h1>
           </div>
 
@@ -763,6 +959,7 @@ const CircuitBuilderFlow = () => {
 
         {/* React Flow Canvas */}
         <div className="flex-1 min-w-0 relative" ref={reactFlowWrapper}
+            style={{ height: containerHeight || 'calc(100vh - 200px)' }}
             onDragOver={(event) => event.preventDefault()}
             onDrop={(event) => {
               event.preventDefault();
@@ -799,7 +996,6 @@ const CircuitBuilderFlow = () => {
             onEdgeClick={onEdgeClick}
             connectionMode={ConnectionMode.Loose}
             onPaneClick={onPaneClick}
-            onEdgeClick={onEdgeClick}
             onNodeClick={onNodeClick}
             
             defaultViewport={{ x: 0, y: 0, zoom: 1.0 }}
@@ -856,10 +1052,10 @@ const CircuitBuilderFlow = () => {
 };
 
 // Wrapper component with ReactFlowProvider
-const CircuitBuilderWithProvider = () => {
+const CircuitBuilderWithProvider: React.FC<CircuitBuilderFlowProps> = (props) => {
   return (
     <ReactFlowProvider>
-      <CircuitBuilderFlow />
+      <CircuitBuilderFlow {...props} />
     </ReactFlowProvider>
   );
 };
