@@ -310,8 +310,6 @@ const TripleReview: React.FC<TripleReviewProps> = ({
   );
 
   const handleSaveCircuitFromBuilder = (updatedCircuit: Circuit) => {
-    if (!currentQuestionData) return;
-
     let updatedCircuits;
     if (existingCircuitForQuestion) {
       updatedCircuits = session.circuits.map((c) =>

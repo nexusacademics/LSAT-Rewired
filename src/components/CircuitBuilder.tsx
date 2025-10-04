@@ -787,19 +787,70 @@ const CircuitBuilderFlow: React.FC<CircuitBuilderFlowProps> = ({
     setEdges([]);
   }, [setNodes, setEdges]);
 
+  // Handle close with auto-save
+  const handleClose = useCallback(() => {
+    // Auto-save before closing if there are any nodes
+    if (getNodes().length > 0) {
+      saveCircuit();
+    }
+    onBack();
+  }, [getNodes, saveCircuit, onBack]);
+
+  // Auto-save on unmount if there are changes
+  useEffect(() => {
+    return () => {
+      // Save on unmount if there are nodes
+      const currentNodes = getNodes();
+      if (currentNodes.length > 0) {
+        // Force a synchronous save before unmounting
+        try {
+          const currentEdges = getEdges();
+          const score = calculateAnalysisScore(currentNodes, currentEdges);
+
+          const diagramNodes: DiagramNode[] = currentNodes.map(node => {
+            const outgoingEdges = currentEdges.filter(edge => edge.source === node.id);
+            const connections = outgoingEdges.map(edge => ({
+              targetId: edge.target,
+              style: edge.style?.strokeDasharray ? 'dashed' : 'solid'
+            }));
+
+            return {
+              id: node.id,
+              type: node.type as DiagramNode['type'],
+              shape: 'rounded-rectangle' as const,
+              content: node.data.content || '',
+              position: node.position,
+              size: node.style?.width && node.style?.height ? {
+                width: typeof node.style.width === 'number' ? node.style.width : parseInt(node.style.width as string),
+                height: typeof node.style.height === 'number' ? node.style.height : parseInt(node.style.height as string)
+              } : undefined,
+              connections
+            };
+          });
+
+          const circuit: Circuit = {
+            id: existingCircuit?.id || `circuit-${Date.now()}`,
+            questionId: questionData?.id || 'unknown',
+            diagram: diagramNodes,
+            annotations: existingCircuit?.annotations || [],
+            analysisQuality: score,
+            createdAt: existingCircuit?.createdAt || new Date()
+          };
+
+          onSaveCircuit(circuit);
+        } catch (error) {
+          console.error('Failed to auto-save on unmount:', error);
+        }
+      }
+    };
+  }, []); // Empty deps - we want the cleanup to capture latest values
+
   return (
    <div className="flex flex-col h-full bg-slate-50">
       {/* Header */}
       <div className="bg-white border-b border-slate-200 px-6 py-4 flex-shrink-0">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            
-            <button
-              onClick={onBack}
-              className="px-4 py-2 text-slate-600 hover:text-slate-900 border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors"
-            >
-              ← Back
-            </button>
             <h1 className="text-xl font-semibold text-slate-900">Circuit Builder</h1>
           </div>
 
