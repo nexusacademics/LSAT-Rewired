@@ -301,9 +301,9 @@ const findMatchingTextNodeInDOM = (root: HTMLElement, text: string): Text | null
           <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
             <p className="text-sm text-blue-700">
               {selectedTool === 'eraser' ? (
-                <><strong>Eraser mode active:</strong> Select formatted text in the passage to remove highlighting or underlining.</>
+                <><strong>Eraser mode active:</strong> Select formatted text in the passage or answer choices to remove highlighting or underlining.</>
               ) : (
-                <><strong>{selectedTool === 'underline' ? 'Underline' : 'Highlight'} mode active:</strong> Select text in the passage above to apply formatting.</>
+                <><strong>{selectedTool === 'underline' ? 'Underline' : 'Highlight'} mode active:</strong> Select text in the passage above or answer choices to apply formatting.</>
               )}
             </p>
           </div>

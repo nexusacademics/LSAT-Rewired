@@ -52,6 +52,7 @@ const TripleReview: React.FC<TripleReviewProps> = ({
   // Add formatting toolbar state
   const [selectedTool, setSelectedTool] = useState<string | null>(null);
   const clearPassageFormattingRef = useRef<(() => void) | null>(null);
+  const clearAnswerFormattingRef = useRef<(() => void) | null>(null);
 
   // Determine sections and current question
   const currentSections: ProcessedSection[] = session.selectedSectionId
@@ -88,6 +89,9 @@ const TripleReview: React.FC<TripleReviewProps> = ({
   const handleClearFormatting = () => {
     if (clearPassageFormattingRef.current) {
       clearPassageFormattingRef.current();
+    }
+    if (clearAnswerFormattingRef.current) {
+      clearAnswerFormattingRef.current();
     }
     setSelectedTool(null);
   };
@@ -559,6 +563,8 @@ const handleIntermissionEnd = () => {
               greyedOutOptions={greyedOutOptions}
               onAnswerSelection={(optionIndex) => handleAnswerSelection(currentQuestionData.id, optionIndex)}
               onToggleGreyOut={handleToggleGreyOut}
+              selectedTool={selectedTool}
+              onClearAnswerFormatting={clearAnswerFormattingRef}
             />
           </div>
         )}
