@@ -816,12 +816,16 @@ const CircuitBuilderFlow: React.FC<CircuitBuilderFlowProps> = ({
   // Use refs to avoid re-running the effect on every prop change
   const savedCallbackRef = useRef(onSaveCircuit);
   const existingCircuitRef = useRef(existingCircuit);
-  const questionDataRef = useRef(questionData);
+
+  // CRITICAL: Capture the initial questionId and NEVER update it
+  // This prevents the circuit from being saved to the wrong question if the user
+  // navigates to a different question while the Circuit Builder is still open
+  const initialQuestionIdRef = useRef(questionData?.id);
 
   useEffect(() => {
     savedCallbackRef.current = onSaveCircuit;
     existingCircuitRef.current = existingCircuit;
-    questionDataRef.current = questionData;
+    // DO NOT update initialQuestionIdRef here - it must stay fixed
   });
 
   useEffect(() => {
@@ -857,7 +861,7 @@ const CircuitBuilderFlow: React.FC<CircuitBuilderFlowProps> = ({
 
           const circuit: Circuit = {
             id: existingCircuitRef.current?.id || `circuit-${Date.now()}`,
-            questionId: questionDataRef.current?.id || 'unknown',
+            questionId: initialQuestionIdRef.current || 'unknown',
             diagram: diagramNodes,
             annotations: existingCircuitRef.current?.annotations || [],
             analysisQuality: score,
@@ -988,7 +992,6 @@ const CircuitBuilderFlow: React.FC<CircuitBuilderFlowProps> = ({
             onEdgeClick={onEdgeClick}
             connectionMode={ConnectionMode.Loose}
             onPaneClick={onPaneClick}
-            onEdgeClick={onEdgeClick}
             onNodeClick={onNodeClick}
             
             defaultViewport={{ x: 0, y: 0, zoom: 1.0 }}
