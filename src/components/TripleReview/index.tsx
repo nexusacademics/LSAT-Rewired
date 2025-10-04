@@ -515,6 +515,7 @@ const handleIntermissionEnd = () => {
               existingCircuitForQuestion={existingCircuitForQuestion}
               onShowCircuitBuilder={() => setShowCircuitBuilder(true)}
               isCircuitBuilderOpen={showCircuitBuilder}
+              searchQuery={searchQuery}
               // Add formatting props
               selectedTool={selectedTool}
               onClearPassageFormatting={clearPassageFormattingRef}
@@ -543,6 +544,7 @@ const handleIntermissionEnd = () => {
               existingCircuitForQuestion={existingCircuitForQuestion}
               onShowCircuitBuilder={() => setShowCircuitBuilder(true)}
               isCircuitBuilderOpen={showCircuitBuilder}
+              searchQuery={searchQuery}
               // Add formatting props
               selectedTool={selectedTool}
               onClearPassageFormatting={clearPassageFormattingRef}

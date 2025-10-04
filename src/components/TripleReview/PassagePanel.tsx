@@ -62,18 +62,7 @@ export const PassagePanel: React.FC<PassagePanelProps> = ({
 
   // Apply search highlighting to the DOM after render
   useEffect(() => {
-    if (!passageRef.current || !searchQuery) {
-      // Remove existing search highlights
-      if (passageRef.current) {
-        const existingHighlights = passageRef.current.querySelectorAll('.search-highlight');
-        existingHighlights.forEach(highlight => {
-          const textNode = document.createTextNode(highlight.textContent || '');
-          highlight.parentNode?.replaceChild(textNode, highlight);
-        });
-        passageRef.current.normalize();
-      }
-      return;
-    }
+    if (!passageRef.current) return;
 
     // Remove existing search highlights first
     const existingHighlights = passageRef.current.querySelectorAll('.search-highlight');
@@ -82,6 +71,10 @@ export const PassagePanel: React.FC<PassagePanelProps> = ({
       highlight.parentNode?.replaceChild(textNode, highlight);
     });
     passageRef.current.normalize();
+
+    if (!searchQuery || searchQuery.trim() === '') {
+      return;
+    }
 
     // Walk through all text nodes and highlight matches
     const walker = document.createTreeWalker(
