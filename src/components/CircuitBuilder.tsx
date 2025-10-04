@@ -762,12 +762,18 @@ const CircuitBuilderFlow: React.FC<CircuitBuilderFlowProps> = ({
       };
 
       console.log('Saving circuit:', circuit);
+      console.log('onSaveCircuit type:', typeof onSaveCircuit);
 
       // Call the parent callback to save the circuit
-      onSaveCircuit(circuit);
-
-      setSaveStatus('saved');
-      setTimeout(() => setSaveStatus('idle'), 2000);
+      if (typeof onSaveCircuit === 'function') {
+        onSaveCircuit(circuit);
+        setSaveStatus('saved');
+        setTimeout(() => setSaveStatus('idle'), 2000);
+      } else {
+        console.error('onSaveCircuit is not a function:', onSaveCircuit);
+        setSaveStatus('error');
+        setTimeout(() => setSaveStatus('idle'), 3000);
+      }
     } catch (error) {
       console.error('Failed to save circuit:', error);
       setSaveStatus('error');
@@ -797,6 +803,11 @@ const CircuitBuilderFlow: React.FC<CircuitBuilderFlowProps> = ({
   }, [getNodes, saveCircuit, onBack]);
 
   // Auto-save on unmount if there are changes
+  const savedCallbackRef = useRef(onSaveCircuit);
+  useEffect(() => {
+    savedCallbackRef.current = onSaveCircuit;
+  }, [onSaveCircuit]);
+
   useEffect(() => {
     return () => {
       // Save on unmount if there are nodes
@@ -837,13 +848,13 @@ const CircuitBuilderFlow: React.FC<CircuitBuilderFlowProps> = ({
             createdAt: existingCircuit?.createdAt || new Date()
           };
 
-          onSaveCircuit(circuit);
+          savedCallbackRef.current(circuit);
         } catch (error) {
           console.error('Failed to auto-save on unmount:', error);
         }
       }
     };
-  }, []); // Empty deps - we want the cleanup to capture latest values
+  }, [getNodes, getEdges, calculateAnalysisScore, existingCircuit, questionData]);
 
   return (
    <div className="flex flex-col h-full bg-slate-50">
