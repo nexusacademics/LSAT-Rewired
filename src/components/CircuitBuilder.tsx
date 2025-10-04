@@ -559,9 +559,14 @@ const CircuitBuilderFlow: React.FC<CircuitBuilderFlowProps> = ({
 
   // Load existing circuit data when component mounts or existingCircuit changes
   useEffect(() => {
-    if (existingCircuit && existingCircuit.diagram.length > 0) {
-      console.log('Loading existing circuit:', existingCircuit);
-      
+    console.log('Circuit Builder useEffect triggered');
+    console.log('existingCircuit:', existingCircuit);
+    console.log('questionData?.id:', questionData?.id);
+
+    // If there's an existing circuit for THIS question, load it
+    if (existingCircuit && existingCircuit.diagram.length > 0 && existingCircuit.questionId === questionData?.id) {
+      console.log('Loading existing circuit for current question:', existingCircuit);
+
       // Convert DiagramNodes to React Flow Nodes
       const loadedNodes: Node[] = existingCircuit.diagram.map(diagramNode => ({
         id: diagramNode.id,
@@ -571,11 +576,11 @@ const CircuitBuilderFlow: React.FC<CircuitBuilderFlowProps> = ({
           content: diagramNode.content,
           onContentChange: handleNodeContentChange
         },
-        ...(diagramNode.size && { 
-          style: { 
-            width: diagramNode.size.width, 
-            height: diagramNode.size.height 
-          } 
+        ...(diagramNode.size && {
+          style: {
+            width: diagramNode.size.width,
+            height: diagramNode.size.height
+          }
         })
       }));
 
@@ -588,8 +593,8 @@ const CircuitBuilderFlow: React.FC<CircuitBuilderFlowProps> = ({
             source: diagramNode.id,
             target: connection.targetId,
             markerEnd: { type: MarkerType.ArrowClosed },
-            style: { 
-              stroke: connection.style === 'dashed' ? '#64748b' : '#64748b', 
+            style: {
+              stroke: connection.style === 'dashed' ? '#64748b' : '#64748b',
               strokeWidth: 2,
               strokeDasharray: connection.style === 'dashed' ? '5,5' : undefined
             }
@@ -600,8 +605,13 @@ const CircuitBuilderFlow: React.FC<CircuitBuilderFlowProps> = ({
       setNodes(loadedNodes);
       setEdges(loadedEdges);
       console.log(`Loaded ${loadedNodes.length} nodes and ${loadedEdges.length} edges`);
+    } else {
+      // No circuit for this question - start fresh
+      console.log('No circuit for this question - clearing canvas');
+      setNodes([]);
+      setEdges([]);
     }
-  }, [existingCircuit, handleNodeContentChange]);
+  }, [existingCircuit, questionData?.id, handleNodeContentChange]);
 
  useEffect(() => {
   const handleKeyDown = (event: KeyboardEvent) => {
