@@ -832,6 +832,9 @@ const CircuitBuilderFlow: React.FC<CircuitBuilderFlowProps> = ({
     return () => {
       // Save on unmount if there are nodes
       const currentNodes = getNodes();
+      console.log('CircuitBuilder unmounting. Node count:', currentNodes.length);
+      console.log('Will save to question ID:', initialQuestionIdRef.current);
+
       if (currentNodes.length > 0) {
         // Force a synchronous save before unmounting
         try {
@@ -868,6 +871,7 @@ const CircuitBuilderFlow: React.FC<CircuitBuilderFlowProps> = ({
             createdAt: existingCircuitRef.current?.createdAt || new Date()
           };
 
+          console.log('Auto-saving circuit on unmount:', circuit.id, 'to question:', circuit.questionId);
           savedCallbackRef.current(circuit);
         } catch (error) {
           console.error('Failed to auto-save on unmount:', error);
