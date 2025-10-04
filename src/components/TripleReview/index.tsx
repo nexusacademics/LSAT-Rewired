@@ -310,16 +310,31 @@ const TripleReview: React.FC<TripleReviewProps> = ({
     (c) => c.questionId === currentQuestionData?.id
   );
 
+  // Debug logging
+  useEffect(() => {
+    console.log('Current Question ID:', currentQuestionData?.id);
+    console.log('All circuits:', session.circuits.map(c => ({ id: c.id, questionId: c.questionId })));
+    console.log('Existing circuit for question:', existingCircuitForQuestion);
+  }, [currentQuestionData?.id, session.circuits, existingCircuitForQuestion]);
+
   const handleSaveCircuitFromBuilder = (updatedCircuit: Circuit) => {
+    console.log('=== SAVING CIRCUIT ===');
+    console.log('Updated circuit:', updatedCircuit);
+    console.log('Current question ID:', currentQuestionData?.id);
+    console.log('Existing circuit for question:', existingCircuitForQuestion);
+
     let updatedCircuits;
     if (existingCircuitForQuestion) {
+      console.log('Updating existing circuit');
       updatedCircuits = session.circuits.map((c) =>
         c.id === updatedCircuit.id ? updatedCircuit : c
       );
     } else {
+      console.log('Adding new circuit');
       updatedCircuits = [...session.circuits, updatedCircuit];
     }
 
+    console.log('All circuits after update:', updatedCircuits.map(c => ({ id: c.id, questionId: c.questionId })));
     onUpdateSession({ ...session, circuits: updatedCircuits });
     setLastSavedScore(updatedCircuit.analysisQuality);
     setShowSuccessMessage(true);
