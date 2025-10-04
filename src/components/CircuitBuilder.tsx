@@ -803,10 +803,16 @@ const CircuitBuilderFlow: React.FC<CircuitBuilderFlowProps> = ({
   }, [getNodes, saveCircuit, onBack]);
 
   // Auto-save on unmount if there are changes
+  // Use refs to avoid re-running the effect on every prop change
   const savedCallbackRef = useRef(onSaveCircuit);
+  const existingCircuitRef = useRef(existingCircuit);
+  const questionDataRef = useRef(questionData);
+
   useEffect(() => {
     savedCallbackRef.current = onSaveCircuit;
-  }, [onSaveCircuit]);
+    existingCircuitRef.current = existingCircuit;
+    questionDataRef.current = questionData;
+  });
 
   useEffect(() => {
     return () => {
@@ -840,12 +846,12 @@ const CircuitBuilderFlow: React.FC<CircuitBuilderFlowProps> = ({
           });
 
           const circuit: Circuit = {
-            id: existingCircuit?.id || `circuit-${Date.now()}`,
-            questionId: questionData?.id || 'unknown',
+            id: existingCircuitRef.current?.id || `circuit-${Date.now()}`,
+            questionId: questionDataRef.current?.id || 'unknown',
             diagram: diagramNodes,
-            annotations: existingCircuit?.annotations || [],
+            annotations: existingCircuitRef.current?.annotations || [],
             analysisQuality: score,
-            createdAt: existingCircuit?.createdAt || new Date()
+            createdAt: existingCircuitRef.current?.createdAt || new Date()
           };
 
           savedCallbackRef.current(circuit);
@@ -854,7 +860,7 @@ const CircuitBuilderFlow: React.FC<CircuitBuilderFlowProps> = ({
         }
       }
     };
-  }, [getNodes, getEdges, calculateAnalysisScore, existingCircuit, questionData]);
+  }, []); // Empty deps - only register once
 
   return (
    <div className="flex flex-col h-full bg-slate-50">
