@@ -323,8 +323,12 @@ const TripleReview: React.FC<TripleReviewProps> = ({
     console.log('Current question ID:', currentQuestionData?.id);
     console.log('Existing circuit for question:', existingCircuitForQuestion);
 
+    // Find existing circuit by the circuit's questionId (not current question)
+    // This handles the case where user navigates away while Circuit Builder is still open
+    const existingCircuit = session.circuits.find(c => c.questionId === updatedCircuit.questionId);
+
     let updatedCircuits;
-    if (existingCircuitForQuestion) {
+    if (existingCircuit) {
       console.log('Updating existing circuit');
       updatedCircuits = session.circuits.map((c) =>
         c.id === updatedCircuit.id ? updatedCircuit : c
