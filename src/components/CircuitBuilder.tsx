@@ -1029,10 +1029,10 @@ const CircuitBuilderFlow: React.FC<CircuitBuilderFlowProps> = ({
 };
 
 // Wrapper component with ReactFlowProvider
-const CircuitBuilderWithProvider = () => {
+const CircuitBuilderWithProvider: React.FC<CircuitBuilderFlowProps> = (props) => {
   return (
     <ReactFlowProvider>
-      <CircuitBuilderFlow />
+      <CircuitBuilderFlow {...props} />
     </ReactFlowProvider>
   );
 };
