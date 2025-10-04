@@ -40,24 +40,103 @@ export const PassagePanel: React.FC<PassagePanelProps> = ({
       return text;
     }
 
-    const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+    const escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp(`(${escapedQuery})`, 'gi');
     const parts = text.split(regex);
 
     return parts.map((part, index) => {
-      if (regex.test(part)) {
+      if (part.toLowerCase() === query.toLowerCase()) {
         return (
           <mark
             key={index}
-            className="bg-blue-300 text-slate-900 rounded px-0.5"
-            style={{ backgroundColor: '#93c5fd' }}
+            className="search-highlight"
+            style={{ backgroundColor: '#93c5fd', color: '#1e293b', borderRadius: '2px', padding: '0 2px' }}
           >
             {part}
           </mark>
         );
       }
-      return part;
+      return <span key={index}>{part}</span>;
     });
   };
+
+  // Apply search highlighting to the DOM after render
+  useEffect(() => {
+    if (!passageRef.current || !searchQuery) {
+      // Remove existing search highlights
+      if (passageRef.current) {
+        const existingHighlights = passageRef.current.querySelectorAll('.search-highlight');
+        existingHighlights.forEach(highlight => {
+          const textNode = document.createTextNode(highlight.textContent || '');
+          highlight.parentNode?.replaceChild(textNode, highlight);
+        });
+        passageRef.current.normalize();
+      }
+      return;
+    }
+
+    // Remove existing search highlights first
+    const existingHighlights = passageRef.current.querySelectorAll('.search-highlight');
+    existingHighlights.forEach(highlight => {
+      const textNode = document.createTextNode(highlight.textContent || '');
+      highlight.parentNode?.replaceChild(textNode, highlight);
+    });
+    passageRef.current.normalize();
+
+    // Walk through all text nodes and highlight matches
+    const walker = document.createTreeWalker(
+      passageRef.current,
+      NodeFilter.SHOW_TEXT,
+      null
+    );
+
+    const textNodes: Text[] = [];
+    let node: Node | null;
+    while ((node = walker.nextNode())) {
+      textNodes.push(node as Text);
+    }
+
+    const escapedQuery = searchQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp(escapedQuery, 'gi');
+
+    textNodes.forEach(textNode => {
+      const text = textNode.nodeValue || '';
+      const matches = Array.from(text.matchAll(new RegExp(escapedQuery, 'gi')));
+
+      if (matches.length === 0) return;
+
+      const fragment = document.createDocumentFragment();
+      let lastIndex = 0;
+
+      matches.forEach(match => {
+        const matchIndex = match.index!;
+
+        // Add text before match
+        if (matchIndex > lastIndex) {
+          fragment.appendChild(document.createTextNode(text.slice(lastIndex, matchIndex)));
+        }
+
+        // Add highlighted match
+        const mark = document.createElement('mark');
+        mark.className = 'search-highlight';
+        mark.style.backgroundColor = '#93c5fd';
+        mark.style.color = '#1e293b';
+        mark.style.borderRadius = '2px';
+        mark.style.padding = '0 2px';
+        mark.textContent = match[0];
+        fragment.appendChild(mark);
+
+        lastIndex = matchIndex + match[0].length;
+      });
+
+      // Add remaining text
+      if (lastIndex < text.length) {
+        fragment.appendChild(document.createTextNode(text.slice(lastIndex)));
+      }
+
+      textNode.parentNode?.replaceChild(fragment, textNode);
+    });
+  }, [searchQuery]);
 
   // Get text size classes
   const getTextSizeClass = () => {
@@ -317,9 +396,7 @@ const findMatchingTextNodeInDOM = (root: HTMLElement, text: string): Text | null
             onMouseUp={handleMouseUp}
             style={{ userSelect: selectedTool ? 'text' : 'auto' }}
           >
-            <div className="whitespace-pre-line">
-              {searchQuery ? highlightSearchMatches(currentQuestionData.passage, searchQuery) : currentQuestionData.passage}
-            </div>
+            <div className="whitespace-pre-line">{currentQuestionData.passage}</div>
           </div>
         </div>
         
