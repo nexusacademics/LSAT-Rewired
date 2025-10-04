@@ -82,6 +82,7 @@ const TripleReview: React.FC<TripleReviewProps> = ({
     setShowSuccessMessage(false);
     setLastSavedScore(undefined);
     setSelectedTool(null); // Clear selected tool when navigating between questions
+    setShowCircuitBuilder(false); // Close Circuit Builder when navigating to a new question
   }, [currentQuestionData?.id]);
 
   // Formatting toolbar handlers
