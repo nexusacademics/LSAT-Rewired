@@ -54,6 +54,9 @@ const TripleReview: React.FC<TripleReviewProps> = ({
   const clearPassageFormattingRef = useRef<(() => void) | null>(null);
   const clearAnswerFormattingRef = useRef<(() => void) | null>(null);
 
+  // Search state
+  const [searchQuery, setSearchQuery] = useState<string>('');
+
   // Determine sections and current question
   const currentSections: ProcessedSection[] = session.selectedSectionId
     ? processedPrepTest.sections.filter(sec => sec.id === session.selectedSectionId)
@@ -487,6 +490,8 @@ const handleIntermissionEnd = () => {
         onTextSizeChange={handleTextSizeChange}
         lineSpacing={lineSpacing}
         onLineSpacingChange={handleLineSpacingChange}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
       />
 
 
@@ -565,6 +570,7 @@ const handleIntermissionEnd = () => {
               onToggleGreyOut={handleToggleGreyOut}
               selectedTool={selectedTool}
               onClearAnswerFormatting={clearAnswerFormattingRef}
+              searchQuery={searchQuery}
             />
           </div>
         )}

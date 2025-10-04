@@ -34,6 +34,31 @@ export const PassagePanel: React.FC<PassagePanelProps> = ({
 }) => {
   const passageRef = useRef<HTMLDivElement>(null);
 
+  // Helper function to highlight search matches
+  const highlightSearchMatches = (text: string, query: string): React.ReactNode => {
+    if (!query || query.trim() === '') {
+      return text;
+    }
+
+    const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+    const parts = text.split(regex);
+
+    return parts.map((part, index) => {
+      if (regex.test(part)) {
+        return (
+          <mark
+            key={index}
+            className="bg-blue-300 text-slate-900 rounded px-0.5"
+            style={{ backgroundColor: '#93c5fd' }}
+          >
+            {part}
+          </mark>
+        );
+      }
+      return part;
+    });
+  };
+
   // Get text size classes
   const getTextSizeClass = () => {
     switch (textSize) {
@@ -286,13 +311,15 @@ const findMatchingTextNodeInDOM = (root: HTMLElement, text: string): Text | null
       {/* Passage */}
       <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
         <div className="prose max-w-none">
-          <div 
+          <div
             ref={passageRef}
             className={`text-slate-700 font-serif ${getTextSizeClass()} ${getLineSpacingClass()} ${selectedTool ? 'select-text cursor-text' : ''}`}
             onMouseUp={handleMouseUp}
             style={{ userSelect: selectedTool ? 'text' : 'auto' }}
           >
-            <div className="whitespace-pre-line">{currentQuestionData.passage}</div>
+            <div className="whitespace-pre-line">
+              {searchQuery ? highlightSearchMatches(currentQuestionData.passage, searchQuery) : currentQuestionData.passage}
+            </div>
           </div>
         </div>
         

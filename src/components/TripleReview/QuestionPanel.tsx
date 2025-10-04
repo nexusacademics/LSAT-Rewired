@@ -12,6 +12,7 @@ interface QuestionPanelProps {
   onToggleGreyOut: (questionId: string, optionIndex: number) => void;
   selectedTool: string | null;
   onClearAnswerFormatting: React.MutableRefObject<(() => void) | null>;
+  searchQuery: string;
 }
 
 export const QuestionPanel: React.FC<QuestionPanelProps> = ({
@@ -22,10 +23,36 @@ export const QuestionPanel: React.FC<QuestionPanelProps> = ({
   onAnswerSelection,
   onToggleGreyOut,
   selectedTool,
-  onClearAnswerFormatting
+  onClearAnswerFormatting,
+  searchQuery
 }) => {
   const [showAnswerChoices, setShowAnswerChoices] = useState(false);
   const answerChoicesRef = useRef<HTMLDivElement>(null);
+
+  // Helper function to highlight search matches
+  const highlightSearchMatches = (text: string, query: string): React.ReactNode => {
+    if (!query || query.trim() === '') {
+      return text;
+    }
+
+    const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+    const parts = text.split(regex);
+
+    return parts.map((part, index) => {
+      if (regex.test(part)) {
+        return (
+          <mark
+            key={index}
+            className="bg-blue-300 text-slate-900 rounded px-0.5"
+            style={{ backgroundColor: '#93c5fd' }}
+          >
+            {part}
+          </mark>
+        );
+      }
+      return part;
+    });
+  };
 
   // Reset overlay when question changes during blind review
   React.useEffect(() => {
@@ -248,7 +275,9 @@ export const QuestionPanel: React.FC<QuestionPanelProps> = ({
       <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
         <div className="mb-4">
           <h3 className="text-lg font-serif font-semibold text-slate-900">
-            <div className="whitespace-pre-line">{currentQuestionData.question}</div>
+            <div className="whitespace-pre-line">
+              {searchQuery ? highlightSearchMatches(currentQuestionData.question, searchQuery) : currentQuestionData.question}
+            </div>
           </h3>
         </div>
       </div>
@@ -328,7 +357,7 @@ export const QuestionPanel: React.FC<QuestionPanelProps> = ({
                   <span className={`text-slate-700 flex-1 ${
                     isGreyedOut ? 'opacity-50 text-slate-400 line-through' : ''
                   }`}>
-                    {option}
+                    {searchQuery ? highlightSearchMatches(option, searchQuery) : option}
                   </span>
                 </label>
 
