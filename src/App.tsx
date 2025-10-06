@@ -81,8 +81,6 @@ function AppContent() {
     exitSession
   } = useTestSessions(user);
 
-  const isLoading = authLoading || dataLoading;
-
   // Fetch test data when session starts or changes
   useEffect(() => {
     if (currentSession && currentView === 'triple-review') {
@@ -129,7 +127,7 @@ function AppContent() {
     setHasInitialChatWelcomeBeenSent(false);
   }, [exitSession, clearTestData]);
 
-  if (authLoading) {
+  if (authLoading || (authUser && !profile)) {
     return <LoadingSpinner />;
   }
 

@@ -108,7 +108,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (currentSession?.user) {
           setUser(currentSession.user);
           setSession(currentSession);
-          await loadUserData(currentSession.user);
+          try {
+            await loadUserData(currentSession.user);
+          } catch (loadError) {
+            console.error('Error loading user data:', loadError);
+          }
         }
       } catch (error) {
         console.error('Error initializing auth:', error);
