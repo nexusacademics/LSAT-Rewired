@@ -70,7 +70,7 @@ function AppContent() {
     } else if (!currentSession) {
       clearTestData();
     }
-  }, [currentSession, currentView, fetchTestById, clearTestData]);
+  }, [currentSession?.id, currentSession?.testId, currentSession?.selectedSectionId, currentView, fetchTestById, clearTestData]);
 
   // Derive current question data for chat
   const currentQuestionDataForChat = useCurrentQuestionData(
