@@ -132,12 +132,15 @@ export default function Navigation({ currentView, onViewChange, onOpenAuth, user
 
                   {profileMenuOpen && (
                     <div
-                      className={`absolute right-0 mt-2 w-48 rounded-lg shadow-lg py-1 ${
+                      className={`absolute right-0 mt-2 w-48 rounded-lg shadow-lg py-1 z-50 ${
                         theme === 'dark' ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'
                       }`}
                     >
                       <button
-                        onClick={() => handleLinkClick('profile')}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleLinkClick('profile');
+                        }}
                         className={`w-full flex items-center px-4 py-2 text-sm ${
                           theme === 'dark'
                             ? 'text-gray-300 hover:bg-gray-700 hover:text-white'
@@ -148,7 +151,10 @@ export default function Navigation({ currentView, onViewChange, onOpenAuth, user
                         Profile Settings
                       </button>
                       <button
-                        onClick={handleSignOut}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleSignOut();
+                        }}
                         className={`w-full flex items-center px-4 py-2 text-sm ${
                           theme === 'dark'
                             ? 'text-gray-300 hover:bg-gray-700 hover:text-white'
@@ -211,12 +217,15 @@ export default function Navigation({ currentView, onViewChange, onOpenAuth, user
 
                 {profileMenuOpen && (
                   <div
-                    className={`absolute right-0 mt-2 w-48 rounded-lg shadow-lg py-1 ${
+                    className={`absolute right-0 mt-2 w-48 rounded-lg shadow-lg py-1 z-50 ${
                       theme === 'dark' ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'
                     }`}
                   >
                     <button
-                      onClick={() => handleLinkClick('profile')}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleLinkClick('profile');
+                      }}
                       className={`w-full flex items-center px-4 py-2 text-sm ${
                         theme === 'dark'
                           ? 'text-gray-300 hover:bg-gray-700 hover:text-white'
@@ -227,7 +236,10 @@ export default function Navigation({ currentView, onViewChange, onOpenAuth, user
                       Profile Settings
                     </button>
                     <button
-                      onClick={handleSignOut}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleSignOut();
+                      }}
                       className={`w-full flex items-center px-4 py-2 text-sm ${
                         theme === 'dark'
                           ? 'text-gray-300 hover:bg-gray-700 hover:text-white'
