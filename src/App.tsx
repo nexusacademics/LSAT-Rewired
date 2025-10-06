@@ -1,8 +1,11 @@
 // App.tsx
 import React, { useState, useCallback, useEffect } from 'react';
 
+// Import contexts
+import { ThemeProvider, useTheme } from './contexts/ThemeContext';
+import { AuthProvider, useAuthContext } from './contexts/AuthContext';
+
 // Import custom hooks for separation of concerns
-import { useAuth } from './hooks/useAuth';
 import { useTestData } from './hooks/useTestData';
 import { useTestDetails } from './hooks/useTestDetails';
 import { useTestSessions } from './hooks/useTestSessions';
@@ -15,14 +18,16 @@ import FloatingChatButton from './components/FloatingChatButton';
 import LoadingSpinner from './components/LoadingSpinner';
 import Navigation from './components/Navigation';
 import StudyScheduleBuilder from './components/StudyScheduleBuilder';
+import ProfileSettings from './components/ProfileSettings';
+import AuthModal from './components/Auth/AuthModal';
 
 // Import types
 import type { TestSession } from './types/user';
 import type { ProcessedQuestion, ProcessedPrepTest } from './types/test-data';
-import { ThemeProvider, useTheme } from './contexts/ThemeContext';
+import type { User } from './types/user';
 
 // Define view type
-type AppView = 'dashboard' | 'triple-review' | 'performance' | 'studyscheduler' | 'subscription';
+type AppView = 'dashboard' | 'triple-review' | 'performance' | 'studyscheduler' | 'subscription' | 'profile';
 
 // Define Message interface for chat history
 export interface Message {
@@ -33,17 +38,33 @@ export interface Message {
   feedback?: 'helpful' | 'not-helpful';
 }
 
-// Main App Content Component (needs to be inside ThemeProvider)
+// Main App Content Component (needs to be inside ThemeProvider and AuthProvider)
 function AppContent() {
   const { theme } = useTheme();
+  const { user: authUser, profile, subscription, isLoading: authLoading } = useAuthContext();
+
   const [currentView, setCurrentView] = useState<AppView>('dashboard');
   const [messages, setMessages] = useState<Message[]>([]);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [lastProcessedQuestionIdForChat, setLastProcessedQuestionIdForChat] = useState<{ questionId: string, phase: string } | null>(null);
   const [hasInitialChatWelcomeBeenSent, setHasInitialChatWelcomeBeenSent] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
-  // Custom hooks handle specific concerns
-  const { user, supabaseUser, subscription, isLoading: authLoading } = useAuth();
+  // Convert auth user and profile to User type for compatibility
+  const user: User | null = authUser && profile ? {
+    id: authUser.id,
+    email: authUser.email || '',
+    name: profile.first_name || profile.username || authUser.email?.split('@')[0] || 'User',
+    firstName: profile.first_name,
+    lastName: profile.last_name,
+    username: profile.username,
+    stats: {
+      circuitsCreated: 0,
+      testsCompleted: 0,
+      averageAnalysisScore: 0,
+      rank: 0
+    }
+  } : null;
   
   // Keep old hook for Dashboard search functionality (will be removed in Phase 4)
   const { allProcessedTests, isLoading: dataLoading } = useTestData();
@@ -126,6 +147,7 @@ function AppContent() {
         <Navigation
           currentView={currentView}
           onViewChange={setCurrentView}
+          onOpenAuth={() => setIsAuthModalOpen(true)}
           userStats={user?.stats}
         />
 
@@ -164,9 +186,13 @@ function AppContent() {
           {currentView === 'performance' && user && (
             <PerformanceTracker user={user} />
           )}
+
+          {currentView === 'profile' && (
+            <ProfileSettings />
+          )}
         </main>
 
-        {user && (
+        {authUser && user && (
           <FloatingChatButton
             user={user}
             currentView={currentView}
@@ -183,16 +209,23 @@ function AppContent() {
             setHasInitialChatWelcomeBeenSent={setHasInitialChatWelcomeBeenSent}
           />
         )}
+
+        <AuthModal
+          isOpen={isAuthModalOpen}
+          onClose={() => setIsAuthModalOpen(false)}
+        />
       </div>
     </div>
   );
 }
 
-// Main App Component (wraps with ThemeProvider)
+// Main App Component (wraps with ThemeProvider and AuthProvider)
 function App() {
   return (
     <ThemeProvider>
-      <AppContent />
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
     </ThemeProvider>
   );
 }
