@@ -336,19 +336,19 @@ export const Header: React.FC<HeaderProps> = ({
 
       {/* Formatting Toolbar */}
       <div className="border-t border-slate-200 px-6 py-3 bg-slate-50">
-        <div className="flex items-center justify-between gap-4">
+        <div className="flex items-center gap-4">
           <div className="flex items-center space-x-1 flex-shrink-0">
             {formattingTools.map((tool) => {
               const Icon = tool.icon;
               const isSelected = selectedTool === tool.id;
-              
+
               return (
                 <button
                   key={tool.id}
                   onClick={() => handleToolClick(tool.id)}
                   className={`p-2 rounded-lg border transition-all ${
-                    isSelected 
-                      ? 'bg-blue-100 border-blue-300 text-blue-700 shadow-sm' 
+                    isSelected
+                      ? 'bg-blue-100 border-blue-300 text-blue-700 shadow-sm'
                       : `bg-white border-slate-200 text-slate-600 ${tool.bgColor}`
                   }`}
                   title={tool.label}
@@ -356,7 +356,7 @@ export const Header: React.FC<HeaderProps> = ({
                   {tool.id.startsWith('highlight-') ? (
                     <div className="relative">
                       <Icon className="h-4 w-4" />
-                      <div 
+                      <div
                         className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full border border-white"
                         style={{ backgroundColor: tool.color }}
                       />
@@ -367,9 +367,9 @@ export const Header: React.FC<HeaderProps> = ({
                 </button>
               );
             })}
-            
+
             <div className="w-px h-6 bg-slate-300 mx-2" />
-            
+
             {/* Text Size Dropdown */}
             <div className="relative">
               <button
@@ -383,7 +383,7 @@ export const Header: React.FC<HeaderProps> = ({
               >
                 <TextResizeIcon className="h-4 w-4" />
               </button>
-              
+
               {showTextSizeDropdown && (
                 <div className="absolute top-full mt-1 left-0 bg-white border border-slate-200 rounded-lg shadow-lg z-50 min-w-32">
                   <button
@@ -427,7 +427,7 @@ export const Header: React.FC<HeaderProps> = ({
               >
                 <LineSpacingIcon className="h-4 w-4" />
               </button>
-              
+
               {showLineSpacingDropdown && (
                 <div className="absolute top-full mt-1 left-0 bg-white border border-slate-200 rounded-lg shadow-lg z-50 min-w-32">
                   <button
@@ -457,7 +457,7 @@ export const Header: React.FC<HeaderProps> = ({
                 </div>
               )}
             </div>
-            
+
             <button
               onClick={onClearFormatting}
               className="p-2 rounded-lg border bg-white border-slate-200 text-slate-600 hover:bg-slate-100 transition-colors"
@@ -467,8 +467,18 @@ export const Header: React.FC<HeaderProps> = ({
             </button>
           </div>
 
-          {/* Search Field */}
-          <div className="flex-1 max-w-md">
+          <div className="text-sm text-slate-500 flex-shrink-0">
+            {selectedTool === 'eraser' ? (
+              <span>Select formatted text to remove highlighting or underlining</span>
+            ) : selectedTool ? (
+              <span>Select text in the passage to apply formatting</span>
+            ) : (
+              <span>Choose a formatting tool, then select text in the passage</span>
+            )}
+          </div>
+
+          {/* Search Field - moved to the right */}
+          <div className="ml-auto flex-shrink-0 w-80">
             {isSearchActive ? (
               <div className="flex items-center bg-white border border-blue-300 rounded-lg shadow-sm">
                 <Search className="h-4 w-4 text-slate-400 ml-3" />
@@ -491,21 +501,11 @@ export const Header: React.FC<HeaderProps> = ({
             ) : (
               <button
                 onClick={() => setIsSearchActive(true)}
-                className="flex items-center space-x-2 px-3 py-1.5 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors text-sm text-slate-600"
+                className="flex items-center space-x-2 px-3 py-1.5 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors text-sm text-slate-600 w-full justify-center"
               >
                 <Search className="h-4 w-4" />
                 <span>Search (Ctrl+F)</span>
               </button>
-            )}
-          </div>
-
-          <div className="text-sm text-slate-500 flex-shrink-0">
-            {selectedTool === 'eraser' ? (
-              <span>Select formatted text to remove highlighting or underlining</span>
-            ) : selectedTool ? (
-              <span>Select text in the passage to apply formatting</span>
-            ) : (
-              <span>Choose a formatting tool, then select text in the passage</span>
             )}
           </div>
         </div>
