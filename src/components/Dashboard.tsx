@@ -552,7 +552,6 @@ const handleSearch = () => {
           isOpen={isTimeModeModalOpen}
           onClose={() => setIsTimeModeModal(false)}
           onSelectTimeMode={handleTimeModeSelected}
-          allProcessedTests={allProcessedTests}
         />
         </div>
        {/* Error Message for Direct Search */}

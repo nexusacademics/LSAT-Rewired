@@ -1,76 +1,86 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
-import { ProcessedPrepTest, ProcessedSection } from '../App'; // Import ProcessedPrepTest type
+import { useTestMetadata, TestMetadata } from '../hooks/useTestMetadata';
+import { useTestSections, SectionMetadata } from '../hooks/useTestSections';
 
 interface TimeModeSelectionModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSelectTimeMode: (testId: string, timeMode: 'regular' | '1.5x' | '2x' | 'custom' | 'untimed', customTimeMinutes?: number, selectedSectionId?: string) => void;
-  allProcessedTests: { [key: string]: ProcessedPrepTest }; // New prop for all processed test data
 }
 
 type Step = 'selectTest' | 'selectSection' | 'selectTiming';
 
-const TimeModeSelectionModal: React.FC<TimeModeSelectionModalProps> = ({ isOpen, onClose, onSelectTimeMode, allProcessedTests }) => {
+const TimeModeSelectionModal: React.FC<TimeModeSelectionModalProps> = ({ isOpen, onClose, onSelectTimeMode }) => {
   const [currentStep, setCurrentStep] = useState<Step>('selectTest');
   const [selectedTestId, setSelectedTestId] = useState<string | null>(null);
-  const [selectedSectionId, setSelectedSectionId] = useState<string | undefined>(undefined); // undefined for whole test
+  const [selectedTestName, setSelectedTestName] = useState<string>('');
+  const [selectedSectionId, setSelectedSectionId] = useState<string | undefined>(undefined);
   const [selectedTimeMode, setSelectedTimeMode] = useState<'regular' | '1.5x' | '2x' | 'custom' | 'untimed'>('regular');
   const [customMinutes, setCustomMinutes] = useState<string>('35');
   const [customError, setCustomError] = useState(false);  
   const [searchTerm, setSearchTerm] = useState('');
 
-console.log('All Processed Tests received by TimeModeSelectionModal:', allProcessedTests);
+  const { testMetadata, isLoading: isLoadingTests } = useTestMetadata();
+  const { sections, isLoading: isLoadingSections, fetchSectionsForTest, clearSections } = useTestSections();
+
   // Reset state when modal opens/closes
-  React.useEffect(() => {
+  useEffect(() => {
     if (isOpen) {
       setCurrentStep('selectTest');
       setSelectedTestId(null);
+      setSelectedTestName('');
       setSelectedSectionId(undefined);
       setSelectedTimeMode('regular');
-      setCustomMinutes(35);
+      setCustomMinutes('35');
+      clearSections();
     }
-  }, [isOpen]);
+  }, [isOpen, clearSections]);
+
+  // Fetch sections when test is selected
+  useEffect(() => {
+    if (selectedTestId && currentStep === 'selectSection') {
+      fetchSectionsForTest(selectedTestId);
+    }
+  }, [selectedTestId, currentStep, fetchSectionsForTest]);
 
   if (!isOpen) return null;
 
   const handleConfirm = () => {
-      if (selectedTimeMode === 'custom') {
-        const customVal = parseInt(customMinutes);
-        if (isNaN(customVal) || customVal < 1) {
-          setCustomError(true);
-          return;
-        }
+    if (selectedTimeMode === 'custom') {
+      const customVal = parseInt(customMinutes);
+      if (isNaN(customVal) || customVal < 1) {
+        setCustomError(true);
+        return;
       }
-    
-      if (selectedTestId) {
-        onSelectTimeMode(
-          selectedTestId,
-          selectedTimeMode,
-          selectedTimeMode === 'custom' ? parseInt(customMinutes) : undefined,
-          selectedSectionId
-        );
-        onClose();
-      }
-    };
+    }
+  
+    if (selectedTestId) {
+      onSelectTimeMode(
+        selectedTestId,
+        selectedTimeMode,
+        selectedTimeMode === 'custom' ? parseInt(customMinutes) : undefined,
+        selectedSectionId
+      );
+      onClose();
+    }
+  };
 
   const handleBack = () => {
     if (currentStep === 'selectTiming') {
       setCurrentStep('selectSection');
     } else if (currentStep === 'selectSection') {
       setCurrentStep('selectTest');
+      clearSections();
     }
   };
 
-  const processedTest = selectedTestId ? allProcessedTests[selectedTestId] : undefined;
-
-  // Helper to format section names for display with section type
-  const formatSectionDisplayName = (section: ProcessedSection, index: number) => {
+  const formatSectionDisplayName = (section: SectionMetadata, index: number) => {
     const sectionType = section.name.startsWith('LR') ? 'Logical Reasoning' : 
                        section.name.startsWith('RC') ? 'Reading Comprehension' : 
                        'Unknown';
     return {
-      title: `Section ${index + 1}`,
+      title: 'Section ' + (index + 1),
       type: sectionType
     };
   };
@@ -106,78 +116,89 @@ console.log('All Processed Tests received by TimeModeSelectionModal:', allProces
             />
 
             <div className="space-y-3 flex-grow overflow-y-auto">
-             {Object.values(allProcessedTests)
-              .sort((a, b) => {
-                  // Extract the number from the test name (e.g., "PrepTest 85" -> 85)
-                  const numA = parseInt(a.name.match(/\d+/)?.[0] || '0', 10);
-                  const numB = parseInt(b.name.match(/\d+/)?.[0] || '0', 10);
-                  return numA - numB;
-                })
-              .filter(test => test.name.toLowerCase().includes(searchTerm.toLowerCase()))
-              .map((test) => (
-                <button
-                  key={test.id}
-                  onClick={() => {
-                    setSelectedTestId(test.id);
-                    setCurrentStep('selectSection');
-                  }}
-                  className={`w-full p-3 text-left rounded-lg border-2 transition-colors ${
-                    selectedTestId === test.id ? 'border-blue-500 bg-blue-50' : 'border-slate-200 hover:border-slate-300'
-                  }`}
-                >
-                  <div className="font-medium">{test.name}</div>
-                  <div className="text-sm text-slate-600">Full PrepTest with {test.sections.length} sections</div>
-                </button>
-              ))}
+              {isLoadingTests ? (
+                <div className="text-center py-8 text-slate-500">Loading tests...</div>
+              ) : (
+                testMetadata
+                  .sort((a, b) => {
+                    const numA = parseInt(a.name.match(/\d+/)?.[0] || '0', 10);
+                    const numB = parseInt(b.name.match(/\d+/)?.[0] || '0', 10);
+                    return numA - numB;
+                  })
+                  .filter(test => test.name.toLowerCase().includes(searchTerm.toLowerCase()))
+                  .map((test) => (
+                    <button
+                      key={test.id}
+                      onClick={() => {
+                        setSelectedTestId(test.id);
+                        setSelectedTestName(test.name);
+                        setCurrentStep('selectSection');
+                      }}
+                      className={`w-full p-3 text-left rounded-lg border-2 transition-colors ${
+                        selectedTestId === test.id ? 'border-blue-500 bg-blue-50' : 'border-slate-200 hover:border-slate-300'
+                      }`}
+                    >
+                      <div className="font-medium">{test.name}</div>
+                      <div className="text-sm text-slate-600">Official LSAC PrepTest</div>
+                    </button>
+                  ))
+              )}
             </div>
           </>
         )}
 
-        {currentStep === 'selectSection' && processedTest && (
+        {currentStep === 'selectSection' && (
           <>
-            {/* Fixed title with better spacing for navigation buttons */}
             <div className="px-8 mb-6">
               <h2 className="text-lg sm:text-xl font-bold text-slate-900 text-center leading-tight">
-                Select Section for {processedTest.name}
+                Select Section for {selectedTestName}
               </h2>
             </div>
-            <div className="space-y-3">
-              <button
-                onClick={() => {
-                  setSelectedSectionId(undefined); // Undefined means whole test
-                  setCurrentStep('selectTiming');
-                }}
-                className={`w-full p-3 text-left rounded-lg border-2 transition-colors ${
-                  selectedSectionId === undefined ? 'border-blue-500 bg-blue-50' : 'border-slate-200 hover:border-slate-300'
-                }`}
-              >
-                <div className="font-medium">Whole Test</div>
-                <div className="text-sm text-slate-600">All {processedTest.sections.length} sections</div>
-              </button>
+            
+            {isLoadingSections ? (
+              <div className="text-center py-8 text-slate-500">Loading sections...</div>
+            ) : (
+              <div className="space-y-3">
+                <button
+                  onClick={() => {
+                    setSelectedSectionId(undefined);
+                    setCurrentStep('selectTiming');
+                  }}
+                  className={`w-full p-3 text-left rounded-lg border-2 transition-colors ${
+                    selectedSectionId === undefined ? 'border-blue-500 bg-blue-50' : 'border-slate-200 hover:border-slate-300'
+                  }`}
+                >
+                  <div className="font-medium">Whole Test</div>
+                  <div className="text-sm text-slate-600">All {sections.length} sections</div>
+                </button>
 
-              {processedTest.sections.map((section, index) => {
-                const { title, type } = formatSectionDisplayName(section, index);
-                return (
-                  <button
-                    key={section.id}
-                    onClick={() => {
-                      setSelectedSectionId(section.id);
-                      setCurrentStep('selectTiming');
-                    }}
-                    className={`w-full p-3 text-left rounded-lg border-2 transition-colors ${
-                      selectedSectionId === section.id ? 'border-blue-500 bg-blue-50' : 'border-slate-200 hover:border-slate-300'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="font-medium">{title}</div>
-                      <div className="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded">
-                        {type}
+                {sections.map((section, index) => {
+                  const { title, type } = formatSectionDisplayName(section, index);
+                  return (
+                    <button
+                      key={section.id}
+                      onClick={() => {
+                        setSelectedSectionId(section.id);
+                        setCurrentStep('selectTiming');
+                      }}
+                      className={`w-full p-3 text-left rounded-lg border-2 transition-colors ${
+                        selectedSectionId === section.id ? 'border-blue-500 bg-blue-50' : 'border-slate-200 hover:border-slate-300'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <div className="font-medium">{title}</div>
+                          <div className="text-xs text-slate-500">{section.question_count} questions</div>
+                        </div>
+                        <div className="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded">
+                          {type}
+                        </div>
                       </div>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
           </>
         )}
 
@@ -222,7 +243,7 @@ console.log('All Processed Tests received by TimeModeSelectionModal:', allProces
               }`}>
                 <div className="font-medium mb-2">Custom Time</div>
                 <div className="flex items-center space-x-2">
-                 <input
+                  <input
                     type="number"
                     value={customMinutes}
                     onFocus={(e) => {
@@ -231,7 +252,7 @@ console.log('All Processed Tests received by TimeModeSelectionModal:', allProces
                     }}
                     onChange={(e) => {
                       setCustomMinutes(e.target.value);
-                      setCustomError(false); // Clear error as user edits
+                      setCustomError(false);
                     }}
                     className={`w-20 px-2 py-1 border rounded text-sm ${
                       customError ? 'border-red-500' : 'border-slate-300'
