@@ -51,13 +51,13 @@ function AppContent() {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
   // Convert auth user and profile to User type for compatibility
-  const user: User | null = authUser && profile ? {
+  const user: User | null = authUser ? {
     id: authUser.id,
     email: authUser.email || '',
-    name: profile.first_name || profile.username || authUser.email?.split('@')[0] || 'User',
-    firstName: profile.first_name,
-    lastName: profile.last_name,
-    username: profile.username,
+    name: profile?.first_name || profile?.username || authUser.email?.split('@')[0] || 'User',
+    firstName: profile?.first_name,
+    lastName: profile?.last_name,
+    username: profile?.username,
     stats: {
       circuitsCreated: 0,
       testsCompleted: 0,
@@ -127,7 +127,7 @@ function AppContent() {
     setHasInitialChatWelcomeBeenSent(false);
   }, [exitSession, clearTestData]);
 
-  if (authLoading || (authUser && !profile)) {
+  if (authLoading) {
     return <LoadingSpinner />;
   }
 
