@@ -129,7 +129,7 @@ function AppContent() {
     setHasInitialChatWelcomeBeenSent(false);
   }, [exitSession, clearTestData]);
 
-  if (isLoading) {
+  if (authLoading) {
     return <LoadingSpinner />;
   }
 
