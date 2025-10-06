@@ -311,11 +311,6 @@ const TripleReview: React.FC<TripleReviewProps> = ({
   );
 
   // Debug logging
-  useEffect(() => {
-    console.log('Current Question ID:', currentQuestionData?.id);
-    console.log('All circuits:', session.circuits.map(c => ({ id: c.id, questionId: c.questionId })));
-    console.log('Existing circuit for question:', existingCircuitForQuestion);
-  }, [currentQuestionData?.id, session.circuits, existingCircuitForQuestion]);
 
   const handleSaveCircuitFromBuilder = (updatedCircuit: Circuit) => {
     console.log('=== SAVING CIRCUIT ===');
