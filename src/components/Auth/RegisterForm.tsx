@@ -67,7 +67,7 @@ export default function RegisterForm({ onSwitchToLogin, onSuccess }: RegisterFor
       setError(error.message);
       setIsLoading(false);
     } else {
-      setSuccessMessage('Account created successfully! Please check your email to verify your account.');
+      setSuccessMessage('Account created successfully! You can now sign in.');
       setTimeout(() => {
         onSuccess();
       }, 2000);
