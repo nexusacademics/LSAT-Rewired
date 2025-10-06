@@ -164,24 +164,10 @@ export const QuestionTracker: React.FC<QuestionTrackerProps> = ({
   {/* Phase + Buttons */}
   <div className="flex items-center justify-between mb-1">
     {/* Phase indicator */}
-    <div className="text-small text-slate-600 flex items-center space-x-6 whitespace-nowrap">
+    <div className="text-small text-slate-600 flex items-center space-x-4 whitespace-nowrap">
       <span>
         <strong>Phase:</strong> {session.phase.charAt(0).toUpperCase() + session.phase.slice(1)}
       </span>
-      <div className="flex items-center space-x-4 text-small">
-        <div className="flex items-center space-x-1">
-          <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-          <span>Timed</span>
-        </div>
-        <div className="flex items-center space-x-1">
-          <div className="w-3 h-3 rounded-full bg-orange-500"></div>
-          <span>BR</span>
-        </div>
-        <div className="flex items-center space-x-1">
-          <div className="w-3 h-3 rounded-full bg-red-500"></div>
-          <span>Strategy</span>
-        </div>
-      </div>
     </div>
 
     {/* Navigation Buttons */}
@@ -213,8 +199,10 @@ export const QuestionTracker: React.FC<QuestionTrackerProps> = ({
     </div>
   </div>
 
-  {/* Question circles */}
-  <div className="flex space-x-3 pl-4 pt-2 overflow-x-auto pb-2">
+  {/* Question circles row with legend */}
+  <div className="flex items-center space-x-4 pl-4 pt-2 overflow-x-auto pb-2">
+    {/* Question circles */}
+    <div className="flex space-x-3">
     {questionsInCurrentSection.map((q, index) => {
       const isCurrent = index === session.currentQuestionIndex;
       const isAnswered = session.answeredQuestions.hasOwnProperty(q.id);
@@ -251,6 +239,23 @@ export const QuestionTracker: React.FC<QuestionTrackerProps> = ({
         </button>
       );
     })}
+    </div>
+
+    {/* Color legend - inline with circles */}
+    <div className="flex items-center space-x-3 text-xs text-slate-600 ml-auto shrink-0">
+      <div className="flex items-center space-x-1">
+        <div className="w-2 h-2 rounded-full bg-yellow-500"></div>
+        <span>Timed</span>
+      </div>
+      <div className="flex items-center space-x-1">
+        <div className="w-2 h-2 rounded-full bg-orange-500"></div>
+        <span>BR</span>
+      </div>
+      <div className="flex items-center space-x-1">
+        <div className="w-2 h-2 rounded-full bg-red-500"></div>
+        <span>Strategy</span>
+      </div>
+    </div>
   </div>
 </div>
   );
