@@ -1,4 +1,6 @@
 // src/hooks/useTestData.ts
+// LEGACY HOOK - Only used for Dashboard search functionality
+// This will be replaced with server-side search in Phase 4
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import type { ProcessedPrepTest, ProcessedSection, ProcessedQuestion } from '../types/test-data';
@@ -9,15 +11,13 @@ export function useTestData() {
 
   useEffect(() => {
     const fetchTestData = async () => {
-      console.log('fetchTestData function is executing!');
+      console.log('[LEGACY] useTestData: Fetching all tests for search functionality...');
       setIsLoading(true);
       try {
         // Fetch all tests
         const { data: tests, error: testsError } = await supabase
           .from('tests')
           .select('id, name');
-        console.log('Supabase tests data:', tests);
-        console.log('Supabase tests error:', testsError);
         if (testsError) throw testsError;
 
         // Fetch all sections, ordered by their section_order
@@ -25,66 +25,64 @@ export function useTestData() {
           .from('sections')
           .select('id, test_id, name, section_type, section_order')
           .order('section_order', { ascending: true });
-        console.log('Supabase sections data:', sections);
-        console.log('Supabase sections error:', sectionsError);
         if (sectionsError) throw sectionsError;
       
-        // Fetch all questions with explanations, ordered by their question_order
-        const { data: questions, error: questionsError } = await supabase
-          .from('questions')
-          .select(`
-            id, 
-            section_id, 
-            passage, 
-            question_stem, 
-            correct_answer_index, 
-            question_order, 
-            question_type,
-            conclusion_explanation,
-            roles_explanation,
-            assumption_explanation,
-            prediction_explanation,
-            correct_explanation,
-            incorrect_explanation
-          `)
-          .order('question_order', { ascending: true });
-        console.log('Supabase questions data:', questions);
-        console.log('Supabase questions error:', questionsError);
-        if (questionsError) throw questionsError;
- 
-        // ADD THIS LINE: Log total questions fetched
-        console.log(`Total questions fetched from 'questions' table: ${questions.length}`);
-        // Fetch all question options, ordered by their option_order
+        // Fetch all questions with explanations using pagination
         const batchSize = 1000;
-        let allOptions: any[] = [];
+        let allQuestions: any[] = [];
         let from = 0;
         let to = batchSize - 1;
-        let hasMoreOptions = true;
+        let hasMoreQuestions = true;
 
-        while (hasMoreOptions) {
-          const { data: optionsBatch, error: optionsError } = await supabase
-            .from('question_options')
-            .select('id, question_id, option_letter, option_text, option_order')
-            .order('id', { ascending: true }) // CHANGE THIS LINE: Order by 'id' for stable pagination
+        while (hasMoreQuestions) {
+          const { data: questionsBatch, error: questionsError } = await supabase
+            .from('questions')
+            .select('id, section_id, passage, question_stem, correct_answer_index, question_order, question_type, conclusion_explanation, roles_explanation, assumption_explanation, prediction_explanation, correct_explanation, incorrect_explanation')
+            .order('question_order', { ascending: true })
             .range(from, to);
 
-          if (optionsError) throw optionsError;
+          if (questionsError) throw questionsError;
+          allQuestions = allQuestions.concat(questionsBatch);
 
-          allOptions = allOptions.concat(optionsBatch);
-
-          console.log(`Fetched options ${from} to ${to}:`, optionsBatch.length);
-          if (optionsBatch.length < batchSize) {
-            hasMoreOptions = false; // Last batch
+          if (questionsBatch.length < batchSize) {
+            hasMoreQuestions = false;
           } else {
             from += batchSize;
             to += batchSize;
           }
         }
 
-        // Step 1: Map options to questions
+        console.log('[LEGACY] useTestData: Fetched ' + allQuestions.length + ' total questions');
+
+        // Fetch all question options using pagination
+        const batchSize2 = 1000;
+        let allOptions: any[] = [];
+        let from2 = 0;
+        let to2 = batchSize2 - 1;
+        let hasMoreOptions = true;
+
+        while (hasMoreOptions) {
+          const { data: optionsBatch, error: optionsError } = await supabase
+            .from('question_options')
+            .select('id, question_id, option_letter, option_text, option_order')
+            .order('id', { ascending: true })
+            .range(from2, to2);
+
+          if (optionsError) throw optionsError;
+          allOptions = allOptions.concat(optionsBatch);
+
+          if (optionsBatch.length < batchSize2) {
+            hasMoreOptions = false;
+          } else {
+            from2 += batchSize2;
+            to2 += batchSize2;
+          }
+        }
+
+        // Map options to questions
         const optionsMap = new Map<string, { optionLetter: string; optionText: string; optionOrder: number }[]>();
         allOptions.forEach(opt => {
-          const questionIdString = String(opt.question_id); // Convert to string for map key
+          const questionIdString = String(opt.question_id);
           if (!optionsMap.has(questionIdString)) {
             optionsMap.set(questionIdString, []);
           }
@@ -93,28 +91,17 @@ export function useTestData() {
             optionText: opt.option_text,
             optionOrder: opt.option_order
           });
-          console.log(`Option added to map for question ${questionIdString}:`, opt.option_letter, opt.option_text);
         });
-        console.log('Final optionsMap:', optionsMap);
 
-        // Step 2: Map questions to sections
+        // Map questions to sections
         const questionsMap = new Map<string, ProcessedQuestion[]>();
-        questions.forEach(q => {
-          const questionIdString = String(q.id); // Convert to string for map lookup
-          const rawOptionsForQuestion = optionsMap.get(questionIdString) || []; // Get the array of options for this question
-          console.log(`Raw options array length for question ${questionIdString}:`, rawOptionsForQuestion.length); // ADD THIS LOG
-
-          // MODIFIED BLOCK: Detailed log for any problematic question (not exactly 5 options)
-          if (rawOptionsForQuestion.length !== 5) { // Trigger if not exactly 5 options
-            console.log(`DEBUG: Problematic question ${questionIdString} has ${rawOptionsForQuestion.length} options.`);
-            console.log(`DEBUG: Raw options for question ${questionIdString}:`, rawOptionsForQuestion);
-          }
-          // END MODIFIED BLOCK
+        allQuestions.forEach(q => {
+          const questionIdString = String(q.id);
+          const rawOptionsForQuestion = optionsMap.get(questionIdString) || [];
           
           const processedOptions = rawOptionsForQuestion
-            .sort((a, b) => a.optionOrder - b.optionOrder) // Ensure options are sorted
+            .sort((a, b) => a.optionOrder - b.optionOrder)
             .map(opt => opt.optionText);
-          console.log(`Processed options for question ${questionIdString}:`, processedOptions);
 
           const processedQuestion: ProcessedQuestion = {
             id: q.id,
@@ -123,7 +110,6 @@ export function useTestData() {
             options: processedOptions,
             correctAnswer: q.correct_answer_index,
             type: q.question_type,
-            // Add explanations to the processed question
             explanations: {
               conclusion: q.conclusion_explanation,
               roles: q.roles_explanation,
@@ -133,7 +119,6 @@ export function useTestData() {
               incorrect: q.incorrect_explanation
             }
           };
-          console.log(`Processed question object for ${q.id}:`, processedQuestion);
 
           if (!questionsMap.has(q.section_id)) {
             questionsMap.set(q.section_id, []);
@@ -141,18 +126,15 @@ export function useTestData() {
           questionsMap.get(q.section_id)?.push(processedQuestion);
         });
 
-        // Step 3: Map sections to tests
+        // Map sections to tests
         const sectionsMap = new Map<string, ProcessedSection[]>();
         sections.forEach(s => {
-          const processedQuestions = (questionsMap.get(s.id) || [])
-            .sort((a, b) => a.question_order - b.question_order); // Ensure questions are sorted
-            // ADD THIS LINE: Log questions per section
-          console.log(`Section ${s.name} (${s.id}) has ${processedQuestions.length} questions.`);
+          const questionsForSection = questionsMap.get(s.id) || [];
 
           const processedSection: ProcessedSection = {
             id: s.id,
             name: s.name,
-            questions: processedQuestions,
+            questions: questionsForSection,
           };
           if (!sectionsMap.has(s.test_id)) {
             sectionsMap.set(s.test_id, []);
@@ -160,10 +142,10 @@ export function useTestData() {
           sectionsMap.get(s.test_id)?.push(processedSection);
         });
 
-        // Step 4: Assemble final processed tests
+        // Assemble final processed tests
         const processed: { [key: string]: ProcessedPrepTest } = {};
         tests.forEach(t => {
-          const processedSections = (sectionsMap.get(t.id) || []); // Removed sort here as per previous plan
+          const processedSections = (sectionsMap.get(t.id) || []);
 
           processed[t.id] = {
             id: t.id,
@@ -173,10 +155,9 @@ export function useTestData() {
         });
 
         setAllProcessedTests(processed);
-        console.log('Final processed tests:', processed);
+        console.log('[LEGACY] useTestData: Processed ' + Object.keys(processed).length + ' tests');
       } catch (error) {
-        console.error('Error fetching test data from Supabase:', error);
-        // You might want to set an error state here to display to the user
+        console.error('[LEGACY] useTestData: Error fetching test data:', error);
       } finally {
         setIsLoading(false);
       }
