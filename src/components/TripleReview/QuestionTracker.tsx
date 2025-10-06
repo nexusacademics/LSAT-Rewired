@@ -161,17 +161,73 @@ export const QuestionTracker: React.FC<QuestionTrackerProps> = ({
 }) => {
   return (
    <div className="bg-white shadow-lg border-t border-slate-200 p-2">
-  {/* Phase + Buttons */}
-  <div className="flex items-center justify-between mb-1">
-    {/* Phase indicator */}
-    <div className="text-small text-slate-600 flex items-center space-x-4 whitespace-nowrap">
-      <span>
+  {/* Main content row with fixed left/right and scrolling middle */}
+  <div className="flex items-center">
+    {/* Left side: Phase info and color legend - fixed */}
+    <div className="flex flex-col space-y-1 pr-4 shrink-0">
+      <div className="text-xs text-slate-600">
         <strong>Phase:</strong> {session.phase.charAt(0).toUpperCase() + session.phase.slice(1)}
-      </span>
+      </div>
+      <div className="flex items-center space-x-3 text-xs text-slate-600">
+        <div className="flex items-center space-x-1">
+          <div className="w-2 h-2 rounded-full bg-yellow-500"></div>
+          <span>Timed</span>
+        </div>
+        <div className="flex items-center space-x-1">
+          <div className="w-2 h-2 rounded-full bg-orange-500"></div>
+          <span>BR</span>
+        </div>
+        <div className="flex items-center space-x-1">
+          <div className="w-2 h-2 rounded-full bg-red-500"></div>
+          <span>Strategy</span>
+        </div>
+      </div>
     </div>
 
-    {/* Navigation Buttons */}
-    <div className="flex space-x-1 shrink-0">
+    {/* Middle: Question circles - scrollable */}
+    <div className="flex-1 overflow-x-auto">
+      <div className="flex space-x-3 py-2">
+        {questionsInCurrentSection.map((q, index) => {
+          const isCurrent = index === session.currentQuestionIndex;
+          const isAnswered = session.answeredQuestions.hasOwnProperty(q.id);
+          const flags = session.questionFlags?.[q.id] || {};
+
+          // Check both new flag system and legacy flaggedQuestions array
+          const isLegacyFlagged = session.flaggedQuestions?.includes(q.id) || false;
+          const effectiveFlags = {
+            ...flags,
+            // If using legacy system in timed phase, treat as timed flag
+            timedSection: flags.timedSection || (session.phase === 'timed' && isLegacyFlagged)
+          };
+
+          const flagTooltip = [];
+          if (effectiveFlags.timedSection) flagTooltip.push('Flagged in Timed Section');
+          if (effectiveFlags.blindReview) flagTooltip.push('Flagged in Blind Review');
+          if (effectiveFlags.strategyPlanning) flagTooltip.push('Flagged in Strategy Planning');
+
+          const tooltipText = `Question ${index + 1}${isAnswered ? ' (Answered)' : ''}${flagTooltip.length > 0 ? '\n' + flagTooltip.join('\n') : ''}`;
+
+          return (
+            <button
+              key={q.id}
+              onClick={() => onQuestionJump(index)}
+              className="transition-all hover:scale-105"
+              title={tooltipText}
+            >
+              <ConcentricFlagIndicator
+                flags={effectiveFlags}
+                isAnswered={isAnswered}
+                isCurrent={isCurrent}
+                questionNumber={index + 1}
+              />
+            </button>
+          );
+        })}
+      </div>
+    </div>
+
+    {/* Right side: Navigation buttons - fixed */}
+    <div className="flex space-x-1 pl-4 shrink-0">
       <button
         onClick={onPreviousQuestion}
         disabled={session.currentQuestionIndex === 0}
@@ -196,65 +252,6 @@ export const QuestionTracker: React.FC<QuestionTrackerProps> = ({
           <ChevronRight className="h-3 w-3 ml-1" />
         </button>
       )}
-    </div>
-  </div>
-
-  {/* Question circles row with legend */}
-  <div className="flex items-center space-x-4 pl-4 pt-2 overflow-x-auto pb-2">
-    {/* Question circles */}
-    <div className="flex space-x-3">
-    {questionsInCurrentSection.map((q, index) => {
-      const isCurrent = index === session.currentQuestionIndex;
-      const isAnswered = session.answeredQuestions.hasOwnProperty(q.id);
-      const flags = session.questionFlags?.[q.id] || {};
-
-      // Check both new flag system and legacy flaggedQuestions array
-      const isLegacyFlagged = session.flaggedQuestions?.includes(q.id) || false;
-      const effectiveFlags = {
-        ...flags,
-        // If using legacy system in timed phase, treat as timed flag
-        timedSection: flags.timedSection || (session.phase === 'timed' && isLegacyFlagged)
-      };
-
-      const flagTooltip = [];
-      if (effectiveFlags.timedSection) flagTooltip.push('Flagged in Timed Section');
-      if (effectiveFlags.blindReview) flagTooltip.push('Flagged in Blind Review');
-      if (effectiveFlags.strategyPlanning) flagTooltip.push('Flagged in Strategy Planning');
-
-      const tooltipText = `Question ${index + 1}${isAnswered ? ' (Answered)' : ''}${flagTooltip.length > 0 ? '\n' + flagTooltip.join('\n') : ''}`;
-
-      return (
-        <button
-          key={q.id}
-          onClick={() => onQuestionJump(index)}
-          className="transition-all hover:scale-105"
-          title={tooltipText}
-        >
-          <ConcentricFlagIndicator
-            flags={effectiveFlags}
-            isAnswered={isAnswered}
-            isCurrent={isCurrent}
-            questionNumber={index + 1}
-          />
-        </button>
-      );
-    })}
-    </div>
-
-    {/* Color legend - inline with circles */}
-    <div className="flex items-center space-x-3 text-xs text-slate-600 ml-auto shrink-0">
-      <div className="flex items-center space-x-1">
-        <div className="w-2 h-2 rounded-full bg-yellow-500"></div>
-        <span>Timed</span>
-      </div>
-      <div className="flex items-center space-x-1">
-        <div className="w-2 h-2 rounded-full bg-orange-500"></div>
-        <span>BR</span>
-      </div>
-      <div className="flex items-center space-x-1">
-        <div className="w-2 h-2 rounded-full bg-red-500"></div>
-        <span>Strategy</span>
-      </div>
     </div>
   </div>
 </div>
