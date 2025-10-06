@@ -13,7 +13,7 @@ interface LoginFormProps {
 export default function LoginForm({ onSwitchToRegister, onSwitchToForgotPassword, onSuccess }: LoginFormProps) {
   const { theme } = useTheme();
   const { signIn, signInWithGoogle } = useAuthContext();
-  const [email, setEmail] = useState('');
+  const [emailOrUsername, setEmailOrUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -23,7 +23,7 @@ export default function LoginForm({ onSwitchToRegister, onSwitchToForgotPassword
     setError(null);
     setIsLoading(true);
 
-    const { error } = await signIn(email, password);
+    const { error } = await signIn(emailOrUsername, password);
 
     if (error) {
       setError(error.message);
@@ -58,23 +58,23 @@ export default function LoginForm({ onSwitchToRegister, onSwitchToForgotPassword
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label htmlFor="email" className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
-            Email
+          <label htmlFor="emailOrUsername" className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+            Email or Username
           </label>
           <div className="relative">
             <Mail className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-400'}`} />
             <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              id="emailOrUsername"
+              type="text"
+              value={emailOrUsername}
+              onChange={(e) => setEmailOrUsername(e.target.value)}
               required
               className={`w-full pl-10 pr-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${
                 theme === 'dark'
                   ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400'
                   : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
               }`}
-              placeholder="your.email@example.com"
+              placeholder="email or username"
             />
           </div>
         </div>
