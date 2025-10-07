@@ -3,13 +3,9 @@ import { Search, Drill, BookOpen, Play, TrendingUp, Calendar, Upload, Download, 
 import { User, TestSession, ProcessedPrepTest } from '../App';
 import TimeModeSelectionModal from './TimeModeSelectionModal';
 
-//import search functions
-import { parseSearchQuery } from '../utils/parseSearchQuery';
-import Fuse from 'fuse.js';
-
-import { supabase } from '../lib/supabase';
-import { GoogleGenerativeAI } from '@google/generative-ai';
 import SearchResultsModal from './SearchResultsModal';
+import { useSearch } from '../hooks/useSearch';
+import type { ProcessedQuestion } from '../types/dashboard.types';
 
 // Import your new design system components
 import { useTheme } from '../contexts/ThemeContext';
@@ -27,21 +23,19 @@ interface DashboardProps {
   allProcessedTests: { [key: string]: ProcessedPrepTest };
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ 
-  user, 
-  userSessions, 
-  onStartNewTestSession, 
-  onResumeTestSession, 
-  allProcessedTests 
+const Dashboard: React.FC<DashboardProps> = ({
+  user,
+  userSessions,
+  onStartNewTestSession,
+  onResumeTestSession,
+  allProcessedTests
 }) => {
   const [isTimeModeModalOpen, setIsTimeModeModal] = useState(false);
   const { theme } = useTheme();
- 
-  //item search
-  const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY || '');
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
-  
-  const [searchResults, setSearchResults] = useState<ProcessedQuestion[]>([]);
+
+  // Use the useSearch hook for server-side search
+  const { searchResults, isSearching, searchError, searchQuestions, searchDirectQuestion, clearSearch } = useSearch();
+
   const [searchTerm, setSearchTerm] = useState('');
   const [directTest, setDirectTest] = useState('');
   const [directSection, setDirectSection] = useState('');
@@ -58,121 +52,47 @@ const Dashboard: React.FC<DashboardProps> = ({
   
   const handleSelect = (question: ProcessedQuestion) => {
     setSearchModalOpen(false);
-    // navigate or trigger TripleReview for this question
-    setCurrentSession({
-      preptest: question.preptest,
-      section: question.section,
-      questionIndex: question.index, // if you store index
-    });
+    clearSearch();
+    // TODO: Implement navigation to selected question
+    // For now, we'll just close the modal
+    // Future: Create a new session or navigate to the question in review mode
+    console.log('Selected question:', question);
+    alert('Question selection feature coming soon! Question ID: ' + question.id);
   };
 
 
-const [errorMessage, setErrorMessage] = useState("");
+// Removed errorMessage - using searchError from useSearch hook instead
   
-  //Direct Search
- const handleDirectSearch = () => {
+  // Direct Search using server-side query
+  const handleDirectSearch = async () => {
+    if (!directTest.trim() || !directSection.trim() || !directQuestion.trim()) {
+      return;
+    }
 
+    await searchDirectQuestion(directTest.trim(), directSection.trim(), directQuestion.trim());
 
-  // Assuming allProcessedTests is an object with test ids as keys
-  const testsArray = Object.values(allProcessedTests);
-
-  // Find the test by matching the number in the test name
-  const selectedTest = testsArray.find(test => {
-    const match = test.name?.match(/\d+/);
-    return match && match[0] === directTest.trim();
-  });
-
- if (!selectedTest) {
-  setErrorMessage("PrepTest not found. Please check the test number and try again.");
-  return;
-}
-
-  const sectionIndex = parseInt(directSection, 10) - 1;
-  const questionIndex = parseInt(directQuestion, 10) - 1;
-
-  const selectedSection = selectedTest.sections?.[sectionIndex];
-  if (!selectedSection) {
-     setErrorMessage("Section number not found. Please check the section number and try again.");
-    return;
-  }
-
-  const selectedQuestion = selectedSection.questions?.[questionIndex];
-  if (!selectedQuestion) {
-    setErrorMessage("Question number not found. Please check the question number and try again.");
-  return;
-  }
-
-  // Construct a question object with necessary fields for SearchResultsModal
-  const questionForModal: ProcessedQuestion = {
-    ...selectedQuestion,
-    test_name: selectedTest.name,
-    section_order: sectionIndex + 1,
-    question_order: questionIndex + 1,
+    // If search was successful and we have results, open modal with first result selected
+    if (searchResults.length > 0) {
+      setModalSelectedQuestion(searchResults[0]);
+      setSearchModalOpen(true);
+      setDirectSearchMode(true);
+    } else if (searchError) {
+      // Error is already set by searchDirectQuestion
+      setSearchModalOpen(false);
+    }
   };
 
-setModalSelectedQuestion(questionForModal);  // NEW: sets the question to show on modal open
-setSearchResults([questionForModal]);
-setSearchModalOpen(true);
-setDirectSearchMode(true);  // optional local state flag
-};
 
+  // Keyword Search using server-side query
+  const handleSearch = async () => {
+    if (!searchTerm.trim()) {
+      return;
+    }
 
-//Fuzzy Logic Search
-const handleSearch = () => {
-  const results: ProcessedQuestion[] = [];
-
-  const normalizedSearchTerm = searchTerm.toLowerCase().trim();
-  const searchWords = normalizedSearchTerm.split(/\s+/).filter(Boolean);
-
-  Object.values(allProcessedTests).forEach((test) => {
-    test.sections.forEach((section, sectionIndex) => {
-      section.questions.forEach((question, questionIndex) => {
-        // Include metadata in search
-        const combinedText = `
-          ${test.name ?? ''}
-          ${section.name ?? ''}
-          ${question.passage ?? ''}
-          ${question.question ?? ''}
-          ${question.type ?? ''}
-        `.toLowerCase();
-
-        // Debug logs
-        console.log('---');
-        console.log('Test Name:', test.name);
-        console.log('Section Name:', section.name);
-        console.log('Question Stem:', question.question);
-        console.log('Passage snippet:', (question.passage ?? '').slice(0, 100));
-        console.log('Question Type:', question.type);
-        console.log('Combined Text snippet:', combinedText.slice(0, 200));
-        console.log('Search words:', searchWords);
-
-        const isMatch = searchWords.every(word => combinedText.includes(word));
-        console.log('Is Match:', isMatch);
-
-        if (isMatch) {
-          console.log('*** Match found! Question ID:', question.id);
-          const enhancedQuestion = {
-            ...question,
-            test_name: test.name,
-            test_id: test.id,
-            section_name: section.name,
-            section_id: section.id,
-            section_order: sectionIndex + 1,
-            question_order: questionIndex + 1,
-            section_type: section.name?.startsWith('LR') ? 'LR' :
-                          section.name?.startsWith('RC') ? 'RC' :
-                          section.id?.startsWith('LR') ? 'LR' :
-                          section.id?.startsWith('RC') ? 'RC' : 'Unknown'
-          };
-          results.push(enhancedQuestion);
-        }
-      });
-    });
-  });
-
-  setSearchResults(results);
-  setSearchModalOpen(true);
-};
+    await searchQuestions(searchTerm.trim());
+    setSearchModalOpen(true);
+    setDirectSearchMode(false);
+  };
 
   
   // Filter user sessions into categories (keeping your existing logic)
@@ -203,6 +123,31 @@ const handleSearch = () => {
   const handleTimeModeSelected = (testId: string, timeMode: 'regular' | '1.5x' | '2x' | 'custom' | 'untimed', customTimeMinutes?: number, selectedSectionId?: string) => {
     onStartNewTestSession(testId, 'timed', timeMode, customTimeMinutes, selectedSectionId);
     setIsTimeModeModal(false);
+  };
+
+  // Transform SearchResult to ProcessedQuestion format for the modal
+  const transformSearchResultToProcessedQuestion = (result: any): ProcessedQuestion => {
+    return {
+      id: result.id,
+      passage: result.passage || '',
+      question: result.question_stem || result.question || '',
+      options: result.options || [],
+      correctAnswer: result.correct_answer_index ?? result.correctAnswer ?? 0,
+      type: result.question_type || result.type || 'Unknown',
+      explanations: result.explanations,
+      test_name: result.test_name,
+      test_id: result.test_id,
+      section_name: result.section_name,
+      section_id: result.section_id,
+      section_order: result.section_order,
+      question_order: result.question_order,
+      question_stem: result.question_stem,
+      correct_answer_index: result.correct_answer_index
+    };
+  };
+
+  const transformSearchResultsToProcessedQuestions = (results: any[]): ProcessedQuestion[] => {
+    return results.map(transformSearchResultToProcessedQuestion);
   };
 
 
@@ -554,12 +499,12 @@ const handleSearch = () => {
           onSelectTimeMode={handleTimeModeSelected}
         />
         </div>
-       {/* Error Message for Direct Search */}
+       {/* Error Message for Search */}
           <div>
-          {errorMessage && (
-        <ErrorModal 
-          message={errorMessage} 
-          onClose={() => setErrorMessage("")} 
+          {searchError && (
+        <ErrorModal
+          message={searchError}
+          onClose={clearSearch}
         />
       )}
             </div>
@@ -570,19 +515,19 @@ const handleSearch = () => {
             onClose={() => {
               setSearchModalOpen(false);
               setModalSelectedQuestion(null);
-              setSearchResults([]);
+              clearSearch();
               setDirectSearchMode(false);
             }}
-            results={searchResults}
-            initialSelectedQuestion={modalSelectedQuestion}  // pass initialSelectedQuestion, NOT selectedQuestion
+            results={transformSearchResultsToProcessedQuestions(searchResults)}
+            initialSelectedQuestion={modalSelectedQuestion ? transformSearchResultToProcessedQuestion(modalSelectedQuestion) : null}
             onSelect={(question) => {
               setSearchModalOpen(false);
               setModalSelectedQuestion(null);
-              setSearchResults([]);
+              clearSearch();
               handleSelect(question);
             }}
-            disableBackToResults={directSearchMode}  // <-- pass this prop here
-              searchTerm={searchTerm}
+            disableBackToResults={directSearchMode}
+            searchTerm={searchTerm}
           />
 
 
