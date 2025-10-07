@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
 import type { User as SupabaseUser, Session } from '@supabase/supabase-js';
 
@@ -84,7 +84,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const loadUserData = async (user: SupabaseUser) => {
+  const loadUserData = useCallback(async (user: SupabaseUser) => {
     const [profileData, subscriptionData] = await Promise.all([
       fetchProfile(user.id),
       fetchSubscription(user.id)
@@ -92,7 +92,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     setProfile(profileData);
     setSubscription(subscriptionData);
-  };
+  }, []);
 
   const refreshProfile = async () => {
     if (user) {
