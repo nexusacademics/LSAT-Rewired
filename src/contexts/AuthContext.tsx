@@ -274,11 +274,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       console.log('Updating profile for user:', user.id, 'with data:', updates);
 
-      const { data, error } = await supabase
+      // Create a timeout promise
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('Update request timed out after 10 seconds')), 10000);
+      });
+
+      // Race between the update and timeout
+      const updatePromise = supabase
         .from('profiles')
         .update(updates)
         .eq('id', user.id)
         .select();
+
+      const { data, error } = await Promise.race([updatePromise, timeoutPromise]) as any;
 
       console.log('Update response:', { data, error });
 
