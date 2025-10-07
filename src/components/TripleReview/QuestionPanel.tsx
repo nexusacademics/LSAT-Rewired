@@ -329,28 +329,63 @@ export const QuestionPanel: React.FC<QuestionPanelProps> = ({
               <div
                 key={index}
                 className={`flex items-start space-x-3 p-4 border rounded-xl transition-colors ${
-                  isCorrect && session.phase === 'strategy-review' 
-                    ? 'border-green-500 bg-green-50' 
+                  isCorrect && session.phase === 'strategy-review'
+                    ? 'border-green-500 bg-green-50'
                     : 'border-slate-200 hover:bg-slate-50'
                 }`}
               >
                 <label className="flex items-start space-x-3 flex-1 cursor-pointer">
-                  <input
-                    type="radio"
-                    name="answer"
-                    value={index}
-                    checked={
-                      session.phase === 'strategy-review' 
-                        ? false 
-                        : session.answeredQuestions[currentQuestionData.id] === index
-                    }
-                    onChange={() => onAnswerSelection(index)}
-                    className="mt-1 text-blue-600"
-                    disabled={
-                      (session.phase === 'timed' && !isTimerRunning) || 
-                      session.phase === 'strategy-review'
-                    }
-                  />
+                  <div className="flex flex-col items-center space-y-1">
+                    <input
+                      type="radio"
+                      name="answer"
+                      value={index}
+                      checked={
+                        session.phase === 'strategy-review'
+                          ? false
+                          : session.answeredQuestions[currentQuestionData.id] === index
+                      }
+                      onChange={() => onAnswerSelection(index)}
+                      className="mt-1 text-blue-600"
+                      disabled={
+                        (session.phase === 'timed' && !isTimerRunning) ||
+                        session.phase === 'strategy-review'
+                      }
+                    />
+                    {session.phase === 'strategy-review' && (
+                      <div className="flex flex-col items-center space-y-1 mt-2">
+                        {isCorrect && (
+                          <span className="text-xs font-medium text-green-600 whitespace-nowrap">
+                            Correct
+                          </span>
+                        )}
+                        {timedAnswerChosen === index && (
+                          <span className={`px-1.5 py-0.5 rounded text-xs font-medium whitespace-nowrap ${
+                            isCorrect ? 'bg-green-200 text-green-800' : 'bg-red-100 text-red-700'
+                          }`}>
+                            Timed {isCorrect ? '✓' : '✗'}
+                          </span>
+                        )}
+                        {blindReviewAnswerChosen === index && (
+                          <span className={`px-1.5 py-0.5 rounded text-xs font-medium whitespace-nowrap ${
+                            isCorrect ? 'bg-green-200 text-green-800' : 'bg-red-100 text-red-700'
+                          }`}>
+                            Blind {isCorrect ? '✓' : '✗'}
+                          </span>
+                        )}
+                        {timedAnswerChosen === undefined && index === currentQuestionData.correctAnswer && (
+                          <span className="px-1.5 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-700 whitespace-nowrap">
+                            Timed Ø
+                          </span>
+                        )}
+                        {blindReviewAnswerChosen === undefined && index === currentQuestionData.correctAnswer && (
+                          <span className="px-1.5 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-700 whitespace-nowrap">
+                            Blind Ø
+                          </span>
+                        )}
+                      </div>
+                    )}
+                  </div>
                   <span className="font-medium text-slate-700 mr-3">
                     ({String.fromCharCode(65 + index)})
                   </span>
@@ -360,36 +395,6 @@ export const QuestionPanel: React.FC<QuestionPanelProps> = ({
                     {searchQuery ? highlightSearchMatches(option, searchQuery) : option}
                   </span>
                 </label>
-
-                {session.phase === 'strategy-review' && (
-                  <div className="flex items-center space-x-2 text-sm">
-                    {isCorrect && <span className="text-green-600 font-medium">Correct</span>}
-                    {timedAnswerChosen === index && (
-                      <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-                        isCorrect ? 'bg-green-200 text-green-800' : 'bg-red-100 text-red-700'
-                      }`}>
-                        Timed {isCorrect ? '✓' : '✗'}
-                      </span>
-                    )}
-                    {blindReviewAnswerChosen === index && (
-                      <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-                        isCorrect ? 'bg-green-200 text-green-800' : 'bg-red-100 text-red-700'
-                      }`}>
-                        Blind {isCorrect ? '✓' : '✗'}
-                      </span>
-                    )}
-                    {timedAnswerChosen === undefined && index === currentQuestionData.correctAnswer && (
-                      <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-700">
-                        Timed Ø
-                      </span>
-                    )}
-                    {blindReviewAnswerChosen === undefined && index === currentQuestionData.correctAnswer && (
-                      <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-700">
-                        Blind Ø
-                      </span>
-                    )}
-                  </div>
-                )}
 
                 <button
                   type="button"
