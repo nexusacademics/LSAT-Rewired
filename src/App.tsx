@@ -51,20 +51,25 @@ function AppContent() {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
   // Convert auth user and profile to User type for compatibility
-  const user: User | null = authUser ? {
-    id: authUser.id,
-    email: authUser.email || '',
-    name: profile?.first_name || profile?.username || authUser.email?.split('@')[0] || 'User',
-    firstName: profile?.first_name,
-    lastName: profile?.last_name,
-    username: profile?.username,
-    stats: {
-      circuitsCreated: 0,
-      testsCompleted: 0,
-      averageAnalysisScore: 0,
-      rank: 0
-    }
-  } : null;
+  // Memoize to prevent infinite re-renders in child components
+  const user: User | null = React.useMemo(() => {
+    if (!authUser) return null;
+
+    return {
+      id: authUser.id,
+      email: authUser.email || '',
+      name: profile?.first_name || profile?.username || authUser.email?.split('@')[0] || 'User',
+      firstName: profile?.first_name,
+      lastName: profile?.last_name,
+      username: profile?.username,
+      stats: {
+        circuitsCreated: 0,
+        testsCompleted: 0,
+        averageAnalysisScore: 0,
+        rank: 0
+      }
+    };
+  }, [authUser?.id, authUser?.email, profile?.first_name, profile?.last_name, profile?.username]);
   
   // Keep old hook for Dashboard search functionality (will be removed in Phase 4)
   const { allProcessedTests, isLoading: dataLoading } = useTestData();
