@@ -140,16 +140,12 @@ function AppContent() {
     setHasInitialChatWelcomeBeenSent(false);
   }, [exitSession, clearTestData]);
 
-  if (authLoading) {
-    return <LoadingSpinner />;
-  }
-
   // Use currentTestData if available, otherwise fallback to allProcessedTests
   const processedPrepTest = currentTestData || (currentSession ? allProcessedTests[currentSession.testId] : undefined);
 
   // Dynamic background classes based on theme
-  const backgroundClasses = theme === 'dark' 
-    ? 'bg-gray-900' 
+  const backgroundClasses = theme === 'dark'
+    ? 'bg-gray-900'
     : 'bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100';
 
   return (
@@ -163,14 +159,34 @@ function AppContent() {
         />
 
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {currentView === 'dashboard' && user && (
-            <Dashboard
-              user={user}
-              userSessions={userSessions}
-              onStartNewTestSession={handleStartNewSession}
-              onResumeTestSession={handleResumeSession}
-              allProcessedTests={allProcessedTests}
-            />
+          {currentView === 'dashboard' && (
+            authLoading ? (
+              <div className="text-center py-12">
+                <LoadingSpinner />
+                <p className="mt-4 text-slate-600">Loading your profile...</p>
+              </div>
+            ) : user ? (
+              <Dashboard
+                user={user}
+                userSessions={userSessions}
+                onStartNewTestSession={handleStartNewSession}
+                onResumeTestSession={handleResumeSession}
+                allProcessedTests={allProcessedTests}
+              />
+            ) : (
+              <div className="text-center py-12 max-w-2xl mx-auto">
+                <h2 className="text-3xl font-bold text-slate-900 mb-4">Welcome to LSAT Rewired</h2>
+                <p className="text-lg text-slate-600 mb-8">
+                  Sign in to access your personalized LSAT prep experience
+                </p>
+                <button
+                  onClick={() => setIsAuthModalOpen(true)}
+                  className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  Sign In / Register
+                </button>
+              </div>
+            )
           )}
 
           {currentView === 'triple-review' && currentSession && (

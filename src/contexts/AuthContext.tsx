@@ -109,10 +109,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         // Set a timeout to prevent infinite loading
         timeoutId = setTimeout(() => {
-          console.error('Auth initialization timeout - forcing completion');
-          console.error('This usually means the browser cannot reach Supabase servers');
+          console.warn('Auth initialization timeout - forcing completion after 5s');
+          console.warn('This usually means the browser cannot reach Supabase servers');
           setIsLoading(false);
-        }, 10000); // 10 second timeout
+        }, 5000); // 5 second timeout
 
         console.log('Calling supabase.auth.getSession()...');
         const sessionStart = Date.now();

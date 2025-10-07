@@ -21,7 +21,7 @@ const TimeModeSelectionModal: React.FC<TimeModeSelectionModalProps> = ({ isOpen,
   const [customError, setCustomError] = useState(false);  
   const [searchTerm, setSearchTerm] = useState('');
 
-  const { testMetadata, isLoading: isLoadingTests } = useTestMetadata();
+  const { testMetadata, isLoading: isLoadingTests, error: testLoadError } = useTestMetadata();
   const { sections, isLoading: isLoadingSections, fetchSectionsForTest, clearSections } = useTestSections();
 
   // Reset state when modal opens/closes
@@ -117,7 +117,25 @@ const TimeModeSelectionModal: React.FC<TimeModeSelectionModalProps> = ({ isOpen,
 
             <div className="space-y-3 flex-grow overflow-y-auto">
               {isLoadingTests ? (
-                <div className="text-center py-8 text-slate-500">Loading tests...</div>
+                <div className="text-center py-8 text-slate-500">
+                  <div className="animate-pulse">Loading tests...</div>
+                </div>
+              ) : testLoadError ? (
+                <div className="text-center py-8">
+                  <div className="text-red-500 mb-2">Failed to load tests</div>
+                  <div className="text-sm text-slate-600">{testLoadError}</div>
+                  <button
+                    onClick={() => window.location.reload()}
+                    className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  >
+                    Retry
+                  </button>
+                </div>
+              ) : testMetadata.length === 0 ? (
+                <div className="text-center py-8 text-slate-500">
+                  <div className="mb-2">No tests available</div>
+                  <div className="text-sm">Please contact support</div>
+                </div>
               ) : (
                 testMetadata
                   .sort((a, b) => {
