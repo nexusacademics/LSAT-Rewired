@@ -275,48 +275,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const updateProfile = async (updates: Partial<Profile>) => {
-    if (!user) return { error: new Error('No user logged in') };
+    if (!user || !session) return { error: new Error('No user logged in') };
 
     try {
-      console.log('Updating profile for user:', user.id, 'with data:', updates);
-      console.log('Supabase URL:', import.meta.env.VITE_SUPABASE_URL);
+      console.log('Updating profile via edge function for user:', user.id, 'with data:', updates);
 
-      // Test connection first
-      console.log('Testing connection with a simple select...');
-      const testStart = Date.now();
-      const { data: testData, error: testError } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('id', user.id)
-        .single();
-      console.log(`Connection test took ${Date.now() - testStart}ms`, { testData, testError });
+      const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/profile-api/profile`;
 
-      if (testError) {
-        console.error('Connection test failed:', testError);
-        return { error: new Error('Failed to connect to database: ' + testError.message) };
+      const response = await fetch(apiUrl, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json',
+          'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
+        },
+        body: JSON.stringify(updates),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Profile update failed:', errorData);
+        return { error: new Error(errorData.error || 'Failed to update profile') };
       }
 
-      // Now try the update
-      console.log('Starting update...');
-      const updateStart = Date.now();
-      const { data, error } = await supabase
-        .from('profiles')
-        .update(updates)
-        .eq('id', user.id)
-        .select()
-        .single();
+      const data = await response.json();
+      console.log('Profile updated successfully:', data);
 
-      console.log(`Update took ${Date.now() - updateStart}ms`);
-      console.log('Update response:', { data, error });
-
-      if (error) {
-        console.error('Supabase update error:', error);
-        return { error };
-      }
-
-      console.log('Refreshing profile after update...');
-      await refreshProfile();
-      console.log('Profile refresh complete');
+      // Update local state
+      setProfile(data);
 
       return { error: null };
     } catch (err) {
