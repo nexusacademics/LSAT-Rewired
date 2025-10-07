@@ -105,13 +105,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const initializeAuth = async () => {
       try {
+        console.log('Initializing auth with Supabase URL:', import.meta.env.VITE_SUPABASE_URL);
+
         // Set a timeout to prevent infinite loading
         timeoutId = setTimeout(() => {
           console.error('Auth initialization timeout - forcing completion');
+          console.error('This usually means the browser cannot reach Supabase servers');
           setIsLoading(false);
         }, 10000); // 10 second timeout
 
+        console.log('Calling supabase.auth.getSession()...');
+        const sessionStart = Date.now();
         const { data: { session: currentSession }, error: sessionError } = await supabase.auth.getSession();
+        console.log(`getSession() took ${Date.now() - sessionStart}ms`);
 
         if (sessionError) {
           console.error('Session error:', sessionError);
