@@ -44,7 +44,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const fetchProfile = async (userId: string) => {
+  const fetchProfile = useCallback(async (userId: string) => {
     try {
       const { data, error } = await supabase
         .from('profiles')
@@ -62,9 +62,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.error('Unexpected error fetching profile:', err);
       return null;
     }
-  };
+  }, []);
 
-  const fetchSubscription = async (userId: string) => {
+  const fetchSubscription = useCallback(async (userId: string) => {
     try {
       const { data, error } = await supabase
         .from('subscriptions')
@@ -82,7 +82,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.error('Unexpected error fetching subscription:', err);
       return null;
     }
-  };
+  }, []);
 
   const loadUserData = useCallback(async (user: SupabaseUser) => {
     const [profileData, subscriptionData] = await Promise.all([
@@ -92,7 +92,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     setProfile(profileData);
     setSubscription(subscriptionData);
-  }, []);
+  }, [fetchProfile, fetchSubscription]);
 
   const refreshProfile = async () => {
     if (user) {
