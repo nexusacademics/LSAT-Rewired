@@ -101,9 +101,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+
     const initializeAuth = async () => {
       try {
-        const { data: { session: currentSession } } = await supabase.auth.getSession();
+        // Set a timeout to prevent infinite loading
+        timeoutId = setTimeout(() => {
+          console.error('Auth initialization timeout - forcing completion');
+          setIsLoading(false);
+        }, 10000); // 10 second timeout
+
+        const { data: { session: currentSession }, error: sessionError } = await supabase.auth.getSession();
+
+        if (sessionError) {
+          console.error('Session error:', sessionError);
+          await supabase.auth.signOut();
+          clearTimeout(timeoutId);
+          setIsLoading(false);
+          return;
+        }
 
         if (currentSession?.user) {
           setUser(currentSession.user);
@@ -114,8 +130,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             console.error('Error loading user data:', loadError);
           }
         }
+
+        clearTimeout(timeoutId);
       } catch (error) {
         console.error('Error initializing auth:', error);
+        await supabase.auth.signOut();
+        clearTimeout(timeoutId);
       } finally {
         setIsLoading(false);
       }
@@ -151,6 +171,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     );
 
     return () => {
+      if (timeoutId) clearTimeout(timeoutId);
       authSubscription.unsubscribe();
     };
   }, []);
