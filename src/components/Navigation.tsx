@@ -132,7 +132,7 @@ export default function Navigation({ currentView, onViewChange, onOpenAuth, user
 
                   {profileMenuOpen && (
                     <div
-                      className={`absolute right-0 mt-2 w-48 rounded-lg shadow-lg py-1 z-50 ${
+                      className={`absolute right-0 mt-2 w-48 rounded-lg shadow-lg py-1 z-[100] ${
                         theme === 'dark' ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'
                       }`}
                     >
@@ -217,7 +217,7 @@ export default function Navigation({ currentView, onViewChange, onOpenAuth, user
 
                 {profileMenuOpen && (
                   <div
-                    className={`absolute right-0 mt-2 w-48 rounded-lg shadow-lg py-1 z-50 ${
+                    className={`absolute right-0 mt-2 w-48 rounded-lg shadow-lg py-1 z-[100] ${
                       theme === 'dark' ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'
                     }`}
                   >
