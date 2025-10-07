@@ -273,21 +273,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     try {
       console.log('Updating profile for user:', user.id, 'with data:', updates);
+      console.log('Supabase URL:', import.meta.env.VITE_SUPABASE_URL);
 
-      // Create a timeout promise
-      const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('Update request timed out after 10 seconds')), 10000);
-      });
+      // Test connection first
+      console.log('Testing connection with a simple select...');
+      const testStart = Date.now();
+      const { data: testData, error: testError } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('id', user.id)
+        .single();
+      console.log(`Connection test took ${Date.now() - testStart}ms`, { testData, testError });
 
-      // Race between the update and timeout
-      const updatePromise = supabase
+      if (testError) {
+        console.error('Connection test failed:', testError);
+        return { error: new Error('Failed to connect to database: ' + testError.message) };
+      }
+
+      // Now try the update
+      console.log('Starting update...');
+      const updateStart = Date.now();
+      const { data, error } = await supabase
         .from('profiles')
         .update(updates)
         .eq('id', user.id)
-        .select();
+        .select()
+        .single();
 
-      const { data, error } = await Promise.race([updatePromise, timeoutPromise]) as any;
-
+      console.log(`Update took ${Date.now() - updateStart}ms`);
       console.log('Update response:', { data, error });
 
       if (error) {
