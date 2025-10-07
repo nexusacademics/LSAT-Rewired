@@ -109,8 +109,13 @@ export default function Navigation({ currentView, onViewChange, onOpenAuth, user
                 )}
                 <div className="relative ml-4" ref={profileMenuRef}>
                   <button
-                    onClick={() => setProfileMenuOpen(!profileMenuOpen)}
-                    className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors ${
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      console.log('Profile menu toggle clicked', !profileMenuOpen);
+                      setProfileMenuOpen(!profileMenuOpen);
+                    }}
+                    className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors cursor-pointer ${
                       theme === 'dark'
                         ? 'hover:bg-gray-700 text-white'
                         : 'hover:bg-gray-100 text-gray-900'
@@ -132,16 +137,18 @@ export default function Navigation({ currentView, onViewChange, onOpenAuth, user
 
                   {profileMenuOpen && (
                     <div
-                      className={`absolute right-0 mt-2 w-48 rounded-lg shadow-lg py-1 z-[100] ${
+                      className={`absolute right-0 mt-2 w-48 rounded-lg shadow-lg py-1 z-[100] pointer-events-auto ${
                         theme === 'dark' ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'
                       }`}
                     >
                       <button
                         onClick={(e) => {
+                          e.preventDefault();
                           e.stopPropagation();
+                          console.log('Profile Settings clicked');
                           handleLinkClick('profile');
                         }}
-                        className={`w-full flex items-center px-4 py-2 text-sm ${
+                        className={`w-full flex items-center px-4 py-2 text-sm cursor-pointer ${
                           theme === 'dark'
                             ? 'text-gray-300 hover:bg-gray-700 hover:text-white'
                             : 'text-gray-700 hover:bg-gray-100'
@@ -152,10 +159,12 @@ export default function Navigation({ currentView, onViewChange, onOpenAuth, user
                       </button>
                       <button
                         onClick={(e) => {
+                          e.preventDefault();
                           e.stopPropagation();
+                          console.log('Sign Out clicked');
                           handleSignOut();
                         }}
-                        className={`w-full flex items-center px-4 py-2 text-sm ${
+                        className={`w-full flex items-center px-4 py-2 text-sm cursor-pointer ${
                           theme === 'dark'
                             ? 'text-gray-300 hover:bg-gray-700 hover:text-white'
                             : 'text-gray-700 hover:bg-gray-100'
@@ -166,6 +175,7 @@ export default function Navigation({ currentView, onViewChange, onOpenAuth, user
                       </button>
                     </div>
                   )}
+                  {profileMenuOpen && console.log('Dropdown is open')}
                 </div>
               </>
             ) : (
@@ -201,8 +211,13 @@ export default function Navigation({ currentView, onViewChange, onOpenAuth, user
             {user ? (
               <div className="relative" ref={profileMenuRef}>
                 <button
-                  onClick={() => setProfileMenuOpen(!profileMenuOpen)}
-                  className={`p-2 rounded-lg transition-colors ${
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('Profile menu toggle clicked (md)', !profileMenuOpen);
+                    setProfileMenuOpen(!profileMenuOpen);
+                  }}
+                  className={`p-2 rounded-lg transition-colors cursor-pointer ${
                     theme === 'dark' ? 'hover:bg-gray-700' : 'hover:bg-gray-100'
                   }`}
                 >
@@ -217,16 +232,18 @@ export default function Navigation({ currentView, onViewChange, onOpenAuth, user
 
                 {profileMenuOpen && (
                   <div
-                    className={`absolute right-0 mt-2 w-48 rounded-lg shadow-lg py-1 z-[100] ${
+                    className={`absolute right-0 mt-2 w-48 rounded-lg shadow-lg py-1 z-[100] pointer-events-auto ${
                       theme === 'dark' ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'
                     }`}
                   >
                     <button
                       onClick={(e) => {
+                        e.preventDefault();
                         e.stopPropagation();
+                        console.log('Profile Settings clicked (md)');
                         handleLinkClick('profile');
                       }}
-                      className={`w-full flex items-center px-4 py-2 text-sm ${
+                      className={`w-full flex items-center px-4 py-2 text-sm cursor-pointer ${
                         theme === 'dark'
                           ? 'text-gray-300 hover:bg-gray-700 hover:text-white'
                           : 'text-gray-700 hover:bg-gray-100'
@@ -237,10 +254,12 @@ export default function Navigation({ currentView, onViewChange, onOpenAuth, user
                     </button>
                     <button
                       onClick={(e) => {
+                        e.preventDefault();
                         e.stopPropagation();
+                        console.log('Sign Out clicked (md)');
                         handleSignOut();
                       }}
-                      className={`w-full flex items-center px-4 py-2 text-sm ${
+                      className={`w-full flex items-center px-4 py-2 text-sm cursor-pointer ${
                         theme === 'dark'
                           ? 'text-gray-300 hover:bg-gray-700 hover:text-white'
                           : 'text-gray-700 hover:bg-gray-100'
