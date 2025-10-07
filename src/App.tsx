@@ -27,7 +27,7 @@ import type { ProcessedQuestion, ProcessedPrepTest } from './types/test-data';
 import type { User } from './types/user';
 
 // Define view type
-type AppView = 'dashboard' | 'triple-review' | 'performance' | 'studyscheduler' | 'subscription' | 'profile';
+type AppView = 'dashboard' | 'triple-review' | 'performance' | 'studyscheduler' | 'profile';
 
 // Define Message interface for chat history
 export interface Message {

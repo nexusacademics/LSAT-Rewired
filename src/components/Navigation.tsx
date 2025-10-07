@@ -4,7 +4,7 @@ import { useTheme } from '../contexts/ThemeContext';
 import { useAuthContext } from '../contexts/AuthContext';
 import ThemeToggle from '../components/ui/ThemeToggle';
 
-type AppView = 'dashboard' | 'triple-review' | 'performance' | 'studyscheduler' | 'subscription' | 'profile';
+type AppView = 'dashboard' | 'triple-review' | 'performance' | 'studyscheduler' | 'profile';
 
 interface NavigationProps {
   currentView: AppView;
@@ -94,9 +94,6 @@ export default function Navigation({ currentView, onViewChange, onOpenAuth, user
             </NavButton>
             <NavButton active={currentView === 'studyscheduler'} onClick={() => handleLinkClick('studyscheduler')} theme={theme}>
               Study Scheduler
-            </NavButton>
-            <NavButton active={currentView === 'subscription'} onClick={() => handleLinkClick('subscription')} theme={theme}>
-              Subscription
             </NavButton>
             <ThemeToggle />
 
@@ -205,9 +202,6 @@ export default function Navigation({ currentView, onViewChange, onOpenAuth, user
             </NavButton>
             <NavButton active={currentView === 'studyscheduler'} onClick={() => handleLinkClick('studyscheduler')} theme={theme}>
               Study Scheduler
-            </NavButton>
-            <NavButton active={currentView === 'subscription'} onClick={() => handleLinkClick('subscription')} theme={theme}>
-              Subscription
             </NavButton>
             <ThemeToggle />
 
@@ -341,9 +335,6 @@ export default function Navigation({ currentView, onViewChange, onOpenAuth, user
             </NavButton>
             <NavButton active={currentView === 'studyscheduler'} onClick={() => handleLinkClick('studyscheduler')} theme={theme}>
               Study Scheduler
-            </NavButton>
-            <NavButton active={currentView === 'subscription'} onClick={() => handleLinkClick('subscription')} theme={theme}>
-              Subscription
             </NavButton>
 
             {user && (
