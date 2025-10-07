@@ -175,7 +175,6 @@ export default function Navigation({ currentView, onViewChange, onOpenAuth, user
                       </button>
                     </div>
                   )}
-                  {profileMenuOpen && console.log('Dropdown is open')}
                 </div>
               </>
             ) : (
