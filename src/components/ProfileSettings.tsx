@@ -36,12 +36,32 @@ export default function ProfileSettings() {
     setErrorMessage(null);
 
     try {
-      const updates: any = {
-        username: formData.username,
-        first_name: formData.first_name,
-        last_name: formData.last_name,
-        bio: formData.bio
-      };
+      const updates: any = {};
+
+      // Only include non-empty values
+      if (formData.username && formData.username.trim()) {
+        updates.username = formData.username.trim();
+      } else {
+        updates.username = null;
+      }
+
+      if (formData.first_name && formData.first_name.trim()) {
+        updates.first_name = formData.first_name.trim();
+      } else {
+        updates.first_name = null;
+      }
+
+      if (formData.last_name && formData.last_name.trim()) {
+        updates.last_name = formData.last_name.trim();
+      } else {
+        updates.last_name = null;
+      }
+
+      if (formData.bio && formData.bio.trim()) {
+        updates.bio = formData.bio.trim();
+      } else {
+        updates.bio = null;
+      }
 
       if (formData.target_lsat_score) {
         updates.target_lsat_score = parseInt(formData.target_lsat_score);
