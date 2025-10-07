@@ -35,31 +35,40 @@ export default function ProfileSettings() {
     setSuccessMessage(null);
     setErrorMessage(null);
 
-    const updates: any = {
-      username: formData.username,
-      first_name: formData.first_name,
-      last_name: formData.last_name,
-      bio: formData.bio
-    };
+    try {
+      const updates: any = {
+        username: formData.username,
+        first_name: formData.first_name,
+        last_name: formData.last_name,
+        bio: formData.bio
+      };
 
-    if (formData.target_lsat_score) {
-      updates.target_lsat_score = parseInt(formData.target_lsat_score);
+      if (formData.target_lsat_score) {
+        updates.target_lsat_score = parseInt(formData.target_lsat_score);
+      }
+
+      if (formData.test_date) {
+        updates.test_date = formData.test_date;
+      }
+
+      console.log('Submitting profile updates:', updates);
+      const result = await updateProfile(updates);
+      console.log('Profile update result:', result);
+
+      if (result.error) {
+        console.error('Profile update error:', result.error);
+        setErrorMessage(result.error.message);
+      } else {
+        console.log('Profile updated successfully');
+        setSuccessMessage('Profile updated successfully!');
+        setTimeout(() => setSuccessMessage(null), 3000);
+      }
+    } catch (err) {
+      console.error('Unexpected error during profile update:', err);
+      setErrorMessage('An unexpected error occurred. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
-
-    if (formData.test_date) {
-      updates.test_date = formData.test_date;
-    }
-
-    const { error } = await updateProfile(updates);
-
-    if (error) {
-      setErrorMessage(error.message);
-    } else {
-      setSuccessMessage('Profile updated successfully!');
-      setTimeout(() => setSuccessMessage(null), 3000);
-    }
-
-    setIsLoading(false);
   };
 
   const handleSignOut = async () => {

@@ -272,16 +272,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!user) return { error: new Error('No user logged in') };
 
     try {
-      const { error } = await supabase
+      console.log('Updating profile for user:', user.id, 'with data:', updates);
+
+      const { data, error } = await supabase
         .from('profiles')
         .update(updates)
-        .eq('id', user.id);
+        .eq('id', user.id)
+        .select();
 
-      if (error) return { error };
+      console.log('Update response:', { data, error });
 
+      if (error) {
+        console.error('Supabase update error:', error);
+        return { error };
+      }
+
+      console.log('Refreshing profile after update...');
       await refreshProfile();
+      console.log('Profile refresh complete');
+
       return { error: null };
     } catch (err) {
+      console.error('Caught error in updateProfile:', err);
       return { error: err as Error };
     }
   };
