@@ -56,6 +56,7 @@ export default function Navigation({ currentView, onViewChange, onOpenAuth, user
         setMobileOpen(false);
       }
       if (profileMenuRef.current && !profileMenuRef.current.contains(e.target as Node)) {
+        console.log('Click outside profile menu, closing');
         setProfileMenuOpen(false);
       }
     };
@@ -137,12 +138,15 @@ export default function Navigation({ currentView, onViewChange, onOpenAuth, user
 
                   {profileMenuOpen && (
                     <div
-                      className={`absolute right-0 mt-2 w-48 rounded-lg shadow-lg py-1 z-[100] pointer-events-auto ${
+                      className={`absolute right-0 mt-2 w-48 rounded-lg shadow-lg py-1 z-[100] ${
                         theme === 'dark' ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'
                       }`}
+                      onMouseDown={(e) => {
+                        e.stopPropagation();
+                      }}
                     >
                       <button
-                        onClick={(e) => {
+                        onMouseDown={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
                           console.log('Profile Settings clicked');
@@ -158,7 +162,7 @@ export default function Navigation({ currentView, onViewChange, onOpenAuth, user
                         Profile Settings
                       </button>
                       <button
-                        onClick={(e) => {
+                        onMouseDown={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
                           console.log('Sign Out clicked');
@@ -231,12 +235,15 @@ export default function Navigation({ currentView, onViewChange, onOpenAuth, user
 
                 {profileMenuOpen && (
                   <div
-                    className={`absolute right-0 mt-2 w-48 rounded-lg shadow-lg py-1 z-[100] pointer-events-auto ${
+                    className={`absolute right-0 mt-2 w-48 rounded-lg shadow-lg py-1 z-[100] ${
                       theme === 'dark' ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'
                     }`}
+                    onMouseDown={(e) => {
+                      e.stopPropagation();
+                    }}
                   >
                     <button
-                      onClick={(e) => {
+                      onMouseDown={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
                         console.log('Profile Settings clicked (md)');
@@ -252,7 +259,7 @@ export default function Navigation({ currentView, onViewChange, onOpenAuth, user
                       Profile Settings
                     </button>
                     <button
-                      onClick={(e) => {
+                      onMouseDown={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
                         console.log('Sign Out clicked (md)');
