@@ -83,13 +83,21 @@ function AppContent() {
 
   // Fetch test data when session starts or changes
   useEffect(() => {
+    // Guard: Don't fetch data while auth is still loading
+    if (authLoading) return;
+
+    // Guard: Only fetch if we have a valid session with required properties
     if (currentSession && currentView === 'triple-review') {
-      console.log('Session active, fetching test data...');
-      fetchTestById(currentSession.testId, currentSession.selectedSectionId);
+      if (currentSession.testId) {
+        console.log('Session active, fetching test data...');
+        fetchTestById(currentSession.testId, currentSession.selectedSectionId);
+      }
     } else if (!currentSession) {
       clearTestData();
     }
-  }, [currentSession?.id, currentSession?.testId, currentSession?.selectedSectionId, currentView, fetchTestById, clearTestData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // Note: fetchTestById and clearTestData are stable callbacks and don't need to be in deps
+  }, [currentSession?.id, currentSession?.testId, currentSession?.selectedSectionId, currentView, authLoading]);
 
   // Derive current question data for chat
   const currentQuestionDataForChat = useCurrentQuestionData(
