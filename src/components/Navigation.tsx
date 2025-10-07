@@ -74,7 +74,7 @@ export default function Navigation({ currentView, onViewChange, onOpenAuth, user
   return (
     <nav className={`${navClasses} shadow-sm border-b transition-all duration-500 z-50 flex-shrink-0 fixed top-0 left-0 right-0`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+        <div className="flex justify-between items-center h-16 gap-8">
           <div
             className="flex items-center space-x-2 cursor-pointer flex-shrink-0"
             onClick={() => handleLinkClick('dashboard')}
@@ -85,7 +85,7 @@ export default function Navigation({ currentView, onViewChange, onOpenAuth, user
             </span>
           </div>
 
-          <div className="hidden xl:flex space-x-6 items-center">
+          <div className="hidden xl:flex space-x-6 items-center flex-1 justify-start">
             <NavButton active={currentView === 'dashboard'} onClick={() => handleLinkClick('dashboard')} theme={theme}>
               Dashboard
             </NavButton>
