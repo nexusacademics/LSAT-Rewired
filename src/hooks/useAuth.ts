@@ -128,7 +128,7 @@ export function useAuth() {
             name: mockSupabaseUser.email?.split('@')[0] || 'Jake',
             firstName: 'Jake',
             lastName: 'Username',
-            username: 'LSATWizard',
+            username: 'Jake',
             stats: {
               circuitsCreated: 50,
               testsCompleted: 10,
@@ -172,7 +172,7 @@ export function useAuth() {
       name: mockSupabaseUser.email?.split('@')[0] || 'Jake',
       firstName: 'Jake',
       lastName: 'Username',
-      username: 'LSATWizard',
+      username: 'Jake',
       stats: {
         circuitsCreated: 50,
         testsCompleted: 10,
