@@ -3,7 +3,7 @@ import { User, CreditCard, LogOut, ChevronDown } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import type { User as UserType } from '../types/user';
 
-type AppView = 'dashboard' | 'triple-review' | 'performance' | 'studyscheduler' | 'profile' | 'billing';
+type AppView = 'landing' | 'dashboard' | 'triple-review' | 'performance' | 'studyscheduler' | 'profile' | 'billing';
 
 interface UserDropdownProps {
   user: UserType;

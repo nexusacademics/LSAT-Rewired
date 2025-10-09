@@ -15,6 +15,7 @@ import FloatingChatButton from './components/FloatingChatButton';
 import LoadingSpinner from './components/LoadingSpinner';
 import Navigation from './components/Navigation';
 import StudyScheduleBuilder from './components/StudyScheduleBuilder';
+import LandingPage from './components/LandingPage';
 import { supabase } from './lib/supabase';
 
 // Import types
@@ -23,7 +24,7 @@ import type { ProcessedQuestion, ProcessedPrepTest } from './types/test-data';
 import { ThemeProvider, useTheme } from './contexts/ThemeContext';
 
 // Define view type
-type AppView = 'dashboard' | 'triple-review' | 'performance' | 'studyscheduler' | 'profile' | 'billing';
+type AppView = 'landing' | 'dashboard' | 'triple-review' | 'performance' | 'studyscheduler' | 'profile' | 'billing';
 
 // Define Message interface for chat history
 export interface Message {
@@ -112,10 +113,14 @@ function AppContent() {
   const handleSignOut = async () => {
     try {
       await supabase.auth.signOut();
-      setCurrentView('dashboard');
+      setCurrentView('landing');
     } catch (error) {
       console.error('Error signing out:', error);
     }
+  };
+
+  const handleLogin = () => {
+    setCurrentView('dashboard');
   };
 
   if (isLoading) {
@@ -133,14 +138,19 @@ function AppContent() {
   return (
     <div className="app">
       <div className={'min-h-screen transition-all duration-500 ' + backgroundClasses}>
-        <Navigation
-          currentView={currentView}
-          onViewChange={setCurrentView}
-          user={user || undefined}
-          onSignOut={handleSignOut}
-        />
+        {currentView !== 'landing' && (
+          <Navigation
+            currentView={currentView}
+            onViewChange={setCurrentView}
+            user={user || undefined}
+            onSignOut={handleSignOut}
+          />
+        )}
 
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {currentView === 'landing' ? (
+          <LandingPage onLogin={handleLogin} />
+        ) : (
+          <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {currentView === 'dashboard' && user && (
             <Dashboard
               user={user}
@@ -189,9 +199,10 @@ function AppContent() {
               <p className={`mt-4 ${theme === 'dark' ? 'text-gray-400' : 'text-slate-600'}`}>Billing management coming soon</p>
             </div>
           )}
-        </main>
+          </main>
+        )}
 
-        {user && (
+        {user && currentView !== 'landing' && (
           <FloatingChatButton
             user={user}
             currentView={currentView}
