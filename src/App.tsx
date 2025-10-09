@@ -45,7 +45,7 @@ function AppContent() {
   const [hasInitialChatWelcomeBeenSent, setHasInitialChatWelcomeBeenSent] = useState(false);
 
   // Custom hooks handle specific concerns
-  const { user, supabaseUser, subscription, isLoading: authLoading } = useAuth();
+  const { user, supabaseUser, subscription, isLoading: authLoading, restoreMockUser } = useAuth();
   
   // Keep old hook for Dashboard search functionality (will be removed in Phase 4)
   const { allProcessedTests, isLoading: dataLoading } = useTestData();
@@ -120,6 +120,7 @@ function AppContent() {
   };
 
   const handleLogin = () => {
+    restoreMockUser();
     setCurrentView('dashboard');
   };
 

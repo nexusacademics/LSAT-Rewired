@@ -161,10 +161,34 @@ export function useAuth() {
     return () => subscription.unsubscribe();
   }, []);
 
+  const restoreMockUser = () => {
+    const mockSupabaseUser: SupabaseUser = {
+      id: 'mock-user-id',
+      email: 'LSATWizard@gmail.com',
+    };
+    const mockUser: User = {
+      id: mockSupabaseUser.id,
+      email: mockSupabaseUser.email || '',
+      name: mockSupabaseUser.email?.split('@')[0] || 'Jake',
+      firstName: 'Jake',
+      lastName: 'Username',
+      username: 'LSATWizard',
+      stats: {
+        circuitsCreated: 50,
+        testsCompleted: 10,
+        averageAnalysisScore: 88,
+        rank: 100
+      }
+    };
+    setSupabaseUser(mockSupabaseUser);
+    setUser(mockUser);
+  };
+
   return {
     user,
     supabaseUser,
     subscription,
-    isLoading
+    isLoading,
+    restoreMockUser
   };
 }
