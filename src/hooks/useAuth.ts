@@ -71,10 +71,10 @@ export function useAuth() {
       const mockUser: User = {
         id: supabaseUser.id,
         email: supabaseUser.email || '',
-        name: supabaseUser.email?.split('@')[0] || 'Jake',
-         firstName: 'Jake', // You can also change this
-      lastName: 'Username', // And this
-      username: 'Jake', // And this
+        name: 'Jake',
+        firstName: 'Jake',
+        lastName: 'Username',
+        username: 'Jake',
         stats: {
           circuitsCreated: 50,
           testsCompleted: 10,
@@ -125,7 +125,7 @@ export function useAuth() {
           const mockUser: User = {
             id: mockSupabaseUser.id,
             email: mockSupabaseUser.email || '',
-            name: mockSupabaseUser.email?.split('@')[0] || 'Jake',
+            name: 'Jake',
             firstName: 'Jake',
             lastName: 'Username',
             username: 'Jake',
@@ -169,7 +169,7 @@ export function useAuth() {
     const mockUser: User = {
       id: mockSupabaseUser.id,
       email: mockSupabaseUser.email || '',
-      name: mockSupabaseUser.email?.split('@')[0] || 'Jake',
+      name: 'Jake',
       firstName: 'Jake',
       lastName: 'Username',
       username: 'Jake',
