@@ -2,19 +2,19 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Brain, Target, TrendingUp, Menu, X } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import ThemeToggle from '../components/ui/ThemeToggle';
+import UserDropdown from './UserDropdown';
+import type { User } from '../types/user';
 
-type AppView = 'dashboard' | 'triple-review' | 'performance' |'Study Scheduler'| 'subscription';
+type AppView = 'dashboard' | 'triple-review' | 'performance' | 'studyscheduler' | 'profile' | 'billing';
 
 interface NavigationProps {
   currentView: AppView;
   onViewChange: (view: AppView) => void;
-  userStats?: {
-    circuitsCreated: number;
-    rank: number;
-  };
+  user?: User;
+  onSignOut: () => void;
 }
 
-export default function Navigation({ currentView, onViewChange, userStats }: NavigationProps) {
+export default function Navigation({ currentView, onViewChange, user, onSignOut }: NavigationProps) {
   if (currentView === 'triple-review') return null;
   
   const { theme } = useTheme();
@@ -79,16 +79,14 @@ export default function Navigation({ currentView, onViewChange, userStats }: Nav
             <NavButton active={currentView === 'studyscheduler'} onClick={() => handleLinkClick('studyscheduler')} theme={theme}>
               Study Scheduler
             </NavButton>
-            <NavButton active={currentView === 'subscription'} onClick={() => handleLinkClick('subscription')} theme={theme}>
-              Subscription
-            </NavButton>
             <ThemeToggle />
-            {userStats && (
+            {user && (
               <div className="flex items-center space-x-4 ml-4">
-                <Stat icon={<Target className="h-4 w-4 text-teal-600" />} label={`${userStats.circuitsCreated} Circuits`} theme={theme} />
-                <Stat icon={<TrendingUp className="h-4 w-4 text-orange-600" />} label={`Rank #${userStats.rank}`} theme={theme} />
+                <Stat icon={<Target className="h-4 w-4 text-teal-600" />} label={`${user.stats.circuitsCreated} Circuits`} theme={theme} />
+                <Stat icon={<TrendingUp className="h-4 w-4 text-orange-600" />} label={`Rank #${user.stats.rank}`} theme={theme} />
               </div>
             )}
+            {user && <UserDropdown user={user} onViewChange={onViewChange} onSignOut={onSignOut} />}
           </div>
 
           {/* Medium screens - Show nav without stats */}
@@ -99,13 +97,11 @@ export default function Navigation({ currentView, onViewChange, userStats }: Nav
             <NavButton active={currentView === 'performance'} onClick={() => handleLinkClick('performance')} theme={theme}>
               Performance
             </NavButton>
-              <NavButton active={currentView === 'studyscheduler'} onClick={() => handleLinkClick('studyscheduler')} theme={theme}>
+            <NavButton active={currentView === 'studyscheduler'} onClick={() => handleLinkClick('studyscheduler')} theme={theme}>
               Study Scheduler
             </NavButton>
-            <NavButton active={currentView === 'subscription'} onClick={() => handleLinkClick('subscription')} theme={theme}>
-              Subscription
-            </NavButton>
             <ThemeToggle />
+            {user && <UserDropdown user={user} onViewChange={onViewChange} onSignOut={onSignOut} />}
           </div>
 
           {/* Mobile Hamburger */}
@@ -144,14 +140,16 @@ export default function Navigation({ currentView, onViewChange, userStats }: Nav
             <NavButton active={currentView === 'studyscheduler'} onClick={() => handleLinkClick('studyscheduler')} theme={theme}>
               Study Scheduler
             </NavButton>
-              <NavButton active={currentView === 'subscription'} onClick={() => handleLinkClick('subscription')} theme={theme}>
-              Subscription
-            </NavButton>
             <ThemeToggle />
-            {userStats && (
+            {user && (
+              <div className="pt-4 mt-4 border-t border-gray-300 dark:border-gray-700">
+                <UserDropdown user={user} onViewChange={onViewChange} onSignOut={onSignOut} />
+              </div>
+            )}
+            {user && (
               <div className="pt-4 mt-auto border-t border-gray-300 dark:border-gray-700 text-sm space-y-1">
-                <div className={statsTextClasses}>{userStats.circuitsCreated} Circuits</div>
-                <div className={statsTextClasses}>Rank #{userStats.rank}</div>
+                <div className={statsTextClasses}>{user.stats.circuitsCreated} Circuits</div>
+                <div className={statsTextClasses}>Rank #{user.stats.rank}</div>
               </div>
             )}
           </div>

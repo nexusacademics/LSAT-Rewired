@@ -15,6 +15,7 @@ import FloatingChatButton from './components/FloatingChatButton';
 import LoadingSpinner from './components/LoadingSpinner';
 import Navigation from './components/Navigation';
 import StudyScheduleBuilder from './components/StudyScheduleBuilder';
+import { supabase } from './lib/supabase';
 
 // Import types
 import type { TestSession } from './types/user';
@@ -22,7 +23,7 @@ import type { ProcessedQuestion, ProcessedPrepTest } from './types/test-data';
 import { ThemeProvider, useTheme } from './contexts/ThemeContext';
 
 // Define view type
-type AppView = 'dashboard' | 'triple-review' | 'performance' | 'studyscheduler' | 'subscription';
+type AppView = 'dashboard' | 'triple-review' | 'performance' | 'studyscheduler' | 'profile' | 'billing';
 
 // Define Message interface for chat history
 export interface Message {
@@ -108,6 +109,15 @@ function AppContent() {
     setHasInitialChatWelcomeBeenSent(false);
   }, [exitSession, clearTestData]);
 
+  const handleSignOut = async () => {
+    try {
+      await supabase.auth.signOut();
+      setCurrentView('dashboard');
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
+
   if (isLoading) {
     return <LoadingSpinner />;
   }
@@ -126,7 +136,8 @@ function AppContent() {
         <Navigation
           currentView={currentView}
           onViewChange={setCurrentView}
-          userStats={user?.stats}
+          user={user || undefined}
+          onSignOut={handleSignOut}
         />
 
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -160,9 +171,23 @@ function AppContent() {
           {currentView === 'studyscheduler' && (
             <StudyScheduleBuilder />
           )}
-          
+
           {currentView === 'performance' && user && (
             <PerformanceTracker user={user} />
+          )}
+
+          {currentView === 'profile' && (
+            <div className="text-center py-12">
+              <h2 className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>Profile Settings</h2>
+              <p className={`mt-4 ${theme === 'dark' ? 'text-gray-400' : 'text-slate-600'}`}>Profile management coming soon</p>
+            </div>
+          )}
+
+          {currentView === 'billing' && (
+            <div className="text-center py-12">
+              <h2 className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>Billing & Subscription</h2>
+              <p className={`mt-4 ${theme === 'dark' ? 'text-gray-400' : 'text-slate-600'}`}>Billing management coming soon</p>
+            </div>
           )}
         </main>
 
