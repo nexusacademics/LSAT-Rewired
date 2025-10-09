@@ -74,7 +74,7 @@ export function useAuth() {
         name: supabaseUser.email?.split('@')[0] || 'Jake',
          firstName: 'Jake', // You can also change this
       lastName: 'Username', // And this
-      username: 'LSATWizard', // And this
+      username: 'Jake', // And this
         stats: {
           circuitsCreated: 50,
           testsCompleted: 10,
