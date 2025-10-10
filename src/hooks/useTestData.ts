@@ -7,7 +7,7 @@ import type { ProcessedPrepTest, ProcessedSection, ProcessedQuestion } from '../
 
 export function useTestData() {
   const [allProcessedTests, setAllProcessedTests] = useState<{ [key: string]: ProcessedPrepTest }>({});
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchTestData = async () => {
