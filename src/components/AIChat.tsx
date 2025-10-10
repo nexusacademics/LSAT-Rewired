@@ -32,7 +32,7 @@ const AIChat: React.FC<AIChatProps> = ({ user, isChatDisabled = false, currentVi
 
   // Initialize Gemini AI
   const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY || '');
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
+  const model = genAI.getGenerativeModel({ model: "gemini-2.5-pro" });
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
