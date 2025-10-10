@@ -186,7 +186,7 @@ export const QuestionTracker: React.FC<QuestionTrackerProps> = ({
 
     {/* Middle: Question circles - scrollable */}
     <div className="flex-1 overflow-x-auto">
-      <div className="flex space-x-3 py-2 pl-4">
+      <div className="flex space-x-3 py-2">
         {questionsInCurrentSection.map((q, index) => {
           const isCurrent = index === session.currentQuestionIndex;
           const isAnswered = session.answeredQuestions.hasOwnProperty(q.id);

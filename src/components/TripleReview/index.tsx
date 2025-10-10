@@ -263,41 +263,25 @@ const TripleReview: React.FC<TripleReviewProps> = ({
     phase: session.phase
   });
 
-  // Use refs to track latest session state and avoid stale closures
-  const sessionRef = useRef(session);
-  const onUpdateSessionRef = useRef(onUpdateSession);
-
-  // Keep refs in sync with latest values
-  useEffect(() => {
-    sessionRef.current = session;
-  }, [session]);
-
-  useEffect(() => {
-    onUpdateSessionRef.current = onUpdateSession;
-  }, [onUpdateSession]);
-
   // Effect to save timer state periodically during timed sessions
   useEffect(() => {
     if (session.phase === 'timed' && isTimerRunning) {
       const interval = setInterval(() => {
-        const currentSession = sessionRef.current;
-        const updateSession = onUpdateSessionRef.current;
-
-        const sectionTimerKey = `section-${currentSession.currentSectionIndex}`;
+        const sectionTimerKey = `section-${session.currentSectionIndex}`;
         const updatedTimerStates = {
-          ...currentSession.timerStates,
+          ...session.timerStates,
           [sectionTimerKey]: timeRemaining
         };
-
-        updateSession({
-          ...currentSession,
+        
+        onUpdateSession({
+          ...session,
           timerStates: updatedTimerStates
         });
       }, 10000); // Save every 10 seconds
-
+      
       return () => clearInterval(interval);
     }
-  }, [session.phase, isTimerRunning, timeRemaining]);
+  }, [session.phase, isTimerRunning, timeRemaining, session.currentSectionIndex]);
 
   const {
     mainContentRef,

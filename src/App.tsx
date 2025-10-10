@@ -1,8 +1,11 @@
 // App.tsx
 import React, { useState, useCallback, useEffect } from 'react';
 
+// Import contexts
+import { ThemeProvider, useTheme } from './contexts/ThemeContext';
+import { AuthProvider, useAuthContext } from './contexts/AuthContext';
+
 // Import custom hooks for separation of concerns
-import { useAuth } from './hooks/useAuth';
 import { useTestData } from './hooks/useTestData';
 import { useTestDetails } from './hooks/useTestDetails';
 import { useTestSessions } from './hooks/useTestSessions';
@@ -15,16 +18,16 @@ import FloatingChatButton from './components/FloatingChatButton';
 import LoadingSpinner from './components/LoadingSpinner';
 import Navigation from './components/Navigation';
 import StudyScheduleBuilder from './components/StudyScheduleBuilder';
-import LandingPage from './components/LandingPage';
-import { supabase } from './lib/supabase';
+import ProfileSettings from './components/ProfileSettings';
+import AuthModal from './components/Auth/AuthModal';
 
 // Import types
 import type { TestSession } from './types/user';
 import type { ProcessedQuestion, ProcessedPrepTest } from './types/test-data';
-import { ThemeProvider, useTheme } from './contexts/ThemeContext';
+import type { User } from './types/user';
 
 // Define view type
-type AppView = 'landing' | 'dashboard' | 'triple-review' | 'performance' | 'studyscheduler' | 'profile' | 'billing';
+type AppView = 'dashboard' | 'triple-review' | 'performance' | 'studyscheduler' | 'profile';
 
 // Define Message interface for chat history
 export interface Message {
@@ -35,17 +38,38 @@ export interface Message {
   feedback?: 'helpful' | 'not-helpful';
 }
 
-// Main App Content Component (needs to be inside ThemeProvider)
+// Main App Content Component (needs to be inside ThemeProvider and AuthProvider)
 function AppContent() {
   const { theme } = useTheme();
+  const { user: authUser, profile, subscription, isLoading: authLoading } = useAuthContext();
+
   const [currentView, setCurrentView] = useState<AppView>('dashboard');
   const [messages, setMessages] = useState<Message[]>([]);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [lastProcessedQuestionIdForChat, setLastProcessedQuestionIdForChat] = useState<{ questionId: string, phase: string } | null>(null);
   const [hasInitialChatWelcomeBeenSent, setHasInitialChatWelcomeBeenSent] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
-  // Custom hooks handle specific concerns
-  const { user, supabaseUser, subscription, isLoading: authLoading, restoreMockUser } = useAuth();
+  // Convert auth user and profile to User type for compatibility
+  // Memoize to prevent infinite re-renders in child components
+  const user: User | null = React.useMemo(() => {
+    if (!authUser) return null;
+
+    return {
+      id: authUser.id,
+      email: authUser.email || '',
+      name: profile?.first_name || profile?.username || authUser.email?.split('@')[0] || 'User',
+      firstName: profile?.first_name,
+      lastName: profile?.last_name,
+      username: profile?.username,
+      stats: {
+        circuitsCreated: 0,
+        testsCompleted: 0,
+        averageAnalysisScore: 0,
+        rank: 0
+      }
+    };
+  }, [authUser?.id, authUser?.email, profile?.first_name, profile?.last_name, profile?.username]);
   
   // Keep old hook for Dashboard search functionality (will be removed in Phase 4)
   const { allProcessedTests, isLoading: dataLoading } = useTestData();
@@ -62,17 +86,23 @@ function AppContent() {
     exitSession
   } = useTestSessions(user);
 
-  const isLoading = authLoading || dataLoading;
-
   // Fetch test data when session starts or changes
   useEffect(() => {
+    // Guard: Don't fetch data while auth is still loading
+    if (authLoading) return;
+
+    // Guard: Only fetch if we have a valid session with required properties
     if (currentSession && currentView === 'triple-review') {
-      console.log('Session active, fetching test data...');
-      fetchTestById(currentSession.testId, currentSession.selectedSectionId);
+      if (currentSession.testId) {
+        console.log('Session active, fetching test data...');
+        fetchTestById(currentSession.testId, currentSession.selectedSectionId);
+      }
     } else if (!currentSession) {
       clearTestData();
     }
-  }, [currentSession?.id, currentSession?.testId, currentSession?.selectedSectionId, currentView, fetchTestById, clearTestData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // Note: fetchTestById and clearTestData are stable callbacks and don't need to be in deps
+  }, [currentSession?.id, currentSession?.testId, currentSession?.selectedSectionId, currentView, authLoading]);
 
   // Derive current question data for chat
   const currentQuestionDataForChat = useCurrentQuestionData(
@@ -110,26 +140,7 @@ function AppContent() {
     setHasInitialChatWelcomeBeenSent(false);
   }, [exitSession, clearTestData]);
 
-  const handleSignOut = async () => {
-    try {
-      if (user) {
-        const storageKey = `lsat-rewired-sessions-${user.id}`;
-        localStorage.removeItem(storageKey);
-      }
-
-      await supabase.auth.signOut();
-      setCurrentView('landing');
-    } catch (error) {
-      console.error('Error signing out:', error);
-    }
-  };
-
-  const handleLogin = () => {
-    restoreMockUser();
-    setCurrentView('dashboard');
-  };
-
-  if (isLoading) {
+  if (authLoading) {
     return <LoadingSpinner />;
   }
 
@@ -144,19 +155,14 @@ function AppContent() {
   return (
     <div className="app">
       <div className={'min-h-screen transition-all duration-500 ' + backgroundClasses}>
-        {currentView !== 'landing' && (
-          <Navigation
-            currentView={currentView}
-            onViewChange={setCurrentView}
-            user={user || undefined}
-            onSignOut={handleSignOut}
-          />
-        )}
+        <Navigation
+          currentView={currentView}
+          onViewChange={setCurrentView}
+          onOpenAuth={() => setIsAuthModalOpen(true)}
+          userStats={user?.stats}
+        />
 
-        {currentView === 'landing' ? (
-          <LandingPage onLogin={handleLogin} />
-        ) : (
-          <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {currentView === 'dashboard' && user && (
             <Dashboard
               user={user}
@@ -187,28 +193,17 @@ function AppContent() {
           {currentView === 'studyscheduler' && (
             <StudyScheduleBuilder />
           )}
-
+          
           {currentView === 'performance' && user && (
             <PerformanceTracker user={user} />
           )}
 
           {currentView === 'profile' && (
-            <div className="text-center py-12">
-              <h2 className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>Profile Settings</h2>
-              <p className={`mt-4 ${theme === 'dark' ? 'text-gray-400' : 'text-slate-600'}`}>Profile management coming soon</p>
-            </div>
+            <ProfileSettings />
           )}
+        </main>
 
-          {currentView === 'billing' && (
-            <div className="text-center py-12">
-              <h2 className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>Billing & Subscription</h2>
-              <p className={`mt-4 ${theme === 'dark' ? 'text-gray-400' : 'text-slate-600'}`}>Billing management coming soon</p>
-            </div>
-          )}
-          </main>
-        )}
-
-        {user && currentView !== 'landing' && (
+        {authUser && user && (
           <FloatingChatButton
             user={user}
             currentView={currentView}
@@ -225,16 +220,23 @@ function AppContent() {
             setHasInitialChatWelcomeBeenSent={setHasInitialChatWelcomeBeenSent}
           />
         )}
+
+        <AuthModal
+          isOpen={isAuthModalOpen}
+          onClose={() => setIsAuthModalOpen(false)}
+        />
       </div>
     </div>
   );
 }
 
-// Main App Component (wraps with ThemeProvider)
+// Main App Component (wraps with ThemeProvider and AuthProvider)
 function App() {
   return (
     <ThemeProvider>
-      <AppContent />
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
     </ThemeProvider>
   );
 }
