@@ -112,6 +112,11 @@ function AppContent() {
 
   const handleSignOut = async () => {
     try {
+      if (user) {
+        const storageKey = `lsat-rewired-sessions-${user.id}`;
+        localStorage.removeItem(storageKey);
+      }
+
       await supabase.auth.signOut();
       setCurrentView('landing');
     } catch (error) {
