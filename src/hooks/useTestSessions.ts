@@ -170,9 +170,45 @@ export function useTestSessions(user: User | null) {
 
   const updateSession = useCallback((updatedSession: TestSession) => {
     console.log('Updating session:', updatedSession.id);
-    setCurrentSession(updatedSession);
-    setUserSessions(prev => 
-      prev.map(session => 
+
+    // Validate session state to prevent unexpected resets
+    setCurrentSession(prevSession => {
+      if (!prevSession || prevSession.id !== updatedSession.id) {
+        return updatedSession;
+      }
+
+      // Detect and prevent suspicious resets
+      if (updatedSession.currentQuestionIndex < prevSession.currentQuestionIndex ||
+          updatedSession.currentSectionIndex < prevSession.currentSectionIndex) {
+
+        // Allow intentional navigation backwards
+        const isIntentionalNavigation =
+          updatedSession.currentSectionIndex === prevSession.currentSectionIndex ||
+          (updatedSession.currentSectionIndex < prevSession.currentSectionIndex &&
+           updatedSession.currentQuestionIndex === 0);
+
+        if (!isIntentionalNavigation) {
+          console.warn('⚠️ Prevented suspicious session reset:', {
+            prevQuestion: prevSession.currentQuestionIndex,
+            newQuestion: updatedSession.currentQuestionIndex,
+            prevSection: prevSession.currentSectionIndex,
+            newSection: updatedSession.currentSectionIndex
+          });
+
+          // Merge the updates but preserve navigation state
+          return {
+            ...updatedSession,
+            currentQuestionIndex: prevSession.currentQuestionIndex,
+            currentSectionIndex: prevSession.currentSectionIndex
+          };
+        }
+      }
+
+      return updatedSession;
+    });
+
+    setUserSessions(prev =>
+      prev.map(session =>
         session.id === updatedSession.id ? updatedSession : session
       )
     );
