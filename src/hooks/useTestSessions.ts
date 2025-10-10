@@ -178,16 +178,21 @@ export function useTestSessions(user: User | null) {
       }
 
       // Detect and prevent suspicious resets
-      if (updatedSession.currentQuestionIndex < prevSession.currentQuestionIndex ||
-          updatedSession.currentSectionIndex < prevSession.currentSectionIndex) {
+      const isMovingBackwardsInSection =
+        updatedSession.currentSectionIndex === prevSession.currentSectionIndex &&
+        updatedSession.currentQuestionIndex < prevSession.currentQuestionIndex;
 
-        // Allow intentional navigation backwards
-        const isIntentionalNavigation =
-          updatedSession.currentSectionIndex === prevSession.currentSectionIndex ||
-          (updatedSession.currentSectionIndex < prevSession.currentSectionIndex &&
-           updatedSession.currentQuestionIndex === 0);
+      const isMovingToEarlierSection =
+        updatedSession.currentSectionIndex < prevSession.currentSectionIndex;
 
-        if (!isIntentionalNavigation) {
+      if (isMovingBackwardsInSection || isMovingToEarlierSection) {
+        // Allow intentional backwards navigation (user clicking previous button)
+        const isIntentionalBackwardsNavigation =
+          (isMovingBackwardsInSection &&
+           updatedSession.currentQuestionIndex === prevSession.currentQuestionIndex - 1) ||
+          (isMovingToEarlierSection && updatedSession.currentQuestionIndex === 0);
+
+        if (!isIntentionalBackwardsNavigation) {
           console.warn('⚠️ Prevented suspicious session reset:', {
             prevQuestion: prevSession.currentQuestionIndex,
             newQuestion: updatedSession.currentQuestionIndex,
