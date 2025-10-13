@@ -119,7 +119,7 @@ export function useAuth() {
         } else {
           // If no session, create a mock user for dashboard display
           const mockSupabaseUser: SupabaseUser = {
-            id: 'mock-user-id', // A consistent mock ID for development
+            id: '00000000-0000-0000-0000-000000000000', // A consistent mock UUID for development
             email: 'LSATWizard@gmail.com',
           };
           const mockUser: User = {
@@ -163,7 +163,7 @@ export function useAuth() {
 
   const restoreMockUser = () => {
     const mockSupabaseUser: SupabaseUser = {
-      id: 'mock-user-id',
+      id: '00000000-0000-0000-0000-000000000000',
       email: 'LSATWizard@gmail.com',
     };
     const mockUser: User = {
