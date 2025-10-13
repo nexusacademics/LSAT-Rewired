@@ -9,6 +9,7 @@ import { useTestSessions } from './hooks/useTestSessions';
 
 // Import components
 import Dashboard from './components/Dashboard';
+import SessionsPage from './components/SessionsPage';
 import TripleReview from './components/TripleReview';
 import PerformanceTracker from './components/PerformanceTracker';
 import FloatingChatButton from './components/FloatingChatButton';
@@ -24,7 +25,7 @@ import type { ProcessedQuestion, ProcessedPrepTest } from './types/test-data';
 import { ThemeProvider, useTheme } from './contexts/ThemeContext';
 
 // Define view type
-type AppView = 'landing' | 'dashboard' | 'triple-review' | 'performance' | 'studyscheduler' | 'profile' | 'billing';
+type AppView = 'landing' | 'dashboard' | 'triple-review' | 'performance' | 'studyscheduler' | 'profile' | 'billing' | 'sessions';
 
 // Define Message interface for chat history
 export interface Message {
@@ -159,6 +160,13 @@ function AppContent() {
           <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {currentView === 'dashboard' && user && (
             <Dashboard
+              user={user}
+              allProcessedTests={allProcessedTests}
+            />
+          )}
+
+          {currentView === 'sessions' && user && (
+            <SessionsPage
               user={user}
               userSessions={userSessions}
               onStartNewTestSession={handleStartNewSession}

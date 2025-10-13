@@ -73,6 +73,9 @@ export default function Navigation({ currentView, onViewChange, user, onSignOut 
             <NavButton active={currentView === 'dashboard'} onClick={() => handleLinkClick('dashboard')} theme={theme}>
               Dashboard
             </NavButton>
+            <NavButton active={currentView === 'sessions'} onClick={() => handleLinkClick('sessions')} theme={theme}>
+              Sessions
+            </NavButton>
             <NavButton active={currentView === 'performance'} onClick={() => handleLinkClick('performance')} theme={theme}>
               Performance
             </NavButton>
@@ -93,6 +96,9 @@ export default function Navigation({ currentView, onViewChange, user, onSignOut 
           <div className="hidden md:flex xl:hidden space-x-4 items-center">
             <NavButton active={currentView === 'dashboard'} onClick={() => handleLinkClick('dashboard')} theme={theme}>
               Dashboard
+            </NavButton>
+            <NavButton active={currentView === 'sessions'} onClick={() => handleLinkClick('sessions')} theme={theme}>
+              Sessions
             </NavButton>
             <NavButton active={currentView === 'performance'} onClick={() => handleLinkClick('performance')} theme={theme}>
               Performance
@@ -133,6 +139,9 @@ export default function Navigation({ currentView, onViewChange, user, onSignOut 
             </div>
             <NavButton active={currentView === 'dashboard'} onClick={() => handleLinkClick('dashboard')} theme={theme}>
               Dashboard
+            </NavButton>
+            <NavButton active={currentView === 'sessions'} onClick={() => handleLinkClick('sessions')} theme={theme}>
+              Sessions
             </NavButton>
             <NavButton active={currentView === 'performance'} onClick={() => handleLinkClick('performance')} theme={theme}>
               Performance
