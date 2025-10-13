@@ -22,9 +22,10 @@ interface ScheduledItem {
 
 interface WhatsNextProps {
   userId: string;
+  onNavigateToScheduleOptions?: () => void;
 }
 
-const WhatsNext: React.FC<WhatsNextProps> = ({ userId }) => {
+const WhatsNext: React.FC<WhatsNextProps> = ({ userId, onNavigateToScheduleOptions }) => {
   const [nextItem, setNextItem] = useState<ScheduledItem | null>(null);
   const [upcomingItems, setUpcomingItems] = useState<ScheduledItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -186,7 +187,7 @@ const WhatsNext: React.FC<WhatsNextProps> = ({ userId }) => {
             <Button
               variant="primary"
               size="default"
-              onClick={() => window.location.href = '#/schedule-options'}
+              onClick={onNavigateToScheduleOptions}
             >
               Create Schedule
             </Button>

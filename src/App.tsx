@@ -10,6 +10,7 @@ import { useTestSessions } from './hooks/useTestSessions';
 // Import components
 import Dashboard from './components/Dashboard';
 import SessionsPage from './components/SessionsPage';
+import ScheduleOptions from './components/ScheduleOptions';
 import TripleReview from './components/TripleReview';
 import PerformanceTracker from './components/PerformanceTracker';
 import FloatingChatButton from './components/FloatingChatButton';
@@ -25,7 +26,7 @@ import type { ProcessedQuestion, ProcessedPrepTest } from './types/test-data';
 import { ThemeProvider, useTheme } from './contexts/ThemeContext';
 
 // Define view type
-type AppView = 'landing' | 'dashboard' | 'triple-review' | 'performance' | 'studyscheduler' | 'profile' | 'billing' | 'sessions';
+type AppView = 'landing' | 'dashboard' | 'triple-review' | 'performance' | 'studyscheduler' | 'profile' | 'billing' | 'sessions' | 'schedule-options';
 
 // Define Message interface for chat history
 export interface Message {
@@ -162,6 +163,7 @@ function AppContent() {
             <Dashboard
               user={user}
               allProcessedTests={allProcessedTests}
+              onNavigateToScheduleOptions={() => setCurrentView('schedule-options')}
             />
           )}
 
@@ -194,6 +196,13 @@ function AppContent() {
 
           {currentView === 'studyscheduler' && (
             <StudyScheduleBuilder />
+          )}
+
+          {currentView === 'schedule-options' && user && (
+            <ScheduleOptions
+              userId={user.id}
+              onScheduleCreated={() => setCurrentView('dashboard')}
+            />
           )}
 
           {currentView === 'performance' && user && (

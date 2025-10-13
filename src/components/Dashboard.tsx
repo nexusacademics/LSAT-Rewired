@@ -15,11 +15,13 @@ import Badge from '../components/ui/Badge';
 interface DashboardProps {
   user: User;
   allProcessedTests: { [key: string]: ProcessedPrepTest };
+  onNavigateToScheduleOptions?: () => void;
 }
 
 const Dashboard: React.FC<DashboardProps> = ({
   user,
-  allProcessedTests
+  allProcessedTests,
+  onNavigateToScheduleOptions
 }) => {
   const { theme } = useTheme();
  
@@ -253,7 +255,7 @@ const handleSearch = () => {
         <div className="grid lg:grid-cols-2 gap-4">
           {/* Left Column - What's Next */}
           <div className="space-y-4">
-            <WhatsNext userId={user.id} />
+            <WhatsNext userId={user.id} onNavigateToScheduleOptions={onNavigateToScheduleOptions} />
           </div>
 
           {/* Right Column - Item Search */}

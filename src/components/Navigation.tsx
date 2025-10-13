@@ -5,7 +5,7 @@ import ThemeToggle from '../components/ui/ThemeToggle';
 import UserDropdown from './UserDropdown';
 import type { User } from '../types/user';
 
-type AppView = 'landing' | 'dashboard' | 'triple-review' | 'performance' | 'studyscheduler' | 'profile' | 'billing';
+type AppView = 'landing' | 'dashboard' | 'triple-review' | 'performance' | 'studyscheduler' | 'profile' | 'billing' | 'sessions' | 'schedule-options';
 
 interface NavigationProps {
   currentView: AppView;
