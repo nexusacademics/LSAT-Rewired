@@ -129,12 +129,15 @@ const ScheduleOptions: React.FC<ScheduleOptionsProps> = ({ userId, onScheduleCre
           start_date: startDate,
           target_test_date: targetTestDate,
           status: 'active',
-          progress_percentage: 0
+          progress_percentage: 0.00
         })
         .select()
         .single();
 
-      if (scheduleError) throw scheduleError;
+      if (scheduleError) {
+        console.error('Schedule creation error:', scheduleError);
+        throw scheduleError;
+      }
 
       await generateScheduledItems(newSchedule.id, selectedOption);
 
@@ -142,9 +145,10 @@ const ScheduleOptions: React.FC<ScheduleOptionsProps> = ({ userId, onScheduleCre
       if (onScheduleCreated) {
         onScheduleCreated();
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error creating schedule:', err);
-      setError('Failed to create schedule. Please try again.');
+      const errorMessage = err?.message || err?.error_description || JSON.stringify(err);
+      setError(`Failed to create schedule: ${errorMessage}`);
       setCreating(false);
     }
   };
@@ -179,7 +183,7 @@ const ScheduleOptions: React.FC<ScheduleOptionsProps> = ({ userId, onScheduleCre
           item_type: 'rest_day',
           title: 'Rest Day',
           description: 'Take a break to consolidate learning and avoid burnout',
-          estimated_hours: 0,
+          estimated_hours: 0.0,
           status: 'pending',
           day_in_sequence: day + 1
         });
@@ -202,7 +206,7 @@ const ScheduleOptions: React.FC<ScheduleOptionsProps> = ({ userId, onScheduleCre
           estimatedHours = 3.5;
         }
 
-        items.push({
+        const item: any = {
           user_schedule_id: scheduleId,
           scheduled_date: itemDate.toISOString().split('T')[0],
           item_type: itemType,
@@ -211,17 +215,24 @@ const ScheduleOptions: React.FC<ScheduleOptionsProps> = ({ userId, onScheduleCre
           estimated_hours: Math.round(estimatedHours * 10) / 10,
           status: 'pending',
           day_in_sequence: day + 1
-        });
+        };
+
+        // Don't include null fields - let DB use defaults
+        items.push(item);
       }
 
       daysInCurrentPhase++;
     }
 
+    console.log('Inserting', items.length, 'scheduled items');
     const { error: itemsError } = await supabase
       .from('scheduled_items')
       .insert(items);
 
-    if (itemsError) throw itemsError;
+    if (itemsError) {
+      console.error('Items insertion error:', itemsError);
+      throw itemsError;
+    }
 
     const milestones = [];
     let dayCounter = 0;
@@ -263,11 +274,15 @@ const ScheduleOptions: React.FC<ScheduleOptionsProps> = ({ userId, onScheduleCre
       milestone_type: 'final_week'
     });
 
+    console.log('Inserting', milestones.length, 'milestones');
     const { error: milestonesError } = await supabase
       .from('schedule_milestones')
       .insert(milestones);
 
-    if (milestonesError) throw milestonesError;
+    if (milestonesError) {
+      console.error('Milestones insertion error:', milestonesError);
+      throw milestonesError;
+    }
   };
 
   if (loading) {
