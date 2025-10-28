@@ -205,20 +205,21 @@ export const QuestionTracker: React.FC<QuestionTrackerProps> = ({
           if (effectiveFlags.blindReview) flagTooltip.push('Flagged in Blind Review');
           if (effectiveFlags.strategyPlanning) flagTooltip.push('Flagged in Strategy Planning');
 
-          const tooltipText = `Question ${index + 1}${isAnswered ? ' (Answered)' : ''}${flagTooltip.length > 0 ? '\n' + flagTooltip.join('\n') : ''}`;
+          const questionNum = q.question_order || (index + 1);
+          const tooltipText = `Question ${questionNum}${isAnswered ? ' (Answered)' : ''}${q.isExcluded ? ' (Excluded from scoring)' : ''}${flagTooltip.length > 0 ? '\n' + flagTooltip.join('\n') : ''}`;
 
           return (
             <button
               key={q.id}
               onClick={() => onQuestionJump(index)}
-              className="transition-all hover:scale-105"
+              className={`transition-all hover:scale-105 ${q.isExcluded ? 'opacity-60' : ''}`}
               title={tooltipText}
             >
               <ConcentricFlagIndicator
                 flags={effectiveFlags}
                 isAnswered={isAnswered}
                 isCurrent={isCurrent}
-                questionNumber={index + 1}
+                questionNumber={questionNum}
               />
             </button>
           );

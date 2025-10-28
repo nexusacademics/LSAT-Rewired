@@ -272,7 +272,10 @@ export const Header: React.FC<HeaderProps> = ({
                 {getPhaseTitle(session.phase)}
               </h1>
               <p className="text-slate-600">
-                {formattedSectionDisplay} • Question {session.currentQuestionIndex + 1} of {questionsInCurrentSection.length}
+                {formattedSectionDisplay} • Question {currentQuestionData.question_order || session.currentQuestionIndex + 1} of {questionsInCurrentSection.filter(q => !q.isExcluded).length}
+                {currentQuestionData.isExcluded && (
+                  <span className="ml-2 text-amber-600 font-medium">(Excluded from scoring)</span>
+                )}
               </p>
             </div>
           </div>
