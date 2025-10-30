@@ -203,7 +203,7 @@ function AppContent() {
           {currentView === 'schedule-options' && user && (
             <ScheduleOptions
               userId={user.id}
-              onScheduleCreated={() => setCurrentView('dashboard')}
+              onScheduleCreated={() => setCurrentView('studyscheduler')}
             />
           )}
 
