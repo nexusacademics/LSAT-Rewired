@@ -1,8 +1,16 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-const ThemeContext = createContext();
+interface ThemeContextValue {
+  theme: 'light' | 'dark';
+  setTheme: (theme: 'light' | 'dark') => void;
+  toggleTheme: () => void;
+  isDark: boolean;
+  isLight: boolean;
+}
 
-export const useTheme = () => {
+const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
+
+export const useTheme = (): ThemeContextValue => {
   const context = useContext(ThemeContext);
   if (!context) {
     throw new Error('useTheme must be used within a ThemeProvider');
@@ -10,14 +18,16 @@ export const useTheme = () => {
   return context;
 };
 
-export const ThemeProvider = ({ children }) => {
-  const [theme, setTheme] = useState(() => {
-    // Check localStorage or system preference
+interface ThemeProviderProps {
+  children: React.ReactNode;
+}
+
+export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('lsat-theme');
-      if (saved) return saved;
-      
-      // Check system preference
+      if (saved === 'light' || saved === 'dark') return saved;
+
       return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     }
     return 'light';
@@ -25,8 +35,7 @@ export const ThemeProvider = ({ children }) => {
 
   useEffect(() => {
     localStorage.setItem('lsat-theme', theme);
-    
-    // Apply theme class to document root for global styles
+
     document.documentElement.classList.remove('light', 'dark');
     document.documentElement.classList.add(theme);
   }, [theme]);
@@ -35,7 +44,7 @@ export const ThemeProvider = ({ children }) => {
     setTheme(prev => prev === 'light' ? 'dark' : 'light');
   };
 
-  const value = {
+  const value: ThemeContextValue = {
     theme,
     setTheme,
     toggleTheme,
