@@ -186,7 +186,7 @@ const WhatsNext: React.FC<WhatsNextProps> = ({ userId, onNavigateToScheduleOptio
             </p>
             <Button
               variant="primary"
-              size="default"
+              size="md"
               onClick={onNavigateToScheduleOptions}
             >
               Create Schedule

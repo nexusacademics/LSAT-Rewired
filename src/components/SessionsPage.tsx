@@ -104,7 +104,7 @@ const SessionsPage: React.FC<SessionsPageProps> = ({
                     </div>
                   </div>
                   <Button
-                    size="default"
+                    size="md"
                     className="w-full"
                     onClick={handleStartNewSessionClick}
                   >
@@ -180,7 +180,7 @@ const SessionsPage: React.FC<SessionsPageProps> = ({
                     </div>
                   </div>
                   <Button
-                    size="default"
+                    size="md"
                     className="w-full"
                     onClick={handleStartNewSessionClick}
                   >
