@@ -497,7 +497,7 @@ const ScheduleOptions: React.FC<ScheduleOptionsProps> = ({ userId, onScheduleCre
               <div className="mt-6 flex justify-end">
                 <Button
                   variant="primary"
-                  size="md"
+                  size="default"
                   onClick={handleCreateSchedule}
                   disabled={creating || !targetTestDate}
                   className="flex items-center"

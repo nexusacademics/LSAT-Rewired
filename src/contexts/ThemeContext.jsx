@@ -1,16 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-interface ThemeContextValue {
-  theme: 'light' | 'dark';
-  setTheme: (theme: 'light' | 'dark') => void;
-  toggleTheme: () => void;
-  isDark: boolean;
-  isLight: boolean;
-}
+const ThemeContext = createContext();
 
-const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
-
-export const useTheme = (): ThemeContextValue => {
+export const useTheme = () => {
   const context = useContext(ThemeContext);
   if (!context) {
     throw new Error('useTheme must be used within a ThemeProvider');
@@ -18,16 +10,14 @@ export const useTheme = (): ThemeContextValue => {
   return context;
 };
 
-interface ThemeProviderProps {
-  children: React.ReactNode;
-}
-
-export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
-  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+export const ThemeProvider = ({ children }) => {
+  const [theme, setTheme] = useState(() => {
+    // Check localStorage or system preference
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('lsat-theme');
-      if (saved === 'light' || saved === 'dark') return saved;
-
+      if (saved) return saved;
+      
+      // Check system preference
       return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     }
     return 'light';
@@ -35,7 +25,8 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
 
   useEffect(() => {
     localStorage.setItem('lsat-theme', theme);
-
+    
+    // Apply theme class to document root for global styles
     document.documentElement.classList.remove('light', 'dark');
     document.documentElement.classList.add(theme);
   }, [theme]);
@@ -44,7 +35,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     setTheme(prev => prev === 'light' ? 'dark' : 'light');
   };
 
-  const value: ThemeContextValue = {
+  const value = {
     theme,
     setTheme,
     toggleTheme,

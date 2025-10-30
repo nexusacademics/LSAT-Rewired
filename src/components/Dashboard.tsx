@@ -313,7 +313,7 @@ const handleSearch = () => {
                     }`}
                   />
                   <Button
-                       size="md" 
+                       size="default" 
                        className="w-full"
                        onClick={handleDirectSearch}
                         disabled={
