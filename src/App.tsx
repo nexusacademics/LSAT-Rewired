@@ -195,7 +195,9 @@ function AppContent() {
           )}
 
           {currentView === 'studyscheduler' && (
-            <StudyScheduleBuilder />
+            <StudyScheduleBuilder
+              onNavigateToScheduleOptions={() => setCurrentView('schedule-options')}
+            />
           )}
 
           {currentView === 'schedule-options' && user && (

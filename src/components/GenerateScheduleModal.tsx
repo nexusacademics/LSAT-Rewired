@@ -1,4 +1,7 @@
 // src/components/GenerateScheduleModal.tsx
+// DEPRECATED: This component is no longer used in the main application flow.
+// Schedule creation now happens through ScheduleOptions.tsx which uses preset schedules from the database.
+// This file is kept for reference but may be removed in a future cleanup.
 import React, { useState, useEffect } from 'react';
 import { X, Calendar, Clock, Target, Brain, BookOpen, Scale, AlertCircle, CheckCircle, Loader } from 'lucide-react';
 import { GoogleGenerativeAI } from '@google/generative-ai'; // Ensure this import is present

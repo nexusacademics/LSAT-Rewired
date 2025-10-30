@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, Clock, Target, TrendingUp, BookOpen, Scale, Brain, Plus, Filter, Download, Settings, Sun, Moon, BarChart3 } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
-import GenerateScheduleModal from './GenerateScheduleModal'; // adjust path as needed
 
 
 // Mock FullCalendar replacement for demo
@@ -134,13 +133,16 @@ import GenerateScheduleModal from './GenerateScheduleModal'; // adjust path as n
   );
 };
 
-const StudyScheduleBuilder = () => {
+interface StudyScheduleBuilderProps {
+  onNavigateToScheduleOptions?: () => void;
+}
+
+const StudyScheduleBuilder: React.FC<StudyScheduleBuilderProps> = ({ onNavigateToScheduleOptions }) => {
   const { theme, toggleTheme } = useTheme();
   const isDarkMode = theme === 'dark';
   
   const [currentView, setCurrentView] = useState('dayGridWeek');
   const [events, setEvents] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [showStats, setShowStats] = useState(false);
   const [filter, setFilter] = useState('all');
@@ -213,23 +215,6 @@ const StudyScheduleBuilder = () => {
     };
   }, [events]);
 
-  const handleScheduleGenerated = (schedule) => {
-    const transformedEvents = schedule.map((item, index) => ({
-      id: String(Date.now() + index),
-      title: item.task,
-      start: item.date,
-      section: item.section || 'Practice',
-      topics: [item.task],
-      estimatedHours: item.estimatedHours,
-      completedHours: 0,
-      difficulty: item.difficulty || 'Intermediate',
-      completed: false,
-      allDay: false
-    }));
-    setEvents(transformedEvents);
-    setIsModalOpen(false);
-  };
-
   const filteredEvents = events.filter(event => {
     if (filter === 'all') return true;
     if (filter === 'completed') return event.completed;
@@ -288,11 +273,11 @@ const StudyScheduleBuilder = () => {
             
             {/* Generate schedule button */}
             <button
-              onClick={() => setIsModalOpen(true)}
+              onClick={onNavigateToScheduleOptions}
               className="flex items-center space-x-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
             >
               <Plus className="w-4 h-4" />
-              <span>Generate Schedule</span>
+              <span>Create Schedule</span>
             </button>
           </div>
         </div>
@@ -512,15 +497,6 @@ const StudyScheduleBuilder = () => {
               ))}
             </div>
           </div>
-        )}
-
-        {/* Enhanced Modal Import */}
-        {isModalOpen && (
-          <GenerateScheduleModal
-            isOpen={isModalOpen}
-            onClose={() => setIsModalOpen(false)}
-            onScheduleGenerated={handleScheduleGenerated}
-          />
         )}
 
         {/* Event Detail Modal */}
