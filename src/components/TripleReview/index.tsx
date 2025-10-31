@@ -17,6 +17,7 @@ import { useQuestionNavigation } from '../../hooks/useQuestionNavigation';
 import { useAnswerSelection } from '../../hooks/useAnswerSelection';
 import { usePortal } from '../../hooks/usePortal';
 import { IntermissionModal } from './intermissionModal';
+import { testHistoryService } from '../../utils/testHistoryService';
 
 
 interface TripleReviewProps {
@@ -356,7 +357,7 @@ const TripleReview: React.FC<TripleReviewProps> = ({
     setTimeout(() => setShowSuccessMessage(false), 3000);
   };
 
-  const handleConfirmSectionSubmit = () => {
+  const handleConfirmSectionSubmit = async () => {
     const nextSectionIndex = session.currentSectionIndex + 1;
     const updatedCompletedSectionIds = [...session.completedSectionIds, currentSectionData.id];
 
@@ -377,7 +378,17 @@ const TripleReview: React.FC<TripleReviewProps> = ({
           return;  // wait for intermission to finish
         }
       }
-    
+
+    // Record section completion to Supabase before updating state
+    const sectionTimeSpent = session.phase === 'timed' ? (getInitialTime() - timeRemaining) : 0;
+    await testHistoryService.recordSectionCompletion(
+      session,
+      currentSectionData,
+      session.currentSectionIndex,
+      processedPrepTest.name,
+      sectionTimeSpent
+    );
+
     let updatedSession = { ...session };
     if (session.phase === 'timed') {
       updatedSession.timedAnswers = { ...session.answeredQuestions };
@@ -402,11 +413,23 @@ const TripleReview: React.FC<TripleReviewProps> = ({
       setIsSectionTransitionTriggeredByTimer(false);
       // Restart timer for next section if it was running
       if (session.phase === 'timed') {
-        resetTimer();  
+        resetTimer();
         setIsTimerRunning(true);
       }
     } else {
       const updatedCompletedPhases = [...session.completedPhases, session.phase];
+
+      // Record test completion to Supabase
+      const totalTestTimeMinutes = session.startTime
+        ? Math.floor((new Date().getTime() - new Date(session.startTime).getTime()) / 60000)
+        : 0;
+      await testHistoryService.recordTestCompletion(
+        updatedSession,
+        processedPrepTest.name,
+        currentSections,
+        totalTestTimeMinutes
+      );
+
       onUpdateSession({
         ...updatedSession,
         endTime: new Date(),
@@ -421,8 +444,18 @@ const TripleReview: React.FC<TripleReviewProps> = ({
 
   const isLastSection = session.currentSectionIndex === currentSections.length - 1;
 
-const handleIntermissionEnd = () => {
+const handleIntermissionEnd = async () => {
   setIsIntermissionMode(false);
+
+  // Record section completion to Supabase before advancing
+  const sectionTimeSpent = session.phase === 'timed' ? (getInitialTime() - timeRemaining) : 0;
+  await testHistoryService.recordSectionCompletion(
+    session,
+    currentSectionData,
+    session.currentSectionIndex,
+    processedPrepTest.name,
+    sectionTimeSpent
+  );
 
   // Advance the section index + reset timer and session states exactly like normal section submit
 
@@ -452,6 +485,18 @@ const handleIntermissionEnd = () => {
     setIsTimerRunning(true);
   } else {
     const updatedCompletedPhases = [...session.completedPhases, session.phase];
+
+    // Record test completion to Supabase
+    const totalTestTimeMinutes = session.startTime
+      ? Math.floor((new Date().getTime() - new Date(session.startTime).getTime()) / 60000)
+      : 0;
+    await testHistoryService.recordTestCompletion(
+      updatedSession,
+      processedPrepTest.name,
+      currentSections,
+      totalTestTimeMinutes
+    );
+
     onUpdateSession({
       ...updatedSession,
       endTime: new Date(),
