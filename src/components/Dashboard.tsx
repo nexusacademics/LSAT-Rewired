@@ -17,12 +17,14 @@ interface DashboardProps {
   user: User;
   allProcessedTests: { [key: string]: ProcessedPrepTest };
   onNavigateToScheduleOptions?: () => void;
+  onNavigateToTestHistory?: () => void;
 }
 
 const Dashboard: React.FC<DashboardProps> = ({
   user,
   allProcessedTests,
-  onNavigateToScheduleOptions
+  onNavigateToScheduleOptions,
+  onNavigateToTestHistory
 }) => {
   const { theme } = useTheme();
 
@@ -56,24 +58,10 @@ const Dashboard: React.FC<DashboardProps> = ({
 
 const [errorMessage, setErrorMessage] = useState("");
 
-  const handleTestHistory = async () => {
-    console.log('Testing Test History Service...');
-
-    const testCompletions = await testHistoryService.getTestCompletions(5);
-    const sectionCompletions = await testHistoryService.getSectionCompletions(5);
-    const recentActivity = await testHistoryService.getRecentActivity(5);
-    const performanceByType = await testHistoryService.getPerformanceByQuestionType();
-
-    const results = {
-      testCompletions,
-      sectionCompletions,
-      recentActivity,
-      performanceByType
-    };
-
-    console.log('Test History Results:', results);
-    setTestHistoryData(results);
-    setShowTestHistory(true);
+  const handleTestHistory = () => {
+    if (onNavigateToTestHistory) {
+      onNavigateToTestHistory();
+    }
   };
 
   //Direct Search
@@ -402,52 +390,20 @@ const handleSearch = () => {
             <Card padding="default" hover>
               <CardHeader className="pb-3">
                 <CardTitle icon={<Database className="h-5 w-5 text-green-500" />}>
-                  Test History (Debug)
+                  Test History
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <p className={`text-sm mb-4 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                  Test the new history tracking system
+                  View all your test activity, section completions, and performance across all phases
                 </p>
                 <Button
                   variant="secondary"
                   onClick={handleTestHistory}
                   className="w-full"
                 >
-                  Fetch Test History
+                  View Test History
                 </Button>
-
-                {showTestHistory && testHistoryData && (
-                  <div className={`mt-4 p-4 rounded-lg ${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'}`}>
-                    <div className="space-y-3 text-sm">
-                      <div>
-                        <strong>Test Completions:</strong> {testHistoryData.testCompletions?.data?.length || 0}
-                      </div>
-                      <div>
-                        <strong>Section Completions:</strong> {testHistoryData.sectionCompletions?.data?.length || 0}
-                      </div>
-                      <div>
-                        <strong>Recent Activity:</strong> {testHistoryData.recentActivity?.data?.length || 0}
-                      </div>
-                      <div>
-                        <strong>Performance Types:</strong> {testHistoryData.performanceByType?.data?.length || 0}
-                      </div>
-                      {testHistoryData.testCompletions?.error && (
-                        <div className="text-red-500">
-                          Error: {testHistoryData.testCompletions.error}
-                        </div>
-                      )}
-                      <details className="mt-2">
-                        <summary className="cursor-pointer font-semibold">View Raw Data</summary>
-                        <pre className={`mt-2 p-2 rounded text-xs overflow-auto max-h-96 ${
-                          theme === 'dark' ? 'bg-gray-900' : 'bg-white'
-                        }`}>
-                          {JSON.stringify(testHistoryData, null, 2)}
-                        </pre>
-                      </details>
-                    </div>
-                  </div>
-                )}
               </CardContent>
             </Card>
           </div>

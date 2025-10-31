@@ -655,6 +655,110 @@ class TestHistoryService {
       return { data: null, error: String(err) };
     }
   }
+
+  async getAllActivity(limit?: number): Promise<{ data: any[] | null; error?: string }> {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+
+      if (!user) {
+        return { data: null, error: 'User not authenticated' };
+      }
+
+      const [testCompletionsResult, sectionCompletionsResult] = await Promise.all([
+        supabase
+          .from('test_completions')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('completion_timestamp', { ascending: false }),
+        supabase
+          .from('section_completions')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('completion_timestamp', { ascending: false })
+      ]);
+
+      if (testCompletionsResult.error) {
+        console.error('Error fetching test completions:', testCompletionsResult.error);
+        return { data: null, error: testCompletionsResult.error.message };
+      }
+
+      if (sectionCompletionsResult.error) {
+        console.error('Error fetching section completions:', sectionCompletionsResult.error);
+        return { data: null, error: sectionCompletionsResult.error.message };
+      }
+
+      const allActivity = [
+        ...(testCompletionsResult.data || []).map(item => ({ ...item, activity_type: 'test_completion' })),
+        ...(sectionCompletionsResult.data || []).map(item => ({ ...item, activity_type: 'section_completion' }))
+      ];
+
+      allActivity.sort((a, b) => {
+        const aTime = new Date(a.completion_timestamp).getTime();
+        const bTime = new Date(b.completion_timestamp).getTime();
+        return bTime - aTime;
+      });
+
+      const limitedActivity = limit ? allActivity.slice(0, limit) : allActivity;
+
+      return { data: limitedActivity };
+    } catch (err) {
+      console.error('Exception fetching all activity:', err);
+      return { data: null, error: String(err) };
+    }
+  }
+
+  async getActivityByPhase(phase: 'timed' | 'blind-review' | 'strategy-review', limit?: number): Promise<{ data: any[] | null; error?: string }> {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+
+      if (!user) {
+        return { data: null, error: 'User not authenticated' };
+      }
+
+      const [testCompletionsResult, sectionCompletionsResult] = await Promise.all([
+        supabase
+          .from('test_completions')
+          .select('*')
+          .eq('user_id', user.id)
+          .eq('phase', phase)
+          .order('completion_timestamp', { ascending: false }),
+        supabase
+          .from('section_completions')
+          .select('*')
+          .eq('user_id', user.id)
+          .eq('phase', phase)
+          .order('completion_timestamp', { ascending: false })
+      ]);
+
+      if (testCompletionsResult.error) {
+        console.error('Error fetching test completions by phase:', testCompletionsResult.error);
+        return { data: null, error: testCompletionsResult.error.message };
+      }
+
+      if (sectionCompletionsResult.error) {
+        console.error('Error fetching section completions by phase:', sectionCompletionsResult.error);
+        return { data: null, error: sectionCompletionsResult.error.message };
+      }
+
+      const allActivity = [
+        ...(testCompletionsResult.data || []).map(item => ({ ...item, activity_type: 'test_completion' })),
+        ...(sectionCompletionsResult.data || []).map(item => ({ ...item, activity_type: 'section_completion' }))
+      ];
+
+      allActivity.sort((a, b) => {
+        const aTime = new Date(a.completion_timestamp).getTime();
+        const bTime = new Date(b.completion_timestamp).getTime();
+        return bTime - aTime;
+      });
+
+      const limitedActivity = limit ? allActivity.slice(0, limit) : allActivity;
+
+      return { data: limitedActivity };
+    } catch (err) {
+      console.error('Exception fetching activity by phase:', err);
+      return { data: null, error: String(err) };
+    }
+  }
 }
 
 export const testHistoryService = new TestHistoryService();

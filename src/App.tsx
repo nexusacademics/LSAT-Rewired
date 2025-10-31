@@ -18,6 +18,7 @@ import LoadingSpinner from './components/LoadingSpinner';
 import Navigation from './components/Navigation';
 import StudyScheduleBuilder from './components/StudyScheduleBuilder';
 import LandingPage from './components/LandingPage';
+import TestHistoryPage from './components/TestHistoryPage';
 import { supabase } from './lib/supabase';
 
 // Import types
@@ -26,7 +27,7 @@ import type { ProcessedQuestion, ProcessedPrepTest } from './types/test-data';
 import { ThemeProvider, useTheme } from './contexts/ThemeContext';
 
 // Define view type
-type AppView = 'landing' | 'dashboard' | 'triple-review' | 'performance' | 'studyscheduler' | 'profile' | 'billing' | 'sessions' | 'schedule-options';
+type AppView = 'landing' | 'dashboard' | 'triple-review' | 'performance' | 'studyscheduler' | 'profile' | 'billing' | 'sessions' | 'schedule-options' | 'test-history';
 
 // Define Message interface for chat history
 export interface Message {
@@ -164,6 +165,7 @@ function AppContent() {
               user={user}
               allProcessedTests={allProcessedTests}
               onNavigateToScheduleOptions={() => setCurrentView('schedule-options')}
+              onNavigateToTestHistory={() => setCurrentView('test-history')}
             />
           )}
 
@@ -175,6 +177,10 @@ function AppContent() {
               onResumeTestSession={handleResumeSession}
               allProcessedTests={allProcessedTests}
             />
+          )}
+
+          {currentView === 'test-history' && (
+            <TestHistoryPage onClose={() => setCurrentView('dashboard')} />
           )}
 
           {currentView === 'triple-review' && currentSession && (
