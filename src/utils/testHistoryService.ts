@@ -355,6 +355,306 @@ class TestHistoryService {
 
     return await this.insertTestCompletion(testCompletionData);
   }
+
+  async getAllQuestionAttempts(limit?: number): Promise<{ data: any[] | null; error?: string }> {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+
+      if (!user) {
+        return { data: null, error: 'User not authenticated' };
+      }
+
+      let query = supabase
+        .from('question_attempts')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('attempt_timestamp', { ascending: false });
+
+      if (limit) {
+        query = query.limit(limit);
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        console.error('Error fetching question attempts:', error);
+        return { data: null, error: error.message };
+      }
+
+      return { data };
+    } catch (err) {
+      console.error('Exception fetching question attempts:', err);
+      return { data: null, error: String(err) };
+    }
+  }
+
+  async getQuestionAttemptsByTest(testId: string, phase?: string): Promise<{ data: any[] | null; error?: string }> {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+
+      if (!user) {
+        return { data: null, error: 'User not authenticated' };
+      }
+
+      let query = supabase
+        .from('question_attempts')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('test_id', testId)
+        .order('attempt_timestamp', { ascending: false });
+
+      if (phase) {
+        query = query.eq('phase', phase);
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        console.error('Error fetching question attempts by test:', error);
+        return { data: null, error: error.message };
+      }
+
+      return { data };
+    } catch (err) {
+      console.error('Exception fetching question attempts by test:', err);
+      return { data: null, error: String(err) };
+    }
+  }
+
+  async getQuestionAttemptsByType(questionType: string, phase?: string): Promise<{ data: any[] | null; error?: string }> {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+
+      if (!user) {
+        return { data: null, error: 'User not authenticated' };
+      }
+
+      let query = supabase
+        .from('question_attempts')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('question_type', questionType)
+        .order('attempt_timestamp', { ascending: false });
+
+      if (phase) {
+        query = query.eq('phase', phase);
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        console.error('Error fetching question attempts by type:', error);
+        return { data: null, error: error.message };
+      }
+
+      return { data };
+    } catch (err) {
+      console.error('Exception fetching question attempts by type:', err);
+      return { data: null, error: String(err) };
+    }
+  }
+
+  async getSectionCompletions(limit?: number): Promise<{ data: any[] | null; error?: string }> {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+
+      if (!user) {
+        return { data: null, error: 'User not authenticated' };
+      }
+
+      let query = supabase
+        .from('section_completions')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('completion_timestamp', { ascending: false });
+
+      if (limit) {
+        query = query.limit(limit);
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        console.error('Error fetching section completions:', error);
+        return { data: null, error: error.message };
+      }
+
+      return { data };
+    } catch (err) {
+      console.error('Exception fetching section completions:', err);
+      return { data: null, error: String(err) };
+    }
+  }
+
+  async getSectionCompletionsByTest(testId: string, phase?: string): Promise<{ data: any[] | null; error?: string }> {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+
+      if (!user) {
+        return { data: null, error: 'User not authenticated' };
+      }
+
+      let query = supabase
+        .from('section_completions')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('test_id', testId)
+        .order('completion_timestamp', { ascending: false });
+
+      if (phase) {
+        query = query.eq('phase', phase);
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        console.error('Error fetching section completions by test:', error);
+        return { data: null, error: error.message };
+      }
+
+      return { data };
+    } catch (err) {
+      console.error('Exception fetching section completions by test:', err);
+      return { data: null, error: String(err) };
+    }
+  }
+
+  async getTestCompletions(limit?: number): Promise<{ data: any[] | null; error?: string }> {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+
+      if (!user) {
+        return { data: null, error: 'User not authenticated' };
+      }
+
+      let query = supabase
+        .from('test_completions')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('completion_timestamp', { ascending: false });
+
+      if (limit) {
+        query = query.limit(limit);
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        console.error('Error fetching test completions:', error);
+        return { data: null, error: error.message };
+      }
+
+      return { data };
+    } catch (err) {
+      console.error('Exception fetching test completions:', err);
+      return { data: null, error: String(err) };
+    }
+  }
+
+  async getTestCompletionsByTestId(testId: string): Promise<{ data: any[] | null; error?: string }> {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+
+      if (!user) {
+        return { data: null, error: 'User not authenticated' };
+      }
+
+      const { data, error } = await supabase
+        .from('test_completions')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('test_id', testId)
+        .order('completion_timestamp', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching test completions by test ID:', error);
+        return { data: null, error: error.message };
+      }
+
+      return { data };
+    } catch (err) {
+      console.error('Exception fetching test completions by test ID:', err);
+      return { data: null, error: String(err) };
+    }
+  }
+
+  async getPerformanceByQuestionType(phase?: string): Promise<{ data: any[] | null; error?: string }> {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+
+      if (!user) {
+        return { data: null, error: 'User not authenticated' };
+      }
+
+      let query = supabase
+        .from('question_attempts')
+        .select('question_type, is_correct, phase')
+        .eq('user_id', user.id)
+        .not('question_type', 'is', null);
+
+      if (phase) {
+        query = query.eq('phase', phase);
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        console.error('Error fetching performance by question type:', error);
+        return { data: null, error: error.message };
+      }
+
+      const aggregated = data?.reduce((acc: any, attempt: any) => {
+        const key = `${attempt.question_type}-${attempt.phase}`;
+        if (!acc[key]) {
+          acc[key] = {
+            question_type: attempt.question_type,
+            phase: attempt.phase,
+            total: 0,
+            correct: 0,
+            accuracy: 0
+          };
+        }
+        acc[key].total++;
+        if (attempt.is_correct) {
+          acc[key].correct++;
+        }
+        acc[key].accuracy = (acc[key].correct / acc[key].total) * 100;
+        return acc;
+      }, {});
+
+      return { data: Object.values(aggregated || {}) };
+    } catch (err) {
+      console.error('Exception fetching performance by question type:', err);
+      return { data: null, error: String(err) };
+    }
+  }
+
+  async getRecentActivity(limit: number = 10): Promise<{ data: any[] | null; error?: string }> {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+
+      if (!user) {
+        return { data: null, error: 'User not authenticated' };
+      }
+
+      const { data, error } = await supabase
+        .from('test_completions')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('completion_timestamp', { ascending: false })
+        .limit(limit);
+
+      if (error) {
+        console.error('Error fetching recent activity:', error);
+        return { data: null, error: error.message };
+      }
+
+      return { data };
+    } catch (err) {
+      console.error('Exception fetching recent activity:', err);
+      return { data: null, error: String(err) };
+    }
+  }
 }
 
 export const testHistoryService = new TestHistoryService();
