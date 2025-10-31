@@ -352,14 +352,45 @@ const TestHistoryPage: React.FC<TestHistoryPageProps> = ({ onClose }) => {
 
           {!loading && !error && activityData.length === 0 && (
             <Card padding="default">
-              <div className="text-center py-12">
+              <div className="text-center py-12 max-w-2xl mx-auto">
                 <TrendingUp className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                <p className={`text-lg ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                  No test activity found
+                <p className={`text-xl font-semibold mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+                  No test activity yet
                 </p>
-                <p className={`text-sm mt-2 ${theme === 'dark' ? 'text-gray-500' : 'text-gray-500'}`}>
-                  Complete a test section to see your history here
+                <p className={`text-sm mb-6 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                  Your test history will appear here after you complete your first section
                 </p>
+
+                <div className={`text-left p-6 rounded-lg ${theme === 'dark' ? 'bg-gray-800/50' : 'bg-blue-50'}`}>
+                  <h3 className={`font-semibold mb-3 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                    How to start tracking your progress:
+                  </h3>
+                  <ol className={`space-y-2 text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+                    <li className="flex items-start">
+                      <span className="font-semibold mr-2">1.</span>
+                      <span>Go to Sessions page and start a new PrepTest or section</span>
+                    </li>
+                    <li className="flex items-start">
+                      <span className="font-semibold mr-2">2.</span>
+                      <span>Complete the section (you'll see a completion modal)</span>
+                    </li>
+                    <li className="flex items-start">
+                      <span className="font-semibold mr-2">3.</span>
+                      <span>Your results will automatically appear here in Test History</span>
+                    </li>
+                  </ol>
+                  <p className={`mt-4 text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                    Note: All phases (Timed, Blind Review, Strategy Review) are tracked separately so you can see your improvement over time.
+                  </p>
+                </div>
+
+                <Button
+                  variant="primary"
+                  className="mt-6"
+                  onClick={onClose}
+                >
+                  Go to Sessions
+                </Button>
               </div>
             </Card>
           )}

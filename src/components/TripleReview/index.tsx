@@ -381,13 +381,24 @@ const TripleReview: React.FC<TripleReviewProps> = ({
 
     // Record section completion to Supabase before updating state
     const sectionTimeSpent = session.phase === 'timed' ? (getInitialTime() - timeRemaining) : 0;
-    await testHistoryService.recordSectionCompletion(
+    console.log('📊 Recording section completion to database...');
+    console.log('Section:', currentSectionData.name);
+    console.log('Phase:', session.phase);
+    console.log('Test:', processedPrepTest.name);
+
+    const recordResult = await testHistoryService.recordSectionCompletion(
       session,
       currentSectionData,
       session.currentSectionIndex,
       processedPrepTest.name,
       sectionTimeSpent
     );
+
+    if (recordResult.success) {
+      console.log('✅ Section completion saved to database successfully!');
+    } else {
+      console.error('❌ Failed to save section completion:', recordResult.error);
+    }
 
     let updatedSession = { ...session };
     if (session.phase === 'timed') {
@@ -423,12 +434,24 @@ const TripleReview: React.FC<TripleReviewProps> = ({
       const totalTestTimeMinutes = session.startTime
         ? Math.floor((new Date().getTime() - new Date(session.startTime).getTime()) / 60000)
         : 0;
-      await testHistoryService.recordTestCompletion(
+
+      console.log('🎯 Recording test completion to database...');
+      console.log('Test:', processedPrepTest.name);
+      console.log('Phase:', session.phase);
+      console.log('Sections completed:', currentSections.length);
+
+      const testRecordResult = await testHistoryService.recordTestCompletion(
         updatedSession,
         processedPrepTest.name,
         currentSections,
         totalTestTimeMinutes
       );
+
+      if (testRecordResult.success) {
+        console.log('✅ Test completion saved to database successfully!');
+      } else {
+        console.error('❌ Failed to save test completion:', testRecordResult.error);
+      }
 
       onUpdateSession({
         ...updatedSession,
