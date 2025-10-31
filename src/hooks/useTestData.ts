@@ -37,7 +37,7 @@ export function useTestData() {
         while (hasMoreQuestions) {
           const { data: questionsBatch, error: questionsError } = await supabase
             .from('questions')
-            .select('id, section_id, passage, question_stem, correct_answer_index, question_order, question_type, conclusion_explanation, roles_explanation, assumption_explanation, prediction_explanation, correct_explanation, incorrect_explanation')
+            .select('id, section_id, passage, question_stem, correct_answer_index, question_order, question_type, conclusion_explanation, roles_explanation, assumption_explanation, prediction_explanation, correct_explanation, incorrect_explanation, is_excluded, excluded_reason')
             .order('question_order', { ascending: true })
             .range(from, to);
 
@@ -110,6 +110,9 @@ export function useTestData() {
             options: processedOptions,
             correctAnswer: q.correct_answer_index,
             type: q.question_type,
+            question_order: q.question_order,
+            isExcluded: q.is_excluded || false,
+            excludedReason: q.excluded_reason || undefined,
             explanations: {
               conclusion: q.conclusion_explanation,
               roles: q.roles_explanation,

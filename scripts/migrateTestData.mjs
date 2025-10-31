@@ -137,6 +137,11 @@ for (const [qIndex, rawQuestion] of rawSection.items.entries()) {
   }
 
   if (!question) {
+    // Check if this is a removed item (no correct answer)
+    const correctAnswerIndex = rawQuestion.correctAnswer
+      ? optionLetterToIndex(rawQuestion.correctAnswer)
+      : 0; // Default to 0 for removed items
+
     const { data, error } = await supabase
       .from('questions')
       .insert({
@@ -144,7 +149,7 @@ for (const [qIndex, rawQuestion] of rawSection.items.entries()) {
         item_id: rawQuestion.itemId,
         passage: stripHtmlTags(rawQuestion.stimulusText), // Changed from stimulus_text
         question_stem: stripHtmlTags(rawQuestion.stemText), // Changed from stem_text
-        correct_answer_index: optionLetterToIndex(rawQuestion.correctAnswer),
+        correct_answer_index: correctAnswerIndex,
         question_order: qIndex + 1, // 1-indexed order
         question_type: sectionType // ADDED THIS LINE (uses sectionType from above)
       })
@@ -163,8 +168,9 @@ for (const [qIndex, rawQuestion] of rawSection.items.entries()) {
 
       const questionId = question.id;
 
-     // Insert Options for the question
-for (const [oIndex, rawOption] of rawQuestion.options.entries()) {
+     // Insert Options for the question (skip if no options for removed items)
+if (rawQuestion.options && Array.isArray(rawQuestion.options)) {
+  for (const [oIndex, rawOption] of rawQuestion.options.entries()) {
   let { data: option, error: optionError } = await supabase
     .from('question_options')
     .select('id')
@@ -194,6 +200,7 @@ for (const [oIndex, rawOption] of rawQuestion.options.entries()) {
     // console.log(`      Inserted option: ${rawOption.optionLetter}`);
   } else {
     // console.log(`      Option ${rawOption.optionLetter} for question ${questionId} already exists, skipping insertion.`);
+  }
   }
 }
     }

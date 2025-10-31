@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Calendar, Clock, Target, TrendingUp, BookOpen, Scale, Brain, Plus, Filter, Download, Settings, Sun, Moon, BarChart3 } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
-import GenerateScheduleModal from './GenerateScheduleModal'; // adjust path as needed
+import { useAuth } from '../hooks/useAuth';
+import { useScheduledItems } from '../hooks/useScheduledItems';
+import { transformScheduledItemToCalendarEvent, CalendarEvent } from '../utils/scheduleCalendarUtils';
 
 
 // Mock FullCalendar replacement for demo
@@ -134,67 +136,25 @@ import GenerateScheduleModal from './GenerateScheduleModal'; // adjust path as n
   );
 };
 
-const StudyScheduleBuilder = () => {
+interface StudyScheduleBuilderProps {
+  onNavigateToScheduleOptions?: () => void;
+}
+
+const StudyScheduleBuilder: React.FC<StudyScheduleBuilderProps> = ({ onNavigateToScheduleOptions }) => {
   const { theme, toggleTheme } = useTheme();
   const isDarkMode = theme === 'dark';
-  
+  const { user } = useAuth();
+
+  const { scheduledItems, userSchedule, isLoading, error, markItemComplete, updateItemHours } = useScheduledItems(user?.id);
+
   const [currentView, setCurrentView] = useState('dayGridWeek');
-  const [events, setEvents] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
   const [showStats, setShowStats] = useState(false);
   const [filter, setFilter] = useState('all');
 
-  // Sample events for demo
-  useEffect(() => {
-    const sampleEvents = [
-      {
-        id: '1',
-        title: 'Conditional Reasoning Fundamentals',
-        start: '2025-08-10',
-        section: 'Fundamentals',
-        topics: ['Conditional Reasoning', 'Basic Diagrams'],
-        estimatedHours: 8,
-        completedHours: 8,
-        difficulty: 'Beginner',
-        completed: true
-      },
-      {
-        id: '2',
-        title: 'Reading Comprehension',
-        start: '2025-08-17',
-        section: 'Fundamentals',
-        topics: ['Reading Comp', 'Main Point Questions'],
-        estimatedHours: 10,
-        completedHours: 6,
-        difficulty: 'Beginner',
-        completed: false
-      },
-      {
-        id: '3',
-        title: 'Logical Reasoning Practice',
-        start: '2025-08-24',
-        section: 'Practice',
-        topics: ['Logical Reasoning', 'Assumption Questions'],
-        estimatedHours: 12,
-        completedHours: 0,
-        difficulty: 'Intermediate',
-        completed: false
-      },
-       {
-        id: '4',
-        title: 'Logical Reasoning Practice',
-        start: '2025-08-24',
-        section: 'Practice',
-        topics: ['Logical Reasoning', 'Assumption Questions'],
-        estimatedHours: 12,
-        completedHours: 0,
-        difficulty: 'Intermediate',
-        completed: false
-      }
-    ];
-    setEvents(sampleEvents);
-  }, []);
+  const events = useMemo(() => {
+    return scheduledItems.map(item => transformScheduledItemToCalendarEvent(item));
+  }, [scheduledItems]);
 
   // Calculate statistics
   const stats = React.useMemo(() => {
@@ -213,23 +173,6 @@ const StudyScheduleBuilder = () => {
     };
   }, [events]);
 
-  const handleScheduleGenerated = (schedule) => {
-    const transformedEvents = schedule.map((item, index) => ({
-      id: String(Date.now() + index),
-      title: item.task,
-      start: item.date,
-      section: item.section || 'Practice',
-      topics: [item.task],
-      estimatedHours: item.estimatedHours,
-      completedHours: 0,
-      difficulty: item.difficulty || 'Intermediate',
-      completed: false,
-      allDay: false
-    }));
-    setEvents(transformedEvents);
-    setIsModalOpen(false);
-  };
-
   const filteredEvents = events.filter(event => {
     if (filter === 'all') return true;
     if (filter === 'completed') return event.completed;
@@ -237,31 +180,67 @@ const StudyScheduleBuilder = () => {
     return event.section.toLowerCase() === filter;
   });
 
-  const handleEventClick = (event) => {
+  const handleEventClick = (event: CalendarEvent) => {
     setSelectedEvent(event);
   };
 
-  const toggleEventComplete = (eventId) => {
-    setEvents(prev => prev.map(event => 
-      event.id === eventId 
-        ? { ...event, completed: !event.completed, completedHours: !event.completed ? event.estimatedHours : 0 }
-        : event
-    ));
+  const toggleEventComplete = async (eventId: string) => {
+    await markItemComplete(eventId);
     setSelectedEvent(null);
   };
 
-  const updateEventHours = (eventId, completedHours) => {
-    setEvents(prev => prev.map(event => 
-      event.id === eventId 
-        ? { ...event, completedHours, completed: completedHours >= event.estimatedHours }
-        : event
-    ));
+  const updateEventHours = async (eventId: string, completedHours: number) => {
+    await updateItemHours(eventId, completedHours);
   };
+
+  if (isLoading) {
+    return (
+      <div className={`transition-colors duration-300 ${isDarkMode ? 'bg-slate-900' : 'bg-gray-50'} min-h-screen flex items-center justify-center`}>
+        <div className="text-center">
+          <div className={`text-lg ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+            Loading your schedule...
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!userSchedule && !isLoading) {
+    return (
+      <div className={`transition-colors duration-300 ${isDarkMode ? 'bg-slate-900' : 'bg-gray-50'} min-h-screen`}>
+        <div className="w-full pt-10 px-4 pb-4">
+          <div className="max-w-[1600px] mx-auto">
+            <div className="text-center py-12">
+              <div className="text-4xl mb-4">📅</div>
+              <h2 className={`text-2xl font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-slate-800'}`}>
+                No Active Study Schedule
+              </h2>
+              <p className={`mb-6 ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>
+                Create a personalized study schedule to track your progress
+              </p>
+              <button
+                onClick={onNavigateToScheduleOptions}
+                className="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+              >
+                Create Schedule
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={`transition-colors duration-300 ${isDarkMode ? 'bg-slate-900' : 'bg-gray-50'}`}>
       <div className="w-full pt-10 px-4 pb-4">
             <div className="max-w-[1600px] mx-auto space-y-6">
+
+        {error && (
+          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-4">
+            <p className="text-red-800 dark:text-red-200">{error}</p>
+          </div>
+        )}
 
         {/* Header */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between space-y-4 lg:space-y-0">
@@ -288,11 +267,11 @@ const StudyScheduleBuilder = () => {
             
             {/* Generate schedule button */}
             <button
-              onClick={() => setIsModalOpen(true)}
+              onClick={onNavigateToScheduleOptions}
               className="flex items-center space-x-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
             >
               <Plus className="w-4 h-4" />
-              <span>Generate Schedule</span>
+              <span>Create Schedule</span>
             </button>
           </div>
         </div>
@@ -512,15 +491,6 @@ const StudyScheduleBuilder = () => {
               ))}
             </div>
           </div>
-        )}
-
-        {/* Enhanced Modal Import */}
-        {isModalOpen && (
-          <GenerateScheduleModal
-            isOpen={isModalOpen}
-            onClose={() => setIsModalOpen(false)}
-            onScheduleGenerated={handleScheduleGenerated}
-          />
         )}
 
         {/* Event Detail Modal */}

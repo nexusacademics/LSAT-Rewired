@@ -43,7 +43,7 @@ export function useTestDetails() {
       const sectionIds = (sections || []).map(s => s.id);
       const { data: questions, error: questionsError } = await supabase
         .from('questions')
-        .select('id, section_id, passage, question_stem, correct_answer_index, question_order, question_type, conclusion_explanation, roles_explanation, assumption_explanation, prediction_explanation, correct_explanation, incorrect_explanation')
+        .select('id, section_id, passage, question_stem, correct_answer_index, question_order, question_type, conclusion_explanation, roles_explanation, assumption_explanation, prediction_explanation, correct_explanation, incorrect_explanation, is_excluded, excluded_reason')
         .in('section_id', sectionIds)
         .order('question_order', { ascending: true });
 
@@ -101,6 +101,9 @@ export function useTestDetails() {
           options: processedOptions,
           correctAnswer: q.correct_answer_index,
           type: q.question_type,
+          question_order: q.question_order,
+          isExcluded: q.is_excluded || false,
+          excludedReason: q.excluded_reason || undefined,
           explanations: {
             conclusion: q.conclusion_explanation,
             roles: q.roles_explanation,

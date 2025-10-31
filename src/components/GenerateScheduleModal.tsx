@@ -1,4 +1,7 @@
 // src/components/GenerateScheduleModal.tsx
+// DEPRECATED: This component is no longer used in the main application flow.
+// Schedule creation now happens through ScheduleOptions.tsx which uses preset schedules from the database.
+// This file is kept for reference but may be removed in a future cleanup.
 import React, { useState, useEffect } from 'react';
 import { X, Calendar, Clock, Target, Brain, BookOpen, Scale, AlertCircle, CheckCircle, Loader } from 'lucide-react';
 import { GoogleGenerativeAI } from '@google/generative-ai'; // Ensure this import is present
@@ -135,7 +138,7 @@ const GenerateScheduleModal: React.FC<GenerateScheduleModalProps> = ({
 
       // Initialize Gemini AI
       const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY || '');
-      const model = genAI.getGenerativeModel({ model: 'gemini-1.5-pro' });
+      const model = genAI.getGenerativeModel({ model: 'gemini-2.5-pro' });
       
       const prompt = `# Enhanced LSAT Study Calendar Prompt for Gemini
 

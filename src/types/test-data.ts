@@ -2,16 +2,25 @@
 export interface RawPrepTest {
   sections: RawSection[];
   moduleName: string;
+  excludedQuestions?: ExcludedQuestion[];
+}
+
+export interface ExcludedQuestion {
+  sectionOrder: number;
+  questionNumber: number;
+  reason?: string;
 }
 
 export interface RawSection {
   sectionId: string;
   sectionName: string;
+  sectionOrder: number;
   items: RawQuestionItem[];
 }
 
 export interface RawQuestionItem {
   itemId: string;
+  itemPosition: number;
   stimulusText: string;
   stemText: string;
   options: { optionLetter: string; optionContent: string }[];
@@ -41,6 +50,8 @@ export interface ProcessedQuestion {
   section_order?: number;
   section_type?: string;
   question_order?: number;
+  isExcluded?: boolean;
+  excludedReason?: string;
 }
 
 export interface ProcessedSection {

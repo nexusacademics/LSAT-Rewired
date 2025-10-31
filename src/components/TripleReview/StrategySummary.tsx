@@ -11,15 +11,18 @@ interface StrategySummaryProps {
 }
 
 const calculateScore = (
-  answers: { [questionId: string]: number }, 
+  answers: { [questionId: string]: number },
   targetSections: ProcessedSection[]
 ) => {
   let correctCount = 0;
   let totalQuestionsInScope = 0;
 
   for (const section of targetSections) {
-    totalQuestionsInScope += section.questions.length;
-    for (const question of section.questions) {
+    // Only count questions that are not excluded
+    const scorableQuestions = section.questions.filter(q => !q.isExcluded);
+    totalQuestionsInScope += scorableQuestions.length;
+
+    for (const question of scorableQuestions) {
       if (answers.hasOwnProperty(question.id)) {
         if (answers[question.id] === question.correctAnswer) {
           correctCount++;

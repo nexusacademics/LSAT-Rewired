@@ -71,10 +71,10 @@ export function useAuth() {
       const mockUser: User = {
         id: supabaseUser.id,
         email: supabaseUser.email || '',
-        name: supabaseUser.email?.split('@')[0] || 'Jake',
-         firstName: 'Jake', // You can also change this
-      lastName: 'Username', // And this
-      username: 'LSATWizard', // And this
+        name: 'Jake',
+        firstName: 'Jake',
+        lastName: 'Username',
+        username: 'Jake',
         stats: {
           circuitsCreated: 50,
           testsCompleted: 10,
@@ -119,16 +119,16 @@ export function useAuth() {
         } else {
           // If no session, create a mock user for dashboard display
           const mockSupabaseUser: SupabaseUser = {
-            id: 'mock-user-id', // A consistent mock ID for development
+            id: '00000000-0000-0000-0000-000000000000', // A consistent mock UUID for development
             email: 'LSATWizard@gmail.com',
           };
           const mockUser: User = {
             id: mockSupabaseUser.id,
             email: mockSupabaseUser.email || '',
-            name: mockSupabaseUser.email?.split('@')[0] || 'Jake',
+            name: 'Jake',
             firstName: 'Jake',
             lastName: 'Username',
-            username: 'LSATWizard',
+            username: 'Jake',
             stats: {
               circuitsCreated: 50,
               testsCompleted: 10,
@@ -161,10 +161,34 @@ export function useAuth() {
     return () => subscription.unsubscribe();
   }, []);
 
+  const restoreMockUser = () => {
+    const mockSupabaseUser: SupabaseUser = {
+      id: '00000000-0000-0000-0000-000000000000',
+      email: 'LSATWizard@gmail.com',
+    };
+    const mockUser: User = {
+      id: mockSupabaseUser.id,
+      email: mockSupabaseUser.email || '',
+      name: 'Jake',
+      firstName: 'Jake',
+      lastName: 'Username',
+      username: 'Jake',
+      stats: {
+        circuitsCreated: 50,
+        testsCompleted: 10,
+        averageAnalysisScore: 88,
+        rank: 100
+      }
+    };
+    setSupabaseUser(mockSupabaseUser);
+    setUser(mockUser);
+  };
+
   return {
     user,
     supabaseUser,
     subscription,
-    isLoading
+    isLoading,
+    restoreMockUser
   };
 }
