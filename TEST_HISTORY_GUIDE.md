@@ -3,6 +3,8 @@
 ## Overview
 The Test History system is now fully implemented and ready for testing. It tracks every question attempt, section completion, and test completion across all three phases (timed, blind review, and strategy review).
 
+**NEW: Demo Mode Support** - The system now works seamlessly in demo mode (without authentication), storing all history data in localStorage. When you log out in demo mode, all local history data is automatically cleared.
+
 ## What's Been Implemented
 
 ### Database Schema (Step 1)
@@ -27,8 +29,9 @@ All tables have proper indexes, RLS policies, and foreign key constraints.
 ## How to Test
 
 ### Prerequisites
-1. Make sure you're logged into the application
-2. The Supabase database is configured and accessible
+1. You can test in either authenticated mode OR demo mode (no login required)
+2. For authenticated testing: Make sure you're logged in and Supabase database is configured
+3. For demo mode testing: Just use the application without logging in - data will be stored locally
 
 ### Testing Steps
 
@@ -60,9 +63,20 @@ All tables have proper indexes, RLS policies, and foreign key constraints.
 - Open Developer Tools (F12)
 - Check the Console tab for:
   - "Test History Results:" log with all fetched data
+  - In demo mode, look for logs like "📝 Saving section completion to localStorage (demo mode)"
   - Any errors during insertion or retrieval
 
-#### 4. Verify in Supabase Dashboard (Optional)
+#### 4. Test Demo Mode Data Persistence
+1. Complete a section while in demo mode
+2. Refresh the browser page
+3. Go to Test History page - your completed sections should still be there
+4. Log out (click "Log Out" in the user dropdown)
+5. Log back in - Test History should now be empty (data was cleared on logout)
+6. Check browser localStorage (Developer Tools > Application > Local Storage):
+   - Look for keys starting with "lsat-rewired-mock-"
+   - After logout, these keys should be gone
+
+#### 5. Verify in Supabase Dashboard (Optional - Authenticated Mode Only)
 1. Go to your Supabase project dashboard
 2. Navigate to Table Editor
 3. Check these tables for new records:
@@ -124,10 +138,12 @@ All tables have proper indexes, RLS policies, and foreign key constraints.
 ## Troubleshooting
 
 ### No Data Shows Up
-1. Check that you're authenticated (logged in)
-2. Check the browser console for errors
-3. Verify your Supabase connection in .env file
-4. Make sure you actually completed a section (pressed Submit)
+1. **Demo Mode:** Data should appear immediately - check localStorage in DevTools
+2. **Authenticated Mode:** Check that you're logged in
+3. Check the browser console for errors
+4. Verify your Supabase connection in .env file
+5. Make sure you actually completed a section (pressed Submit)
+6. Try refreshing the Test History page
 
 ### Errors in Console
 - "User not authenticated" - You need to log in

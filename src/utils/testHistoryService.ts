@@ -1,6 +1,7 @@
 import { supabase } from '../lib/supabase';
 import type { TestSession, Circuit } from '../types/user';
 import type { ProcessedQuestion, ProcessedSection } from '../types/test-data';
+import { mockHistoryStorage } from './mockHistoryStorage';
 
 export interface QuestionAttemptData {
   session_id: string;
@@ -62,9 +63,9 @@ class TestHistoryService {
     try {
       const { data: { user } } = await supabase.auth.getUser();
 
-      if (!user) {
-        console.warn('⚠️ No authenticated user - data not saved to database (using mock user)');
-        return { success: true };
+      if (!user || mockHistoryStorage.isMockUser(user.id)) {
+        console.log('📝 Saving question attempt to localStorage (demo mode)');
+        return mockHistoryStorage.insertQuestionAttempt(data);
       }
 
       const { error } = await supabase
@@ -90,9 +91,9 @@ class TestHistoryService {
     try {
       const { data: { user } } = await supabase.auth.getUser();
 
-      if (!user) {
-        console.warn('⚠️ No authenticated user - data not saved to database (using mock user)');
-        return { success: true, insertedCount: attempts.length };
+      if (!user || mockHistoryStorage.isMockUser(user.id)) {
+        console.log(`📝 Saving ${attempts.length} question attempts to localStorage (demo mode)`);
+        return mockHistoryStorage.insertQuestionAttemptsBatch(attempts);
       }
 
       const attemptsWithUserId = attempts.map(attempt => ({
@@ -120,9 +121,9 @@ class TestHistoryService {
     try {
       const { data: { user } } = await supabase.auth.getUser();
 
-      if (!user) {
-        console.warn('⚠️ No authenticated user - data not saved to database (using mock user)');
-        return { success: true };
+      if (!user || mockHistoryStorage.isMockUser(user.id)) {
+        console.log('📝 Saving section completion to localStorage (demo mode)');
+        return mockHistoryStorage.insertSectionCompletion(data);
       }
 
       const { error } = await supabase
@@ -148,9 +149,9 @@ class TestHistoryService {
     try {
       const { data: { user } } = await supabase.auth.getUser();
 
-      if (!user) {
-        console.warn('⚠️ No authenticated user - data not saved to database (using mock user)');
-        return { success: true };
+      if (!user || mockHistoryStorage.isMockUser(user.id)) {
+        console.log('📝 Saving test completion to localStorage (demo mode)');
+        return mockHistoryStorage.insertTestCompletion(data);
       }
 
       const { error } = await supabase
@@ -364,8 +365,8 @@ class TestHistoryService {
     try {
       const { data: { user } } = await supabase.auth.getUser();
 
-      if (!user) {
-        return { data: null, error: 'User not authenticated' };
+      if (!user || mockHistoryStorage.isMockUser(user.id)) {
+        return mockHistoryStorage.getAllQuestionAttempts(limit);
       }
 
       let query = supabase
@@ -396,8 +397,8 @@ class TestHistoryService {
     try {
       const { data: { user } } = await supabase.auth.getUser();
 
-      if (!user) {
-        return { data: null, error: 'User not authenticated' };
+      if (!user || mockHistoryStorage.isMockUser(user.id)) {
+        return mockHistoryStorage.getQuestionAttemptsByTest(testId, phase);
       }
 
       let query = supabase
@@ -429,8 +430,8 @@ class TestHistoryService {
     try {
       const { data: { user } } = await supabase.auth.getUser();
 
-      if (!user) {
-        return { data: null, error: 'User not authenticated' };
+      if (!user || mockHistoryStorage.isMockUser(user.id)) {
+        return mockHistoryStorage.getQuestionAttemptsByType(questionType, phase);
       }
 
       let query = supabase
@@ -462,8 +463,8 @@ class TestHistoryService {
     try {
       const { data: { user } } = await supabase.auth.getUser();
 
-      if (!user) {
-        return { data: null, error: 'User not authenticated' };
+      if (!user || mockHistoryStorage.isMockUser(user.id)) {
+        return mockHistoryStorage.getSectionCompletions(limit);
       }
 
       let query = supabase
@@ -494,8 +495,8 @@ class TestHistoryService {
     try {
       const { data: { user } } = await supabase.auth.getUser();
 
-      if (!user) {
-        return { data: null, error: 'User not authenticated' };
+      if (!user || mockHistoryStorage.isMockUser(user.id)) {
+        return mockHistoryStorage.getSectionCompletionsByTest(testId, phase);
       }
 
       let query = supabase
@@ -527,8 +528,8 @@ class TestHistoryService {
     try {
       const { data: { user } } = await supabase.auth.getUser();
 
-      if (!user) {
-        return { data: null, error: 'User not authenticated' };
+      if (!user || mockHistoryStorage.isMockUser(user.id)) {
+        return mockHistoryStorage.getTestCompletions(limit);
       }
 
       let query = supabase
@@ -559,8 +560,8 @@ class TestHistoryService {
     try {
       const { data: { user } } = await supabase.auth.getUser();
 
-      if (!user) {
-        return { data: null, error: 'User not authenticated' };
+      if (!user || mockHistoryStorage.isMockUser(user.id)) {
+        return mockHistoryStorage.getTestCompletionsByTestId(testId);
       }
 
       const { data, error } = await supabase
@@ -586,8 +587,8 @@ class TestHistoryService {
     try {
       const { data: { user } } = await supabase.auth.getUser();
 
-      if (!user) {
-        return { data: null, error: 'User not authenticated' };
+      if (!user || mockHistoryStorage.isMockUser(user.id)) {
+        return mockHistoryStorage.getPerformanceByQuestionType(phase);
       }
 
       let query = supabase
@@ -637,8 +638,8 @@ class TestHistoryService {
     try {
       const { data: { user } } = await supabase.auth.getUser();
 
-      if (!user) {
-        return { data: null, error: 'User not authenticated' };
+      if (!user || mockHistoryStorage.isMockUser(user.id)) {
+        return mockHistoryStorage.getRecentActivity(limit);
       }
 
       const { data, error } = await supabase
@@ -664,9 +665,8 @@ class TestHistoryService {
     try {
       const { data: { user } } = await supabase.auth.getUser();
 
-      if (!user) {
-        console.warn('⚠️ No authenticated user - returning empty activity list (using mock user)');
-        return { data: [] };
+      if (!user || mockHistoryStorage.isMockUser(user.id)) {
+        return mockHistoryStorage.getAllActivity(limit);
       }
 
       const [testCompletionsResult, sectionCompletionsResult] = await Promise.all([
@@ -716,9 +716,8 @@ class TestHistoryService {
     try {
       const { data: { user } } = await supabase.auth.getUser();
 
-      if (!user) {
-        console.warn('⚠️ No authenticated user - returning empty activity list (using mock user)');
-        return { data: [] };
+      if (!user || mockHistoryStorage.isMockUser(user.id)) {
+        return mockHistoryStorage.getActivityByPhase(phase, limit);
       }
 
       const [testCompletionsResult, sectionCompletionsResult] = await Promise.all([

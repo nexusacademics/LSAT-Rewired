@@ -20,6 +20,7 @@ import StudyScheduleBuilder from './components/StudyScheduleBuilder';
 import LandingPage from './components/LandingPage';
 import TestHistoryPage from './components/TestHistoryPage';
 import { supabase } from './lib/supabase';
+import { mockHistoryStorage } from './utils/mockHistoryStorage';
 
 // Import types
 import type { TestSession } from './types/user';
@@ -118,6 +119,11 @@ function AppContent() {
       if (user) {
         const storageKey = `lsat-rewired-sessions-${user.id}`;
         localStorage.removeItem(storageKey);
+
+        if (mockHistoryStorage.isMockUser(user.id)) {
+          mockHistoryStorage.clearAllMockData();
+          console.log('🧹 Cleared all demo history data on logout');
+        }
       }
 
       await supabase.auth.signOut();
