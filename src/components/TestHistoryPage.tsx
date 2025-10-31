@@ -368,19 +368,23 @@ const TestHistoryPage: React.FC<TestHistoryPageProps> = ({ onClose }) => {
                   <ol className={`space-y-2 text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                     <li className="flex items-start">
                       <span className="font-semibold mr-2">1.</span>
-                      <span>Go to Sessions page and start a new PrepTest or section</span>
+                      <span>Sign in or create an account to enable test history tracking</span>
                     </li>
                     <li className="flex items-start">
                       <span className="font-semibold mr-2">2.</span>
-                      <span>Complete the section (you'll see a completion modal)</span>
+                      <span>Go to Sessions page and start a new PrepTest or section</span>
                     </li>
                     <li className="flex items-start">
                       <span className="font-semibold mr-2">3.</span>
-                      <span>Your results will automatically appear here in Test History</span>
+                      <span>Complete the section - your results will automatically be saved</span>
+                    </li>
+                    <li className="flex items-start">
+                      <span className="font-semibold mr-2">4.</span>
+                      <span>Return here to view your complete test history</span>
                     </li>
                   </ol>
                   <p className={`mt-4 text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                    Note: All phases (Timed, Blind Review, Strategy Review) are tracked separately so you can see your improvement over time.
+                    Note: Test history requires authentication. Currently using a demo account - data will not be persisted.
                   </p>
                 </div>
 
